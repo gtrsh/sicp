@@ -11,7 +11,12 @@ FROM debian:bookworm-slim AS fetch
 
 ARG TEXINFO_VERSION=5.1
 ARG PHANTOMJS_VERSION=2.1.1
-ARG MATHJAX_VERSION=2.7.9
+# 2.4.0 — это «latest» MathJax на момент сборки оригинального html (авг 2014).
+# Именно он даёт MathML 1-в-1 с репным: версии >=2.7 добавили в toMathML
+# <mi/>-спейсеры, displaystyle, <mstyle scriptlevel>, пустые <mo fence/> и
+# другой отступ — отсюда весь шум в diff. Если фидельность не важна и нужен
+# просто корректный рендер — можно вернуть 2.7.9.
+ARG MATHJAX_VERSION=2.4.0
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl bzip2 xz-utils tar perl \
@@ -30,10 +35,10 @@ RUN curl -fsSL -o phantomjs.tar.bz2 \
     && cp "phantomjs-${PHANTOMJS_VERSION}-linux-x86_64/bin/phantomjs" /opt/phantomjs/bin/ \
     && chmod +x /opt/phantomjs/bin/phantomjs
 
-# --- MathJax 2.7.x ---------------------------------------------------------
-# mathcell.xhtml дёргает MathJax.Hub + toMathML — это API v2. В 3.x его
-# выпилили, поэтому жёстко пиним 2.7.x. Оригинальный cdn.mathjax.org умер в
-# 2017, так что вендорим локально и в entrypoint подменяем src на file://.
+# --- MathJax (пин версии — см. ARG выше) -----------------------------------
+# mathcell.xhtml дёргает MathJax.Hub + toMathML — это API v2 (в 3.x его
+# выпилили, так что любая 2.x, но не 3.x). Оригинальный cdn.mathjax.org умер
+# в 2017, поэтому вендорим локально и в entrypoint подменяем src на file://.
 RUN curl -fsSL -o mathjax.tar.gz \
       "https://github.com/mathjax/MathJax/archive/refs/tags/${MATHJAX_VERSION}.tar.gz" \
     && mkdir -p /opt/mathjax \
