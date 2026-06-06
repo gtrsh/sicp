@@ -62,6 +62,11 @@ case "${1:-epub}" in
       exit 1
     fi
     log "phantomjs $(phantomjs --version) OK"
+    # db.json — кэш MathML (LaTeX -> MathML). get-math переиспользует его и НЕ
+    # переконвертит уже знакомый LaTeX. Поэтому при смене версии MathJax старый
+    # MathML «прилипает». Для честной полной сборки сносим кэш — math
+    # переконвертится текущим MathJax.
+    rm -f db.json
     # Полная регенерация из sicp-pocket.texi: texi2any -> get/put-math (MathJax)
     # -> batch-prettify -> create_metafiles -> zip. Форсим регенерацию, делая
     # .texi новее html.

@@ -695,61 +695,61 @@ follows:<a class="footnote_link" id="DOCF169" href="#FOOT169"><sup>169</sup></a>
 <p>This procedure works well when only a single process is trying to do the
 exchange.  Suppose, however, that Peter and Paul both have access to accounts
 <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>1</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>1</mn>
+  </mrow>
 </math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>2</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>2</mn>
+  </mrow>
 </math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>3</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>3</mn>
+  </mrow>
 </math>, and that Peter exchanges <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>1</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>1</mn>
+  </mrow>
 </math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>2</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>2</mn>
+  </mrow>
 </math> while
 Paul concurrently exchanges <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>1</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>1</mn>
+  </mrow>
 </math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>3</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>3</mn>
+  </mrow>
 </math>.  Even with account deposits and
 withdrawals serialized for individual accounts (as in the <code>make-account</code>
 procedure shown above in this section), <code>exchange</code> can still produce
 incorrect results.  For example, Peter might compute the difference in the
 balances for <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>1</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>1</mn>
+  </mrow>
 </math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>2</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>2</mn>
+  </mrow>
 </math>, but then Paul might change the balance in
 <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>1</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>1</mn>
+  </mrow>
 </math> before Peter is able to complete the exchange.<a class="footnote_link" id="DOCF170" href="#FOOT170"><sup>170</sup></a>  For correct behavior, we must arrange for the
 <code>exchange</code> procedure to lock out any other concurrent accesses to the
 accounts during the entire time of the exchange.
@@ -1009,57 +1009,57 @@ semaphore must wait for release operations.  Give implementations of semaphores
 <p>Now that we have seen how to implement serializers, we can see that account
 exchanging still has a problem, even with the <code>serialized-exchange</code>
 procedure above.  Imagine that Peter attempts to exchange <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>1</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>1</mn>
+  </mrow>
 </math> with <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>2</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>2</mn>
+  </mrow>
 </math>
 while Paul concurrently attempts to exchange <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>2</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>2</mn>
+  </mrow>
 </math> with <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>1</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>1</mn>
+  </mrow>
 </math>.  Suppose that
 Peter’s process reaches the point where it has entered a serialized procedure
 protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>1</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>1</mn>
+  </mrow>
 </math> and, just after that, Paul’s process enters a serialized
 procedure protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>2</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>2</mn>
+  </mrow>
 </math>.  Now Peter cannot proceed (to enter a serialized
 procedure protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>2</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>2</mn>
+  </mrow>
 </math>) until Paul exits the serialized procedure
 protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>2</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>2</mn>
+  </mrow>
 </math>.  Similarly, Paul cannot proceed until Peter exits the
 serialized procedure protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
-<mrow class="MJX-TeXAtom-ORD">
-  <mi>a</mi>
-  <mn>1</mn>
-</mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mn>1</mn>
+  </mrow>
 </math>.  Each process is stalled forever,
 waiting for the other.  This situation is called a <a id="index-deadlock"></a>
 <em>deadlock</em>.

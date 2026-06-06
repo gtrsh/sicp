@@ -9,15 +9,14 @@
 ##############################################################################
 FROM debian:bookworm-slim AS fetch
 
-ARG TEXINFO_VERSION=5.1
-ARG PHANTOMJS_VERSION=2.1.1
-# 2.4.0 — это «latest» MathJax на момент сборки оригинального html (авг 2014).
-# Именно он даёт MathML 1-в-1 с репным: версии >=2.7 добавили в toMathML
-# <mi/>-спейсеры, displaystyle, <mstyle scriptlevel>, пустые <mo fence/> и
-# другой отступ — отсюда весь шум в diff. Если фидельность не важна и нужен
-# просто корректный рендер — можно вернуть 2.7.9.
-ARG MATHJAX_VERSION=2.4.0
-
+# Раскладка слоёв заточена под кэш. Правило сборщика: смена значения ARG даёт
+# cache-miss с ПЕРВОГО использования, а дальше по цепочке пересобирается всё,
+# что стоит ниже сломанного слоя. Отсюда два приёма:
+#   1) apt — первым и БЕЗ единого ARG, чтобы тяжёлый apt-get update не зависел
+#      от версий и не инвалидировался при их смене;
+#   2) каждый ARG — вплотную перед своим RUN, а загрузки отсортированы по
+#      частоте смены версии. MathJax крутим чаще всего → он СТРОГО последний;
+#      texinfo/phantomjs стоят выше и остаются в кэше при смене версии mathjax.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl bzip2 xz-utils tar perl \
     && rm -rf /var/lib/apt/lists/*
@@ -28,6 +27,7 @@ WORKDIR /tmp
 # Заброшен с 2018, в апт-репах современных дистров его нет. Берём официальный
 # пребилт-бинарь (внутри статически слинкованный Qt/WebKit). Все три скрипта
 # книги (get-math/put-math/batch-prettify) — это phantomjs, а не node.
+ARG PHANTOMJS_VERSION=2.1.1
 RUN curl -fsSL -o phantomjs.tar.bz2 \
       "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${PHANTOMJS_VERSION}-linux-x86_64.tar.bz2" \
     && tar xjf phantomjs.tar.bz2 \
@@ -35,16 +35,7 @@ RUN curl -fsSL -o phantomjs.tar.bz2 \
     && cp "phantomjs-${PHANTOMJS_VERSION}-linux-x86_64/bin/phantomjs" /opt/phantomjs/bin/ \
     && chmod +x /opt/phantomjs/bin/phantomjs
 
-# --- MathJax (пин версии — см. ARG выше) -----------------------------------
-# mathcell.xhtml дёргает MathJax.Hub + toMathML — это API v2 (в 3.x его
-# выпилили, так что любая 2.x, но не 3.x). Оригинальный cdn.mathjax.org умер
-# в 2017, поэтому вендорим локально и в entrypoint подменяем src на file://.
-RUN curl -fsSL -o mathjax.tar.gz \
-      "https://github.com/mathjax/MathJax/archive/refs/tags/${MATHJAX_VERSION}.tar.gz" \
-    && mkdir -p /opt/mathjax \
-    && tar xzf mathjax.tar.gz --strip-components=1 -C /opt/mathjax
-
-# --- Texinfo 5.1 (только perl-дерево) --------------------------------------
+# --- Texinfo 5.1 (только perl-дерево, меняется редко) ----------------------
 # Бандленый в репе lib/Texinfo/Convert/HTML.pm — это пропатченная версия 5.0.
 # Он перекрывает только HTML.pm, а Parser.pm/Structuring.pm texi2any берёт из
 # системного $datadir/texinfo. Современный texinfo 6.x/7.x переписал этот
@@ -55,6 +46,7 @@ RUN curl -fsSL -o mathjax.tar.gz \
 # конфигурим и не компилим вообще, просто копируем дерево туда, где texi2any
 # сам его ищет: /usr/local/share/texinfo/{Texinfo,DebugTexinfo,lib/...}.
 # Завершающий require — sanity-check, что дерево разложилось и грузится.
+ARG TEXINFO_VERSION=5.1
 RUN curl -fsSL -o texinfo.tar.gz \
       "https://ftp.gnu.org/gnu/texinfo/texinfo-${TEXINFO_VERSION}.tar.gz" \
     && tar xzf texinfo.tar.gz \
@@ -69,6 +61,22 @@ RUN curl -fsSL -o texinfo.tar.gz \
          -I/staging/texinfo/lib/Unicode-EastAsianWidth/lib \
          -I/staging/texinfo/lib/Text-Unidecode/lib \
          -e 'require Texinfo::Parser; require Texinfo::Structuring; print "texinfo 5.1 perl-tree OK\n"'
+
+# --- MathJax (СТРОГО последним — версию крутим чаще всего) ------------------
+# mathcell.xhtml дёргает MathJax.Hub + toMathML — это API v2 (в 3.x его
+# выпилили, так что любая 2.x, но не 3.x). Оригинальный cdn.mathjax.org умер
+# в 2017, поэтому вендорим локально и в entrypoint подменяем src на file://.
+# Версия критична для бит-в-бит MathML с репным html, две границы:
+#   * отступ: MML.math.toMathML (extensions/toMathML.js) у 2.4.0 даёт детям
+#     <math> +0, у 2.5.0+ — +2. Репный html — с +2, значит генерён НЕ на 2.4.0.
+#   * структура: >=2.7 добавили <mi/>-спейсеры, displaystyle, <mstyle
+#     scriptlevel>, пустые <mo fence/> — структурный шум в diff.
+# 2.5.0 — окно «отступ уже +2, шума 2.7 ещё нет», MathML 1-в-1. Зашумит — 2.6.1.
+ARG MATHJAX_VERSION=2.3.0
+RUN curl -fsSL -o mathjax.tar.gz \
+      "https://github.com/mathjax/MathJax/archive/refs/tags/${MATHJAX_VERSION}.tar.gz" \
+    && mkdir -p /opt/mathjax \
+    && tar xzf mathjax.tar.gz --strip-components=1 -C /opt/mathjax
 
 ##############################################################################
 # Стейдж 2: рантайм сборки
