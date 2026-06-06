@@ -1,0 +1,54 @@
+# Кладётся в корень репозитория sicp (рядом с Makefile / sicp-pocket.texi).
+#
+# Использование:
+#   docker compose run --rm epub     # epub из готового html/ (быстро, дефолт)
+#   docker compose run --rm full     # полная регенерация из .texi
+#   docker compose run --rm shell    # bash внутри сборочного окружения
+#   docker compose up serve          # читать собранный html на :8080
+#
+# Артефакт -> ./dist/sicp.epub
+#
+# Заметка под Fedora: ':z' на маунтах нужен из-за SELinux, иначе контейнер не
+# достучится до файлов. Под rootless podman uid-маппинг разрулится сам — root
+# в контейнере = твой юзер на хосте, файлы в dist/ будут твои.
+
+# Общий build+image для всех сборочных сервисов. Якорь нужен, чтобы ЛЮБОЙ
+# сервис (а не только первый) умел собрать образ — иначе compose для full/shell
+# пытается спулить sicp-build:local из реестра и падает с pull access denied.
+x-sicp-build: &sicp-build
+  build:
+    context: ./docker
+    dockerfile: Dockerfile
+  image: sicp-build:local
+  # Не лезть в реестр за локальным образом — собирать его самим. Без этого
+  # compose сначала пытается спулить sicp-build:local и сыплет 'pull access
+  # denied' (безобидно, но шумно), и только потом фоллбэчится на build.
+  pull_policy: build
+  volumes:
+    - .:/work:z
+
+services:
+  epub:
+    <<: *sicp-build
+    command: ["epub"]
+
+  full:
+    <<: *sicp-build
+    command: ["full"]
+
+  shell:
+    <<: *sicp-build
+    command: ["shell"]
+    stdin_open: true
+    tty: true
+
+  # Статика для чтения собранного HTML5-варианта книги (не epub).
+  # nginx.conf нужен, иначе на '/' прилетает 403: книга стартует с
+  # index.xhtml, а стоковый nginx ищет index.html и не находит индекс.
+  serve:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro,z
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro,z
