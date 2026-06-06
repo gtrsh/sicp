@@ -1,0 +1,13 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index b17fd1d..9e2ae39 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -34955,7 +34955,7 @@ contents, then @code{preserving} wraps a @code{save} and a @code{restore} of
+ the register around the first sequence before appending the sequences.
+ Otherwise, @code{preserving} simply returns the appended instruction sequences.
+ Thus, for example,
+-@code{(preserving (list ⟨@var{reg₁}⟩ ⟨@var{reg₂}⟩) ⟨@var{seg₁}⟩ ⟨@var{seg₂}⟩)}
++@code{(preserving (list ⟨@var{reg₁}⟩ ⟨@var{reg₂}⟩) ⟨@var{seq₁}⟩ ⟨@var{seq₂}⟩)}
+ produces one of the following four sequences of instructions, depending on how
+ @math{{⟨\kern0.1em seq_1⟩}} and @math{{⟨\kern0.1em seq_2⟩}} 
+ use @math{{⟨\kern0.1em reg_1⟩}} and @math{{⟨\kern0.1em reg_2⟩}}:

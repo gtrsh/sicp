@@ -1,0 +1,13 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index b17fd1d..685ac68 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -15404,7 +15404,7 @@ env       +-----------------------------------------------------+
+         |      |       | y: 10 |        |      |        |       |
+         +------+       +-------+        +------+        +-------+
+    (sum-of-squares   (+ (square x)       (* x x)         (* x x)
+-     (+ a 1)            (square u))
++     (+ a 1)            (square y))
+      (+ a 2))
+ @end example
+ @end ifinfo
