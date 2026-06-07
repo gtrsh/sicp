@@ -1,0 +1,179 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 43add71..e90c2b6 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -1495,84 +1495,82 @@ Pascal и заметьте, какая его часть посвящена оп
+ словам Алана Перлиса, «синтаксический сахар вызывает рак точек с запятой».}
+ 
+ @node	1.1.4, 1.1.5, 1.1.3, 1.1
+-@subsection Compound Procedures
++@subsection Составные процедуры
+ 
+-We have identified in Lisp some of the elements that must appear in any
+-powerful programming language:
++В Lisp мы выделили некоторые элементы, которые должны присутствовать в любом
++мощном языке программирования:
+ 
+ @itemize @bullet
+ 
+ @item
+-Numbers and arithmetic operations are primitive data and procedures.
++Числа и арифметические операции — это примитивные данные и процедуры.
+ 
+ @item
+-Nesting of combinations provides a means of combining operations.
++Вложение комбинаций даёт средство комбинирования операций.
+ 
+ @item
+-Definitions that associate names with values provide a limited means of
+-abstraction.
++Определения, связывающие имена со значениями, дают ограниченное средство
++абстракции.
+ 
+ @end itemize
+ 
+ @noindent
+-Now we will learn about @newterm{procedure definitions}, a much more powerful
+-abstraction technique by which a compound operation can be given a name and
+-then referred to as a unit.
++Теперь мы узнаем об @newterm{определениях процедур} — куда более мощном приёме
++абстракции, с помощью которого составной операции можно дать имя и затем
++обращаться к ней как к единому целому.
+ 
+-We begin by examining how to express the idea of ``squaring.''  We might say,
+-``To square something, multiply it by itself.''  This is expressed in our
+-language as
++Начнём с того, как выразить идею «возведения в квадрат».  Мы могли бы сказать:
++«Чтобы возвести нечто в квадрат, умножь его само на себя».  В нашем языке это
++выражается так:
+ 
+ @lisp
+ (define (square x) (* x x))
+ @end lisp
+ 
+ @noindent
+-We can understand this in the following way:
++Понимать это можно следующим образом:
+ 
+ @example
+-(define (square x)    (*       x       x))
+-  |      |      |      |       |       |
+- To square something, multiply it by itself.
++(define (square x)              (*        x        x))
++   |        |       |            |         |          |
++ Чтобы возвести нечто в квадрат, умножь    его    само на себя.
+ @end example
+ 
+ @noindent
+-We have here a @newterm{compound procedure}, which has been given the name
+-@code{square}.  The procedure represents the operation of multiplying something
+-by itself.  The thing to be multiplied is given a local name, @code{x}, which
+-plays the same role that a pronoun plays in natural language.  Evaluating the
+-definition creates this compound procedure and associates it with the name
+-@code{square}.@footnote{Observe that there are two different operations being
+-combined here: we are creating the procedure, and we are giving it the name
+-@code{square}.  It is possible, indeed important, to be able to separate these
+-two notions---to create procedures without naming them, and to give names to
+-procedures that have already been created.  We will see how to do this in
++Перед нами @newterm{составная процедура}, которой дано имя @code{square}.
++Процедура представляет операцию умножения чего-либо само на себя.  Тому, что нужно
++умножить, дано локальное имя @code{x}, играющее ту же роль, что и местоимение в
++естественном языке.  Вычисление определения создаёт эту составную процедуру и
++связывает её с именем @code{square}.@footnote{Заметьте, что здесь объединяются две
++разные операции: мы создаём процедуру и мы даём ей имя @code{square}.  Возможно —
++и притом важно — уметь разделять эти два понятия: создавать процедуры, не именуя
++их, и давать имена уже созданным процедурам.  Как это делать, мы увидим в
+ @ref{1.3.2}.}
+ 
+-The general form of a procedure definition is
++Общая форма определения процедуры такова:
+ 
+ @lisp
+-(define (⟨@var{name}⟩ ⟨@var{formal parameters}⟩) ⟨@var{body}⟩)
++(define (⟨@var{имя}⟩ ⟨@var{формальные параметры}⟩) ⟨@var{тело}⟩)
+ @end lisp
+ 
+ @noindent
+-The @code{⟨}@var{name}@code{⟩} is a symbol to be associated with the procedure definition in
+-the environment.@footnote{Throughout this book, we will describe the general
+-syntax of expressions by using italic symbols delimited by angle
+-brackets---e.g., @code{⟨}@var{name}@code{⟩}---to denote the ``slots'' in the expression to be
+-filled in when such an expression is actually used.} The @code{⟨}@var{@w{formal} @w{parameters}}@code{⟩} 
+-are the names used within the body of the procedure to refer to
+-the corresponding arguments of the procedure.  The @code{⟨}@var{body}@code{⟩} is an
+-expression that will yield the value of the procedure application when the
+-formal parameters are replaced by the actual arguments to which the procedure
+-is applied.@footnote{More generally, the body of the procedure can be a
+-sequence of expressions.  In this case, the interpreter evaluates each
+-expression in the sequence in turn and returns the value of the final
+-expression as the value of the procedure application.}  The @code{⟨}@var{name}@code{⟩} and
+-the @code{⟨}@var{formal parameters}@code{⟩} are grouped within parentheses, just as they
+-would be in an actual call to the procedure being defined.
++@code{⟨}@var{имя}@code{⟩} — это символ, который будет связан с определением
++процедуры в окружении.@footnote{На протяжении всей книги мы будем описывать общий
++синтаксис выражений с помощью наклонных символов, заключённых в угловые скобки, —
++например, @code{⟨}@var{имя}@code{⟩}, — чтобы обозначить «гнёзда» в выражении,
++которые нужно заполнить, когда такое выражение действительно используется.}
++@code{⟨}@var{@w{формальные} @w{параметры}}@code{⟩} — это имена, используемые внутри
++тела процедуры для обращения к соответствующим аргументам процедуры.
++@code{⟨}@var{тело}@code{⟩} — это выражение, которое даст значение применения
++процедуры, когда формальные параметры будут заменены фактическими аргументами, к
++которым процедура применяется.@footnote{В более общем случае телом процедуры может
++быть последовательность выражений.  В этом случае интерпретатор по очереди
++вычисляет каждое выражение последовательности и возвращает значение последнего
++выражения как значение применения процедуры.}  @code{⟨}@var{имя}@code{⟩} и
++@code{⟨}@var{формальные параметры}@code{⟩} группируются внутри скобок — ровно так
++же, как они стояли бы при настоящем вызове определяемой процедуры.
+ 
+-Having defined @code{square}, we can now use it:
++Определив @code{square}, мы теперь можем им пользоваться:
+ 
+ @lisp
+ (square 21)
+@@ -1586,16 +1584,16 @@ Having defined @code{square}, we can now use it:
+ @end lisp
+ 
+ @noindent
+-We can also use @code{square} as a building block in defining other procedures.
+-For example, @math{x^2 + y^2} can be expressed as
++Мы можем также использовать @code{square} как строительный блок при определении
++других процедур.  Например, @math{x^2 + y^2} можно выразить как
+ 
+ @lisp
+ (+ (square x) (square y))
+ @end lisp
+ 
+ @noindent
+-We can easily define a procedure @code{sum-of-squares} that, given any two
+-numbers as arguments, produces the sum of their squares:
++Мы легко определим процедуру @code{sum-of-squares}, которая по любым двум числам,
++данным как аргументы, выдаёт сумму их квадратов:
+ 
+ @lisp
+ (define (sum-of-squares x y)
+@@ -1606,8 +1604,8 @@ numbers as arguments, produces the sum of their squares:
+ @end lisp
+ 
+ @noindent
+-Now we can use @code{sum-of-squares} as a building block in constructing
+-further procedures:
++Теперь мы можем использовать @code{sum-of-squares} как строительный блок при
++построении дальнейших процедур:
+ 
+ @lisp
+ (define (f a)
+@@ -1618,10 +1616,10 @@ further procedures:
+ @end lisp
+ 
+ @noindent
+-Compound procedures are used in exactly the same way as primitive procedures.
+-Indeed, one could not tell by looking at the definition of
+-@code{sum-of-squares} given above whether @code{square} was built into the
+-interpreter, like @code{+} and @code{*}, or defined as a compound procedure.
++Составные процедуры используются точно так же, как примитивные.  В самом деле, по
++данному выше определению @code{sum-of-squares} нельзя сказать, была ли @code{square}
++встроена в интерпретатор, как @code{+} и @code{*}, или определена как составная
++процедура.
+ 
+ @node	1.1.5, 1.1.6, 1.1.4, 1.1
+ @subsection The Substitution Model for Procedure Application

@@ -1,0 +1,272 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index e90c2b6..dd8950f 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -1622,132 +1622,127 @@ Pascal и заметьте, какая его часть посвящена оп
+ процедура.
+ 
+ @node	1.1.5, 1.1.6, 1.1.4, 1.1
+-@subsection The Substitution Model for Procedure Application
++@subsection Подстановочная модель применения процедур
+ 
+-To evaluate a combination whose operator names a compound procedure, the
+-interpreter follows much the same process as for combinations whose operators
+-name primitive procedures, which we described in @ref{1.1.3}.  That is,
+-the interpreter evaluates the elements of the combination and applies the
+-procedure (which is the value of the operator of the combination) to the
+-arguments (which are the values of the operands of the combination).
++Чтобы вычислить комбинацию, оператор которой именует составную процедуру,
++интерпретатор следует во многом тому же процессу, что и для комбинаций, операторы
++которых именуют примитивные процедуры (мы описали его в @ref{1.1.3}).  То есть
++интерпретатор вычисляет элементы комбинации и применяет процедуру (являющуюся
++значением оператора комбинации) к аргументам (являющимся значениями операндов
++комбинации).
+ 
+-We can assume that the mechanism for applying primitive procedures to arguments
+-is built into the interpreter.  For compound procedures, the application
+-process is as follows:
++Можно считать, что механизм применения примитивных процедур к аргументам встроен
++в интерпретатор.  Для составных процедур процесс применения таков:
+ 
+ @quotation
+-To apply a compound procedure to arguments, evaluate the body of the procedure
+-with each formal parameter replaced by the corresponding argument.
++Чтобы применить составную процедуру к аргументам, вычисли тело процедуры, заменив
++каждый формальный параметр соответствующим аргументом.
+ @end quotation
+ 
+ @noindent
+-To illustrate this process, let's evaluate the combination
++Чтобы проиллюстрировать этот процесс, вычислим комбинацию
+ 
+ @lisp
+ (f 5)
+ @end lisp
+ 
+ @noindent
+-where @code{f} is the procedure defined in @ref{1.1.4}.  We begin by
+-retrieving the body of @code{f}:
++где @code{f} — процедура, определённая в @ref{1.1.4}.  Начнём с извлечения тела
++@code{f}:
+ 
+ @lisp
+ (sum-of-squares (+ a 1) (* a 2))
+ @end lisp
+ 
+ @noindent
+-Then we replace the formal parameter @code{a} by the argument 5:
++Затем заменим формальный параметр @code{a} аргументом 5:
+ 
+ @lisp
+ (sum-of-squares (+ 5 1) (* 5 2))
+ @end lisp
+ 
+ @noindent
+-Thus the problem reduces to the evaluation of a combination with two operands
+-and an operator @code{sum-of-squares}.  Evaluating this combination involves
+-three subproblems.  We must evaluate the operator to get the procedure to be
+-applied, and we must evaluate the operands to get the arguments.  Now @code{(+
+-5 1)} produces 6 and @code{(* 5 2)} produces 10, so we must apply the
+-@code{sum-of-squares} procedure to 6 and 10.  These values are substituted for
+-the formal parameters @code{x} and @code{y} in the body of
+-@code{sum-of-squares}, reducing the expression to
++Таким образом, задача сводится к вычислению комбинации с двумя операндами и
++оператором @code{sum-of-squares}.  Вычисление этой комбинации включает три
++подзадачи.  Мы должны вычислить оператор, чтобы получить применяемую процедуру, и
++должны вычислить операнды, чтобы получить аргументы.  Поскольку @code{(+ 5 1)} даёт
++6, а @code{(* 5 2)} даёт 10, нам нужно применить процедуру @code{sum-of-squares} к
++6 и 10.  Эти значения подставляются вместо формальных параметров @code{x} и
++@code{y} в теле @code{sum-of-squares}, сводя выражение к
+ 
+ @lisp
+ (+ (square 6) (square 10))
+ @end lisp
+ 
+ @noindent
+-If we use the definition of @code{square}, this reduces to
++Если воспользоваться определением @code{square}, это сводится к
+ 
+ @lisp
+ (+ (* 6 6) (* 10 10))
+ @end lisp
+ 
+ @noindent
+-which reduces by multiplication to
++что умножением сводится к
+ 
+ @lisp
+ (+ 36 100)
+ @end lisp
+ 
+ @noindent
+-and finally to
++и, наконец, к
+ 
+ @lisp
+ 136
+ @end lisp
+ 
+ @noindent
+-The process we have just described is called the @newterm{substitution model}
+-for procedure application.  It can be taken as a model that determines the
+-``meaning'' of procedure application, insofar as the procedures in this chapter
+-are concerned.  However, there are two points that should be stressed:
++Только что описанный процесс называется @newterm{подстановочной моделью} применения
++процедур.  Её можно принять за модель, определяющую «смысл» применения процедуры —
++по крайней мере в том, что касается процедур этой главы.  Однако следует
++подчеркнуть два момента:
+ 
+ @itemize @bullet
+ 
+ @item
+-The purpose of the substitution is to help us think about procedure
+-application, not to provide a description of how the interpreter really works.
+-Typical interpreters do not evaluate procedure applications by manipulating the
+-text of a procedure to substitute values for the formal parameters.  In
+-practice, the ``substitution'' is accomplished by using a local environment for
+-the formal parameters.  We will discuss this more fully in @ref{Chapter 3} and
+-@ref{Chapter 4} when we examine the implementation of an interpreter in detail.
+-
+-@item
+-Over the course of this book, we will present a sequence of increasingly
+-elaborate models of how interpreters work, culminating with a complete
+-implementation of an interpreter and compiler in @ref{Chapter 5}.  The
+-substitution model is only the first of these models---a way to get started
+-thinking formally about the evaluation process.  In general, when modeling
+-phenomena in science and engineering, we begin with simplified, incomplete
+-models.  As we examine things in greater detail, these simple models become
+-inadequate and must be replaced by more refined models.  The substitution model
+-is no exception.  In particular, when we address in @ref{Chapter 3} the use of
+-procedures with ``mutable data,'' we will see that the substitution model
+-breaks down and must be replaced by a more complicated model of procedure
+-application.@footnote{Despite the simplicity of the substitution idea, it turns
+-out to be surprisingly complicated to give a rigorous mathematical definition
+-of the substitution process.  The problem arises from the possibility of
+-confusion between the names used for the formal parameters of a procedure and
+-the (possibly identical) names used in the expressions to which the procedure
+-may be applied.  Indeed, there is a long history of erroneous definitions of
+-@newterm{substitution} in the literature of logic and programming semantics.
+-See @ref{Stoy 1977} for a careful discussion of substitution.}
++Назначение подстановки — помочь нам размышлять о применении процедур, а не дать
++описание того, как интерпретатор работает на самом деле.  Типичные интерпретаторы
++не вычисляют применение процедур, манипулируя текстом процедуры ради подстановки
++значений вместо формальных параметров.  На практике «подстановка» достигается
++использованием локального окружения для формальных параметров.  Мы обсудим это
++подробнее в @ref{Chapter 3} и @ref{Chapter 4}, когда детально рассмотрим реализацию
++интерпретатора.
++
++@item
++На протяжении этой книги мы представим последовательность всё более развитых
++моделей того, как работают интерпретаторы, завершив полной реализацией
++интерпретатора и компилятора в @ref{Chapter 5}.  Подстановочная модель — лишь
++первая из этих моделей, способ начать формально размышлять о процессе вычисления.
++Вообще, моделируя явления в науке и технике, мы начинаем с упрощённых, неполных
++моделей.  По мере того как мы рассматриваем вещи подробнее, эти простые модели
++становятся недостаточными и должны заменяться более точными.  Подстановочная модель
++не исключение.  В частности, когда в @ref{Chapter 3} мы обратимся к использованию
++процедур с «изменяемыми данными», мы увидим, что подстановочная модель рушится и
++должна быть заменена более сложной моделью применения процедур.@footnote{Несмотря
++на простоту идеи подстановки, дать строгое математическое определение процесса
++подстановки оказывается на удивление сложно.  Затруднение возникает из-за возможной
++путаницы между именами, используемыми для формальных параметров процедуры, и
++(возможно, совпадающими) именами, используемыми в выражениях, к которым процедура
++может применяться.  В самом деле, в литературе по логике и семантике
++программирования есть долгая история ошибочных определений @newterm{подстановки}.
++Аккуратное обсуждение подстановки см. в @ref{Stoy 1977}.}
+ 
+ @end itemize
+ 
+-@subsubheading Applicative order versus normal order
++@subsubheading Аппликативный порядок против нормального порядка
+ 
+-According to the description of evaluation given in @ref{1.1.3}, the
+-interpreter first evaluates the operator and operands and then applies the
+-resulting procedure to the resulting arguments.  This is not the only way to
+-perform evaluation.  An alternative evaluation model would not evaluate the
+-operands until their values were needed.  Instead it would first substitute
+-operand expressions for parameters until it obtained an expression involving
+-only primitive operators, and would then perform the evaluation.  If we used
+-this method, the evaluation of @code{(f 5)} would proceed according to the
+-sequence of expansions
++Согласно описанию вычисления, данному в @ref{1.1.3}, интерпретатор сначала
++вычисляет оператор и операнды, а затем применяет получившуюся процедуру к
++получившимся аргументам.  Это не единственный способ выполнять вычисление.
++Альтернативная модель вычисления не вычисляла бы операнды, пока их значения не
++понадобятся.  Вместо этого она сначала подставляла бы выражения-операнды вместо
++параметров, пока не получила бы выражение, содержащее только примитивные операторы,
++и лишь затем выполняла бы вычисление.  Если бы мы пользовались этим методом,
++вычисление @code{(f 5)} шло бы согласно такой последовательности раскрытий
+ 
+ @lisp
+ (sum-of-squares (+ 5 1) (* 5 2))
+@@ -1760,7 +1755,7 @@ sequence of expansions
+ @end lisp
+ 
+ @noindent
+-followed by the reductions
++за которыми следуют свёртки
+ 
+ @lisp
+ (+ (* 6 6) 
+@@ -1772,34 +1767,33 @@ followed by the reductions
+ @end lisp
+ 
+ @noindent
+-This gives the same answer as our previous evaluation model, but the process is
+-different.  In particular, the evaluations of @code{(+ 5 1)} and @code{(* 5 2)}
+-are each performed twice here, corresponding to the reduction of the expression
+-@code{(* x x)} with @code{x} replaced respectively by @code{(+ 5 1)} and
+-@code{(* 5 2)}.
+-
+-This alternative ``fully expand and then reduce'' evaluation method is known as
+-@newterm{normal-order evaluation}, in contrast to the ``evaluate the arguments
+-and then apply'' method that the interpreter actually uses, which is called
+-@newterm{applicative-order evaluation}.  It can be shown that, for procedure
+-applications that can be modeled using substitution (including all the
+-procedures in the first two chapters of this book) and that yield legitimate
+-values, normal-order and applicative-order evaluation produce the same value.
+-(See @ref{Exercise 1.5} for an instance of an ``illegitimate'' value where
+-normal-order and applicative-order evaluation do not give the same result.)
+-
+-Lisp uses applicative-order evaluation, partly because of the additional
+-efficiency obtained from avoiding multiple evaluations of expressions such as
+-those illustrated with @code{(+ 5 1)} and @code{(* 5 2)} above and, more
+-significantly, because normal-order evaluation becomes much more complicated to
+-deal with when we leave the realm of procedures that can be modeled by
+-substitution.  On the other hand, normal-order evaluation can be an extremely
+-valuable tool, and we will investigate some of its implications in @ref{Chapter
+-3} and @ref{Chapter 4}.@footnote{In @ref{Chapter 3} we will introduce
+-@newterm{stream processing}, which is a way of handling apparently ``infinite''
+-data structures by incorporating a limited form of normal-order evaluation.  In
+-@ref{4.2} we will modify the Scheme interpreter to produce a
+-normal-order variant of Scheme.}
++Это даёт тот же ответ, что и наша предыдущая модель вычисления, но процесс иной.
++В частности, вычисления @code{(+ 5 1)} и @code{(* 5 2)} здесь выполняются дважды
++каждое — что соответствует свёртке выражения @code{(* x x)}, где @code{x} заменён
++соответственно на @code{(+ 5 1)} и @code{(* 5 2)}.
++
++Этот альтернативный метод вычисления «полностью раскрой, а потом сворачивай»
++известен как @newterm{вычисление в нормальном порядке} — в противоположность методу
++«вычисли аргументы, а потом применяй», который интерпретатор использует на самом
++деле и который называется @newterm{вычислением в аппликативном порядке}.  Можно
++показать, что для применений процедур, которые моделируются подстановкой (включая
++все процедуры первых двух глав этой книги) и дают допустимые значения, вычисление в
++нормальном и в аппликативном порядке даёт одно и то же значение.  (Пример
++«недопустимого» значения, на котором вычисление в нормальном и аппликативном
++порядке не даёт одинакового результата, см. в @ref{Exercise 1.5}.)
++
++Lisp использует вычисление в аппликативном порядке — отчасти из-за дополнительной
++эффективности, получаемой за счёт того, что удаётся избежать многократных
++вычислений выражений вроде проиллюстрированных выше @code{(+ 5 1)} и @code{(* 5 2)},
++а более существенно — потому что с вычислением в нормальном порядке становится
++гораздо сложнее иметь дело, когда мы выходим за пределы процедур, моделируемых
++подстановкой.  С другой стороны, вычисление в нормальном порядке может быть
++чрезвычайно ценным инструментом, и некоторые его следствия мы исследуем в
++@ref{Chapter 3} и @ref{Chapter 4}.@footnote{В @ref{Chapter 3} мы введём
++@newterm{потоковую обработку} — способ обращения с внешне «бесконечными»
++структурами данных за счёт включения ограниченной формы вычисления в нормальном
++порядке.  В @ref{4.2} мы изменим интерпретатор Scheme, чтобы получить вариант
++Scheme с нормальным порядком.}
+ 
+ @node	1.1.6, 1.1.7, 1.1.5, 1.1
+ @subsection Conditional Expressions and Predicates

@@ -1,0 +1,575 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 103a2b2..cdd19e5 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -5211,23 +5211,23 @@ tan x = ---------------
+ @end quotation
+ 
+ @node	1.3.4, Chapter 2, 1.2, 1.3
+-@subsection Procedures as Returned Values
++@subsection Процедуры как возвращаемые значения
+ 
+-The above examples demonstrate how the ability to pass procedures as arguments
+-significantly enhances the expressive power of our programming language.  We
+-can achieve even more expressive power by creating procedures whose returned
+-values are themselves procedures.
++Приведённые выше примеры показывают, как способность передавать процедуры в качестве
++аргументов значительно усиливает выразительную силу нашего языка программирования.  Мы
++можем достичь ещё большей выразительной силы, создавая процедуры, возвращаемые
++значения которых сами являются процедурами.
+ 
+-We can illustrate this idea by looking again at the fixed-point example
+-described at the end of @ref{1.3.3}.  We formulated a new version of
+-the square-root procedure as a fixed-point search, starting with the
+-observation that @math{\sqrt{x}} is a fixed-point of the function @math{{y \mapsto
+-x / y}}.  Then we used average damping to make the approximations converge.
+-Average damping is a useful general technique in itself.  Namely, given a
+-function @math{f}, we consider the function whose value at @math{x} is equal to the
+-average of @math{x} and @math{{f(x)}}.
++Мы можем проиллюстрировать эту идею, снова взглянув на пример с неподвижной точкой,
++описанный в конце @ref{1.3.3}.  Мы сформулировали новую версию процедуры квадратного
++корня как поиск неподвижной точки, начав с наблюдения, что @math{\sqrt{x}} —
++неподвижная точка функции @math{{y \mapsto x / y}}.  Затем мы воспользовались
++усреднённым затуханием, чтобы заставить приближения сходиться.  Усреднённое затухание
++— полезный обобщённый приём сам по себе.  А именно, для данной функции @math{f} мы
++рассматриваем функцию, значение которой в @math{x} равно среднему @math{x} и
++@math{{f(x)}}.
+ 
+-We can express the idea of average damping by means of the following procedure:
++Мы можем выразить идею усреднённого затухания с помощью следующей процедуры:
+ 
+ @lisp
+ (define (average-damp f)
+@@ -5236,17 +5236,17 @@ We can express the idea of average damping by means of the following procedure:
+ @end lisp
+ 
+ @noindent
+-@code{Average-damp} is a procedure that takes as its argument a procedure
+-@code{f} and returns as its value a procedure (produced by the @code{lambda})
+-that, when applied to a number @code{x}, produces the average of @code{x} and
+-@code{(f x)}.  For example, applying @code{average-damp} to the @code{square}
+-procedure produces a procedure whose value at some number @math{x} is the average
+-of @math{x} and @math{x^2}.  Applying this resulting procedure to 10 returns the
+-average of 10 and 100, or 55:@footnote{Observe that this is a combination whose
+-operator is itself a combination.  @ref{Exercise 1.4} already demonstrated the
+-ability to form such combinations, but that was only a toy example.  Here we
+-begin to see the real need for such combinations---when applying a procedure
+-that is obtained as the value returned by a higher-order procedure.}
++@code{Average-damp} — это процедура, которая принимает в качестве аргумента процедуру
++@code{f} и возвращает в качестве значения процедуру (порождённую @code{lambda}),
++которая, будучи применена к числу @code{x}, выдаёт среднее @code{x} и @code{(f x)}.
++Например, применение @code{average-damp} к процедуре @code{square} даёт процедуру,
++значение которой в некотором числе @math{x} есть среднее @math{x} и @math{x^2}.
++Применение этой получившейся процедуры к 10 возвращает среднее 10 и 100, то есть
++55:@footnote{Заметьте, что это комбинация, оператор которой сам является комбинацией.
++@ref{Exercise 1.4} уже демонстрировало способность образовывать такие комбинации, но
++то был лишь игрушечный пример.  Здесь же мы начинаем видеть настоящую нужду в таких
++комбинациях — когда применяем процедуру, полученную как значение, возвращённое
++процедурой высшего порядка.}
+ 
+ @lisp
+ ((average-damp square) 10)
+@@ -5254,8 +5254,8 @@ that is obtained as the value returned by a higher-order procedure.}
+ @end lisp
+ 
+ @noindent
+-Using @code{average-damp}, we can reformulate the square-root procedure as
+-follows:
++Пользуясь @code{average-damp}, мы можем переформулировать процедуру квадратного корня
++так:
+ 
+ @lisp
+ (define (sqrt x)
+@@ -5266,20 +5266,19 @@ follows:
+ @end lisp
+ 
+ @noindent
+-Notice how this formulation makes explicit the three ideas in the method:
+-fixed-point search, average damping, and the function @math{{y \mapsto x / y}}.
+-It is instructive to compare this formulation of the square-root method with
+-the original version given in @ref{1.1.7}.  Bear in mind that these
+-procedures express the same process, and notice how much clearer the idea
+-becomes when we express the process in terms of these abstractions.  In
+-general, there are many ways to formulate a process as a procedure.
+-Experienced programmers know how to choose procedural formulations that are
+-particularly perspicuous, and where useful elements of the process are exposed
+-as separate entities that can be reused in other applications.  As a simple
+-example of reuse, notice that the cube root of @math{x} is a fixed point of the
+-function @math{{y \mapsto x / y^2}}, so we can immediately generalize our
+-square-root procedure to one that extracts cube roots:@footnote{See
+-@ref{Exercise 1.45} for a further generalization.}
++Заметьте, как эта формулировка делает явными три идеи метода: поиск неподвижной точки,
++усреднённое затухание и функцию @math{{y \mapsto x / y}}.  Поучительно сравнить эту
++формулировку метода квадратного корня с исходной версией, данной в @ref{1.1.7}.
++Помните, что эти процедуры выражают один и тот же процесс, и заметьте, насколько яснее
++становится идея, когда мы выражаем процесс в терминах этих абстракций.  Вообще,
++существует много способов сформулировать процесс как процедуру.  Опытные программисты
++умеют выбирать процедурные формулировки, которые особенно прозрачны и в которых
++полезные элементы процесса выставлены как отдельные сущности, пригодные для повторного
++использования в других приложениях.  Как простой пример повторного использования,
++заметьте, что кубический корень @math{x} — неподвижная точка функции
++@math{{y \mapsto x / y^2}}, так что мы можем немедленно обобщить нашу процедуру
++квадратного корня до процедуры, извлекающей кубические корни:@footnote{См.
++@ref{Exercise 1.45} для дальнейшего обобщения.}
+ 
+ @lisp
+ (define (cube-root x)
+@@ -5290,12 +5289,12 @@ square-root procedure to one that extracts cube roots:@footnote{See
+    1.0))
+ @end lisp
+ 
+-@subsubheading Newton's method
++@subsubheading Метод Ньютона
+ 
+-When we first introduced the square-root procedure, in @ref{1.1.7}, we
+-mentioned that this was a special case of @newterm{Newton's method}.  
+-If @math{{x \mapsto g(x)}} is a differentiable function, then a solution of the equation
+-@math{{g(x) = 0}} is a fixed point of the function @math{{x \mapsto f(x)}} where
++Когда мы впервые ввели процедуру квадратного корня, в @ref{1.1.7}, мы упомянули, что
++это частный случай @newterm{метода Ньютона}.  Если @math{{x \mapsto g(x)}} —
++дифференцируемая функция, то решение уравнения @math{{g(x) = 0}} есть неподвижная
++точка функции @math{{x \mapsto f(x)}}, где
+ @ifinfo
+ 
+ @example
+@@ -5314,28 +5313,28 @@ f(x) = x - -----
+ 
+ @end tex
+ @noindent
+-and @math{{Dg(x)}} is the derivative of @math{g} evaluated at @math{x}.  Newton's
+-method is the use of the fixed-point method we saw above to approximate a
+-solution of the equation by finding a fixed point of the function
+-@math{{f}}.@footnote{Elementary calculus books usually describe Newton's method in
+-terms of the sequence of approximations @math{x_{n+1} = x_n - {g(x_n)\,/ Dg(x_n)}}. 
+-Having language for talking about processes and using the idea of fixed points 
+-simplifies the description of the method.}
+-
+-For many functions @math{g} and for sufficiently good initial guesses for @math{x},
+-Newton's method converges very rapidly to a solution of @math{{g(x) = 0}}.@footnote{Newton's
+-method does not always converge to an answer, but it can
+-be shown that in favorable cases each iteration doubles the number-of-digits
+-accuracy of the approximation to the solution.  In such cases, Newton's method
+-will converge much more rapidly than the half-interval method.}
+-
+-In order to implement Newton's method as a procedure, we must first express the
+-idea of derivative.  Note that ``derivative,'' like average damping, is
+-something that transforms a function into another function.  For instance, the
+-derivative of the function @math{{x \mapsto x^3}} is the function @math{{x \mapsto 3x^2}}.
+-In general, if @math{g} is a function and @math{{dx}} is a small number,
+-then the derivative @math{{Dg}} of @math{g} is the function whose value at any
+-number @math{x} is given (in the limit of small @math{{dx}}) by
++а @math{{Dg(x)}} — производная @math{g}, вычисленная в @math{x}.  Метод Ньютона —
++это использование метода неподвижной точки, который мы видели выше, для приближения
++решения уравнения путём нахождения неподвижной точки функции
++@math{{f}}.@footnote{Учебники элементарного анализа обычно описывают метод Ньютона в
++терминах последовательности приближений
++@math{x_{n+1} = x_n - {g(x_n)\,/ Dg(x_n)}}.  Наличие языка для разговора о процессах и
++использование идеи неподвижных точек упрощает описание метода.}
++
++Для многих функций @math{g} и для достаточно хороших начальных предположений о @math{x}
++метод Ньютона очень быстро сходится к решению
++@math{{g(x) = 0}}.@footnote{Метод Ньютона не всегда сходится к ответу, но можно
++показать, что в благоприятных случаях каждая итерация удваивает точность приближения к
++решению по числу цифр.  В таких случаях метод Ньютона будет сходиться гораздо быстрее
++метода половинного деления.}
++
++Чтобы реализовать метод Ньютона как процедуру, мы должны сначала выразить идею
++производной.  Заметьте, что «производная», как и усреднённое затухание, — это нечто,
++преобразующее одну функцию в другую.  Например, производная функции
++@math{{x \mapsto x^3}} — это функция @math{{x \mapsto 3x^2}}.  Вообще, если @math{g} —
++функция, а @math{{dx}} — малое число, то производная @math{{Dg}} функции @math{g} —
++это функция, значение которой в любом числе @math{x} задаётся (в пределе малого
++@math{{dx}}) выражением
+ @ifinfo
+ 
+ @example
+@@ -5354,8 +5353,8 @@ Dg(x) \,=\, {\frac{g(x + dx) - g(x)}{dx}.}
+ 
+ @end tex
+ @noindent
+-Thus, we can express the idea of derivative (taking @math{{dx}} to be, say,
+-0.00001) as the procedure
++Таким образом, мы можем выразить идею производной (взяв @math{{dx}} равным, скажем,
++0.00001) как процедуру
+ 
+ @lisp
+ (define (deriv g)
+@@ -5365,16 +5364,17 @@ Thus, we can express the idea of derivative (taking @math{{dx}} to be, say,
+ @end lisp
+ 
+ @noindent
+-along with the definition
++вместе с определением
+ 
+ @lisp
+ (define dx 0.00001)
+ @end lisp
+ 
+ @noindent
+-Like @code{average-damp}, @code{deriv} is a procedure that takes a procedure as
+-argument and returns a procedure as value.  For example, to approximate the
+-derivative of @math{{x \mapsto x^3}} at 5 (whose exact value is 75) we can evaluate
++Как и @code{average-damp}, @code{deriv} — это процедура, которая принимает процедуру
++в качестве аргумента и возвращает процедуру в качестве значения.  Например, чтобы
++приблизить производную @math{{x \mapsto x^3}} в 5 (чьё точное значение равно 75), мы
++можем вычислить
+ 
+ @lisp
+ (define (cube x) (* x x x))
+@@ -5384,8 +5384,7 @@ derivative of @math{{x \mapsto x^3}} at 5 (whose exact value is 75) we can evalu
+ @end lisp
+ 
+ @noindent
+-With the aid of @code{deriv}, we can express Newton's method as a fixed-point
+-process:
++С помощью @code{deriv} мы можем выразить метод Ньютона как процесс неподвижной точки:
+ 
+ @lisp
+ (define (newton-transform g)
+@@ -5399,16 +5398,15 @@ process:
+ @end lisp
+ 
+ @noindent
+-The @code{newton-transform} procedure expresses the formula at the beginning of
+-this section, and @code{newtons-method} is readily defined in terms of this.
+-It takes as arguments a procedure that computes the function for which we want
+-to find a zero, together with an initial guess.  For instance, to find the
+-square root of @math{x}, we can use Newton's method to find a zero of the function
+-@math{{y \mapsto y^2 - x}} starting with an initial guess of 1.@footnote{For
+-finding square roots, Newton's method converges rapidly to the correct solution
+-from any starting point.}
++Процедура @code{newton-transform} выражает формулу из начала этого раздела, а
++@code{newtons-method} легко определяется через неё.  Она принимает в качестве
++аргументов процедуру, вычисляющую функцию, для которой мы хотим найти нуль, вместе с
++начальным предположением.  Например, чтобы найти квадратный корень @math{x}, мы можем
++воспользоваться методом Ньютона для нахождения нуля функции @math{{y \mapsto y^2 - x}},
++начав с начального предположения 1.@footnote{Для нахождения квадратных корней метод
++Ньютона быстро сходится к верному решению из любой начальной точки.}
+ 
+-This provides yet another form of the square-root procedure:
++Это даёт ещё одну форму процедуры квадратного корня:
+ 
+ @lisp
+ (define (sqrt x)
+@@ -5418,14 +5416,14 @@ This provides yet another form of the square-root procedure:
+    1.0))
+ @end lisp
+ 
+-@subsubheading Abstractions and first-class procedures
++@subsubheading Абстракции и первоклассные процедуры
+ 
+-We've seen two ways to express the square-root computation as an instance of a
+-more general method, once as a fixed-point search and once using Newton's
+-method.  Since Newton's method was itself expressed as a fixed-point process,
+-we actually saw two ways to compute square roots as fixed points.  Each method
+-begins with a function and finds a fixed point of some transformation of the
+-function.  We can express this general idea itself as a procedure:
++Мы видели два способа выразить вычисление квадратного корня как частный случай более
++обобщённого метода: один раз как поиск неподвижной точки и один раз с помощью метода
++Ньютона.  Поскольку сам метод Ньютона был выражен как процесс неподвижной точки, мы на
++самом деле видели два способа вычислять квадратные корни как неподвижные точки.  Каждый
++метод начинается с функции и находит неподвижную точку некоторого преобразования этой
++функции.  Мы можем выразить саму эту обобщённую идею как процедуру:
+ 
+ @lisp
+ (define (fixed-point-of-transform 
+@@ -5434,13 +5432,13 @@ function.  We can express this general idea itself as a procedure:
+ @end lisp
+ 
+ @noindent
+-This very general procedure takes as its arguments a procedure @code{g} that
+-computes some function, a procedure that transforms @code{g}, and an initial
+-guess.  The returned result is a fixed point of the transformed function.
++Эта очень обобщённая процедура принимает в качестве своих аргументов процедуру
++@code{g}, вычисляющую некоторую функцию, процедуру, преобразующую @code{g}, и начальное
++предположение.  Возвращаемый результат — неподвижная точка преобразованной функции.
+ 
+-Using this abstraction, we can recast the first square-root computation from
+-this section (where we look for a fixed point of the average-damped version of
+-@math{{y \mapsto x / y}}) as an instance of this general method:
++Пользуясь этой абстракцией, мы можем переформулировать первое вычисление квадратного
++корня из этого раздела (где мы ищем неподвижную точку усреднённо-затухающей версии
++@math{{y \mapsto x / y}}) как частный случай этого обобщённого метода:
+ 
+ @lisp
+ (define (sqrt x)
+@@ -5451,9 +5449,9 @@ this section (where we look for a fixed point of the average-damped version of
+ @end lisp
+ 
+ @noindent
+-Similarly, we can express the second square-root computation from this section
+-(an instance of Newton's method that finds a fixed point of the Newton
+-transform of @math{{y \mapsto y^2 - x}}) as
++Аналогично мы можем выразить второе вычисление квадратного корня из этого раздела
++(частный случай метода Ньютона, который находит неподвижную точку ньютонова
++преобразования @math{{y \mapsto y^2 - x}}) как
+ 
+ @lisp
+ (define (sqrt x)
+@@ -5464,76 +5462,73 @@ transform of @math{{y \mapsto y^2 - x}}) as
+ @end lisp
+ 
+ @noindent
+-We began section @ref{1.3} with the observation that compound procedures are a
+-crucial abstraction mechanism, because they permit us to express general
+-methods of computing as explicit elements in our programming language.  Now
+-we've seen how higher-order procedures permit us to manipulate these general
+-methods to create further abstractions.
++Мы начали раздел @ref{1.3} с наблюдения, что составные процедуры — критически важный
++механизм абстракции, поскольку они позволяют нам выражать обобщённые методы вычисления
++как явные элементы нашего языка программирования.  Теперь мы увидели, как процедуры
++высшего порядка позволяют нам манипулировать этими обобщёнными методами, чтобы
++создавать дальнейшие абстракции.
+ 
+-As programmers, we should be alert to opportunities to identify the underlying
+-abstractions in our programs and to build upon them and generalize them to
+-create more powerful abstractions.  This is not to say that one should always
+-write programs in the most abstract way possible; expert programmers know how
+-to choose the level of abstraction appropriate to their task.  But it is
+-important to be able to think in terms of these abstractions, so that we can be
+-ready to apply them in new contexts.  The significance of higher-order
+-procedures is that they enable us to represent these abstractions explicitly as
+-elements in our programming language, so that they can be handled just like
+-other computational elements.
++Как программисты, мы должны быть внимательны к возможностям выявить лежащие в основе
++наших программ абстракции, строить на них и обобщать их, чтобы создавать более мощные
++абстракции.  Это не значит, что программы всегда следует писать в максимально
++абстрактном виде; знатоки-программисты умеют выбирать уровень абстракции, подходящий
++их задаче.  Но важно уметь мыслить в терминах этих абстракций, чтобы быть готовыми
++применить их в новых контекстах.  Значимость процедур высшего порядка в том, что они
++позволяют нам представлять эти абстракции явно, как элементы нашего языка
++программирования, так что с ними можно обращаться так же, как с прочими вычислительными
++элементами.
+ 
+-In general, programming languages impose restrictions on the ways in which
+-computational elements can be manipulated.  Elements with the fewest
+-restrictions are said to have @newterm{first-class} status.  Some of the
+-``rights and privileges'' of first-class elements are:@footnote{The notion of
+-first-class status of programming-language elements is due to the British
+-computer scientist Christopher Strachey (1916-1975).}
++Вообще, языки программирования налагают ограничения на способы, которыми можно
++манипулировать вычислительными элементами.  Об элементах с наименьшими ограничениями
++говорят, что они обладают @newterm{первоклассным} статусом.  Вот некоторые «права и
++привилегии» первоклассных элементов:@footnote{Понятие первоклассного статуса элементов
++языка программирования принадлежит британскому информатику Кристоферу Стрэчи
++(1916–1975).}
+ 
+ @itemize @bullet
+ 
+ @item
+-They may be named by variables.
++их можно именовать переменными;
+ 
+ @item
+-They may be passed as arguments to procedures.
++их можно передавать как аргументы процедурам;
+ 
+ @item
+-They may be returned as the results of procedures.
++их можно возвращать как результаты процедур;
+ 
+ @item
+-They may be included in data structures.@footnote{We'll see examples of this
+-after we introduce data structures in @ref{Chapter 2,,@w{Chapter 2}}.}
++их можно включать в структуры данных.@footnote{Примеры этого мы увидим после того,
++как введём структуры данных в @ref{Chapter 2,,@w{Chapter 2}}.}
+ 
+ @end itemize
+ 
+ @noindent
+-Lisp, unlike other common programming languages, awards procedures full
+-first-class status.  This poses challenges for efficient implementation, but
+-the resulting gain in expressive power is enormous.@footnote{The major
+-implementation cost of first-class procedures is that allowing procedures to be
+-returned as values requires reserving storage for a procedure's free variables
+-even while the procedure is not executing.  In the Scheme implementation we
+-will study in @ref{4.1}, these variables are stored in the procedure's
+-environment.}
++Lisp, в отличие от других распространённых языков программирования, наделяет процедуры
++полным первоклассным статусом.  Это создаёт трудности для эффективной реализации, но
++получающийся выигрыш в выразительной силе огромен.@footnote{Главные затраты на
++реализацию первоклассных процедур состоят в том, что возможность возвращать процедуры
++как значения требует резервировать память для свободных переменных процедуры даже
++тогда, когда процедура не выполняется.  В реализации Scheme, которую мы будем изучать
++в @ref{4.1}, эти переменные хранятся в окружении процедуры.}
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.40}Exercise 1.40:} Define a procedure @code{cubic}
+-that can be used together with the @code{newtons-method} procedure in
+-expressions of the form
++@strong{@anchor{Exercise 1.40}Exercise 1.40:} Определите процедуру @code{cubic},
++которую можно использовать вместе с процедурой @code{newtons-method} в выражениях вида
+ 
+ @lisp
+ (newtons-method (cubic a b c) 1)
+ @end lisp
+ 
+ @noindent
+-to approximate zeros of the cubic @math{{x^3 + ax^2 + bx + c}}.
++для приближения нулей кубического многочлена @math{{x^3 + ax^2 + bx + c}}.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.41}Exercise 1.41:} Define a procedure @code{double}
+-that takes a procedure of one argument as argument and returns a procedure that
+-applies the original procedure twice.  For example, if @code{inc} is a
+-procedure that adds 1 to its argument, then @code{(double inc)} should be a
+-procedure that adds 2.  What value is returned by
++@strong{@anchor{Exercise 1.41}Exercise 1.41:} Определите процедуру @code{double},
++которая принимает в качестве аргумента процедуру одного аргумента и возвращает
++процедуру, применяющую исходную процедуру дважды.  Например, если @code{inc} —
++процедура, прибавляющая 1 к своему аргументу, то @code{(double inc)} должна быть
++процедурой, прибавляющей 2.  Какое значение возвращает
+ 
+ @lisp
+ (((double (double double)) inc) 5)
+@@ -5541,11 +5536,11 @@ procedure that adds 2.  What value is returned by
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.42}Exercise 1.42:} Let @math{f} and @math{g} be two
+-one-argument functions.  The @newterm{composition} @math{f} after @math{g} is defined
+-to be the function @math{{x \mapsto f(g(x))}}.  Define a procedure
+-@code{compose} that implements composition.  For example, if @code{inc} is a
+-procedure that adds 1 to its argument,
++@strong{@anchor{Exercise 1.42}Exercise 1.42:} Пусть @math{f} и @math{g} — две функции
++одного аргумента.  @newterm{Композиция} @math{f} после @math{g} определяется как
++функция @math{{x \mapsto f(g(x))}}.  Определите процедуру @code{compose},
++реализующую композицию.  Например, если @code{inc} — процедура, прибавляющая 1 к
++своему аргументу,
+ 
+ @lisp
+ ((compose square inc) 6)
+@@ -5554,72 +5549,72 @@ procedure that adds 1 to its argument,
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.43}Exercise 1.43:} If @math{f} is a numerical function
+-and @math{n} is a positive integer, then we can form the @math{n^{\text{th}}} repeated
+-application of @math{f}, which is defined to be the function whose value at @math{x}
+-is @math{{f(f(\dots (f(x))\dots ))}}.  For example, if @math{f} is the
+-function @math{{x \mapsto x + 1}}, then the @math{n^{\text{th}}} repeated application of @math{f} is
+-the function @math{{x \mapsto x + n}}.  If @math{f} is the operation of squaring a
+-number, then the @math{n^{\text{th}}} repeated application of @math{f} is the function that
+-raises its argument to the @math{{2^n\text{-th}}} power.  Write a procedure that takes as
+-inputs a procedure that computes @math{f} and a positive integer @math{n} and returns
+-the procedure that computes the @math{n^{\text{th}}} repeated application of @math{f}.  Your
+-procedure should be able to be used as follows:
++@strong{@anchor{Exercise 1.43}Exercise 1.43:} Если @math{f} — числовая функция, а
++@math{n} — положительное целое число, то мы можем образовать @math{n}-кратное
++повторное применение @math{f}, которое определяется как функция, значение которой в
++@math{x} равно @math{{f(f(\dots (f(x))\dots ))}}.  Например, если @math{f} — функция
++@math{{x \mapsto x + 1}}, то @math{n}-кратное повторное применение @math{f} — это
++функция @math{{x \mapsto x + n}}.  Если @math{f} — операция возведения числа в
++квадрат, то @math{n}-кратное повторное применение @math{f} — это функция, возводящая
++свой аргумент в степень @math{2^n}.  Напишите процедуру, которая принимает на вход
++процедуру, вычисляющую @math{f}, и положительное целое число @math{n} и возвращает
++процедуру, вычисляющую @math{n}-кратное повторное применение @math{f}.  Вашу процедуру
++должно быть можно использовать так:
+ 
+ @lisp
+ ((repeated square 2) 5)
+ @i{625}
+ @end lisp
+ 
+-Hint: You may find it convenient to use @code{compose} from @ref{Exercise 1.42}.
+-@end quotation
+-
+-@quotation
+-@strong{@anchor{Exercise 1.44}Exercise 1.44:} The idea of @newterm{smoothing} a
+-function is an important concept in signal processing.  If @math{f} is a function
+-and @math{{dx}} is some small number, then the smoothed version of @math{f} is the
+-function whose value at a point @math{x} is the average of @math{{f(x - dx)}}, 
+-@math{{f(x)}}, and @math{{f(x + dx)}}.  Write a procedure
+-@code{smooth} that takes as input a procedure that computes @math{f} and returns a
+-procedure that computes the smoothed @math{f}.  It is sometimes valuable to
+-repeatedly smooth a function (that is, smooth the smoothed function, and so on)
+-to obtain the @newterm{@i{n}-fold smoothed function}.  Show how to generate
+-the @i{n}-fold smoothed function of any given function using @code{smooth} and
+-@code{repeated} from @ref{Exercise 1.43}.
+-@end quotation
+-
+-@quotation
+-@strong{@anchor{Exercise 1.45}Exercise 1.45:} We saw in @ref{1.3.3}
+-that attempting to compute square roots by naively finding a fixed point of
+-@math{{y \mapsto x / y}} does not converge, and that this can be fixed by average
+-damping.  The same method works for finding cube roots as fixed points of the
+-average-damped @math{{y \mapsto x / y^2}}.  Unfortunately, the process does not
+-work for fourth roots---a single average damp is not enough to make a
+-fixed-point search for @math{{y \mapsto x / y^3}} converge.  On the other hand, if
+-we average damp twice (i.e., use the average damp of the average damp of 
+-@math{{y \mapsto x / y^3}}) the fixed-point search does converge.  Do some experiments
+-to determine how many average damps are required to compute @math{n^{\text{th}}} roots as a
+-fixed-point search based upon repeated average damping of @math{{y \mapsto x / y^{\kern0.1em n-1}}}.  
+-Use this to implement a simple procedure for computing
+-@math{n^{\text{th}}} roots using @code{fixed-point}, @code{average-damp}, and the
+-@code{repeated} procedure of @ref{Exercise 1.43}.  Assume that any arithmetic
+-operations you need are available as primitives.
+-@end quotation
+-
+-@quotation
+-@strong{@anchor{Exercise 1.46}Exercise 1.46:} Several of the numerical methods
+-described in this chapter are instances of an extremely general computational
+-strategy known as @newterm{iterative improvement}.  Iterative improvement says
+-that, to compute something, we start with an initial guess for the answer, test
+-if the guess is good enough, and otherwise improve the guess and continue the
+-process using the improved guess as the new guess.  Write a procedure
+-@code{iterative-improve} that takes two procedures as arguments: a method for
+-telling whether a guess is good enough and a method for improving a guess.
+-@code{Iterative-improve} should return as its value a procedure that takes a
+-guess as argument and keeps improving the guess until it is good enough.
+-Rewrite the @code{sqrt} procedure of @ref{1.1.7} and the
+-@code{fixed-point} procedure of @ref{1.3.3} in terms of
+-@code{iterative-improve}.
++Подсказка: вам может оказаться удобным воспользоваться @code{compose} из
++@ref{Exercise 1.42}.
++@end quotation
++
++@quotation
++@strong{@anchor{Exercise 1.44}Exercise 1.44:} Идея @newterm{сглаживания} функции —
++важное понятие в обработке сигналов.  Если @math{f} — функция, а @math{{dx}} —
++некоторое малое число, то сглаженная версия @math{f} — это функция, значение которой в
++точке @math{x} есть среднее @math{{f(x - dx)}}, @math{{f(x)}} и @math{{f(x + dx)}}.
++Напишите процедуру @code{smooth}, которая принимает на вход процедуру, вычисляющую
++@math{f}, и возвращает процедуру, вычисляющую сглаженную @math{f}.  Иногда бывает
++ценно сглаживать функцию многократно (то есть сглаживать сглаженную функцию, и так
++далее), чтобы получить @newterm{@i{n}-кратно сглаженную функцию}.  Покажите, как
++породить @i{n}-кратно сглаженную функцию любой данной функции, используя @code{smooth}
++и @code{repeated} из @ref{Exercise 1.43}.
++@end quotation
++
++@quotation
++@strong{@anchor{Exercise 1.45}Exercise 1.45:} В @ref{1.3.3} мы видели, что попытка
++вычислять квадратные корни наивным нахождением неподвижной точки
++@math{{y \mapsto x / y}} не сходится и что это можно исправить усреднённым затуханием.
++Тот же метод работает для нахождения кубических корней как неподвижных точек
++усреднённо-затухающей @math{{y \mapsto x / y^2}}.  К сожалению, процесс не работает для
++корней четвёртой степени — одного усреднённого затухания недостаточно, чтобы поиск
++неподвижной точки для @math{{y \mapsto x / y^3}} сошёлся.  С другой стороны, если мы
++применяем усреднённое затухание дважды (то есть используем усреднённое затухание от
++усреднённого затухания @math{{y \mapsto x / y^3}}), поиск неподвижной точки сходится.
++Проделайте некоторые эксперименты, чтобы определить, сколько усреднённых затуханий
++требуется для вычисления корней @math{n}-й степени как поиска неподвижной точки,
++основанного на повторном усреднённом затухании @math{{y \mapsto x / y^{\kern0.1em n-1}}}.
++Воспользуйтесь этим, чтобы реализовать простую процедуру вычисления корней @math{n}-й
++степени, используя @code{fixed-point}, @code{average-damp} и процедуру
++@code{repeated} из @ref{Exercise 1.43}.  Предполагайте, что любые нужные вам
++арифметические операции доступны как примитивы.
++@end quotation
++
++@quotation
++@strong{@anchor{Exercise 1.46}Exercise 1.46:} Несколько численных методов,
++описанных в этой главе, — частные случаи чрезвычайно обобщённой вычислительной
++стратегии, известной как @newterm{итеративное улучшение}.  Итеративное улучшение
++говорит, что для вычисления чего-либо мы начинаем с начального предположения об ответе,
++проверяем, достаточно ли хорошо предположение, и иначе улучшаем предположение и
++продолжаем процесс, используя улучшенное предположение как новое.  Напишите процедуру
++@code{iterative-improve}, которая принимает в качестве аргументов две процедуры: метод,
++сообщающий, достаточно ли хорошо предположение, и метод улучшения предположения.
++@code{Iterative-improve} должна возвращать в качестве своего значения процедуру,
++которая принимает предположение как аргумент и продолжает улучшать предположение, пока
++оно не станет достаточно хорошим.  Перепишите процедуру @code{sqrt} из @ref{1.1.7} и
++процедуру @code{fixed-point} из @ref{1.3.3} в терминах @code{iterative-improve}.
+ @end quotation
+ 
+ @node    Chapter 2, 2.1, 1.3, Top

@@ -1,0 +1,369 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index b979ea1..a94de2f 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -4528,32 +4528,31 @@ pi   2 * 4 * 4 * 6 * 6 * 8 ...
+ @end quotation
+ 
+ @node	1.3.2, 1.3.3, 1.3.1, 1.3
+-@subsection Constructing Procedures Using @code{Lambda}
++@subsection Построение процедур с помощью @code{Lambda}
+ 
+-In using @code{sum} as in @ref{1.3.1}, it seems terribly awkward to
+-have to define trivial procedures such as @code{pi-term} and @code{pi-next}
+-just so we can use them as arguments to our higher-order procedure.  Rather
+-than define @code{pi-next} and @code{pi-term}, it would be more convenient to
+-have a way to directly specify ``the procedure that returns its input
+-incremented by 4'' and ``the procedure that returns the reciprocal of its input
+-times its input plus 2.''  We can do this by introducing the special form
+-@code{lambda}, which creates procedures.  Using @code{lambda} we can describe
+-what we want as
++При использовании @code{sum}, как в @ref{1.3.1}, кажется ужасно неуклюжим то, что
++приходится определять тривиальные процедуры вроде @code{pi-term} и @code{pi-next}
++лишь затем, чтобы использовать их как аргументы нашей процедуры высшего порядка.
++Вместо того чтобы определять @code{pi-next} и @code{pi-term}, удобнее было бы иметь
++способ прямо указать «процедуру, возвращающую свой вход, увеличенный на 4» и
++«процедуру, возвращающую обратную величину произведения своего входа на свой вход
++плюс 2».  Мы можем сделать это, введя специальную форму @code{lambda}, создающую
++процедуры.  С помощью @code{lambda} мы можем описать то, что нам нужно, как
+ 
+ @lisp
+ (lambda (x) (+ x 4))
+ @end lisp
+ 
+ @noindent
+-and
++и
+ 
+ @lisp
+ (lambda (x) (/ 1.0 (* x (+ x 2))))
+ @end lisp
+ 
+ @noindent
+-Then our @code{pi-sum} procedure can be expressed without defining any
+-auxiliary procedures as
++Тогда нашу процедуру @code{pi-sum} можно выразить без определения каких-либо
++вспомогательных процедур как
+ 
+ @lisp
+ (define (pi-sum a b)
+@@ -4564,8 +4563,8 @@ auxiliary procedures as
+ @end lisp
+ 
+ @noindent
+-Again using @code{lambda}, we can write the @code{integral} procedure without
+-having to define the auxiliary procedure @code{add-dx}:
++Снова используя @code{lambda}, мы можем написать процедуру @code{integral}, не
++определяя вспомогательной процедуры @code{add-dx}:
+ 
+ @lisp
+ (define (integral f a b dx)
+@@ -4576,41 +4575,41 @@ having to define the auxiliary procedure @code{add-dx}:
+ @end lisp
+ 
+ @noindent
+-In general, @code{lambda} is used to create procedures in the same way as
+-@code{define}, except that no name is specified for the procedure:
++Вообще, @code{lambda} используется для создания процедур так же, как @code{define},
++за исключением того, что для процедуры не указывается никакого имени:
+ 
+ @lisp
+-(lambda (⟨@var{formal-parameters}⟩) ⟨@var{body}⟩)
++(lambda (⟨@var{формальные-параметры}⟩) ⟨@var{тело}⟩)
+ @end lisp
+ 
+ @noindent
+-The resulting procedure is just as much a procedure as one that is created
+-using @code{define}.  The only difference is that it has not been associated
+-with any name in the environment.  In fact,
++Получающаяся процедура — точно такая же процедура, как и созданная с помощью
++@code{define}.  Единственное различие в том, что она не связана ни с каким именем в
++окружении.  В самом деле,
+ 
+ @lisp
+ (define (plus4 x) (+ x 4))
+ @end lisp
+ 
+ @noindent
+-is equivalent to
++эквивалентно
+ 
+ @lisp
+ (define plus4 (lambda (x) (+ x 4)))
+ @end lisp
+ 
+ @noindent
+-We can read a @code{lambda} expression as follows:
++Выражение @code{lambda} можно прочитать так:
+ 
+ @example
+-(lambda                     (x)     (+   x     4))
+-    |                        |       |   |     |
+-the procedure of an argument x that adds x and 4
++(lambda                (x) (+           x  4))
++   |                    |  |            |  |
++процедура от аргумента  x  складывающая x  и 4
+ @end example
+ 
+ @noindent
+-Like any expression that has a procedure as its value, a @code{lambda}
+-expression can be used as the operator in a combination such as
++Как и любое выражение, имеющее процедуру своим значением, выражение @code{lambda}
++можно использовать как оператор в комбинации, такой как
+ 
+ @lisp
+ ((lambda (x y z) (+ x y (square z))) 1 2 3)
+@@ -4618,22 +4617,21 @@ expression can be used as the operator in a combination such as
+ @end lisp
+ 
+ @noindent
+-or, more generally, in any context where we would normally use a procedure
+-name.@footnote{It would be clearer and less intimidating to people learning
+-Lisp if a name more obvious than @code{lambda}, such as @code{make-procedure},
+-were used.  But the convention is firmly entrenched.  The notation is adopted
+-from the λ-calculus, a mathematical formalism introduced by the
+-mathematical logician Alonzo @ref{Church (1941)}.  Church developed the 
+-λ-calculus to provide a rigorous foundation for studying the 
+-notions of function
+-and function application.  The λ-calculus has become a basic tool
+-for mathematical investigations of the semantics of programming languages.}
++или, более общо, в любом контексте, где мы обычно использовали бы имя
++процедуры.@footnote{Людям, изучающим Lisp, было бы яснее и менее устрашающе, если бы
++использовалось имя более очевидное, чем @code{lambda}, — например,
++@code{make-procedure}.  Но это соглашение прочно укоренилось.  Обозначение
++позаимствовано из λ-исчисления — математического формализма, введённого
++математическим логиком Алонзо @ref{Church (1941)}.  Чёрч разработал λ-исчисление,
++чтобы дать строгое основание для изучения понятий функции и применения функции.
++λ-исчисление стало основным инструментом для математических исследований семантики
++языков программирования.}
+ 
+-@subsubheading Using @code{let} to create local variables
++@subsubheading Использование @code{let} для создания локальных переменных
+ 
+-Another use of @code{lambda} is in creating local variables.  We often need
+-local variables in our procedures other than those that have been bound as
+-formal parameters.  For example, suppose we wish to compute the function
++Ещё одно применение @code{lambda} — создание локальных переменных.  Нам часто нужны
++в наших процедурах локальные переменные помимо тех, что связаны как формальные
++параметры.  Например, предположим, что мы хотим вычислить функцию
+ @ifinfo
+ 
+ @example
+@@ -4650,7 +4648,7 @@ f(x,y) = x(1 + xy)^2 + y(1 - y) + (1 + xy)(1 - y)
+ 
+ @end tex
+ @noindent
+-which we could also express as
++которую мы могли бы также выразить как
+ @ifinfo
+ 
+ @example
+@@ -4672,10 +4670,10 @@ f(x,y) = xa^2 + yb + ab
+ \]
+ 
+ @end tex
+-In writing a procedure to compute @math{f}, we would like to include as local
+-variables not only @math{x} and @math{y} but also the names of intermediate
+-quantities like @math{a} and @math{b}.  One way to accomplish this is to use an
+-auxiliary procedure to bind the local variables:
++Записывая процедуру для вычисления @math{f}, мы хотели бы включить в качестве
++локальных переменных не только @math{x} и @math{y}, но и имена промежуточных величин
++вроде @math{a} и @math{b}.  Один способ добиться этого — использовать
++вспомогательную процедуру, чтобы связать локальные переменные:
+ 
+ @lisp
+ (define (f x y)
+@@ -4688,9 +4686,9 @@ auxiliary procedure to bind the local variables:
+ @end lisp
+ 
+ @noindent
+-Of course, we could use a @code{lambda} expression to specify an anonymous
+-procedure for binding our local variables.  The body of @code{f} then becomes a
+-single call to that procedure:
++Конечно, мы могли бы использовать выражение @code{lambda}, чтобы задать анонимную
++процедуру для связывания наших локальных переменных.  Тело @code{f} тогда становится
++единственным вызовом этой процедуры:
+ 
+ @lisp
+ (define (f x y)
+@@ -4703,9 +4701,9 @@ single call to that procedure:
+ @end lisp
+ 
+ @noindent
+-This construct is so useful that there is a special form called @code{let} to
+-make its use more convenient.  Using @code{let}, the @code{f} procedure could
+-be written as
++Эта конструкция настолько полезна, что существует специальная форма под названием
++@code{let}, делающая её использование более удобным.  С помощью @code{let} процедуру
++@code{f} можно было бы записать как
+ 
+ @lisp
+ (define (f x y)
+@@ -4717,56 +4715,56 @@ be written as
+ @end lisp
+ 
+ @noindent
+-The general form of a @code{let} expression is
++Общая форма выражения @code{let} такова:
+ 
+ @lisp
+-(let ((⟨@var{var₁}⟩ ⟨@var{exp₁}⟩)
+-      (⟨@var{var₂}⟩ ⟨@var{exp₂}⟩)
++(let ((⟨@var{перем₁}⟩ ⟨@var{выр₁}⟩)
++      (⟨@var{перем₂}⟩ ⟨@var{выр₂}⟩)
+       @r{…}
+-      (⟨@var{varₙ}⟩ ⟨@var{expₙ}⟩))
+-  ⟨@var{body}⟩)
++      (⟨@var{перемₙ}⟩ ⟨@var{вырₙ}⟩))
++  ⟨@var{тело}⟩)
+ @end lisp
+ 
+ @noindent
+-which can be thought of as saying
++что можно мыслить как утверждение
+ 
+ @example
+-let ⟨@var{var₁}⟩ @r{have the value} ⟨@var{exp₁}⟩ @r{and}
+-    ⟨@var{var₂}⟩ @r{have the value} ⟨@var{exp₂}⟩ @r{and}
++let ⟨@var{перем₁}⟩ @r{имеет значение} ⟨@var{выр₁}⟩ @r{и}
++    ⟨@var{перем₂}⟩ @r{имеет значение} ⟨@var{выр₂}⟩ @r{и}
+     @r{…}
+-    ⟨@var{varₙ}⟩ @r{have the value} ⟨@var{expₙ}⟩
+-  @r{in} ⟨@var{body}⟩
++    ⟨@var{перемₙ}⟩ @r{имеет значение} ⟨@var{вырₙ}⟩
++  @r{в} ⟨@var{тело}⟩
+ @end example
+ 
+ @noindent
+-The first part of the @code{let} expression is a list of name-expression pairs.
+-When the @code{let} is evaluated, each name is associated with the value of the
+-corresponding expression.  The body of the @code{let} is evaluated with these
+-names bound as local variables.  The way this happens is that the @code{let}
+-expression is interpreted as an alternate syntax for
++Первая часть выражения @code{let} — это список пар «имя—выражение».  Когда @code{let}
++вычисляется, каждое имя связывается со значением соответствующего выражения.  Тело
++@code{let} вычисляется с этими именами, связанными как локальные переменные.
++Происходит это так, что выражение @code{let} интерпретируется как альтернативный
++синтаксис для
+ 
+ @lisp
+-((lambda (⟨@var{var₁}⟩ @r{…} ⟨@var{varₙ}⟩)
+-   ⟨@var{body}⟩)
+- ⟨@var{exp₁}⟩
++((lambda (⟨@var{перем₁}⟩ @r{…} ⟨@var{перемₙ}⟩)
++   ⟨@var{тело}⟩)
++ ⟨@var{выр₁}⟩
+  @r{…}
+- ⟨@var{expₙ}⟩)
++ ⟨@var{вырₙ}⟩)
+ @end lisp
+ 
+ @noindent
+-No new mechanism is required in the interpreter in order to provide local
+-variables.  A @code{let} expression is simply syntactic sugar for the
+-underlying @code{lambda} application.
++Никакого нового механизма в интерпретаторе для предоставления локальных переменных
++не требуется.  Выражение @code{let} — просто синтаксический сахар для лежащего в
++основе применения @code{lambda}.
+ 
+-We can see from this equivalence that the scope of a variable specified by a
+-@code{let} expression is the body of the @code{let}.  This implies that:
++Из этой эквивалентности видно, что область действия переменной, заданной выражением
++@code{let}, — это тело @code{let}.  Это влечёт, что:
+ 
+ @itemize @bullet
+ 
+ @item
+-@code{Let} allows one to bind variables as locally as possible to where they
+-are to be used.  For example, if the value of @code{x} is 5, the value of the
+-expression
++@code{Let} позволяет связывать переменные настолько локально, насколько возможно, к
++тому месту, где они будут использоваться.  Например, если значение @code{x} равно 5,
++то значение выражения
+ 
+ @lisp
+ (+ (let ((x 3))
+@@ -4775,15 +4773,14 @@ expression
+ @end lisp
+ 
+ @noindent
+-is 38.  Here, the @code{x} in the body of the @code{let} is 3, so the value of
+-the @code{let} expression is 33.  On the other hand, the @code{x} that is the
+-second argument to the outermost @code{+} is still 5.
++равно 38.  Здесь @code{x} в теле @code{let} равен 3, так что значение выражения
++@code{let} равно 33.  С другой стороны, @code{x}, являющийся вторым аргументом
++самого внешнего @code{+}, по-прежнему равен 5.
+ 
+ @item
+-The variables' values are computed outside the @code{let}.  This matters when
+-the expressions that provide the values for the local variables depend upon
+-variables having the same names as the local variables themselves.  For
+-example, if the value of @code{x} is 2, the expression
++Значения переменных вычисляются вне @code{let}.  Это важно, когда выражения, дающие
++значения локальным переменным, зависят от переменных, имеющих те же имена, что и сами
++локальные переменные.  Например, если значение @code{x} равно 2, выражение
+ 
+ @lisp
+ (let ((x 3)
+@@ -4792,14 +4789,14 @@ example, if the value of @code{x} is 2, the expression
+ @end lisp
+ 
+ @noindent
+-will have the value 12 because, inside the body of the @code{let}, @code{x}
+-will be 3 and @code{y} will be 4 (which is the outer @code{x} plus 2).
++будет иметь значение 12, потому что внутри тела @code{let} @code{x} будет равен 3, а
++@code{y} будет равен 4 (что есть внешний @code{x} плюс 2).
+ 
+ @end itemize
+ 
+ @noindent
+-Sometimes we can use internal definitions to get the same effect as with
+-@code{let}.  For example, we could have defined the procedure @code{f} above as
++Иногда мы можем использовать внутренние определения, чтобы получить тот же эффект,
++что и с @code{let}.  Например, мы могли бы определить процедуру @code{f} выше как
+ 
+ @lisp
+ (define (f x y)
+@@ -4812,22 +4809,22 @@ Sometimes we can use internal definitions to get the same effect as with
+ @end lisp
+ 
+ @noindent
+-We prefer, however, to use @code{let} in situations like this and to use
+-internal @code{define} only for internal procedures.@footnote{Understanding
+-internal definitions well enough to be sure a program means what we intend it
+-to mean requires a more elaborate model of the evaluation process than we have
+-presented in this chapter.  The subtleties do not arise with internal
+-definitions of procedures, however.  We will return to this issue in 
+-@ref{4.1.6}, after we learn more about evaluation.}
++Однако мы предпочитаем использовать @code{let} в подобных ситуациях, а внутренний
++@code{define} — только для внутренних процедур.@footnote{Понимание внутренних
++определений достаточно хорошо, чтобы быть уверенным, что программа означает то, что
++мы намереваемся, требует более сложной модели процесса вычисления, чем та, что мы
++представили в этой главе.  Однако с внутренними определениями процедур эти тонкости
++не возникают.  Мы вернёмся к этому вопросу в @ref{4.1.6}, после того как узнаем
++больше о вычислении.}
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.34}Exercise 1.34:} Suppose we define the procedure
++@strong{@anchor{Exercise 1.34}Exercise 1.34:} Предположим, мы определяем процедуру
+ 
+ @lisp
+ (define (f g) (g 2))
+ @end lisp
+ 
+-Then we have
++Тогда мы имеем
+ 
+ @lisp
+ (f square)
+@@ -4837,8 +4834,8 @@ Then we have
+ @i{6}
+ @end lisp
+ 
+-What happens if we (perversely) ask the interpreter to evaluate the combination
+-@code{(f f)}?  Explain.
++Что произойдёт, если мы (извращённо) попросим интерпретатор вычислить комбинацию
++@code{(f f)}?  Объясните.
+ @end quotation
+ 
+ @node	1.3.3, 1.3.4, 1.3.2, 1.3

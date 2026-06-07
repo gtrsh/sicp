@@ -1,0 +1,367 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index abfa933..12fc279 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -2637,9 +2637,9 @@ x/y^2 + 2y
+ @end menu
+ 
+ @node	1.2.1, 1.2.2, 1.2, 1.2
+-@subsection Linear Recursion and Iteration
++@subsection Линейная рекурсия и итерация
+ 
+-We begin by considering the factorial function, defined by
++Начнём с рассмотрения функции факториала, определяемой как
+ @ifinfo
+ 
+ @example
+@@ -2655,9 +2655,9 @@ n! \,=\, {n \cdot (n - 1)} \cdot {(n - 2)} \cdots {3 \cdot 2 \cdot 1.}
+ \]
+ 
+ @end tex
+-There are many ways to compute factorials.  One way is to make use of the
+-observation that @math{{n!}} is equal to @math{n} times @math{{(n - 1)!}} for any positive
+-integer @math{n}:
++Есть много способов вычислять факториалы.  Один из них — воспользоваться
++наблюдением, что @math{{n!}} равно @math{n}, умноженному на @math{{(n - 1)!}}, для
++любого положительного целого @math{n}:
+ @ifinfo
+ 
+ @example
+@@ -2673,9 +2673,9 @@ n! \,=\, {n \cdot [(n - 1)} \cdot {(n - 2)} \cdots {3 \cdot 2 \cdot 1]} \,=\, {n
+ \]
+ 
+ @end tex
+-Thus, we can compute @math{{n!}} by computing @math{{(n - 1)!}} and multiplying the
+-result by @math{n}.  If we add the stipulation that 1! is equal to 1, this
+-observation translates directly into a procedure:
++Таким образом, мы можем вычислить @math{{n!}}, вычислив @math{{(n - 1)!}} и умножив
++результат на @math{n}.  Если добавить оговорку, что 1! равно 1, это наблюдение прямо
++переводится в процедуру:
+ 
+ @lisp
+ (define (factorial n)
+@@ -2685,14 +2685,14 @@ observation translates directly into a procedure:
+ @end lisp
+ 
+ @noindent
+-We can use the substitution model of @ref{1.1.5} to watch this
+-procedure in action computing 6!, as shown in @ref{Figure 1.3}.
++Мы можем воспользоваться подстановочной моделью из @ref{1.1.5}, чтобы понаблюдать
++эту процедуру в действии при вычислении 6!, как показано на @ref{Figure 1.3}.
+ 
+ @float
+ @anchor{Figure 1.3}
+ @ifinfo
+ @quotation
+-@strong{Figure 1.3:} A linear recursive process for computing 6!.
++@strong{Figure 1.3:} Линейный рекурсивный процесс вычисления 6!.
+ 
+ @example
+ (factorial 6)        ----------------
+@@ -2712,18 +2712,17 @@ procedure in action computing 6!, as shown in @ref{Figure 1.3}.
+ @end ifinfo
+ @iftex
+ @image{fig/chap1/Fig1.3d,139mm,,,.std.svg}
+-@caption{@strong{Figure 1.3:} A linear recursive process for computing 6!.}
++@caption{@strong{Figure 1.3:} Линейный рекурсивный процесс вычисления 6!.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-Now let's take a different perspective on computing factorials.  We could
+-describe a rule for computing @math{{n!}} by specifying that we first multiply 1 by
+-2, then multiply the result by 3, then by 4, and so on until we reach @math{n}.
+-More formally, we maintain a running product, together with a counter that
+-counts from 1 up to @math{n}.  We can describe the computation by saying that the
+-counter and the product simultaneously change from one step to the next
+-according to the rule
++Теперь взглянем на вычисление факториалов с другой стороны.  Мы могли бы описать
++правило вычисления @math{{n!}}, указав, что сначала умножаем 1 на 2, затем результат
++на 3, затем на 4 и так далее, пока не дойдём до @math{n}.  Более формально: мы
++поддерживаем текущее произведение вместе со счётчиком, который считает от 1 до
++@math{n}.  Вычисление можно описать, сказав, что счётчик и произведение одновременно
++меняются от одного шага к следующему по правилу
+ 
+ @example
+ product @math{\gets} counter * product
+@@ -2731,12 +2730,12 @@ counter @math{\gets} counter + 1
+ @end example
+ 
+ @noindent
+-and stipulating that @math{{n!}} is the value of the product when the counter
+-exceeds @math{n}.
++и оговорив, что @math{{n!}} — это значение произведения, когда счётчик превышает
++@math{n}.
+ 
+-Once again, we can recast our description as a procedure for computing
+-factorials:@footnote{In a real program we would probably use the block
+-structure introduced in the last section to hide the definition of
++И снова мы можем переписать наше описание как процедуру вычисления
++факториалов:@footnote{В настоящей программе мы, вероятно, использовали бы блочную
++структуру, введённую в предыдущем разделе, чтобы спрятать определение
+ @code{fact-iter}:
+ 
+ @lisp
+@@ -2749,8 +2748,8 @@ structure introduced in the last section to hide the definition of
+   (iter 1 1))
+ @end lisp
+ 
+-We avoided doing this here so as to minimize the number of things to think
+-about at once.}
++Здесь мы этого не сделали, чтобы свести к минимуму число вещей, о которых нужно
++думать одновременно.}
+ 
+ @lisp
+ (define (factorial n) 
+@@ -2765,14 +2764,14 @@ about at once.}
+ @end lisp
+ 
+ @noindent
+-As before, we can use the substitution model to visualize the process of
+-computing 6!, as shown in @ref{Figure 1.4}.
++Как и раньше, мы можем воспользоваться подстановочной моделью, чтобы представить
++себе процесс вычисления 6!, как показано на @ref{Figure 1.4}.
+ 
+ @float
+ @anchor{Figure 1.4}
+ @ifinfo
+ @quotation
+-@strong{Figure 1.4:} A linear iterative process for computing 6!.
++@strong{Figure 1.4:} Линейный итеративный процесс вычисления 6!.
+ 
+ @example
+ (factorial 6)   -----.
+@@ -2789,99 +2788,93 @@ computing 6!, as shown in @ref{Figure 1.4}.
+ @end ifinfo
+ @iftex
+ @image{fig/chap1/Fig1.4d,,62mm,,.std.svg}
+-@caption{@strong{Figure 1.4:} A linear iterative process for computing 6!.}
++@caption{@strong{Figure 1.4:} Линейный итеративный процесс вычисления 6!.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-Compare the two processes.  From one point of view, they seem hardly different
+-at all.  Both compute the same mathematical function on the same domain, and
+-each requires a number of steps proportional to @math{n} to compute @math{{n!}}.
+-Indeed, both processes even carry out the same sequence of multiplications,
+-obtaining the same sequence of partial products.  On the other hand, when we
+-consider the ``shapes'' of the two processes, we find that they evolve quite
+-differently.
+-
+-Consider the first process.  The substitution model reveals a shape of
+-expansion followed by contraction, indicated by the arrow in @ref{Figure 1.3}.
+-The expansion occurs as the process builds up a chain of @newterm{deferred operations} 
+-(in this case, a chain of multiplications).  The contraction occurs
+-as the operations are actually performed.  This type of process, characterized
+-by a chain of deferred operations, is called a @newterm{recursive process}.
+-Carrying out this process requires that the interpreter keep track of the
+-operations to be performed later on.  In the computation of @math{{n!}}, the length
+-of the chain of deferred multiplications, and hence the amount of information
+-needed to keep track of it, grows linearly with @math{n} (is proportional to
+-@math{n}), just like the number of steps.  Such a process is called a
+-@newterm{linear recursive process}.
+-
+-By contrast, the second process does not grow and shrink.  At each step, all we
+-need to keep track of, for any @math{n}, are the current values of the variables
+-@code{product}, @code{counter}, and @code{max-count}.  We call this an
+-@newterm{iterative process}.  In general, an iterative process is one whose
+-state can be summarized by a fixed number of @newterm{state variables},
+-together with a fixed rule that describes how the state variables should be
+-updated as the process moves from state to state and an (optional) end test
+-that specifies conditions under which the process should terminate.  In
+-computing @math{{n!}}, the number of steps required grows linearly with @math{n}.  Such
+-a process is called a @newterm{linear iterative process}.
+-
+-The contrast between the two processes can be seen in another way.  In the
+-iterative case, the program variables provide a complete description of the
+-state of the process at any point.  If we stopped the computation between
+-steps, all we would need to do to resume the computation is to supply the
+-interpreter with the values of the three program variables.  Not so with the
+-recursive process.  In this case there is some additional ``hidden''
+-information, maintained by the interpreter and not contained in the program
+-variables, which indicates ``where the process is'' in negotiating the chain of
+-deferred operations.  The longer the chain, the more information must be
+-maintained.@footnote{When we discuss the implementation of procedures on
+-register machines in @ref{Chapter 5}, we will see that any iterative process
+-can be realized ``in hardware'' as a machine that has a fixed set of registers
+-and no auxiliary memory.  In contrast, realizing a recursive process requires a
+-machine that uses an auxiliary data structure known as a @newterm{stack}.}
+-
+-In contrasting iteration and recursion, we must be careful not to confuse the
+-notion of a recursive @newterm{process} with the notion of a recursive
+-@newterm{procedure}.  When we describe a procedure as recursive, we are
+-referring to the syntactic fact that the procedure definition refers (either
+-directly or indirectly) to the procedure itself.  But when we describe a
+-process as following a pattern that is, say, linearly recursive, we are
+-speaking about how the process evolves, not about the syntax of how a procedure
+-is written.  It may seem disturbing that we refer to a recursive procedure such
+-as @code{fact-iter} as generating an iterative process.  However, the process
+-really is iterative: Its state is captured completely by its three state
+-variables, and an interpreter need keep track of only three variables in order
+-to execute the process.
+-
+-One reason that the distinction between process and procedure may be confusing
+-is that most implementations of common languages (including Ada, Pascal, and C)
+-are designed in such a way that the interpretation of any recursive procedure
+-consumes an amount of memory that grows with the number of procedure calls,
+-even when the process described is, in principle, iterative.  As a consequence,
+-these languages can describe iterative processes only by resorting to
+-special-purpose ``looping constructs'' such as @code{do}, @code{repeat},
+-@code{until}, @code{for}, and @code{while}.  The implementation of Scheme we
+-shall consider in @ref{Chapter 5} does not share this defect.  It will execute
+-an iterative process in constant space, even if the iterative process is
+-described by a recursive procedure.  An implementation with this property is
+-called @newterm{tail-recursive}.  With a tail-recursive implementation,
+-iteration can be expressed using the ordinary procedure call mechanism, so that
+-special iteration constructs are useful only as syntactic sugar.@footnote{Tail
+-recursion has long been known as a compiler optimization trick.  A coherent
+-semantic basis for tail recursion was provided by Carl @ref{Hewitt (1977)}, who
+-explained it in terms of the ``message-passing'' model of computation that we
+-shall discuss in @ref{Chapter 3}.  Inspired by this, Gerald Jay Sussman and Guy
+-Lewis Steele Jr. (see @ref{Steele and Sussman 1975}) constructed a tail-recursive interpreter for
+-Scheme.  Steele later showed how tail recursion is a consequence of the natural
+-way to compile procedure calls (@ref{Steele 1977}).  The @abbr{IEEE} standard for
+-Scheme requires that Scheme implementations be tail-recursive.}
+-
+-@quotation
+-@strong{@anchor{Exercise 1.9}Exercise 1.9:} Each of the following two
+-procedures defines a method for adding two positive integers in terms of the
+-procedures @code{inc}, which increments its argument by 1, and @code{dec},
+-which decrements its argument by 1.
++Сравните два процесса.  С одной точки зрения, они почти не различаются.  Оба
++вычисляют одну и ту же математическую функцию на одной и той же области, и каждый
++требует числа шагов, пропорционального @math{n}, чтобы вычислить @math{{n!}}.  В
++самом деле, оба процесса выполняют даже одну и ту же последовательность умножений,
++получая одну и ту же последовательность частичных произведений.  С другой стороны,
++когда мы рассматриваем «формы» этих двух процессов, мы обнаруживаем, что они
++эволюционируют совершенно по-разному.
++
++Рассмотрим первый процесс.  Подстановочная модель обнаруживает форму расширения с
++последующим сжатием, указанную стрелкой на @ref{Figure 1.3}.  Расширение происходит,
++когда процесс выстраивает цепочку @newterm{отложенных операций} (в данном случае —
++цепочку умножений).  Сжатие происходит, когда операции фактически выполняются.  Этот
++тип процесса, характеризуемый цепочкой отложенных операций, называется
++@newterm{рекурсивным процессом}.  Выполнение такого процесса требует, чтобы
++интерпретатор отслеживал операции, которые предстоит выполнить позже.  При вычислении
++@math{{n!}} длина цепочки отложенных умножений, а значит, и объём сведений, нужных,
++чтобы её отслеживать, растёт линейно с @math{n} (пропорционально @math{n}) — так же,
++как и число шагов.  Такой процесс называется @newterm{линейным рекурсивным процессом}.
++
++В противоположность этому второй процесс не растёт и не сжимается.  На каждом шаге
++всё, что нам нужно отслеживать при любом @math{n}, — это текущие значения переменных
++@code{product}, @code{counter} и @code{max-count}.  Мы называем это
++@newterm{итеративным процессом}.  Вообще, итеративный процесс — это процесс,
++состояние которого можно описать фиксированным числом @newterm{переменных состояния}
++вместе с фиксированным правилом, описывающим, как переменные состояния должны
++обновляться при переходе процесса из состояния в состояние, и (необязательной)
++проверкой окончания, задающей условия, при которых процесс должен завершиться.  При
++вычислении @math{{n!}} требуемое число шагов растёт линейно с @math{n}.  Такой
++процесс называется @newterm{линейным итеративным процессом}.
++
++Различие между двумя процессами можно увидеть и иначе.  В итеративном случае
++программные переменные дают полное описание состояния процесса в любой момент.  Если
++бы мы остановили вычисление между шагами, всё, что нужно было бы сделать для
++возобновления вычисления, — это снабдить интерпретатор значениями трёх программных
++переменных.  Не так с рекурсивным процессом.  В этом случае есть некоторая
++дополнительная «скрытая» информация, поддерживаемая интерпретатором и не
++содержащаяся в программных переменных, которая указывает, «где находится процесс»
++при прохождении цепочки отложенных операций.  Чем длиннее цепочка, тем больше
++информации нужно поддерживать.@footnote{Когда мы будем обсуждать реализацию процедур
++на регистровых машинах в @ref{Chapter 5}, мы увидим, что любой итеративный процесс
++можно реализовать «аппаратно» как машину с фиксированным набором регистров и без
++вспомогательной памяти.  В противоположность этому реализация рекурсивного процесса
++требует машины, использующей вспомогательную структуру данных, известную как
++@newterm{стек}.}
++
++Противопоставляя итерацию и рекурсию, мы должны быть внимательны, чтобы не путать
++понятие рекурсивного @newterm{процесса} с понятием рекурсивной @newterm{процедуры}.
++Когда мы описываем процедуру как рекурсивную, мы имеем в виду синтаксический факт,
++что определение процедуры ссылается (прямо или косвенно) на саму процедуру.  Но
++когда мы описываем процесс как следующий, скажем, линейно рекурсивному образцу, мы
++говорим о том, как эволюционирует процесс, а не о синтаксисе того, как написана
++процедура.  Может показаться смущающим, что мы говорим о рекурсивной процедуре,
++такой как @code{fact-iter}, как о порождающей итеративный процесс.  Однако процесс и
++впрямь итеративен: его состояние полностью схватывается тремя переменными состояния,
++и интерпретатору достаточно отслеживать лишь три переменные, чтобы выполнить процесс.
++
++Одна из причин, по которой различие между процессом и процедурой может сбивать с
++толку, состоит в том, что большинство реализаций распространённых языков (включая
++Ada, Pascal и C) устроены так, что интерпретация любой рекурсивной процедуры
++потребляет объём памяти, растущий с числом вызовов процедур, даже когда описываемый
++процесс в принципе итеративен.  Как следствие, эти языки могут описывать итеративные
++процессы, лишь прибегая к специальным «циклическим конструкциям», таким как
++@code{do}, @code{repeat}, @code{until}, @code{for} и @code{while}.  Реализация
++Scheme, которую мы рассмотрим в @ref{Chapter 5}, не страдает этим недостатком.  Она
++будет выполнять итеративный процесс в постоянном пространстве, даже если итеративный
++процесс описан рекурсивной процедурой.  Реализация с таким свойством называется
++@newterm{хвостово-рекурсивной}.  При хвостово-рекурсивной реализации итерацию можно
++выразить с помощью обычного механизма вызова процедур, так что специальные
++итерационные конструкции полезны лишь как синтаксический сахар.@footnote{Хвостовая
++рекурсия давно известна как приём оптимизации в компиляторах.  Связную семантическую
++основу хвостовой рекурсии дал Карл @ref{Hewitt (1977)}, объяснивший её в терминах
++модели вычислений с «передачей сообщений», которую мы обсудим в @ref{Chapter 3}.
++Вдохновлённые этим, Джеральд Джей Сассман и Гай Льюис Стил-младший (см.
++@ref{Steele and Sussman 1975}) построили хвостово-рекурсивный интерпретатор Scheme.
++Позже Стил показал, как хвостовая рекурсия следует из естественного способа
++компиляции вызовов процедур (@ref{Steele 1977}).  Стандарт @abbr{IEEE} для Scheme
++требует, чтобы реализации Scheme были хвостово-рекурсивными.}
++
++@quotation
++@strong{@anchor{Exercise 1.9}Exercise 1.9:} Каждая из следующих двух процедур задаёт
++метод сложения двух положительных целых чисел через процедуры @code{inc},
++увеличивающую свой аргумент на 1, и @code{dec}, уменьшающую свой аргумент на 1.
+ 
+ @lisp
+ (define (+ a b)
+@@ -2895,14 +2888,13 @@ which decrements its argument by 1.
+       (+ (dec a) (inc b))))
+ @end lisp
+ 
+-Using the substitution model, illustrate the process generated by each
+-procedure in evaluating @code{(+ 4 5)}.  Are these processes iterative or
+-recursive?
++С помощью подстановочной модели проиллюстрируйте процесс, порождаемый каждой
++процедурой при вычислении @code{(+ 4 5)}.  Эти процессы итеративные или рекурсивные?
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.10}Exercise 1.10:} The following procedure computes
+-a mathematical function called Ackermann's function.
++@strong{@anchor{Exercise 1.10}Exercise 1.10:} Следующая процедура вычисляет
++математическую функцию, называемую функцией Аккермана.
+ 
+ @lisp
+ (define (A x y)
+@@ -2913,7 +2905,7 @@ a mathematical function called Ackermann's function.
+                  (A x (- y 1))))))
+ @end lisp
+ 
+-What are the values of the following expressions?
++Каковы значения следующих выражений?
+ 
+ @lisp
+ (A 1 10)
+@@ -2921,8 +2913,7 @@ What are the values of the following expressions?
+ (A 3 3)
+ @end lisp
+ 
+-Consider the following procedures, where @code{A} is the procedure
+-defined above:
++Рассмотрите следующие процедуры, где @code{A} — процедура, определённая выше:
+ 
+ @lisp
+ (define (f n) (A 0 n))
+@@ -2931,9 +2922,9 @@ defined above:
+ (define (k n) (* 5 n n))
+ @end lisp
+ 
+-Give concise mathematical definitions for the functions computed by the
+-procedures @code{f}, @code{g}, and @code{h} for positive integer values of
+-@math{n}.  For example, @code{(k n)} computes @math{{5n^2}}.
++Дайте сжатые математические определения функций, вычисляемых процедурами @code{f},
++@code{g} и @code{h}, для положительных целых значений @math{n}.  Например,
++@code{(k n)} вычисляет @math{{5n^2}}.
+ @end quotation
+ 
+ @node	1.2.2, 1.2.3, 1.2.1, 1.2

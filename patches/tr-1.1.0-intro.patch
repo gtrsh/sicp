@@ -1,0 +1,118 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index bb6dee7..aa5e405 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -1105,65 +1105,66 @@ Lisp поначалу был весьма неэффективен для чис
+ @end menu
+ 
+ @node	1.1, 1.2, Chapter 1, Chapter 1
+-@section The Elements of Programming
++@section Элементы программирования
+ 
+-A powerful programming language is more than just a means for instructing a
+-computer to perform tasks.  The language also serves as a framework within
+-which we organize our ideas about processes.  Thus, when we describe a
+-language, we should pay particular attention to the means that the language
+-provides for combining simple ideas to form more complex ideas.  Every powerful
+-language has three mechanisms for accomplishing this:
++Мощный язык программирования — это больше, чем просто средство поручить
++компьютеру выполнять задачи.  Язык служит ещё и каркасом, в рамках которого мы
++организуем свои мысли о процессах.  Поэтому, описывая язык, мы должны уделять
++особое внимание средствам, которые язык предоставляет для объединения простых
++идей в более сложные.  У всякого мощного языка есть для этого три механизма:
+ 
+ @itemize @bullet
+ 
+-@item @b{primitive expressions},
+-which represent the simplest entities the language is concerned with,
++@item @b{примитивные выражения},
++представляющие простейшие сущности, с которыми имеет дело язык,
+ 
+-@item @b{means of combination},
+-by which compound elements are built from simpler ones, and
++@item @b{средства комбинирования},
++с помощью которых из более простых элементов строятся составные, и
+ 
+-@item @b{means of abstraction},
+-by which compound elements can be named and manipulated as units.
++@item @b{средства абстракции},
++с помощью которых составные элементы можно именовать и обращаться с ними как с
++единым целым.
+ 
+ @end itemize
+ 
+ @noindent
+-In programming, we deal with two kinds of elements: procedures and data. (Later
+-we will discover that they are really not so distinct.)  Informally, data is
+-``stuff'' that we want to manipulate, and procedures are descriptions of the
+-rules for manipulating the data.  Thus, any powerful programming language
+-should be able to describe primitive data and primitive procedures and should
+-have methods for combining and abstracting procedures and data.
+-
+-In this chapter we will deal only with simple numerical data so that we can
+-focus on the rules for building procedures.@footnote{The characterization of
+-numbers as ``simple data'' is a barefaced bluff.  In fact, the treatment of
+-numbers is one of the trickiest and most confusing aspects of any programming
+-language.  Some typical issues involved are these: Some computer systems
+-distinguish @newterm{integers}, such as 2, from @newterm{real numbers}, such as
+-2.71.  Is the real number 2.00 different from the integer 2?  Are the
+-arithmetic operations used for integers the same as the operations used for
+-real numbers?  Does 6 divided by 2 produce 3, or 3.0?  How large a number can
+-we represent?  How many decimal places of accuracy can we represent?  Is the
+-range of integers the same as the range of real numbers?  Above and beyond
+-these questions, of course, lies a collection of issues concerning roundoff and
+-truncation errors---the entire science of numerical analysis.  Since our focus
+-in this book is on large-scale program design rather than on numerical
+-techniques, we are going to ignore these problems.  The numerical examples in
+-this chapter will exhibit the usual roundoff behavior that one observes when
+-using arithmetic operations that preserve a limited number of decimal places of
+-accuracy in noninteger operations.} In later chapters we will see that these
+-same rules allow us to build procedures to manipulate compound data as well.
++В программировании мы имеем дело с двумя видами элементов: процедурами и данными.
++(Позже мы обнаружим, что на самом деле они не так уж различны.)  Неформально
++говоря, данные — это «нечто», чем мы хотим манипулировать, а процедуры — это
++описания правил манипулирования данными.  Таким образом, всякий мощный язык
++программирования должен уметь описывать примитивные данные и примитивные
++процедуры и должен обладать способами комбинирования и абстрагирования процедур
++и данных.
++
++В этой главе мы будем иметь дело только с простыми числовыми данными, чтобы
++сосредоточиться на правилах построения процедур.@footnote{Назвать числа
++«простыми данными» — откровенный блеф.  На деле обращение с числами — один из
++самых хитрых и запутанных аспектов любого языка программирования.  Вот некоторые
++типичные связанные с этим вопросы.  В одних компьютерных системах различают
++@newterm{целые числа}, такие как 2, и @newterm{вещественные числа}, такие как
++2.71.  Отличается ли вещественное число 2.00 от целого 2?  Те же ли
++арифметические операции применяются к целым числам, что и к вещественным?  Даёт
++ли 6, делённое на 2, результат 3 или 3.0?  Сколь большое число мы можем
++представить?  Сколько десятичных знаков точности мы можем представить?  Совпадает
++ли диапазон целых чисел с диапазоном вещественных?  И сверх всех этих вопросов,
++разумеется, лежит целый ряд проблем, связанных с ошибками округления и
++усечения, — вся наука численного анализа.  Поскольку в этой книге мы
++сосредоточены на крупномасштабном проектировании программ, а не на численных
++методах, мы будем игнорировать эти проблемы.  Числовые примеры в этой главе будут
++проявлять обычное поведение округления, наблюдаемое при использовании
++арифметических операций, сохраняющих ограниченное число десятичных знаков
++точности в нецелочисленных операциях.} В последующих главах мы увидим, что эти же
++правила позволяют строить процедуры и для манипулирования составными данными.
+ 
+ @menu
+-* 1.1.1::            Expressions
+-* 1.1.2::            Naming and the Environment
+-* 1.1.3::            Evaluating Combinations
+-* 1.1.4::            Compound Procedures
+-* 1.1.5::            The Substitution Model for Procedure Application
+-* 1.1.6::            Conditional Expressions and Predicates
+-* 1.1.7::            Example: Square Roots by Newton's Method
+-* 1.1.8::            Procedures as Black-Box Abstractions
++* 1.1.1::            Выражения
++* 1.1.2::            Именование и окружение
++* 1.1.3::            Вычисление комбинаций
++* 1.1.4::            Составные процедуры
++* 1.1.5::            Подстановочная модель применения процедур
++* 1.1.6::            Условные выражения и предикаты
++* 1.1.7::            Пример: квадратные корни по методу Ньютона
++* 1.1.8::            Процедуры как абстракции вида «чёрный ящик»
+ @end menu
+ 
+ @node	1.1.1, 1.1.2, 1.1, 1.1

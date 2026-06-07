@@ -1,0 +1,398 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 12fc279..86731a6 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -2928,16 +2928,16 @@ Scheme, которую мы рассмотрим в @ref{Chapter 5}, не стр
+ @end quotation
+ 
+ @node	1.2.2, 1.2.3, 1.2.1, 1.2
+-@subsection Tree Recursion
++@subsection Древовидная рекурсия
+ 
+-Another common pattern of computation is called @newterm{tree recursion}.  As
+-an example, consider computing the sequence of Fibonacci numbers, in which each
+-number is the sum of the preceding two:
++Ещё один распространённый образец вычисления называется @newterm{древовидной
++рекурсией}.  В качестве примера рассмотрим вычисление последовательности чисел
++Фибоначчи, в которой каждое число есть сумма двух предыдущих:
+ 
+ @center 0, 1, 1, 2, 3, 5, 8, 13, 21, @dots{}.
+ 
+ @noindent
+-In general, the Fibonacci numbers can be defined by the rule
++В общем виде числа Фибоначчи можно определить правилом
+ @ifinfo
+ 
+ @example
+@@ -2964,8 +2964,8 @@ Fib(n) = <  1                        if n = 1
+ \]
+ 
+ @end tex
+-We can immediately translate this definition into a recursive procedure for
+-computing Fibonacci numbers:
++Мы можем сразу перевести это определение в рекурсивную процедуру вычисления чисел
++Фибоначчи:
+ 
+ @lisp
+ (define (fib n)
+@@ -2976,17 +2976,17 @@ computing Fibonacci numbers:
+ @end lisp
+ 
+ @noindent
+-Consider the pattern of this computation.  To compute @code{(fib 5)}, we
+-compute @code{(fib 4)} and @code{(fib 3)}.  To compute @code{(fib 4)}, we
+-compute @code{(fib 3)} and @code{(fib 2)}.  In general, the evolved process
+-looks like a tree, as shown in @ref{Figure 1.5}.  Notice that the branches
+-split into two at each level (except at the bottom); this reflects the fact
+-that the @code{fib} procedure calls itself twice each time it is invoked.
++Рассмотрим образец этого вычисления.  Чтобы вычислить @code{(fib 5)}, мы вычисляем
++@code{(fib 4)} и @code{(fib 3)}.  Чтобы вычислить @code{(fib 4)}, мы вычисляем
++@code{(fib 3)} и @code{(fib 2)}.  В общем случае развёрнутый процесс выглядит как
++дерево, показанное на @ref{Figure 1.5}.  Заметьте, что на каждом уровне (кроме
++нижнего) ветви раздваиваются; это отражает тот факт, что процедура @code{fib}
++вызывает себя дважды при каждом обращении.
+ 
+ @float
+ @anchor{Figure 1.5}
+ @ifinfo
+-@strong{Figure 1.5:} The tree-recursive process generated in computing @code{(fib 5)}.
++@strong{Figure 1.5:} Древовидно-рекурсивный процесс, порождаемый при вычислении @code{(fib 5)}.
+ 
+ @example
+ 
+@@ -3012,21 +3012,21 @@ V     /  . \   . 1  .  . 1  .  . 0  .  . 1  .  . 0  ..
+ @end ifinfo
+ @iftex
+ @image{fig/chap1/Fig1.5d,147mm,,,.std.svg}
+-@caption{@strong{Figure 1.5:} The tree-recursive process generated in computing @code{(fib 5)}.}
++@caption{@strong{Figure 1.5:} Древовидно-рекурсивный процесс, порождаемый при вычислении @code{(fib 5)}.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-This procedure is instructive as a prototypical tree recursion, but it is a
+-terrible way to compute Fibonacci numbers because it does so much redundant
+-computation.  Notice in @ref{Figure 1.5} that the entire computation of
+-@code{(fib 3)}---almost half the work---is duplicated.  In fact, it is not hard
+-to show that the number of times the procedure will compute @code{(fib 1)} or
+-@code{(fib 0)} (the number of leaves in the above tree, in general) is
+-precisely @math{{\text{Fib}(n+1)}}.  To get an idea of how bad this is, one can
+-show that the value of @math{{\text{Fib}(n)}} grows exponentially with @math{n}.  More
+-precisely (see @ref{Exercise 1.13}), @math{{\text{Fib}(n)}} is the closest integer
+-to @math{{\varphi^n / \sqrt{5}}}, where
++Эта процедура поучительна как прообраз древовидной рекурсии, но это ужасный способ
++вычислять числа Фибоначчи, потому что она проделывает уйму избыточных вычислений.
++Заметьте на @ref{Figure 1.5}, что всё вычисление @code{(fib 3)} — почти половина
++работы — дублируется.  На самом деле нетрудно показать, что число раз, которое
++процедура вычислит @code{(fib 1)} или @code{(fib 0)} (вообще говоря — число листьев
++в приведённом дереве), в точности равно @math{{\text{Fib}(n+1)}}.  Чтобы получить
++представление о том, насколько это плохо, можно показать, что значение
++@math{{\text{Fib}(n)}} растёт экспоненциально с @math{n}.  Точнее (см.
++@ref{Exercise 1.13}), @math{{\text{Fib}(n)}} — ближайшее целое к
++@math{{\varphi^n / \sqrt{5}}}, где
+ @ifinfo
+ 
+ @example
+@@ -3043,7 +3043,7 @@ to @math{{\varphi^n / \sqrt{5}}}, where
+ 
+ @end tex
+ @noindent
+-is the @newterm{golden ratio}, which satisfies the equation
++есть @newterm{золотое сечение}, удовлетворяющее уравнению
+ @ifinfo
+ 
+ @example
+@@ -3059,17 +3059,17 @@ is the @newterm{golden ratio}, which satisfies the equation
+ \]
+ 
+ @end tex
+-Thus, the process uses a number of steps that grows exponentially with the
+-input.  On the other hand, the space required grows only linearly with the
+-input, because we need keep track only of which nodes are above us in the tree
+-at any point in the computation.  In general, the number of steps required by a
+-tree-recursive process will be proportional to the number of nodes in the tree,
+-while the space required will be proportional to the maximum depth of the tree.
+-
+-We can also formulate an iterative process for computing the Fibonacci numbers.
+-The idea is to use a pair of integers @math{a} and @math{b}, initialized to
+-@math{{\text{Fib(1) = 1}}} and @math{{\text{Fib(0) = 0}}}, and to repeatedly apply the
+-simultaneous transformations
++Таким образом, процесс использует число шагов, растущее экспоненциально со входом.
++С другой стороны, требуемое пространство растёт лишь линейно со входом, потому что в
++любой момент вычисления нам нужно отслеживать только те узлы, что находятся над нами
++в дереве.  В общем случае число шагов, требуемое древовидно-рекурсивным процессом,
++будет пропорционально числу узлов в дереве, а требуемое пространство — максимальной
++глубине дерева.
++
++Мы можем также сформулировать итеративный процесс вычисления чисел Фибоначчи.  Идея
++в том, чтобы использовать пару целых чисел @math{a} и @math{b}, инициализированных
++значениями @math{{\text{Fib(1) = 1}}} и @math{{\text{Fib(0) = 0}}}, и многократно
++применять одновременные преобразования
+ 
+ @ifinfo
+ 
+@@ -3091,10 +3091,10 @@ b <- a
+ 
+ @end tex
+ @noindent
+-It is not hard to show that, after applying this transformation @math{n} times,
+-@math{a} and @math{b} will be equal, respectively, to @math{{\text{Fib}(n+1)}} and
+-@math{{\text{Fib}(n)}}.  Thus, we can compute Fibonacci numbers iteratively using
+-the procedure
++Нетрудно показать, что после @math{n}-кратного применения этого преобразования
++@math{a} и @math{b} будут равны соответственно @math{{\text{Fib}(n+1)}} и
++@math{{\text{Fib}(n)}}.  Таким образом, числа Фибоначчи можно вычислять итеративно с
++помощью процедуры
+ 
+ @lisp
+ (define (fib n) 
+@@ -3107,82 +3107,79 @@ the procedure
+ @end lisp
+ 
+ @noindent
+-This second method for computing @math{{\text{Fib}(n)}} is a linear iteration.  The
+-difference in number of steps required by the two methods---one linear in
+-@math{n}, one growing as fast as @math{{\text{Fib}(n)}} itself---is enormous, even for
+-small inputs.
++Этот второй метод вычисления @math{{\text{Fib}(n)}} — линейная итерация.  Различие в
++числе шагов, требуемых двумя методами, — один линеен по @math{n}, другой растёт так
++же быстро, как и сам @math{{\text{Fib}(n)}}, — огромно даже для малых входов.
+ 
+-One should not conclude from this that tree-recursive processes are useless.
+-When we consider processes that operate on hierarchically structured data
+-rather than numbers, we will find that tree recursion is a natural and powerful
+-tool.@footnote{An example of this was hinted at in @ref{1.1.3}. The
+-interpreter itself evaluates expressions using a tree-recursive process.} But
+-even in numerical operations, tree-recursive processes can be useful in helping
+-us to understand and design programs.  For instance, although the first
+-@code{fib} procedure is much less efficient than the second one, it is more
+-straightforward, being little more than a translation into Lisp of the
+-definition of the Fibonacci sequence.  To formulate the iterative algorithm
+-required noticing that the computation could be recast as an iteration with
+-three state variables.
++Из этого не следует заключать, что древовидно-рекурсивные процессы бесполезны.
++Когда мы будем рассматривать процессы, работающие с иерархически структурированными
++данными, а не с числами, мы обнаружим, что древовидная рекурсия — естественный и
++мощный инструмент.@footnote{Пример этого был намёком приведён в @ref{1.1.3}.  Сам
++интерпретатор вычисляет выражения древовидно-рекурсивным процессом.} Но даже в
++числовых операциях древовидно-рекурсивные процессы могут быть полезны, помогая нам
++понимать и проектировать программы.  Например, хотя первая процедура @code{fib}
++гораздо менее эффективна, чем вторая, она прямолинейнее, будучи немногим более чем
++переводом на Lisp определения последовательности Фибоначчи.  Чтобы сформулировать
++итеративный алгоритм, потребовалось заметить, что вычисление можно переформулировать
++как итерацию с тремя переменными состояния.
+ 
+-@subsubheading Example: Counting change
++@subsubheading Пример: размен монет
+ 
+-It takes only a bit of cleverness to come up with the iterative Fibonacci
+-algorithm.  In contrast, consider the following problem: How many different
+-ways can we make change of $1.00, given half-dollars, quarters, dimes,
+-nickels, and pennies?  More generally, can we write a procedure to compute the
+-number of ways to change any given amount of money?
++Чтобы придумать итеративный алгоритм для чисел Фибоначчи, нужна лишь капелька
++смекалки.  В противоположность этому рассмотрим такую задачу: сколькими разными
++способами можно разменять 1 доллар, имея полудоллары, четвертаки, даймы, никели и
++пенни?  В более общем виде — можем ли мы написать процедуру, вычисляющую число
++способов разменять любую заданную денежную сумму?
+ 
+-This problem has a simple solution as a recursive procedure.  Suppose we think
+-of the types of coins available as arranged in some order.  Then the following
+-relation holds:
++У этой задачи есть простое решение в виде рекурсивной процедуры.  Предположим, мы
++мыслим имеющиеся виды монет упорядоченными некоторым образом.  Тогда выполняется
++такое соотношение:
+ 
+-The number of ways to change amount @math{a} using @math{n} kinds of coins equals
++Число способов разменять сумму @math{a}, используя @math{n} видов монет, равно
+ 
+ @itemize @bullet
+ 
+ @item
+-the number of ways to change amount @math{a} using all but the first kind of coin,
+-plus
++числу способов разменять сумму @math{a}, используя все виды монет, кроме первого,
++плюс
+ 
+ @item
+-the number of ways to change amount @math{{a - d}} using all @math{n} kinds of
+-coins, where @math{d} is the denomination of the first kind of coin.
++число способов разменять сумму @math{{a - d}}, используя все @math{n} видов монет,
++где @math{d} — достоинство первого вида монет.
+ 
+ @end itemize
+ 
+ @noindent
+-To see why this is true, observe that the ways to make change can be divided
+-into two groups: those that do not use any of the first kind of coin, and those
+-that do.  Therefore, the total number of ways to make change for some amount is
+-equal to the number of ways to make change for the amount without using any of
+-the first kind of coin, plus the number of ways to make change assuming that we
+-do use the first kind of coin.  But the latter number is equal to the number of
+-ways to make change for the amount that remains after using a coin of the first
+-kind.
++Чтобы понять, почему это верно, заметим, что способы размена можно разделить на две
++группы: те, что не используют ни одной монеты первого вида, и те, что используют.
++Поэтому общее число способов разменять некоторую сумму равно числу способов
++разменять эту сумму без использования монет первого вида плюс число способов
++разменять её в предположении, что мы используем монету первого вида.  Но последнее
++число равно числу способов разменять ту сумму, что остаётся после использования
++одной монеты первого вида.
+ 
+-Thus, we can recursively reduce the problem of changing a given amount to the
+-problem of changing smaller amounts using fewer kinds of coins.  Consider this
+-reduction rule carefully, and convince yourself that we can use it to describe
+-an algorithm if we specify the following degenerate cases:@footnote{For
+-example, work through in detail how the reduction rule applies to the problem
+-of making change for 10 cents using pennies and nickels.}
++Таким образом, мы можем рекурсивно свести задачу размена данной суммы к задаче
++размена меньших сумм меньшим числом видов монет.  Внимательно рассмотрите это
++правило сведения и убедитесь, что мы можем использовать его для описания алгоритма,
++если зададим следующие вырожденные случаи:@footnote{Например, подробно проследите,
++как правило сведения применяется к задаче размена 10 центов монетами по 1 и 5
++центов.}
+ 
+ @itemize @bullet
+ 
+ @item
+-If @math{a} is exactly 0, we should count that as 1 way to make change.
++Если @math{a} в точности равно 0, мы должны засчитать это как 1 способ размена.
+ 
+ @item
+-If @math{a} is less than 0, we should count that as 0 ways to make change.
++Если @math{a} меньше 0, мы должны засчитать это как 0 способов размена.
+ 
+ @item
+-If @math{n} is 0, we should count that as 0 ways to make change.
++Если @math{n} равно 0, мы должны засчитать это как 0 способов размена.
+ 
+ @end itemize
+ 
+ @noindent
+-We can easily translate this description into a recursive procedure:
++Это описание легко перевести в рекурсивную процедуру:
+ 
+ @lisp
+ (define (count-change amount)
+@@ -3208,11 +3205,10 @@ We can easily translate this description into a recursive procedure:
+ @end lisp
+ 
+ @noindent
+-(The @code{first-denomination} procedure takes as input the number of kinds of
+-coins available and returns the denomination of the first kind.  Here we are
+-thinking of the coins as arranged in order from largest to smallest, but any
+-order would do as well.)  We can now answer our original question about
+-changing a dollar:
++(Процедура @code{first-denomination} принимает на вход число имеющихся видов монет и
++возвращает достоинство первого вида.  Здесь мы мыслим монеты упорядоченными от
++большего к меньшему, но подошёл бы любой порядок.)  Теперь мы можем ответить на наш
++исходный вопрос о размене доллара:
+ 
+ @lisp
+ (count-change 100)
+@@ -3220,35 +3216,34 @@ changing a dollar:
+ @end lisp
+ 
+ @noindent
+-@code{Count-change} generates a tree-recursive process with redundancies
+-similar to those in our first implementation of @code{fib}.  (It will take
+-quite a while for that 292 to be computed.)  On the other hand, it is not
+-obvious how to design a better algorithm for computing the result, and we leave
+-this problem as a challenge.  The observation that a tree-recursive process may
+-be highly inefficient but often easy to specify and understand has led people
+-to propose that one could get the best of both worlds by designing a ``smart
+-compiler'' that could transform tree-recursive procedures into more efficient
+-procedures that compute the same result.@footnote{One approach to coping with
+-redundant computations is to arrange matters so that we automatically construct
+-a table of values as they are computed.  Each time we are asked to apply the
+-procedure to some argument, we first look to see if the value is already stored
+-in the table, in which case we avoid performing the redundant computation.
+-This strategy, known as @newterm{tabulation} or @newterm{memoization}, can be
+-implemented in a straightforward way.  Tabulation can sometimes be used to
+-transform processes that require an exponential number of steps (such as
+-@code{count-change}) into processes whose space and time requirements grow
+-linearly with the input.  See @ref{Exercise 3.27}.}
++@code{Count-change} порождает древовидно-рекурсивный процесс с избыточностями,
++подобными тем, что были в нашей первой реализации @code{fib}.  (Вычисление этого 292
++займёт изрядное время.)  С другой стороны, неочевидно, как спроектировать лучший
++алгоритм для вычисления результата, и мы оставляем эту задачу как вызов.  Наблюдение,
++что древовидно-рекурсивный процесс может быть крайне неэффективным, но зачастую его
++легко задать и понять, привело к предложению, что лучшее из обоих миров можно
++получить, спроектировав «умный компилятор», который преобразовывал бы
++древовидно-рекурсивные процедуры в более эффективные процедуры, вычисляющие тот же
++результат.@footnote{Один из подходов к борьбе с избыточными вычислениями — устроить
++дело так, чтобы мы автоматически строили таблицу значений по мере их вычисления.
++Каждый раз, когда нас просят применить процедуру к некоторому аргументу, мы сперва
++смотрим, не сохранено ли уже значение в таблице, и в этом случае избегаем выполнения
++избыточного вычисления.  Эта стратегия, известная как @newterm{табулирование}, или
++@newterm{мемоизация}, реализуется довольно прямолинейно.  Табулирование иногда можно
++использовать, чтобы преобразовать процессы, требующие экспоненциального числа шагов
++(такие как @code{count-change}), в процессы, чьи требования к пространству и времени
++растут линейно со входом.  См. @ref{Exercise 3.27}.}
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.11}Exercise 1.11:} A function @math{f} is defined by
+-the rule that @math{{f(n) = n}} if @math{{n < 3}} and @math{{f(n)} = {f(n-1)} + {2f(n-2)} + {3f(n-3)}} if @math{{n \ge 3}}.  
+-Write a procedure that computes @math{f} by means of a recursive process.  Write a procedure that
+-computes @math{f} by means of an iterative process.
++@strong{@anchor{Exercise 1.11}Exercise 1.11:} Функция @math{f} задана правилом, что
++@math{{f(n) = n}}, если @math{{n < 3}}, и @math{{f(n)} = {f(n-1)} + {2f(n-2)} + {3f(n-3)}}, если @math{{n \ge 3}}.
++Напишите процедуру, вычисляющую @math{f} посредством рекурсивного процесса.  Напишите
++процедуру, вычисляющую @math{f} посредством итеративного процесса.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.12}Exercise 1.12:} The following pattern of numbers
+-is called @newterm{Pascal's triangle}.
++@strong{@anchor{Exercise 1.12}Exercise 1.12:} Следующий узор из чисел называется
++@newterm{треугольником Паскаля}.
+ 
+ @example
+          1
+@@ -3259,27 +3254,25 @@ is called @newterm{Pascal's triangle}.
+        . . .
+ @end example
+ 
+-The numbers at the edge of the triangle are all 1, and each number inside the
+-triangle is the sum of the two numbers above it.@footnote{The elements of
+-Pascal's triangle are called the @newterm{binomial coefficients}, because the
+-@math{{n^{\text{th}}}} row consists of the coefficients of the terms in the expansion of
+-@math{{(x + y)^n}}.  This pattern for computing the coefficients appeared in
+-Blaise Pascal's 1653 seminal work on probability theory, @cite{Trait@'e du
+-triangle arithm@'etique}.  According to @ref{Knuth (1973)}, the same pattern appears
+-in the @cite{Szu-yuen Y@"u-chien} (``The Precious Mirror of the Four
+-Elements''), published by the Chinese mathematician Chu Shih-chieh in 1303, in
+-the works of the twelfth-century Persian poet and mathematician Omar Khayyam,
+-and in the works of the twelfth-century Hindu mathematician Bh@'ascara
+-@'Ach@'arya.} Write a procedure that computes elements of Pascal's triangle by
+-means of a recursive process.
+-@end quotation
+-
+-@quotation
+-@strong{@anchor{Exercise 1.13}Exercise 1.13:} Prove that @math{{\text{Fib}(n)}} is
+-the closest integer to @math{{\varphi^n / \sqrt{5}}}, where @math{\varphi = {(1 + \sqrt{5}) / 2}}.  
+-Hint: Let @math{\psi = {(1 - \sqrt{5}) / 2}}.
+-Use induction and the definition of the Fibonacci numbers (see @ref{1.2.2}) 
+-to prove that @math{{\text{Fib}(n)} = {(\varphi^n - \psi^n) / \sqrt{5}}}.
++Числа по краям треугольника все равны 1, а каждое число внутри треугольника есть
++сумма двух чисел над ним.@footnote{Элементы треугольника Паскаля называются
++@newterm{биномиальными коэффициентами}, поскольку строка с номером @math{n} состоит
++из коэффициентов членов разложения @math{{(x + y)^n}}.  Этот узор для вычисления
++коэффициентов появился в основополагающем труде Блеза Паскаля 1653 года по теории
++вероятностей, @cite{Trait@'e du triangle arithm@'etique}.  Согласно @ref{Knuth (1973)},
++тот же узор встречается в @cite{Szu-yuen Y@"u-chien} («Драгоценное зеркало четырёх
++элементов»), опубликованном китайским математиком Чжу Шицзе в 1303 году, в трудах
++персидского поэта и математика XII века Омара Хайяма и в трудах индийского математика
++XII века Бхаскары Ачарьи.} Напишите процедуру, вычисляющую элементы треугольника
++Паскаля посредством рекурсивного процесса.
++@end quotation
++
++@quotation
++@strong{@anchor{Exercise 1.13}Exercise 1.13:} Докажите, что @math{{\text{Fib}(n)}} —
++ближайшее целое к @math{{\varphi^n / \sqrt{5}}}, где @math{\varphi = {(1 + \sqrt{5}) / 2}}.
++Подсказка: пусть @math{\psi = {(1 - \sqrt{5}) / 2}}.  Воспользуйтесь индукцией и
++определением чисел Фибоначчи (см. @ref{1.2.2}), чтобы доказать, что
++@math{{\text{Fib}(n)} = {(\varphi^n - \psi^n) / \sqrt{5}}}.
+ @end quotation
+ 
+ @node	1.2.3, 1.2.4, 1.2.2, 1.2

@@ -1,0 +1,213 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 9fb83dc..4b631e2 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -3643,55 +3643,51 @@ b^n = b * b^(n - 1)  if n is odd
+ @end quotation
+ 
+ @node	1.2.5, 1.2.6, 1.2.4, 1.2
+-@subsection Greatest Common Divisors
+-
+-The greatest common divisor (@abbr{GCD}) of two integers @math{a} and @math{b} is
+-defined to be the largest integer that divides both @math{a} and @math{b} with no
+-remainder.  For example, the @abbr{GCD} of 16 and 28 is 4.  In @ref{Chapter
+-2}, when we investigate how to implement rational-number arithmetic, we will
+-need to be able to compute @abbr{GCD}s in order to reduce rational numbers
+-to lowest terms.  (To reduce a rational number to lowest terms, we must divide
+-both the numerator and the denominator by their @abbr{GCD}.  For example,
+-16/28 reduces to 4/7.)  One way to find the @abbr{GCD} of two integers is to
+-factor them and search for common factors, but there is a famous algorithm that
+-is much more efficient.
+-
+-The idea of the algorithm is based on the observation that, if @math{r} is the
+-remainder when @math{a} is divided by @math{b}, then the common divisors of @math{a} and
+-@math{b} are precisely the same as the common divisors of @math{b} and @math{r}.  Thus,
+-we can use the equation
++@subsection Наибольшие общие делители
++
++Наибольший общий делитель (@abbr{НОД}) двух целых чисел @math{a} и @math{b}
++определяется как наибольшее целое число, которое делит и @math{a}, и @math{b} без
++остатка.  Например, @abbr{НОД} чисел 16 и 28 равен 4.  В @ref{Chapter 2}, когда мы
++будем исследовать, как реализовать арифметику рациональных чисел, нам понадобится
++уметь вычислять @abbr{НОД}, чтобы приводить рациональные числа к несократимому виду.
++(Чтобы привести рациональное число к несократимому виду, нужно поделить и числитель,
++и знаменатель на их @abbr{НОД}.  Например, 16/28 сокращается до 4/7.)  Один способ
++найти @abbr{НОД} двух целых чисел — разложить их на множители и поискать общие
++множители, но есть знаменитый алгоритм, гораздо более эффективный.
++
++Идея алгоритма основана на наблюдении, что если @math{r} — остаток от деления
++@math{a} на @math{b}, то общие делители @math{a} и @math{b} в точности те же, что и
++общие делители @math{b} и @math{r}.  Таким образом, мы можем воспользоваться
++уравнением
+ 
+ @example
+-GCD(a,b) = GCD(b,r)
++НОД(a,b) = НОД(b,r)
+ @end example
+ 
+ @noindent
+-to successively reduce the problem of computing a @abbr{GCD} to the problem
+-of computing the @abbr{GCD} of smaller and smaller pairs of integers.  For
+-example,
++чтобы последовательно сводить задачу вычисления @abbr{НОД} к задаче вычисления
++@abbr{НОД} всё меньших и меньших пар целых чисел.  Например,
+ 
+ @example
+-GCD(206,40) = GCD(40,6)
+-            = GCD(6,4)
+-            = GCD(4,2)
+-            = GCD(2,0) = 2
++НОД(206,40) = НОД(40,6)
++            = НОД(6,4)
++            = НОД(4,2)
++            = НОД(2,0) = 2
+ @end example
+ 
+ @noindent
+-reduces @abbr{GCD}(206, 40) to @abbr{GCD}(2, 0), which is 2.  It is
+-possible to show that starting with any two positive integers and performing
+-repeated reductions will always eventually produce a pair where the second
+-number is 0.  Then the @abbr{GCD} is the other number in the pair.  This
+-method for computing the @abbr{GCD} is known as 
+-@newterm{Euclid's Algorithm}.@footnote{Euclid's Algorithm is so called because 
+-it appears in Euclid's @cite{Elements} (Book 7, ca. 300 @abbr{B.C.}).  
+-According to @ref{Knuth (1973)}, it can be considered the oldest known nontrivial 
+-algorithm.  The ancient Egyptian method of multiplication (@ref{Exercise 1.18}) is 
+-surely older, but, as Knuth explains, Euclid's algorithm is the oldest known to 
+-have been presented as a general algorithm, rather than as a set of illustrative
+-examples.}
++сводит @abbr{НОД}(206, 40) к @abbr{НОД}(2, 0), который равен 2.  Можно показать, что,
++начав с любых двух положительных целых чисел и выполняя повторные сведения, мы всегда
++в конце концов получим пару, в которой второе число равно 0.  Тогда @abbr{НОД} — это
++другое число пары.  Этот метод вычисления @abbr{НОД} известен как @newterm{алгоритм
++Евклида}.@footnote{Алгоритм Евклида так называется потому, что он встречается в
++@cite{Elements} Евклида (книга 7, ок. 300 года @abbr{до н.э.}).  Согласно
++@ref{Knuth (1973)}, его можно считать древнейшим известным нетривиальным алгоритмом.
++Древнеегипетский способ умножения (@ref{Exercise 1.18}) наверняка древнее, но, как
++объясняет Кнут, алгоритм Евклида — древнейший из известных, представленных как общий
++алгоритм, а не как набор иллюстративных примеров.}
+ 
+-It is easy to express Euclid's Algorithm as a procedure:
++Алгоритм Евклида легко выразить как процедуру:
+ 
+ @lisp
+ (define (gcd a b)
+@@ -3701,62 +3697,62 @@ It is easy to express Euclid's Algorithm as a procedure:
+ @end lisp
+ 
+ @noindent
+-This generates an iterative process, whose number of steps grows as the
+-logarithm of the numbers involved.
+-
+-The fact that the number of steps required by Euclid's Algorithm has
+-logarithmic growth bears an interesting relation to the Fibonacci numbers:
+-
+-@quotation
+-@strong{Lam@'e's Theorem:} If Euclid's Algorithm requires @math{k} steps to
+-compute the @abbr{GCD} of some pair, then the smaller number in the pair
+-must be greater than or equal to the @math{k^{\text{th}}} Fibonacci number.@footnote{This
+-theorem was proved in 1845 by Gabriel Lam@'e, a French mathematician and
+-engineer known chiefly for his contributions to mathematical physics.  To prove
+-the theorem, we consider pairs @math{{(a_k, b_k)}}, where @math{{a_k \ge b_k}}, 
+-for which Euclid's Algorithm terminates in @math{k} steps.  The proof
+-is based on the claim that, if @math{{(a_{k+1}, b_{k+1})} \to {(a_k, b_k)} \to {(a_{k-1}, b_{k-1})}} 
+-are three successive pairs 
+-in the reduction process, then we must have @math{b_{k+1} \ge b_k + b_{k-1}}.  
+-To verify the claim, consider that a reduction step is defined by applying the 
+-transformation @math{{a_{k-1} = b_k}}, @math{{b_{k-1} =}} remainder of @math{a_k} 
+-divided by @math{b_k}.  The second equation means that @math{a_k = {qb_k} + {b_{k-1}}} 
+-for some positive integer @math{q}.  And since @math{q} must be at least 1 we have 
+-@math{a_k = {qb_k} + b_{k-1} \ge b_k + b_{k-1}}.  But in the previous reduction 
+-step we have @math{b_{k+1} = a_k}.  Therefore, @math{b_{k+1} = a_k \ge b_k + b_{k-1}}.
+-This verifies the claim.  Now we can prove the theorem by induction on @math{k}, 
+-the number of steps that the algorithm requires to terminate.  The result is true for 
+-@math{{k = 1}}, since this merely requires that @math{b} be at least as large as @math{{\text{Fib}(1) = 1}}.  
+-Now, assume that the result is true for all integers less than or equal
+-to @math{k} and establish the result for @math{{k + 1}}.  
+-Let @math{{(a_{k+1}, b_{k+1})} \to {(a_k, b_k)} \to {(a_{k-1}, b_{k-1})}} 
+-be successive pairs in the reduction 
+-process.  By our induction hypotheses, we have @math{b_{k-1} \ge {\text{Fib}(k - 1)}} 
+-and @math{b_k \ge {\text{Fib}(k)}}.  Thus, applying the claim we just proved together with 
+-the definition of the Fibonacci numbers gives 
+-@math{b_{k+1} \ge b_k + b_{k-1} \ge {\text{Fib}(k)} + {\text{Fib}(k-1)} = {\text{Fib}(k+1)}}, 
+-which completes the proof of Lam@'e's Theorem.}
+-@end quotation
+-
+-@noindent
+-We can use this theorem to get an order-of-growth estimate for Euclid's
+-Algorithm.  Let @math{n} be the smaller of the two inputs to the procedure.  If
+-the process takes @math{k} steps, then we must have 
+-@math{n \ge {\text{Fib}(k)} \approx {\varphi^k / \sqrt{5}}}.  Therefore the number of steps @math{k}
+-grows as the logarithm (to the base @math{\varphi}) of @math{n}.  Hence, the order of
+-growth is @math{{\Theta(\log n)}}.
+-
+-@quotation
+-@strong{@anchor{Exercise 1.20}Exercise 1.20:} The process that a procedure
+-generates is of course dependent on the rules used by the interpreter.  As an
+-example, consider the iterative @code{gcd} procedure given above.  Suppose we
+-were to interpret this procedure using normal-order evaluation, as discussed in
+-@ref{1.1.5}.  (The normal-order-evaluation rule for @code{if} is
+-described in @ref{Exercise 1.5}.)  Using the substitution method (for normal
+-order), illustrate the process generated in evaluating @code{(gcd 206 40)} and
+-indicate the @code{remainder} operations that are actually performed.  How many
+-@code{remainder} operations are actually performed in the normal-order
+-evaluation of @code{(gcd 206 40)}?  In the applicative-order evaluation?
++Это порождает итеративный процесс, число шагов которого растёт как логарифм
++участвующих чисел.
++
++Тот факт, что число шагов, требуемых алгоритмом Евклида, имеет логарифмический рост,
++состоит в любопытном отношении с числами Фибоначчи:
++
++@quotation
++@strong{Теорема Ламе:} Если алгоритму Евклида требуется @math{k} шагов, чтобы
++вычислить @abbr{НОД} некоторой пары, то меньшее число в этой паре должно быть больше
++или равно @math{k}-му числу Фибоначчи.@footnote{Эта теорема была доказана в 1845 году
++Габриэлем Ламе, французским математиком и инженером, известным главным образом своим
++вкладом в математическую физику.  Чтобы доказать теорему, мы рассматриваем пары
++@math{{(a_k, b_k)}}, где @math{{a_k \ge b_k}}, для которых алгоритм Евклида
++завершается за @math{k} шагов.  Доказательство основано на утверждении, что если
++@math{{(a_{k+1}, b_{k+1})} \to {(a_k, b_k)} \to {(a_{k-1}, b_{k-1})}} — три
++последовательные пары в процессе сведения, то должно выполняться
++@math{b_{k+1} \ge b_k + b_{k-1}}.  Чтобы проверить это утверждение, учтите, что шаг
++сведения определяется применением преобразования @math{{a_{k-1} = b_k}},
++@math{{b_{k-1} =}} остаток от деления @math{a_k} на @math{b_k}.  Второе равенство
++означает, что @math{a_k = {qb_k} + {b_{k-1}}} для некоторого положительного целого
++@math{q}.  А поскольку @math{q} должно быть не меньше 1, мы имеем
++@math{a_k = {qb_k} + b_{k-1} \ge b_k + b_{k-1}}.  Но на предыдущем шаге сведения мы
++имеем @math{b_{k+1} = a_k}.  Поэтому @math{b_{k+1} = a_k \ge b_k + b_{k-1}}.  Это
++проверяет утверждение.  Теперь мы можем доказать теорему индукцией по @math{k} —
++числу шагов, которое требуется алгоритму для завершения.  Результат верен для
++@math{{k = 1}}, поскольку это требует лишь, чтобы @math{b} было не меньше
++@math{{\text{Fib}(1) = 1}}.  Теперь предположим, что результат верен для всех целых
++чисел, меньших или равных @math{k}, и установим результат для @math{{k + 1}}.  Пусть
++@math{{(a_{k+1}, b_{k+1})} \to {(a_k, b_k)} \to {(a_{k-1}, b_{k-1})}} — последовательные
++пары в процессе сведения.  По нашему предположению индукции мы имеем
++@math{b_{k-1} \ge {\text{Fib}(k - 1)}} и @math{b_k \ge {\text{Fib}(k)}}.  Таким
++образом, применяя только что доказанное утверждение вместе с определением чисел
++Фибоначчи, получаем
++@math{b_{k+1} \ge b_k + b_{k-1} \ge {\text{Fib}(k)} + {\text{Fib}(k-1)} = {\text{Fib}(k+1)}},
++что завершает доказательство теоремы Ламе.}
++@end quotation
++
++@noindent
++Мы можем воспользоваться этой теоремой, чтобы получить оценку порядка роста для
++алгоритма Евклида.  Пусть @math{n} — меньший из двух входов процедуры.  Если процесс
++занимает @math{k} шагов, то должно выполняться
++@math{n \ge {\text{Fib}(k)} \approx {\varphi^k / \sqrt{5}}}.  Поэтому число шагов
++@math{k} растёт как логарифм (по основанию @math{\varphi}) от @math{n}.  Следовательно,
++порядок роста — @math{{\Theta(\log n)}}.
++
++@quotation
++@strong{@anchor{Exercise 1.20}Exercise 1.20:} Процесс, порождаемый процедурой,
++конечно же, зависит от правил, используемых интерпретатором.  В качестве примера
++рассмотрите итеративную процедуру @code{gcd}, приведённую выше.  Предположим, мы
++интерпретируем эту процедуру с помощью вычисления в нормальном порядке, как обсуждалось
++в @ref{1.1.5}.  (Правило вычисления в нормальном порядке для @code{if} описано в
++@ref{Exercise 1.5}.)  С помощью метода подстановки (для нормального порядка)
++проиллюстрируйте процесс, порождаемый при вычислении @code{(gcd 206 40)}, и укажите
++операции @code{remainder}, которые фактически выполняются.  Сколько операций
++@code{remainder} фактически выполняется при вычислении @code{(gcd 206 40)} в
++нормальном порядке?  А при вычислении в аппликативном порядке?
+ @end quotation
+ 
+ @node	1.2.6, 1.3, 1.1, 1.2

@@ -1,0 +1,288 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 67cbd72..9fb83dc 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -3386,12 +3386,12 @@ sin x = 3 sin --- - 4 sin^3 ---
+ @end quotation
+ 
+ @node	1.2.4, 1.2.5, 1.2.3, 1.2
+-@subsection Exponentiation
++@subsection Возведение в степень
+ 
+-Consider the problem of computing the exponential of a given number.  We would
+-like a procedure that takes as arguments a base @math{b} and a positive integer
+-exponent @math{n} and computes @math{b^n}.  One way to do this is via the
+-recursive definition
++Рассмотрим задачу вычисления степени данного числа.  Нам нужна процедура, которая
++принимает в качестве аргументов основание @math{b} и положительный целый показатель
++@math{n} и вычисляет @math{b^n}.  Один способ сделать это — через рекурсивное
++определение
+ @ifinfo
+ 
+ @example
+@@ -3411,7 +3411,7 @@ b^0 = 1
+ \]
+ 
+ @end tex
+-which translates readily into the procedure
++которое легко переводится в процедуру
+ 
+ @lisp
+ (define (expt b n)
+@@ -3421,9 +3421,9 @@ which translates readily into the procedure
+ @end lisp
+ 
+ @noindent
+-This is a linear recursive process, which requires @math{{\Theta(n)}} steps and
+-@math{{\Theta(n)}} space.  Just as with factorial, we can readily formulate an
+-equivalent linear iteration:
++Это линейный рекурсивный процесс, требующий @math{{\Theta(n)}} шагов и
++@math{{\Theta(n)}} пространства.  Как и в случае факториала, мы легко можем
++сформулировать эквивалентную линейную итерацию:
+ 
+ @lisp
+ (define (expt b n) 
+@@ -3438,10 +3438,10 @@ equivalent linear iteration:
+ @end lisp
+ 
+ @noindent
+-This version requires @math{{\Theta(n)}} steps and @math{{\Theta(1)}} space.
++Эта версия требует @math{{\Theta(n)}} шагов и @math{{\Theta(1)}} пространства.
+ 
+-We can compute exponentials in fewer steps by using successive squaring.  For
+-instance, rather than computing @math{b^8} as
++Мы можем вычислять степени за меньшее число шагов, пользуясь последовательным
++возведением в квадрат.  Например, вместо того чтобы вычислять @math{b^8} как
+ @ifinfo
+ 
+ @example
+@@ -3457,7 +3457,7 @@ b * (b * (b * (b * (b * (b * (b * b))))))
+ \]
+ 
+ @end tex
+-we can compute it using three multiplications:
++мы можем вычислить его за три умножения:
+ @ifinfo
+ 
+ @example
+@@ -3479,9 +3479,9 @@ b^8 = b^4 * b^4
+ \]
+ 
+ @end tex
+-This method works fine for exponents that are powers of 2.  We can also take
+-advantage of successive squaring in computing exponentials in general if we use
+-the rule
++Этот способ прекрасно работает для показателей, являющихся степенями двойки.  Мы
++можем воспользоваться последовательным возведением в квадрат и при вычислении
++степеней в общем случае, если применим правило
+ @ifinfo
+ 
+ @example
+@@ -3501,7 +3501,7 @@ b^n = b * b^(n - 1)  if n is odd
+ \]
+ 
+ @end tex
+-We can express this method as a procedure:
++Этот метод можно выразить как процедуру:
+ 
+ @lisp
+ (define (fast-expt b n)
+@@ -3514,8 +3514,8 @@ We can express this method as a procedure:
+ @end lisp
+ 
+ @noindent
+-where the predicate to test whether an integer is even is defined in terms of
+-the primitive procedure @code{remainder} by
++где предикат, проверяющий, чётно ли целое число, определяется через примитивную
++процедуру @code{remainder} так:
+ 
+ @lisp
+ (define (even? n)
+@@ -3523,56 +3523,53 @@ the primitive procedure @code{remainder} by
+ @end lisp
+ 
+ @noindent
+-The process evolved by @code{fast-expt} grows logarithmically with @math{n} in
+-both space and number of steps.  To see this, observe that computing
+-@math{b^{2n}} using @code{fast-expt} requires only one more multiplication
+-than computing @math{b^n}.  The size of the exponent we can compute therefore
+-doubles (approximately) with every new multiplication we are allowed.  Thus,
+-the number of multiplications required for an exponent of @math{n} grows about as
+-fast as the logarithm of @math{n} to the base 2.  The process has
+-@math{{\Theta(\log n)}} growth.@footnote{More precisely, the number of
+-multiplications required is equal to 1 less than the log base 2 of @math{n} plus
+-the number of ones in the binary representation of @math{n}.  This total is always
+-less than twice the log base 2 of @math{n}.  The arbitrary constants @math{k_1} and
+-@math{k_2} in the definition of order notation imply that, for a logarithmic
+-process, the base to which logarithms are taken does not matter, so all such
+-processes are described as @math{{\Theta(\log n)}}.}
+-
+-The difference between @math{{\Theta(\log n)}} growth and
+-@math{{\Theta(n)}} growth becomes striking as @math{n} becomes large.  For
+-example, @code{fast-expt} for @math{n} = 1000 requires only 14
+-multiplications.@footnote{You may wonder why anyone would care about raising
+-numbers to the 1000th power.  See @ref{1.2.6}.} It is also possible to
+-use the idea of successive squaring to devise an iterative algorithm that
+-computes exponentials with a logarithmic number of steps (see @ref{Exercise 1.16}), 
+-although, as is often the case with iterative algorithms, this is not
+-written down so straightforwardly as the recursive algorithm.@footnote{This
+-iterative algorithm is ancient.  It appears in the @cite{Chandah-sutra} by
+-@'Ach@'arya Pingala, written before 200 @abbr{B.C.} See @ref{Knuth 1981}, section
+-4.6.3, for a full discussion and analysis of this and other methods of
+-exponentiation.}
+-
+-@quotation
+-@strong{@anchor{Exercise 1.16}Exercise 1.16:} Design a procedure that evolves
+-an iterative exponentiation process that uses successive squaring and uses a
+-logarithmic number of steps, as does @code{fast-expt}.  (Hint: Using the
+-observation that @math{{(b^{n / 2})^2} = {(b^2)^{n / 2}}}, keep, along with
+-the exponent @math{n} and the base @math{b}, an additional state variable @math{a}, and
+-define the state transformation in such a way that the product @math{{ab^n}} 
+-is unchanged from state to state.  At the beginning of the process
+-@math{a} is taken to be 1, and the answer is given by the value of @math{a} at the
+-end of the process.  In general, the technique of defining an
+-@newterm{invariant quantity} that remains unchanged from state to state is a
+-powerful way to think about the design of iterative algorithms.)
+-@end quotation
+-
+-@quotation
+-@strong{@anchor{Exercise 1.17}Exercise 1.17:} The exponentiation algorithms in
+-this section are based on performing exponentiation by means of repeated
+-multiplication.  In a similar way, one can perform integer multiplication by
+-means of repeated addition.  The following multiplication procedure (in which
+-it is assumed that our language can only add, not multiply) is analogous to the
+-@code{expt} procedure:
++Процесс, развиваемый @code{fast-expt}, растёт логарифмически по @math{n} и по
++пространству, и по числу шагов.  Чтобы убедиться в этом, заметьте, что вычисление
++@math{b^{2n}} с помощью @code{fast-expt} требует лишь на одно умножение больше, чем
++вычисление @math{b^n}.  Поэтому размер показателя, который мы можем вычислить,
++(приблизительно) удваивается с каждым новым разрешённым умножением.  Таким образом,
++число умножений, требуемых для показателя @math{n}, растёт примерно так же быстро,
++как логарифм @math{n} по основанию 2.  Этот процесс имеет рост @math{{\Theta(\log n)}}.@footnote{Точнее,
++требуемое число умножений равно логарифму @math{n} по основанию 2 минус 1 плюс число
++единиц в двоичном представлении @math{n}.  Эта сумма всегда меньше удвоенного
++логарифма @math{n} по основанию 2.  Произвольные постоянные @math{k_1} и @math{k_2}
++в определении нотации порядка означают, что для логарифмического процесса основание,
++по которому берутся логарифмы, не имеет значения, так что все такие процессы
++описываются как @math{{\Theta(\log n)}}.}
++
++Различие между ростом @math{{\Theta(\log n)}} и ростом @math{{\Theta(n)}}
++становится разительным, когда @math{n} становится большим.  Например,
++@code{fast-expt} для @math{n} = 1000 требует лишь 14 умножений.@footnote{Вы можете
++задаться вопросом, кому вообще есть дело до возведения чисел в 1000-ю степень.  См.
++@ref{1.2.6}.} Можно также воспользоваться идеей последовательного возведения в
++квадрат, чтобы придумать итеративный алгоритм, вычисляющий степени за
++логарифмическое число шагов (см. @ref{Exercise 1.16}), хотя, как это часто бывает с
++итеративными алгоритмами, он записывается не так прямолинейно, как рекурсивный
++алгоритм.@footnote{Этот итеративный алгоритм древен.  Он встречается в
++@cite{Chandah-sutra} Ачарьи Пингалы, написанной до 200 года @abbr{до н.э.}  Полное
++обсуждение и анализ этого и других методов возведения в степень см. в
++@ref{Knuth 1981}, раздел 4.6.3.}
++
++@quotation
++@strong{@anchor{Exercise 1.16}Exercise 1.16:} Спроектируйте процедуру, развивающую
++итеративный процесс возведения в степень, который пользуется последовательным
++возведением в квадрат и использует логарифмическое число шагов, как и
++@code{fast-expt}.  (Подсказка: пользуясь наблюдением, что
++@math{{(b^{n / 2})^2} = {(b^2)^{n / 2}}}, держите вместе с показателем @math{n} и
++основанием @math{b} дополнительную переменную состояния @math{a} и определите
++преобразование состояния так, чтобы произведение @math{{ab^n}} не менялось от
++состояния к состоянию.  В начале процесса @math{a} берётся равным 1, а ответ даётся
++значением @math{a} в конце процесса.  В общем случае приём определения
++@newterm{инвариантной величины}, остающейся неизменной от состояния к состоянию, —
++мощный способ размышлять о проектировании итеративных алгоритмов.)
++@end quotation
++
++@quotation
++@strong{@anchor{Exercise 1.17}Exercise 1.17:} Алгоритмы возведения в степень из
++этого раздела основаны на выполнении возведения в степень посредством повторного
++умножения.  Сходным образом можно выполнять целочисленное умножение посредством
++повторного сложения.  Следующая процедура умножения (в которой предполагается, что
++наш язык умеет только складывать, но не умножать) аналогична процедуре @code{expt}:
+ 
+ @lisp
+ (define (* a b)
+@@ -3581,45 +3578,44 @@ it is assumed that our language can only add, not multiply) is analogous to the
+       (+ a (* a (- b 1)))))
+ @end lisp
+ 
+-This algorithm takes a number of steps that is linear in @code{b}.  Now suppose
+-we include, together with addition, operations @code{double}, which doubles an
+-integer, and @code{halve}, which divides an (even) integer by 2.  Using these,
+-design a multiplication procedure analogous to @code{fast-expt} that uses a
+-logarithmic number of steps.
+-@end quotation
+-
+-@quotation
+-@strong{@anchor{Exercise 1.18}Exercise 1.18:} Using the results of
+-@ref{Exercise 1.16} and @ref{Exercise 1.17}, devise a procedure that generates
+-an iterative process for multiplying two integers in terms of adding, doubling,
+-and halving and uses a logarithmic number of steps.@footnote{This algorithm,
+-which is sometimes known as the ``Russian peasant method'' of multiplication,
+-is ancient.  Examples of its use are found in the Rhind Papyrus, one of the two
+-oldest mathematical documents in existence, written about 1700 @abbr{B.C.}
+-(and copied from an even older document) by an Egyptian scribe named A'h-mose.}
+-@end quotation
+-
+-@quotation
+-@strong{@anchor{Exercise 1.19}Exercise 1.19:} There is a clever algorithm for
+-computing the Fibonacci numbers in a logarithmic number of steps.  Recall the
+-transformation of the state variables @math{a} and @math{b} in the @code{fib-iter}
+-process of @ref{1.2.2}: @math{a \gets a + b} and @math{b \gets a}.
+-Call this transformation @math{T}, and observe that applying @math{T} over and over
+-again @math{n} times, starting with 1 and 0, produces the pair @math{{\text{Fib}(n+1)}} and 
+-@math{{\text{Fib}(n)}}.  In other words, the Fibonacci numbers are produced
+-by applying @math{T^n}, the @math{n^{\text{th}}} power of the transformation @math{T},
+-starting with the pair (1, 0).  Now consider @math{T} to be the special case of
+-@math{{p=0}} and @math{{q=1}} in a family of transformations @math{T_{pq}},
+-where @math{T_{pq}} transforms the pair @math{{(a, b)}} according to 
+-@math{a \gets {bq} + {aq} + {ap}} and @math{b \gets {bp} + {aq}}.
+-Show that if we apply such a transformation @math{T_{pq}} twice, the
+-effect is the same as using a single transformation @math{T_{p'q'}} of the
+-same form, and compute @math{p'\!} and @math{q'\!} in terms of @math{p} and @math{q}.  This
+-gives us an explicit way to square these transformations, and thus we can
+-compute @math{T^n} using successive squaring, as in the @code{fast-expt}
+-procedure.  Put this all together to complete the following procedure, which
+-runs in a logarithmic number of steps:@footnote{This exercise was suggested to
+-us by Joe Stoy, based on an example in @ref{Kaldewaij 1990}.}
++Этот алгоритм требует числа шагов, линейного по @code{b}.  Теперь предположим, что
++мы включаем, вместе со сложением, операции @code{double}, удваивающую целое число,
++и @code{halve}, делящую (чётное) целое число на 2.  Пользуясь ими, спроектируйте
++процедуру умножения, аналогичную @code{fast-expt}, которая использует
++логарифмическое число шагов.
++@end quotation
++
++@quotation
++@strong{@anchor{Exercise 1.18}Exercise 1.18:} Пользуясь результатами
++@ref{Exercise 1.16} и @ref{Exercise 1.17}, придумайте процедуру, порождающую
++итеративный процесс умножения двух целых чисел через сложение, удвоение и деление
++пополам и использующую логарифмическое число шагов.@footnote{Этот алгоритм, иногда
++известный как «русский крестьянский способ» умножения, древен.  Примеры его
++применения находят в папирусе Ринда — одном из двух старейших существующих
++математических документов, написанном около 1700 года @abbr{до н.э.} (и скопированном
++с ещё более древнего документа) египетским писцом по имени Ахмес.}
++@end quotation
++
++@quotation
++@strong{@anchor{Exercise 1.19}Exercise 1.19:} Существует остроумный алгоритм
++вычисления чисел Фибоначчи за логарифмическое число шагов.  Вспомните преобразование
++переменных состояния @math{a} и @math{b} в процессе @code{fib-iter} из @ref{1.2.2}:
++@math{a \gets a + b} и @math{b \gets a}.  Назовём это преобразование @math{T} и
++заметим, что применение @math{T} снова и снова, @math{n} раз, начиная с 1 и 0, даёт
++пару @math{{\text{Fib}(n+1)}} и @math{{\text{Fib}(n)}}.  Иными словами, числа
++Фибоначчи получаются применением @math{T^n} — @math{n}-й степени преобразования
++@math{T} — начиная с пары (1, 0).  Теперь рассмотрите @math{T} как частный случай
++@math{{p=0}} и @math{{q=1}} в семействе преобразований @math{T_{pq}}, где
++@math{T_{pq}} преобразует пару @math{{(a, b)}} по правилу
++@math{a \gets {bq} + {aq} + {ap}} и @math{b \gets {bp} + {aq}}.  Покажите, что если
++применить такое преобразование @math{T_{pq}} дважды, то эффект тот же, что и от
++одного преобразования @math{T_{p'q'}} того же вида, и вычислите @math{p'\!} и
++@math{q'\!} через @math{p} и @math{q}.  Это даёт нам явный способ возводить эти
++преобразования в квадрат, и тем самым мы можем вычислять @math{T^n} последовательным
++возведением в квадрат, как в процедуре @code{fast-expt}.  Сложите всё это вместе,
++чтобы дополнить следующую процедуру, работающую за логарифмическое число
++шагов:@footnote{Это упражнение предложил нам Джо Стой на основе примера из
++@ref{Kaldewaij 1990}.}
+ 
+ @lisp
+ (define (fib n)

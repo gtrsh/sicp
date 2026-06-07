@@ -1,0 +1,440 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index a94de2f..a035876 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -4839,35 +4839,33 @@ let ⟨@var{перем₁}⟩ @r{имеет значение} ⟨@var{выр₁}
+ @end quotation
+ 
+ @node	1.3.3, 1.3.4, 1.3.2, 1.3
+-@subsection Procedures as General Methods
+-
+-We introduced compound procedures in @ref{1.1.4} as a mechanism for
+-abstracting patterns of numerical operations so as to make them independent of
+-the particular numbers involved.  With higher-order procedures, such as the
+-@code{integral} procedure of @ref{1.3.1}, we began to see a more
+-powerful kind of abstraction: procedures used to express general methods of
+-computation, independent of the particular functions involved.  In this section
+-we discuss two more elaborate examples---general methods for finding zeros and
+-fixed points of functions---and show how these methods can be expressed
+-directly as procedures.
+-
+-@subsubheading Finding roots of equations by the half-interval method
+-
+-The @newterm{half-interval method} is a simple but powerful technique for
+-finding roots of an equation @math{{f(x) = 0}}, where @math{f} is a continuous
+-function.  The idea is that, if we are given points @math{a} and @math{b} such that
+-@math{{f(a) < 0 < f(b)}}, then @math{f} must have at least one zero between
+-@math{a} and @math{b}.  To locate a zero, let @math{x} be the average of @math{a} and @math{b},
+-and compute @math{{f(x)}}.  If @math{{f(x) > 0}}, then @math{f} must have a zero
+-between @math{a} and @math{x}.  If @math{{f(x) < 0}}, then @math{f} must have a zero
+-between @math{x} and @math{b}.  Continuing in this way, we can identify smaller and
+-smaller intervals on which @math{f} must have a zero.  When we reach a point where
+-the interval is small enough, the process stops.  Since the interval of
+-uncertainty is reduced by half at each step of the process, the number of steps
+-required grows as @math{{\Theta(\log(L\, /\, T))}}, where @math{L} is the
+-length of the original interval and @math{T} is the error tolerance (that is, the
+-size of the interval we will consider ``small enough'').  Here is a procedure
+-that implements this strategy:
++@subsection Процедуры как обобщённые методы
++
++Мы ввели составные процедуры в @ref{1.1.4} как механизм абстрагирования образцов
++числовых операций, чтобы сделать их независимыми от конкретных участвующих чисел.  С
++процедурами высшего порядка, такими как процедура @code{integral} из @ref{1.3.1}, мы
++начали видеть более мощный вид абстракции: процедуры, используемые для выражения
++обобщённых методов вычисления, независимых от конкретных участвующих функций.  В этом
++разделе мы обсудим два более сложных примера — обобщённые методы нахождения нулей и
++неподвижных точек функций — и покажем, как эти методы можно выразить прямо как
++процедуры.
++
++@subsubheading Поиск корней уравнений методом половинного деления
++
++@newterm{Метод половинного деления} — простой, но мощный приём нахождения корней
++уравнения @math{{f(x) = 0}}, где @math{f} — непрерывная функция.  Идея в том, что
++если нам даны точки @math{a} и @math{b} такие, что @math{{f(a) < 0 < f(b)}}, то у
++@math{f} должен быть по крайней мере один нуль между @math{a} и @math{b}.  Чтобы
++найти нуль, пусть @math{x} — среднее @math{a} и @math{b}, и вычислим @math{{f(x)}}.
++Если @math{{f(x) > 0}}, то у @math{f} должен быть нуль между @math{a} и @math{x}.
++Если @math{{f(x) < 0}}, то у @math{f} должен быть нуль между @math{x} и @math{b}.
++Продолжая таким образом, мы можем выделять всё меньшие и меньшие интервалы, на которых
++у @math{f} должен быть нуль.  Когда мы достигаем точки, где интервал достаточно мал,
++процесс останавливается.  Поскольку интервал неопределённости уменьшается вдвое на
++каждом шаге процесса, требуемое число шагов растёт как
++@math{{\Theta(\log(L\, /\, T))}}, где @math{L} — длина исходного интервала, а @math{T}
++— допуск ошибки (то есть размер интервала, который мы будем считать «достаточно
++малым»).  Вот процедура, реализующая эту стратегию:
+ 
+ @lisp
+ (define (search f neg-point pos-point)
+@@ -4885,25 +4883,24 @@ that implements this strategy:
+ @end lisp
+ 
+ @noindent
+-We assume that we are initially given the function @math{f} together with points
+-at which its values are negative and positive.  We first compute the midpoint
+-of the two given points.  Next we check to see if the given interval is small
+-enough, and if so we simply return the midpoint as our answer.  Otherwise, we
+-compute as a test value the value of @math{f} at the midpoint.  If the test value
+-is positive, then we continue the process with a new interval running from the
+-original negative point to the midpoint.  If the test value is negative, we
+-continue with the interval from the midpoint to the positive point.  Finally,
+-there is the possibility that the test value is 0, in which case the midpoint
+-is itself the root we are searching for.
++Мы предполагаем, что изначально нам даны функция @math{f} вместе с точками, в которых
++её значения отрицательны и положительны.  Сначала мы вычисляем среднюю точку двух
++данных точек.  Затем мы проверяем, достаточно ли мал данный интервал, и если так, то
++просто возвращаем среднюю точку как наш ответ.  Иначе мы вычисляем в качестве
++проверочного значения значение @math{f} в средней точке.  Если проверочное значение
++положительно, то мы продолжаем процесс с новым интервалом, идущим от исходной
++отрицательной точки до средней.  Если проверочное значение отрицательно, мы
++продолжаем с интервалом от средней точки до положительной.  Наконец, есть
++возможность, что проверочное значение равно 0, и в этом случае средняя точка сама
++является искомым корнем.
+ 
+-To test whether the endpoints are ``close enough'' we can use a procedure
+-similar to the one used in @ref{1.1.7} for computing square
+-roots:@footnote{We have used 0.001 as a representative ``small'' number to
+-indicate a tolerance for the acceptable error in a calculation.  The
+-appropriate tolerance for a real calculation depends upon the problem to be
+-solved and the limitations of the computer and the algorithm.  This is often a
+-very subtle consideration, requiring help from a numerical analyst or some
+-other kind of magician.}
++Чтобы проверить, «достаточно ли близки» концы, мы можем воспользоваться процедурой,
++похожей на ту, что использовалась в @ref{1.1.7} для вычисления квадратных
++корней:@footnote{Мы использовали 0.001 как представительное «малое» число, чтобы
++обозначить допуск приемлемой ошибки в вычислении.  Подходящий допуск для реального
++вычисления зависит от решаемой задачи и от ограничений компьютера и алгоритма.  Это
++часто очень тонкое соображение, требующее помощи специалиста по численному анализу
++или какого-нибудь иного волшебника.}
+ 
+ @lisp
+ (define (close-enough? x y) 
+@@ -4911,15 +4908,15 @@ other kind of magician.}
+ @end lisp
+ 
+ @noindent
+-@code{Search} is awkward to use directly, because we can accidentally give it
+-points at which @math{f}'s values do not have the required sign, in which case we
+-get a wrong answer.  Instead we will use @code{search} via the following
+-procedure, which checks to see which of the endpoints has a negative function
+-value and which has a positive value, and calls the @code{search} procedure
+-accordingly.  If the function has the same sign on the two given points, the
+-half-interval method cannot be used, in which case the procedure signals an
+-error.@footnote{This can be accomplished using @code{error}, which takes as
+-arguments a number of items that are printed as error messages.}
++@code{Search} неудобно использовать напрямую, потому что мы можем случайно дать ему
++точки, в которых значения @math{f} не имеют требуемого знака, и в этом случае мы
++получим неверный ответ.  Вместо этого мы будем использовать @code{search} через
++следующую процедуру, которая проверяет, какой из концов имеет отрицательное значение
++функции, а какой — положительное, и вызывает процедуру @code{search}
++соответственно.  Если функция имеет один и тот же знак в двух данных точках, метод
++половинного деления использовать нельзя, и в этом случае процедура сигнализирует об
++ошибке.@footnote{Этого можно добиться с помощью @code{error}, которая принимает в
++качестве аргументов некоторое число элементов, печатаемых как сообщения об ошибке.}
+ 
+ @lisp
+ (define (half-interval-method f a b)
+@@ -4937,8 +4934,8 @@ arguments a number of items that are printed as error messages.}
+ @end lisp
+ 
+ @noindent
+-The following example uses the half-interval method to approximate @math{\pi} as
+-the root between 2 and 4 of @math{{\sin x = 0}}:
++Следующий пример использует метод половинного деления, чтобы приблизить @math{\pi}
++как корень @math{{\sin x = 0}} между 2 и 4:
+ 
+ @lisp
+ (half-interval-method sin 2.0 4.0)
+@@ -4946,8 +4943,8 @@ the root between 2 and 4 of @math{{\sin x = 0}}:
+ @end lisp
+ 
+ @noindent
+-Here is another example, using the half-interval method to search for a root of
+-the equation @math{{x^3 - 2x - 3 = 0}} between 1 and 2:
++Вот другой пример, использующий метод половинного деления для поиска корня уравнения
++@math{{x^3 - 2x - 3 = 0}} между 1 и 2:
+ 
+ @lisp
+ (half-interval-method 
+@@ -4957,12 +4954,12 @@ the equation @math{{x^3 - 2x - 3 = 0}} between 1 and 2:
+ @i{1.89306640625}
+ @end lisp
+ 
+-@subsubheading Finding fixed points of functions
++@subsubheading Поиск неподвижных точек функций
+ 
+-A number @math{x} is called a @newterm{fixed point} of a function @math{f} if @math{x}
+-satisfies the equation @math{{f(x) = x}}.  For some functions @math{f} we can
+-locate a fixed point by beginning with an initial guess and applying @math{f}
+-repeatedly,
++Число @math{x} называется @newterm{неподвижной точкой} функции @math{f}, если
++@math{x} удовлетворяет уравнению @math{{f(x) = x}}.  Для некоторых функций @math{f}
++мы можем найти неподвижную точку, начав с начального предположения и многократно
++применяя @math{f},
+ @ifinfo
+ 
+ @example
+@@ -4979,11 +4976,11 @@ f(x), f(f(x)), f(f(f(x))), ...
+ 
+ @end tex
+ @noindent
+-until the value does not change very much.  Using this idea, we can devise a
+-procedure @code{fixed-point} that takes as inputs a function and an initial
+-guess and produces an approximation to a fixed point of the function.  We apply
+-the function repeatedly until we find two successive values whose difference is
+-less than some prescribed tolerance:
++пока значение не перестанет сильно меняться.  Пользуясь этой идеей, мы можем
++придумать процедуру @code{fixed-point}, которая принимает в качестве входов функцию и
++начальное предположение и выдаёт приближение к неподвижной точке функции.  Мы
++применяем функцию многократно, пока не найдём два последовательных значения, разность
++которых меньше некоторого предписанного допуска:
+ 
+ @lisp
+ (define tolerance 0.00001)
+@@ -5001,10 +4998,10 @@ less than some prescribed tolerance:
+ @end lisp
+ 
+ @noindent
+-For example, we can use this method to approximate the fixed point of the
+-cosine function, starting with 1 as an initial approximation:@footnote{Try this
+-during a boring lecture: Set your calculator to radians mode and then
+-repeatedly press the @code{cos} button until you obtain the fixed point.}
++Например, мы можем воспользоваться этим методом, чтобы приблизить неподвижную точку
++функции косинуса, начав с 1 как начального приближения:@footnote{Попробуйте это во
++время скучной лекции: установите свой калькулятор в режим радиан и затем многократно
++нажимайте кнопку @code{cos}, пока не получите неподвижную точку.}
+ 
+ @lisp
+ (fixed-point cos 1.0)
+@@ -5012,8 +5009,7 @@ repeatedly press the @code{cos} button until you obtain the fixed point.}
+ @end lisp
+ 
+ @noindent
+-Similarly, we can find a solution to the equation 
+-@math{{y = \sin y + \cos y}}:
++Аналогично мы можем найти решение уравнения @math{{y = \sin y + \cos y}}:
+ 
+ @lisp
+ (fixed-point (lambda (y) (+ (sin y) (cos y)))
+@@ -5022,17 +5018,18 @@ Similarly, we can find a solution to the equation
+ @end lisp
+ 
+ @noindent
+-The fixed-point process is reminiscent of the process we used for finding
+-square roots in @ref{1.1.7}.  Both are based on the idea of repeatedly
+-improving a guess until the result satisfies some criterion.  In fact, we can
+-readily formulate the square-root computation as a fixed-point search.
+-Computing the square root of some number @math{x} requires finding a @math{y} such
+-that @math{{y^2 = x}}.  Putting this equation into the equivalent form 
+-@math{{y = x / y}}, we recognize that we are looking for a fixed point of the
+-function@footnote{@math{\mapsto} (pronounced ``maps to'') is the mathematician's way of
+-writing @code{lambda}.  @math{{y \mapsto x / y}} means @code{(lambda (y) (/ x y))},
+-that is, the function whose value at @math{y} is @math{{x / y}}.} @math{{y \mapsto x / y}}, 
+-and we can therefore try to compute square roots as
++Процесс неподвижной точки напоминает процесс, который мы использовали для нахождения
++квадратных корней в @ref{1.1.7}.  Оба основаны на идее многократного улучшения
++предположения, пока результат не удовлетворит некоторому критерию.  В самом деле, мы
++легко можем сформулировать вычисление квадратного корня как поиск неподвижной точки.
++Вычисление квадратного корня некоторого числа @math{x} требует нахождения @math{y}
++такого, что @math{{y^2 = x}}.  Приведя это уравнение к эквивалентной форме
++@math{{y = x / y}}, мы узнаём, что ищем неподвижную точку
++функции@footnote{@math{\mapsto} (читается «отображается в») — это способ, которым
++математик записывает @code{lambda}.  @math{{y \mapsto x / y}} означает
++@code{(lambda (y) (/ x y))}, то есть функцию, значение которой в @math{y} равно
++@math{{x / y}}.} @math{{y \mapsto x / y}}, и поэтому мы можем попытаться вычислять
++квадратные корни как
+ 
+ @lisp
+ (define (sqrt x)
+@@ -5041,20 +5038,19 @@ and we can therefore try to compute square roots as
+ @end lisp
+ 
+ @noindent
+-Unfortunately, this fixed-point search does not converge.  Consider an initial
+-guess @math{y_1}.  The next guess is @math{{y_2 = x / y_1}} and the next guess is
+-@math{y_3 = {x / y_2} = {x / (x / y_1)} = y_1}.  This results in an
+-infinite loop in which the two guesses @math{y_1} and @math{y_2} repeat over and
+-over, oscillating about the answer.
++К сожалению, этот поиск неподвижной точки не сходится.  Рассмотрим начальное
++предположение @math{y_1}.  Следующее предположение — @math{{y_2 = x / y_1}}, а
++следующее — @math{y_3 = {x / y_2} = {x / (x / y_1)} = y_1}.  Это приводит к
++бесконечному циклу, в котором два предположения @math{y_1} и @math{y_2} повторяются
++снова и снова, колеблясь вокруг ответа.
+ 
+-One way to control such oscillations is to prevent the guesses from changing so
+-much.  Since the answer is always between our guess @math{y} and @math{{x / y}}, we
+-can make a new guess that is not as far from @math{y} as @math{{x / y}} by averaging
+-@math{y} with @math{{x / y}}, so that the next guess after @math{y} is 
+-@math{{{1\over2}(y + x / y)}} 
+-instead of @math{{x / y}}.  The process of making such a sequence of
+-guesses is simply the process of looking for a fixed point of 
+-@math{y \mapsto {{1\over2}(y + x / y)}}: 
++Один способ управлять такими колебаниями — не давать предположениям меняться так
++сильно.  Поскольку ответ всегда между нашим предположением @math{y} и @math{{x / y}},
++мы можем сделать новое предположение, которое не так далеко от @math{y}, как
++@math{{x / y}}, усреднив @math{y} с @math{{x / y}}, так что следующее предположение
++после @math{y} будет @math{{{1\over2}(y + x / y)}} вместо @math{{x / y}}.  Процесс
++построения такой последовательности предположений — это просто процесс поиска
++неподвижной точки @math{y \mapsto {{1\over2}(y + x / y)}}:
+ 
+ @lisp
+ (define (sqrt x)
+@@ -5064,33 +5060,33 @@ guesses is simply the process of looking for a fixed point of
+ @end lisp
+ 
+ @noindent
+-(Note that @math{y = {{1\over2}(y + x / y)}} is a simple transformation of the
+-equation @math{{y = x / y;}} to derive it, add @math{y} to both sides of the
+-equation and divide by 2.)
++(Заметьте, что @math{y = {{1\over2}(y + x / y)}} — простое преобразование уравнения
++@math{{y = x / y;}} чтобы вывести его, прибавьте @math{y} к обеим сторонам уравнения
++и поделите на 2.)
+ 
+-With this modification, the square-root procedure works.  In fact, if we
+-unravel the definitions, we can see that the sequence of approximations to the
+-square root generated here is precisely the same as the one generated by our
+-original square-root procedure of @ref{1.1.7}.  This approach of
+-averaging successive approximations to a solution, a technique that we call
+-@newterm{average damping}, often aids the convergence of fixed-point searches.
++С этой модификацией процедура квадратного корня работает.  В самом деле, если
++размотать определения, можно увидеть, что порождаемая здесь последовательность
++приближений к квадратному корню в точности та же, что и порождаемая нашей исходной
++процедурой квадратного корня из @ref{1.1.7}.  Этот подход усреднения последовательных
++приближений к решению — приём, который мы называем @newterm{усреднённым затуханием}, —
++часто помогает сходимости поисков неподвижной точки.
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.35}Exercise 1.35:} Show that the golden ratio
+-@math{\varphi} (@ref{1.2.2}) is a fixed point of the transformation 
+-@math{{x \mapsto 1 + 1 / x}}, and use this fact to compute @math{\varphi} by means 
+-of the @code{fixed-point} procedure.
++@strong{@anchor{Exercise 1.35}Exercise 1.35:} Покажите, что золотое сечение
++@math{\varphi} (@ref{1.2.2}) — неподвижная точка преобразования
++@math{{x \mapsto 1 + 1 / x}}, и воспользуйтесь этим фактом, чтобы вычислить
++@math{\varphi} с помощью процедуры @code{fixed-point}.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.36}Exercise 1.36:} Modify @code{fixed-point} so that
+-it prints the sequence of approximations it generates, using the @code{newline}
+-and @code{display} primitives shown in @ref{Exercise 1.22}.  Then find a
+-solution to @math{{x^x = 1000}} by finding a fixed point of @math{x \mapsto
+-{\log(1000) / \log(x)}}.  (Use Scheme's primitive @code{log}
+-procedure, which computes natural logarithms.)  Compare the number of steps
+-this takes with and without average damping.  (Note that you cannot start
+-@code{fixed-point} with a guess of 1, as this would cause division by
++@strong{@anchor{Exercise 1.36}Exercise 1.36:} Измените @code{fixed-point} так,
++чтобы она печатала порождаемую ею последовательность приближений, используя примитивы
++@code{newline} и @code{display}, показанные в @ref{Exercise 1.22}.  Затем найдите
++решение @math{{x^x = 1000}}, найдя неподвижную точку
++@math{x \mapsto {\log(1000) / \log(x)}}.  (Используйте примитивную процедуру Scheme
++@code{log}, вычисляющую натуральные логарифмы.)  Сравните число шагов, которое это
++занимает, с усреднённым затуханием и без него.  (Заметьте, что вы не можете запустить
++@code{fixed-point} с предположением 1, так как это привело бы к делению на
+ @math{{\log(1) = 0}}.)
+ @end quotation
+ 
+@@ -5100,7 +5096,7 @@ this takes with and without average damping.  (Note that you cannot start
+ @enumerate a
+ 
+ @item
+-An infinite @newterm{continued fraction} is an expression of the form
++Бесконечная @newterm{непрерывная дробь} — это выражение вида
+ @ifinfo
+ 
+ @example
+@@ -5122,12 +5118,12 @@ f \,=\, {\frac{N_1}{D_1 + \frac{N_2}{D_2 + \frac{N_3}{D_3 + \dots}}}.}
+ \]
+ 
+ @end tex
+-As an example, one can show that the infinite continued fraction expansion with
+-the @math{N_i} and the @math{D_i} all equal to 1 produces @math{{1 / \varphi}}, where
+-@math{\varphi} is the golden ratio (described in @ref{1.2.2}).  One way to
+-approximate an infinite continued fraction is to truncate the expansion after a
+-given number of terms.  Such a truncation---a so-called @newterm{@i{k}-term
+-finite continued fraction}---has the form
++В качестве примера можно показать, что разложение в бесконечную непрерывную дробь, у
++которого все @math{N_i} и @math{D_i} равны 1, даёт @math{{1 / \varphi}}, где
++@math{\varphi} — золотое сечение (описанное в @ref{1.2.2}).  Один способ приблизить
++бесконечную непрерывную дробь — оборвать разложение после заданного числа членов.
++Такой обрыв — так называемая @newterm{@i{k}-членная конечная непрерывная дробь} —
++имеет вид
+ @ifinfo
+ 
+ @example
+@@ -5149,11 +5145,11 @@ D_1 + -----------
+ \]
+ 
+ @end tex
+-Suppose that @code{n} and @code{d} are procedures of one argument (the term
+-index @math{i}) that return the @math{N_i} and @math{D_i} of the terms of the
+-continued fraction.  Define a procedure @code{cont-frac} such that evaluating
+-@code{(cont-frac n d k)} computes the value of the @math{k}-term finite continued
+-fraction.  Check your procedure by approximating @math{{1 / \varphi}} using
++Предположим, что @code{n} и @code{d} — процедуры одного аргумента (индекса члена
++@math{i}), возвращающие @math{N_i} и @math{D_i} членов непрерывной дроби.  Определите
++процедуру @code{cont-frac} такую, чтобы вычисление @code{(cont-frac n d k)} вычисляло
++значение @math{k}-членной конечной непрерывной дроби.  Проверьте свою процедуру,
++приближая @math{{1 / \varphi}} с помощью
+ 
+ @lisp
+ (cont-frac (lambda (i) 1.0)
+@@ -5162,31 +5158,31 @@ fraction.  Check your procedure by approximating @math{{1 / \varphi}} using
+ @end lisp
+ 
+ @noindent
+-for successive values of @code{k}.  How large must you make @code{k} in order
+-to get an approximation that is accurate to 4 decimal places?
++для последовательных значений @code{k}.  Насколько большим нужно сделать @code{k},
++чтобы получить приближение, точное до 4 десятичных знаков?
+ 
+ @item
+-If your @code{cont-frac} procedure generates a recursive process, write one
+-that generates an iterative process.  If it generates an iterative process,
+-write one that generates a recursive process.
++Если ваша процедура @code{cont-frac} порождает рекурсивный процесс, напишите такую,
++которая порождает итеративный процесс.  Если она порождает итеративный процесс,
++напишите такую, которая порождает рекурсивный процесс.
+ 
+ @end enumerate
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.38}Exercise 1.38:} In 1737, the Swiss mathematician
+-Leonhard Euler published a memoir @cite{De Fractionibus Continuis}, which
+-included a continued fraction expansion for @math{{e - 2}}, where @math{e} is the base
+-of the natural logarithms.  In this fraction, the @math{N_i} are all 1, and
+-the @math{D_i} are successively 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, @dots{}.
+-Write a program that uses your @code{cont-frac} procedure from @ref{Exercise 1.37} 
+-to approximate @math{e}, based on Euler's expansion.
++@strong{@anchor{Exercise 1.38}Exercise 1.38:} В 1737 году швейцарский математик
++Леонард Эйлер опубликовал мемуар @cite{De Fractionibus Continuis}, который включал
++разложение в непрерывную дробь для @math{{e - 2}}, где @math{e} — основание
++натуральных логарифмов.  В этой дроби все @math{N_i} равны 1, а @math{D_i}
++последовательно равны 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, @dots{}.  Напишите программу,
++использующую вашу процедуру @code{cont-frac} из @ref{Exercise 1.37}, чтобы приблизить
++@math{e}, на основе разложения Эйлера.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.39}Exercise 1.39:} A continued fraction
+-representation of the tangent function was published in 1770 by the German
+-mathematician J.H. Lambert:
++@strong{@anchor{Exercise 1.39}Exercise 1.39:} Представление функции тангенса
++непрерывной дробью было опубликовано в 1770 году немецким математиком
++И. Г. Ламбертом:
+ @ifinfo
+ 
+ @example
+@@ -5209,9 +5205,9 @@ tan x = ---------------
+ 
+ @end tex
+ @noindent
+-where @math{x} is in radians.  Define a procedure @code{(tan-cf x k)} that
+-computes an approximation to the tangent function based on Lambert's formula.
+-@code{k} specifies the number of terms to compute, as in @ref{Exercise 1.37}.
++где @math{x} в радианах.  Определите процедуру @code{(tan-cf x k)}, вычисляющую
++приближение к функции тангенса на основе формулы Ламберта.  @code{k} задаёт число
++вычисляемых членов, как в @ref{Exercise 1.37}.
+ @end quotation
+ 
+ @node	1.3.4, Chapter 2, 1.2, 1.3

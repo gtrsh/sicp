@@ -1,0 +1,389 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index e4ab559..b979ea1 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -4154,10 +4154,10 @@ b^n = b * b^(n - 1)  if n is odd
+ @end menu
+ 
+ @node	1.3.1, 1.3.2, 1.3, 1.3
+-@subsection Procedures as Arguments
++@subsection Процедуры как аргументы
+ 
+-Consider the following three procedures.  The first computes the sum of the
+-integers from @code{a} through @code{b}:
++Рассмотрим следующие три процедуры.  Первая вычисляет сумму целых чисел от @code{a}
++до @code{b}:
+ 
+ @lisp
+ (define (sum-integers a b)
+@@ -4167,7 +4167,7 @@ integers from @code{a} through @code{b}:
+ @end lisp
+ 
+ @noindent
+-The second computes the sum of the cubes of the integers in the given range:
++Вторая вычисляет сумму кубов целых чисел в заданном диапазоне:
+ 
+ @lisp
+ (define (sum-cubes a b)
+@@ -4178,7 +4178,7 @@ The second computes the sum of the cubes of the integers in the given range:
+ @end lisp
+ 
+ @noindent
+-The third computes the sum of a sequence of terms in the series
++Третья вычисляет сумму последовательности членов ряда
+ @ifinfo
+ 
+ @example
+@@ -4197,11 +4197,11 @@ The third computes the sum of a sequence of terms in the series
+ 
+ @end tex
+ @noindent
+-which converges to @math{{\pi / 8}} (very slowly):@footnote{This series, usually
+-written in the equivalent form 
+-@math{{\pi\over4} = {1 - {1\over3} + {1\over5}} - {{1\over7} + \dots}}, 
+-is due to Leibniz.  We'll see how to use this as the basis for some
+-fancy numerical tricks in @ref{3.5.3}.}
++который сходится к @math{{\pi / 8}} (очень медленно):@footnote{Этот ряд, обычно
++записываемый в эквивалентной форме
++@math{{\pi\over4} = {1 - {1\over3} + {1\over5}} - {{1\over7} + \dots}}, принадлежит
++Лейбницу.  Как использовать его как основу для некоторых хитрых числовых трюков, мы
++увидим в @ref{3.5.3}.}
+ 
+ @lisp
+ (define (pi-sum a b)
+@@ -4212,25 +4212,25 @@ fancy numerical tricks in @ref{3.5.3}.}
+ @end lisp
+ 
+ @noindent
+-These three procedures clearly share a common underlying pattern.  They are for
+-the most part identical, differing only in the name of the procedure, the
+-function of @code{a} used to compute the term to be added, and the function
+-that provides the next value of @code{a}.  We could generate each of the
+-procedures by filling in slots in the same template:
++Эти три процедуры явно разделяют общий лежащий в основе образец.  Они по большей
++части идентичны, различаясь лишь именем процедуры, функцией от @code{a},
++используемой для вычисления прибавляемого члена, и функцией, дающей следующее
++значение @code{a}.  Мы могли бы породить каждую из процедур, заполнив прорези в одном
++и том же шаблоне:
+ 
+ @lisp
+-(define (⟨@var{name}⟩ a b)
++(define (⟨@var{имя}⟩ a b)
+   (if (> a b)
+       0
+-      (+ (⟨@var{term}⟩ a) 
+-         (⟨@var{name}⟩ (⟨@var{next}⟩ a) b))))
++      (+ (⟨@var{слагаемое}⟩ a)
++         (⟨@var{имя}⟩ (⟨@var{следующий}⟩ a) b))))
+ @end lisp
+ 
+ @noindent
+-The presence of such a common pattern is strong evidence that there is a useful
+-abstraction waiting to be brought to the surface.  Indeed, mathematicians long
+-ago identified the abstraction of @newterm{summation of a series} and invented
+-``sigma notation,'' for example
++Наличие такого общего образца — сильное свидетельство того, что есть полезная
++абстракция, ждущая, чтобы её вывели на поверхность.  И в самом деле, математики
++давным-давно выделили абстракцию @newterm{суммирования ряда} и изобрели
++«сигма-обозначения», например
+ @ifinfo
+ 
+ @example
+@@ -4251,16 +4251,16 @@ ago identified the abstraction of @newterm{summation of a series} and invented
+ 
+ @end tex
+ @noindent
+-to express this concept.  The power of sigma notation is that it allows
+-mathematicians to deal with the concept of summation itself rather than only
+-with particular sums---for example, to formulate general results about sums
+-that are independent of the particular series being summed.
++чтобы выразить это понятие.  Сила сигма-обозначений в том, что они позволяют
++математикам иметь дело с самим понятием суммирования, а не только с конкретными
++суммами — например, формулировать общие результаты о суммах, не зависящие от
++конкретного суммируемого ряда.
+ 
+-Similarly, as program designers, we would like our language to be powerful
+-enough so that we can write a procedure that expresses the concept of summation
+-itself rather than only procedures that compute particular sums.  We can do so
+-readily in our procedural language by taking the common template shown above
+-and transforming the ``slots'' into formal parameters:
++Аналогично, как проектировщики программ, мы хотели бы, чтобы наш язык был достаточно
++мощным, чтобы мы могли написать процедуру, выражающую само понятие суммирования, а не
++только процедуры, вычисляющие конкретные суммы.  Мы легко можем сделать это в нашем
++процедурном языке, взяв показанный выше общий шаблон и превратив «прорези» в
++формальные параметры:
+ 
+ @lisp
+ (define (sum term a next b)
+@@ -4271,11 +4271,11 @@ and transforming the ``slots'' into formal parameters:
+ @end lisp
+ 
+ @noindent
+-Notice that @code{sum} takes as its arguments the lower and upper bounds
+-@code{a} and @code{b} together with the procedures @code{term} and @code{next}.
+-We can use @code{sum} just as we would any procedure.  For example, we can use
+-it (along with a procedure @code{inc} that increments its argument by 1) to
+-define @code{sum-cubes}:
++Заметьте, что @code{sum} принимает в качестве своих аргументов нижнюю и верхнюю
++границы @code{a} и @code{b} вместе с процедурами @code{term} и @code{next}.  Мы
++можем пользоваться @code{sum} так же, как любой процедурой.  Например, мы можем
++воспользоваться ею (вместе с процедурой @code{inc}, увеличивающей свой аргумент на
++1), чтобы определить @code{sum-cubes}:
+ 
+ @lisp
+ (define (inc n) (+ n 1))
+@@ -4285,7 +4285,7 @@ define @code{sum-cubes}:
+ @end lisp
+ 
+ @noindent
+-Using this, we can compute the sum of the cubes of the integers from 1 to 10:
++Пользуясь этим, мы можем вычислить сумму кубов целых чисел от 1 до 10:
+ 
+ @lisp
+ (sum-cubes 1 10)
+@@ -4293,8 +4293,8 @@ Using this, we can compute the sum of the cubes of the integers from 1 to 10:
+ @end lisp
+ 
+ @noindent
+-With the aid of an identity procedure to compute the term, we can define
+-@code{sum-integers} in terms of @code{sum}:
++С помощью тождественной процедуры для вычисления члена мы можем определить
++@code{sum-integers} через @code{sum}:
+ 
+ @lisp
+ (define (identity x) x)
+@@ -4304,7 +4304,7 @@ With the aid of an identity procedure to compute the term, we can define
+ @end lisp
+ 
+ @noindent
+-Then we can add up the integers from 1 to 10:
++Тогда мы можем сложить целые числа от 1 до 10:
+ 
+ @lisp
+ (sum-integers 1 10)
+@@ -4312,11 +4312,11 @@ Then we can add up the integers from 1 to 10:
+ @end lisp
+ 
+ @noindent
+-We can also define @code{pi-sum} in the same way:@footnote{Notice that we have
+-used block structure (@ref{1.1.8}) to embed the definitions of
+-@code{pi-next} and @code{pi-term} within @code{pi-sum}, since these procedures
+-are unlikely to be useful for any other purpose.  We will see how to get rid of
+-them altogether in @ref{1.3.2}.}
++Точно так же мы можем определить @code{pi-sum}:@footnote{Заметьте, что мы
++воспользовались блочной структурой (@ref{1.1.8}), чтобы вложить определения
++@code{pi-next} и @code{pi-term} внутрь @code{pi-sum}, поскольку эти процедуры вряд ли
++будут полезны для какой-либо иной цели.  Как избавиться от них совсем, мы увидим в
++@ref{1.3.2}.}
+ 
+ @lisp
+ (define (pi-sum a b)
+@@ -4328,7 +4328,7 @@ them altogether in @ref{1.3.2}.}
+ @end lisp
+ 
+ @noindent
+-Using these procedures, we can compute an approximation to @math{\pi}:
++Пользуясь этими процедурами, мы можем вычислить приближение к @math{\pi}:
+ 
+ @lisp
+ (* 8 (pi-sum 1 1000))
+@@ -4336,10 +4336,9 @@ Using these procedures, we can compute an approximation to @math{\pi}:
+ @end lisp
+ 
+ @noindent
+-Once we have @code{sum}, we can use it as a building block in formulating
+-further concepts.  For instance, the definite integral of a function @math{f}
+-between the limits @math{a} and @math{b} can be approximated numerically using the
+-formula
++Как только у нас есть @code{sum}, мы можем использовать её как строительный блок при
++формулировании дальнейших понятий.  Например, определённый интеграл функции @math{f}
++между пределами @math{a} и @math{b} можно численно приблизить по формуле
+ @ifinfo
+ 
+ @example
+@@ -4362,7 +4361,7 @@ formula
+ 
+ @end tex
+ @noindent
+-for small values of @math{{dx}}.  We can express this directly as a procedure:
++для малых значений @math{{dx}}.  Это можно выразить прямо как процедуру:
+ 
+ @lisp
+ (define (integral f a b dx)
+@@ -4378,13 +4377,12 @@ for small values of @math{{dx}}.  We can express this directly as a procedure:
+ @end lisp
+ 
+ @noindent
+-(The exact value of the integral of @code{cube} between 0 and 1 is 1/4.)
++(Точное значение интеграла @code{cube} между 0 и 1 равно 1/4.)
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.29}Exercise 1.29:} Simpson's Rule is a more accurate
+-method of numerical integration than the method illustrated above.  Using
+-Simpson's Rule, the integral of a function @math{f} between @math{a} and @math{b} is
+-approximated as
++@strong{@anchor{Exercise 1.29}Exercise 1.29:} Правило Симпсона — более точный метод
++численного интегрирования, чем метод, проиллюстрированный выше.  По правилу Симпсона
++интеграл функции @math{f} между @math{a} и @math{b} приближается как
+ @ifinfo
+ 
+ @example
+@@ -4403,20 +4401,20 @@ h
+ 
+ @end tex
+ @noindent
+-where @math{{h = (b - a)/n}}, for some even integer @math{n}, and
+-@math{y_k = {f(a + kh)}}.  (Increasing @math{n} increases the
+-accuracy of the approximation.)  Define a procedure that takes as arguments
+-@math{f}, @math{a}, @math{b}, and @math{n} and returns the value of the integral, computed
+-using Simpson's Rule.  Use your procedure to integrate @code{cube} between 0
+-and 1 (with @math{{n = 100}} and @math{{n = 1000}}), and compare the results to those of
+-the @code{integral} procedure shown above.
++где @math{{h = (b - a)/n}} для некоторого чётного целого @math{n}, а
++@math{y_k = {f(a + kh)}}.  (Увеличение @math{n} увеличивает точность приближения.)
++Определите процедуру, которая принимает в качестве аргументов @math{f}, @math{a},
++@math{b} и @math{n} и возвращает значение интеграла, вычисленное по правилу Симпсона.
++Воспользуйтесь своей процедурой, чтобы проинтегрировать @code{cube} между 0 и 1 (при
++@math{{n = 100}} и @math{{n = 1000}}), и сравните результаты с результатами процедуры
++@code{integral}, показанной выше.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.30}Exercise 1.30:} The @code{sum} procedure above
+-generates a linear recursion.  The procedure can be rewritten so that the sum
+-is performed iteratively.  Show how to do this by filling in the missing
+-expressions in the following definition:
++@strong{@anchor{Exercise 1.30}Exercise 1.30:} Процедура @code{sum} выше порождает
++линейную рекурсию.  Процедуру можно переписать так, чтобы суммирование выполнялось
++итеративно.  Покажите, как это сделать, заполнив недостающие выражения в следующем
++определении:
+ 
+ @lisp
+ (define (sum term a next b)
+@@ -4434,23 +4432,21 @@ expressions in the following definition:
+ @enumerate a
+ 
+ @item
+-The @code{sum} procedure is only the simplest of a vast number of similar
+-abstractions that can be captured as higher-order procedures.@footnote{The
+-intent of @ref{Exercise 1.31} through @ref{Exercise 1.33} is to demonstrate the
+-expressive power that is attained by using an appropriate abstraction to
+-consolidate many seemingly disparate operations.  However, though accumulation
+-and filtering are elegant ideas, our hands are somewhat tied in using them at
+-this point since we do not yet have data structures to provide suitable means
+-of combination for these abstractions.  We will return to these ideas in
+-@ref{2.2.3} when we show how to use @newterm{sequences} as interfaces
+-for combining filters and accumulators to build even more powerful
+-abstractions.  We will see there how these methods really come into their own
+-as a powerful and elegant approach to designing programs.}  Write an analogous
+-procedure called @code{product} that returns the product of the values of a
+-function at points over a given range.  Show how to define @code{factorial} in
+-terms of @code{product}.  Also use @code{product} to compute approximations to
+-@math{\pi} using the formula@footnote{This formula was discovered by the
+-seventeenth-century English mathematician John Wallis.}
++Процедура @code{sum} — лишь простейшая из обширного множества похожих абстракций,
++которые можно схватить как процедуры высшего порядка.@footnote{Цель @ref{Exercise 1.31}
++— @ref{Exercise 1.33} — продемонстрировать выразительную силу, достигаемую
++использованием подходящей абстракции для объединения многих внешне разрозненных
++операций.  Однако, хотя накопление и фильтрация — изящные идеи, наши руки сейчас
++несколько связаны в их использовании, поскольку у нас пока нет структур данных,
++дающих подходящие средства объединения для этих абстракций.  Мы вернёмся к этим идеям
++в @ref{2.2.3}, когда покажем, как использовать @newterm{последовательности} как
++интерфейсы для объединения фильтров и накопителей, чтобы строить ещё более мощные
++абстракции.  Там мы увидим, как эти методы по-настоящему раскрываются как мощный и
++изящный подход к проектированию программ.}  Напишите аналогичную процедуру под
++названием @code{product}, возвращающую произведение значений функции в точках на
++заданном диапазоне.  Покажите, как определить @code{factorial} через @code{product}.
++Воспользуйтесь также @code{product}, чтобы вычислить приближения к @math{\pi} по
++формуле@footnote{Эту формулу открыл английский математик XVII века Джон Уоллис.}
+ @ifinfo
+ 
+ @example
+@@ -4470,9 +4466,9 @@ pi   2 * 4 * 4 * 6 * 6 * 8 ...
+ 
+ @end tex
+ @item
+-If your @code{product} procedure generates a recursive process, write one that
+-generates an iterative process.  If it generates an iterative process, write
+-one that generates a recursive process.
++Если ваша процедура @code{product} порождает рекурсивный процесс, напишите такую,
++которая порождает итеративный процесс.  Если она порождает итеративный процесс,
++напишите такую, которая порождает рекурсивный процесс.
+ 
+ @end enumerate
+ @end quotation
+@@ -4483,50 +4479,49 @@ one that generates a recursive process.
+ @enumerate a
+ 
+ @item
+-Show that @code{sum} and @code{product} (@ref{Exercise 1.31}) are both special
+-cases of a still more general notion called @code{accumulate} that combines a
+-collection of terms, using some general accumulation function:
++Покажите, что @code{sum} и @code{product} (@ref{Exercise 1.31}) — оба частные случаи
++ещё более общего понятия, называемого @code{accumulate}, которое объединяет набор
++членов, используя некоторую общую функцию накопления:
+ 
+ @lisp
+ (accumulate 
+  combiner null-value term a next b)
+ @end lisp
+ 
+-@code{Accumulate} takes as arguments the same term and range specifications as
+-@code{sum} and @code{product}, together with a @code{combiner} procedure (of
+-two arguments) that specifies how the current term is to be combined with the
+-accumulation of the preceding terms and a @code{null-value} that specifies what
+-base value to use when the terms run out.  Write @code{accumulate} and show how
+-@code{sum} and @code{product} can both be defined as simple calls to
+-@code{accumulate}.
++@code{Accumulate} принимает в качестве аргументов те же спецификации члена и
++диапазона, что @code{sum} и @code{product}, вместе с процедурой @code{combiner} (от
++двух аргументов), задающей, как текущий член должен объединяться с накоплением
++предыдущих членов, и значением @code{null-value}, задающим, какое базовое значение
++использовать, когда члены кончаются.  Напишите @code{accumulate} и покажите, как
++@code{sum} и @code{product} можно определить как простые вызовы @code{accumulate}.
+ 
+ @item
+-If your @code{accumulate} procedure generates a recursive process, write one
+-that generates an iterative process.  If it generates an iterative process,
+-write one that generates a recursive process.
++Если ваша процедура @code{accumulate} порождает рекурсивный процесс, напишите такую,
++которая порождает итеративный процесс.  Если она порождает итеративный процесс,
++напишите такую, которая порождает рекурсивный процесс.
+ 
+ @end enumerate
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.33}Exercise 1.33:} You can obtain an even more
+-general version of @code{accumulate} (@ref{Exercise 1.32}) by introducing the
+-notion of a @newterm{filter} on the terms to be combined.  That is, combine
+-only those terms derived from values in the range that satisfy a specified
+-condition.  The resulting @code{filtered-accumulate} abstraction takes the same
+-arguments as accumulate, together with an additional predicate of one argument
+-that specifies the filter.  Write @code{filtered-accumulate} as a procedure.
+-Show how to express the following using @code{filtered-accumulate}:
++@strong{@anchor{Exercise 1.33}Exercise 1.33:} Вы можете получить ещё более общую
++версию @code{accumulate} (@ref{Exercise 1.32}), введя понятие @newterm{фильтра} на
++объединяемые члены.  То есть объединять только те члены, которые получены из значений
++диапазона, удовлетворяющих заданному условию.  Получающаяся абстракция
++@code{filtered-accumulate} принимает те же аргументы, что и accumulate, вместе с
++дополнительным предикатом от одного аргумента, задающим фильтр.  Напишите
++@code{filtered-accumulate} как процедуру.  Покажите, как выразить следующее с помощью
++@code{filtered-accumulate}:
+ 
+ @enumerate a
+ 
+ @item
+-the sum of the squares of the prime numbers in the interval @math{a} to @math{b}
+-(assuming that you have a @code{prime?} predicate already written)
++сумму квадратов простых чисел в интервале от @math{a} до @math{b} (предполагая, что
++предикат @code{prime?} у вас уже написан);
+ 
+ @item
+-the product of all the positive integers less than @math{n} that are relatively
+-prime to @math{n} (i.e., all positive integers @math{{i < n}} such that
++произведение всех положительных целых чисел, меньших @math{n}, которые взаимно просты
++с @math{n} (то есть всех положительных целых @math{{i < n}} таких, что
+ @math{{\text{GCD}(i, n) = 1}}).
+ 
+ @end enumerate

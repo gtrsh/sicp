@@ -1,0 +1,346 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 4a601c9..d34e73d 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -2093,15 +2093,15 @@ Scheme есть два выделенных значения, обозначае
+ 
+ @anchor{Sec.1.1.7}
+ @node	1.1.7, 1.1.8, 1.1.6, 1.1
+-@subsection Example: Square Roots by Newton's Method
++@subsection Пример: квадратные корни по методу Ньютона
+ 
+-Procedures, as introduced above, are much like ordinary mathematical functions.
+-They specify a value that is determined by one or more parameters.  But there
+-is an important difference between mathematical functions and computer
+-procedures.  Procedures must be effective.
++Процедуры в том виде, в каком они введены выше, во многом похожи на обычные
++математические функции.  Они задают значение, определяемое одним или несколькими
++параметрами.  Но между математическими функциями и компьютерными процедурами есть
++важное различие.  Процедуры должны быть эффективными (в смысле выполнимости).
+ 
+-As a case in point, consider the problem of computing square roots.  We can
+-define the square-root function as
++Показательный пример — задача вычисления квадратных корней.  Функцию квадратного
++корня можно определить так:
+ @ifinfo
+ 
+ @example
+@@ -2118,12 +2118,12 @@ sqrt(x) = the y such that y >= 0 and y^2 = x
+ \]
+ 
+ @end tex
+-This describes a perfectly legitimate mathematical function.  We could use it
+-to recognize whether one number is the square root of another, or to derive
+-facts about square roots in general.  On the other hand, the definition does
+-not describe a procedure.  Indeed, it tells us almost nothing about how to
+-actually find the square root of a given number.  It will not help matters to
+-rephrase this definition in pseudo-Lisp:
++Это описывает вполне законную математическую функцию.  Мы могли бы пользоваться ею,
++чтобы распознавать, является ли одно число квадратным корнем другого, или выводить
++общие факты о квадратных корнях.  С другой стороны, это определение не описывает
++процедуру.  В самом деле, оно почти ничего не говорит нам о том, как на деле найти
++квадратный корень данного числа.  Не поможет и переформулировка этого определения
++на псевдо-Lisp:
+ 
+ @lisp
+ (define (sqrt x)
+@@ -2132,44 +2132,41 @@ rephrase this definition in pseudo-Lisp:
+ @end lisp
+ 
+ @noindent
+-This only begs the question.
+-
+-The contrast between function and procedure is a reflection of the general
+-distinction between describing properties of things and describing how to do
+-things, or, as it is sometimes referred to, the distinction between declarative
+-knowledge and imperative knowledge.  In mathematics we are usually concerned
+-with declarative (what is) descriptions, whereas in computer science we are
+-usually concerned with imperative (how to) descriptions.@footnote{Declarative
+-and imperative descriptions are intimately related, as indeed are mathematics
+-and computer science.  For instance, to say that the answer produced by a
+-program is ``correct'' is to make a declarative statement about the program.
+-There is a large amount of research aimed at establishing techniques for
+-proving that programs are correct, and much of the technical difficulty of this
+-subject has to do with negotiating the transition between imperative statements
+-(from which programs are constructed) and declarative statements (which can be
+-used to deduce things).  In a related vein, an important current area in
+-programming-language design is the exploration of so-called very high-level
+-languages, in which one actually programs in terms of declarative statements.
+-The idea is to make interpreters sophisticated enough so that, given ``what
+-is'' knowledge specified by the programmer, they can generate ``how to''
+-knowledge automatically.  This cannot be done in general, but there are
+-important areas where progress has been made.  We shall revisit this idea in
+-@ref{Chapter 4}.}
+-
+-How does one compute square roots?  The most common way is to use Newton's
+-method of successive approximations, which says that whenever we have a guess
+-@math{y} for the value of the square root of a number @math{x}, we can perform a
+-simple manipulation to get a better guess (one closer to the actual square
+-root) by averaging @math{y} with @math{{x / y}}.@footnote{This square-root algorithm
+-is actually a special case of Newton's method, which is a general technique for
+-finding roots of equations.  The square-root algorithm itself was developed by
+-Heron of Alexandria in the first century @abbr{A.D.}  We will see how to
+-express the general Newton's method as a Lisp procedure in @ref{1.3.4}.} 
+-For example, we can compute the square root of 2 as follows.
+-Suppose our initial guess is 1:
++Это лишь ходит по кругу.
++
++Противопоставление функции и процедуры — отражение общего различия между описанием
++свойств вещей и описанием того, как делать вещи, или, как это иногда называют,
++различия между декларативным знанием и императивным знанием.  В математике мы
++обычно имеем дело с декларативными описаниями (что есть), тогда как в информатике
++мы обычно имеем дело с императивными описаниями (как делать).@footnote{Декларативные
++и императивные описания тесно связаны — как, собственно, связаны математика и
++информатика.  Например, сказать, что ответ, выдаваемый программой, «правилен», —
++значит сделать декларативное утверждение о программе.  Существует большой объём
++исследований, нацеленных на разработку приёмов доказательства правильности
++программ, и значительная часть технических трудностей этой темы связана с переходом
++между императивными утверждениями (из которых строятся программы) и декларативными
++утверждениями (из которых можно делать выводы).  В сходном ключе важная современная
++область проектирования языков программирования — исследование так называемых языков
++сверхвысокого уровня, в которых программируют прямо в терминах декларативных
++утверждений.  Идея в том, чтобы сделать интерпретаторы достаточно изощрёнными, чтобы
++по заданному программистом знанию «что есть» они могли автоматически порождать
++знание «как делать».  В общем случае это невозможно, но есть важные области, где
++достигнут прогресс.  Мы вернёмся к этой идее в @ref{Chapter 4}.}
++
++Как же вычисляют квадратные корни?  Самый распространённый способ — воспользоваться
++методом последовательных приближений Ньютона, который гласит: всякий раз, когда у
++нас есть догадка @math{y} о значении квадратного корня числа @math{x}, мы можем
++простым действием получить лучшую догадку (более близкую к настоящему квадратному
++корню), усреднив @math{y} с @math{{x / y}}.@footnote{Этот алгоритм извлечения
++квадратного корня на самом деле является частным случаем метода Ньютона — общего
++приёма нахождения корней уравнений.  Сам алгоритм извлечения квадратного корня был
++разработан Героном Александрийским в первом веке @abbr{н.э.}  Как выразить общий
++метод Ньютона в виде процедуры на Lisp, мы увидим в @ref{1.3.4}.}
++Например, квадратный корень из 2 можно вычислить так.  Пусть наша начальная
++догадка — 1:
+ 
+ @example
+-Guess     Quotient      Average
++Догадка   Частное       Среднее
+ 
+ 1         (2/1)  = 2    ((2 + 1)/2)  = 1.5
+ 
+@@ -2183,14 +2180,14 @@ Guess     Quotient      Average
+ @end example
+ 
+ @noindent
+-Continuing this process, we obtain better and better approximations to the
+-square root.
++Продолжая этот процесс, мы получаем всё более и более точные приближения к
++квадратному корню.
+ 
+-Now let's formalize the process in terms of procedures.  We start with a value
+-for the radicand (the number whose square root we are trying to compute) and a
+-value for the guess.  If the guess is good enough for our purposes, we are
+-done; if not, we must repeat the process with an improved guess.  We write this
+-basic strategy as a procedure:
++Теперь формализуем процесс в терминах процедур.  Мы начинаем со значения
++подкоренного числа (числа, квадратный корень которого пытаемся вычислить) и со
++значения догадки.  Если догадка достаточно хороша для наших целей, мы закончили;
++если нет — мы должны повторить процесс с улучшенной догадкой.  Эту базовую стратегию
++запишем как процедуру:
+ 
+ @lisp
+ (define (sqrt-iter guess x)
+@@ -2200,8 +2197,7 @@ basic strategy as a procedure:
+ @end lisp
+ 
+ @noindent
+-A guess is improved by averaging it with the quotient of the radicand and the
+-old guess:
++Догадка улучшается усреднением её с частным подкоренного числа и старой догадки:
+ 
+ @lisp
+ (define (improve guess x)
+@@ -2209,7 +2205,7 @@ old guess:
+ @end lisp
+ 
+ @noindent
+-where
++где
+ 
+ @lisp
+ (define (average x y) 
+@@ -2217,14 +2213,14 @@ where
+ @end lisp
+ 
+ @noindent
+-We also have to say what we mean by ``good enough.''  The following will do for
+-illustration, but it is not really a very good test.  (See @ref{Exercise 1.7}.)  
+-The idea is to improve the answer until it is close
+-enough so that its square differs from the radicand by less than a
+-predetermined tolerance (here 0.001):@footnote{We will usually give predicates
+-names ending with question marks, to help us remember that they are predicates.
+-This is just a stylistic convention.  As far as the interpreter is concerned,
+-the question mark is just an ordinary character.}
++Нам нужно также сказать, что мы понимаем под «достаточно хороша».  Следующего
++варианта хватит для иллюстрации, но это не очень хорошая проверка.  (См.
++@ref{Exercise 1.7}.)  Идея в том, чтобы улучшать ответ, пока он не станет
++достаточно близок — так, чтобы его квадрат отличался от подкоренного числа меньше
++чем на заранее заданный допуск (здесь 0,001):@footnote{Мы обычно будем давать
++предикатам имена, оканчивающиеся вопросительным знаком, чтобы помнить, что это
++предикаты.  Это всего лишь стилистическое соглашение.  Для интерпретатора
++вопросительный знак — обычный символ.}
+ 
+ @lisp
+ (define (good-enough? guess x)
+@@ -2232,19 +2228,18 @@ the question mark is just an ordinary character.}
+ @end lisp
+ 
+ @noindent
+-Finally, we need a way to get started.  For instance, we can always guess that
+-the square root of any number is 1:@footnote{Observe that we express our
+-initial guess as 1.0 rather than 1.  This would not make any difference in many
+-Lisp implementations.  @abbr{MIT} Scheme, however, distinguishes between
+-exact integers and decimal values, and dividing two integers produces a
+-rational number rather than a decimal.  For example, dividing 10 by 6 yields
+-5/3, while dividing 10.0 by 6.0 yields 1.6666666666666667.  (We will learn how
+-to implement arithmetic on rational numbers in @ref{2.1.1}.)  If we
+-start with an initial guess of 1 in our square-root program, and @math{x} is an
+-exact integer, all subsequent values produced in the square-root computation
+-will be rational numbers rather than decimals.  Mixed operations on rational
+-numbers and decimals always yield decimals, so starting with an initial guess
+-of 1.0 forces all subsequent values to be decimals.}
++Наконец, нам нужен способ начать.  Например, мы всегда можем предположить, что
++квадратный корень любого числа равен 1:@footnote{Заметьте, что начальную догадку мы
++выражаем как 1.0, а не 1.  Во многих реализациях Lisp это не имело бы значения.
++Однако @abbr{MIT} Scheme различает точные целые и десятичные значения, и деление
++двух целых даёт рациональное число, а не десятичное.  Например, деление 10 на 6
++даёт 5/3, тогда как деление 10.0 на 6.0 даёт 1.6666666666666667.  (Как реализовать
++арифметику рациональных чисел, мы узнаем в @ref{2.1.1}.)  Если мы начинаем с
++начальной догадки 1 в нашей программе извлечения квадратного корня, а @math{x} —
++точное целое, то все последующие значения, получаемые в вычислении квадратного
++корня, будут рациональными числами, а не десятичными.  Смешанные операции над
++рациональными и десятичными числами всегда дают десятичные, так что начало с
++начальной догадки 1.0 заставляет все последующие значения быть десятичными.}
+ 
+ @lisp
+ (define (sqrt x)
+@@ -2252,8 +2247,8 @@ of 1.0 forces all subsequent values to be decimals.}
+ @end lisp
+ 
+ @noindent
+-If we type these definitions to the interpreter, we can use @code{sqrt} just as
+-we can use any procedure:
++Если набрать эти определения интерпретатору, мы сможем пользоваться @code{sqrt}
++так же, как любой процедурой:
+ 
+ @lisp
+ (sqrt 9)
+@@ -2270,23 +2265,22 @@ we can use any procedure:
+ @end lisp
+ 
+ @noindent
+-The @code{sqrt} program also illustrates that the simple procedural language we
+-have introduced so far is sufficient for writing any purely numerical program
+-that one could write in, say, C or Pascal.  This might seem surprising, since
+-we have not included in our language any iterative (looping) constructs that
+-direct the computer to do something over and over again.  @code{Sqrt-iter}, on
+-the other hand, demonstrates how iteration can be accomplished using no special
+-construct other than the ordinary ability to call a procedure.@footnote{Readers
+-who are worried about the efficiency issues involved in using procedure calls
+-to implement iteration should note the remarks on ``tail recursion'' in 
+-@ref{1.2.1}.}
++Программа @code{sqrt} показывает также, что простого процедурного языка, введённого
++нами до сих пор, достаточно, чтобы написать любую чисто числовую программу, какую
++можно было бы написать, скажем, на C или Pascal.  Это может показаться удивительным,
++ведь мы не включили в наш язык никаких итеративных (циклических) конструкций,
++велящих компьютеру делать что-то снова и снова.  @code{Sqrt-iter}, напротив,
++показывает, как итерацию можно осуществить безо всякой особой конструкции, кроме
++обычной способности вызывать процедуру.@footnote{Читателям, обеспокоенным вопросами
++эффективности использования вызовов процедур для реализации итерации, стоит обратить
++внимание на замечания о «хвостовой рекурсии» в @ref{1.2.1}.}
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.6}Exercise 1.6:} Alyssa P. Hacker doesn't see why
+-@code{if} needs to be provided as a special form.  ``Why can't I just define it
+-as an ordinary procedure in terms of @code{cond}?'' she asks.  Alyssa's friend
+-Eva Lu Ator claims this can indeed be done, and she defines a new version of
+-@code{if}:
++@strong{@anchor{Exercise 1.6}Exercise 1.6:} Алисса П. Хакер не понимает, зачем
++@code{if} нужно предоставлять как специальную форму.  «Почему я не могу просто
++определить его как обычную процедуру через @code{cond}?» — спрашивает она.
++Подруга Алиссы, Эва Лу Атор, утверждает, что это и впрямь можно сделать, и
++определяет новую версию @code{if}:
+ 
+ @lisp
+ (define (new-if predicate 
+@@ -2296,7 +2290,7 @@ Eva Lu Ator claims this can indeed be done, and she defines a new version of
+         (else else-clause)))
+ @end lisp
+ 
+-Eva demonstrates the program for Alyssa:
++Эва демонстрирует программу Алиссе:
+ 
+ @lisp
+ (new-if (= 2 3) 0 5)
+@@ -2306,7 +2300,8 @@ Eva demonstrates the program for Alyssa:
+ @i{0}
+ @end lisp
+ 
+-Delighted, Alyssa uses @code{new-if} to rewrite the square-root program:
++В восторге Алисса использует @code{new-if}, чтобы переписать программу извлечения
++квадратного корня:
+ 
+ @lisp
+ (define (sqrt-iter guess x)
+@@ -2315,27 +2310,27 @@ Delighted, Alyssa uses @code{new-if} to rewrite the square-root program:
+           (sqrt-iter (improve guess x) x)))
+ @end lisp
+ 
+-What happens when Alyssa attempts to use this to compute square roots?
+-Explain.
++Что произойдёт, когда Алисса попробует вычислить этим квадратные корни?  Объясните.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.7}Exercise 1.7:} The @code{good-enough?} test used
+-in computing square roots will not be very effective for finding the square
+-roots of very small numbers.  Also, in real computers, arithmetic operations
+-are almost always performed with limited precision.  This makes our test
+-inadequate for very large numbers.  Explain these statements, with examples
+-showing how the test fails for small and large numbers.  An alternative
+-strategy for implementing @code{good-enough?} is to watch how @code{guess}
+-changes from one iteration to the next and to stop when the change is a very
+-small fraction of the guess.  Design a square-root procedure that uses this
+-kind of end test.  Does this work better for small and large numbers?
++@strong{@anchor{Exercise 1.7}Exercise 1.7:} Проверка @code{good-enough?},
++используемая при вычислении квадратных корней, будет не очень действенной для
++нахождения квадратных корней очень малых чисел.  К тому же в реальных компьютерах
++арифметические операции почти всегда выполняются с ограниченной точностью.  Это
++делает нашу проверку неадекватной для очень больших чисел.  Объясните эти
++утверждения с примерами, показывающими, как проверка даёт сбой для малых и больших
++чисел.  Альтернативная стратегия реализации @code{good-enough?} — следить за тем,
++как @code{guess} меняется от одной итерации к следующей, и останавливаться, когда
++изменение составляет очень малую долю догадки.  Спроектируйте процедуру извлечения
++квадратного корня, использующую такого рода проверку окончания.  Лучше ли она
++работает для малых и больших чисел?
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 1.8}Exercise 1.8:} Newton's method for cube roots is
+-based on the fact that if @math{y} is an approximation to the cube root of @math{x},
+-then a better approximation is given by the value
++@strong{@anchor{Exercise 1.8}Exercise 1.8:} Метод Ньютона для кубических корней
++основан на том, что если @math{y} — приближение к кубическому корню числа @math{x},
++то лучшее приближение даётся значением
+ @ifinfo
+ 
+ @example
+@@ -2354,10 +2349,10 @@ x/y^2 + 2y
+ 
+ @end tex
+ @noindent
+-Use this formula to implement a cube-root procedure analogous to the
+-square-root procedure.  (In @ref{1.3.4} we will see how to implement
+-Newton's method in general as an abstraction of these square-root and cube-root
+-procedures.)
++Воспользуйтесь этой формулой, чтобы реализовать процедуру извлечения кубического
++корня по аналогии с процедурой извлечения квадратного корня.  (В @ref{1.3.4} мы
++увидим, как реализовать метод Ньютона в общем виде как абстракцию этих процедур
++извлечения квадратного и кубического корней.)
+ @end quotation
+ 
+ @node	1.1.8, 1.2, Chapter 1, 1.1
