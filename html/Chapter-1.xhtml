@@ -31,176 +31,177 @@
 <p>
 Next: <a href="1_002e1.xhtml#g_t1_002e1" accesskey="n" rel="next">1.1</a>, Prev: <a href="Acknowledgments.xhtml#Acknowledgments" accesskey="p" rel="prev">Acknowledgments</a>, Up: <a href="index.xhtml#Top" accesskey="u" rel="prev">Top</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
-<a id="Building-Abstractions-with-Procedures"></a>
-<h2 class="chapter"><span class="chapnum">1</span><span class="chaptitle">Building Abstractions with Procedures</span></h2>
+<a id="Postroenie-abstrakcii-s-pomoshchxiu-procedur"></a>
+<h2 class="chapter"><span class="chapnum">1</span><span class="chaptitle">Построение абстракций с помощью процедур</span></h2>
 
 <blockquote>
-<p>The acts of the mind, wherein it exerts its power over simple ideas, are
-chiefly these three: 1. Combining<!-- /@w --> several simple ideas into one compound one,
-and thus all complex ideas are made.  2. The second<!-- /@w --> is bringing two ideas,
-whether simple or complex, together, and setting them by one another so as to
-take a view of them at once, without uniting them into one, by which it gets
-all its ideas of relations.  3. The third<!-- /@w --> is separating them from all other
-ideas that accompany them in their real existence: this is called abstraction,
-and thus all its general ideas are made.
+<p>Действия ума, в которых он проявляет свою власть над простыми идеями, суть
+главным образом следующие три: 1. Объединение<!-- /@w --> нескольких простых идей в одну
+составную — так образуются все сложные идеи.  2. Второе<!-- /@w --> — это сведение двух
+идей, простых или сложных, и расположение их одну подле другой так, чтобы
+охватить их разом, не соединяя в одну, — благодаря чему ум получает все свои
+идеи отношений.  3. Третье<!-- /@w --> — это отделение их от всех прочих идей,
+сопутствующих им в действительном существовании: это называется абстрагированием,
+и так образуются все его общие идеи.
 </p>
-<p>—John Locke, <cite>An Essay Concerning Human Understanding</cite> (1690)
+<p>—Джон Локк, <cite>Опыт о человеческом разумении</cite> (1690)
 </p></blockquote>
 
 
-<p>We are about to study the idea of a <a id="index-computational-process"></a>
-<em>computational process</em>.
-Computational processes are abstract beings that inhabit computers.  As they
-evolve, processes manipulate other abstract things called <a id="index-data"></a>
-<em>data</em>.  The
-evolution of a process is directed by a pattern of rules called a
-<a id="index-program"></a>
-<em>program</em>.  People create programs to direct processes.  In effect, we
-conjure the spirits of the computer with our spells.
+<p>Мы приступаем к изучению понятия <a id="index-vychislitelxnyi-process"></a>
+<em>вычислительный процесс</em>.
+Вычислительные процессы — это абстрактные существа, обитающие в компьютерах.
+Развиваясь, процессы манипулируют другими абстрактными сущностями, называемыми
+<a id="index-dannye"></a>
+<em>данные</em>.  Развитие процесса направляется набором правил, называемым
+<a id="index-programma"></a>
+<em>программа</em>.  Люди создают программы, чтобы направлять процессы.  По
+сути, мы заклинаем духов компьютера своими заклинаниями.
 </p>
-<p>A computational process is indeed much like a sorcerer’s idea of a spirit.  It
-cannot be seen or touched.  It is not composed of matter at all.  However, it
-is very real.  It can perform intellectual work.  It can answer questions.  It
-can affect the world by disbursing money at a bank or by controlling a robot
-arm in a factory.  The programs we use to conjure processes are like a
-sorcerer’s spells.  They are carefully composed from symbolic expressions in
-arcane and esoteric <a id="index-programming-languages"></a>
-<em>programming languages</em> that prescribe the tasks we
-want our processes to perform.
+<p>Вычислительный процесс и впрямь во многом подобен тому, как чародей представляет
+себе духа.  Его нельзя ни увидеть, ни потрогать.  Он вовсе не состоит из
+вещества.  И всё же он совершенно реален.  Он способен выполнять
+интеллектуальную работу.  Он может отвечать на вопросы.  Он может воздействовать
+на мир — выдавая деньги в банке или управляя рукой робота на заводе.  Программы,
+которыми мы вызываем процессы, подобны заклинаниям чародея.  Они тщательно
+составлены из символьных выражений на таинственных и эзотерических
+<a id="index-yazykakh-programmirovaniya"></a>
+<em>языках программирования</em>, предписывающих задачи, которые мы хотим
+поручить нашим процессам.
 </p>
-<p>A computational process, in a correctly working computer, executes programs
-precisely and accurately.  Thus, like the sorcerer’s apprentice, novice
-programmers must learn to understand and to anticipate the consequences of
-their conjuring.  Even small errors (usually called <a id="index-bugs"></a>
-<em>bugs</em> or
-<a id="index-glitches"></a>
-<em>glitches</em>) in programs can have complex and unanticipated
-consequences.
+<p>В исправно работающем компьютере вычислительный процесс выполняет программы точно
+и безошибочно.  Поэтому, подобно ученику чародея, начинающие программисты должны
+научиться понимать и предвидеть последствия своих заклинаний.  Даже мелкие ошибки
+(их обычно называют <a id="index-bagami"></a>
+<em>багами</em> или <a id="index-gliukami"></a>
+<em>глюками</em>) в программах могут
+иметь сложные и непредвиденные последствия.
 </p>
-<p>Fortunately, learning to program is considerably less dangerous than learning
-sorcery, because the spirits we deal with are conveniently contained in a
-secure way.  Real-world programming, however, requires care, expertise, and
-wisdom.  A small bug in a computer-aided design program, for example, can lead
-to the catastrophic collapse of an airplane or a dam or the self-destruction of
-an industrial robot.
+<p>К счастью, учиться программировать значительно безопаснее, чем учиться
+колдовству, ведь духи, с которыми мы имеем дело, удобно заключены в надёжную
+оболочку.  Однако программирование в реальном мире требует осторожности,
+мастерства и мудрости.  Так, небольшая ошибка в программе автоматизированного
+проектирования может привести к катастрофическому обрушению самолёта или плотины
+либо к самоуничтожению промышленного робота.
 </p>
-<p>Master software engineers have the ability to organize programs so that they
-can be reasonably sure that the resulting processes will perform the tasks
-intended.  They can visualize the behavior of their systems in advance.  They
-know how to structure programs so that unanticipated problems do not lead to
-catastrophic consequences, and when problems do arise, they can <a id="index-debug"></a>
-<em>debug</em>
-their programs.  Well-designed computational systems, like well-designed
-automobiles or nuclear reactors, are designed in a modular manner, so that the
-parts can be constructed, replaced, and debugged separately.
+<p>Мастера-программисты умеют организовывать программы так, чтобы быть достаточно
+уверенными: порождаемые процессы выполнят именно то, что задумано.  Они способны
+заранее представить поведение своих систем.  Они знают, как структурировать
+программы, чтобы непредвиденные неполадки не вели к катастрофическим
+последствиям, а когда неполадки всё же возникают — умеют <a id="index-otlazhivatx"></a>
+<em>отлаживать</em>
+свои программы.  Хорошо спроектированные вычислительные системы, как и хорошо
+спроектированные автомобили или ядерные реакторы, строятся по модульному
+принципу, так что части можно создавать, заменять и отлаживать по отдельности.
 </p>
-<a id="Programming-in-Lisp"></a>
-<h5 class="subsubheading">Programming in Lisp</h5>
+<a id="Programmirovanie-na-Lisp"></a>
+<h5 class="subsubheading">Программирование на Lisp</h5>
 
-<p>We need an appropriate language for describing processes, and we will use for
-this purpose the programming language Lisp.  Just as our everyday thoughts are
-usually expressed in our natural language (such as English, French, or
-Japanese), and descriptions of quantitative phenomena are expressed with
-mathematical notations, our procedural thoughts will be expressed in Lisp.
-Lisp was invented in the late 1950s as a formalism for reasoning about the use
-of certain kinds of logical expressions, called <a id="index-recursion-equations"></a>
-<em>recursion equations</em>,
-as a model for computation.  The language was conceived by John McCarthy and is
-based on his paper “Recursive Functions of Symbolic Expressions and Their
-Computation by Machine” (<a href="References.xhtml#McCarthy-1960">McCarthy 1960</a>).
+<p>Нам нужен подходящий язык для описания процессов, и для этой цели мы будем
+использовать язык программирования Lisp.  Подобно тому как наши повседневные
+мысли обычно выражаются на естественном языке (например, на английском,
+французском или японском), а описания количественных явлений — на математических
+обозначениях, наши процедурные мысли мы будем выражать на Lisp.  Lisp был
+изобретён в конце 1950-х годов как формализм для рассуждений об использовании
+логических выражений определённого рода, называемых <a id="index-uravneniya-rekursii"></a>
+<em>уравнения рекурсии</em>,
+в качестве модели вычислений.  Язык был задуман Джоном Маккарти и основан на его
+статье «Recursive Functions of Symbolic Expressions and Their Computation by
+Machine» (<a href="References.xhtml#McCarthy-1960">McCarthy 1960</a>).
 </p>
-<p>Despite its inception as a mathematical formalism, Lisp is a practical
-programming language.  A Lisp <a id="index-interpreter"></a>
-<em>interpreter</em> is a machine that carries
-out processes described in the Lisp language.  The first Lisp interpreter was
-implemented by McCarthy with the help of colleagues and students in the
-Artificial Intelligence Group of the <abbr>MIT</abbr> Research Laboratory of
-Electronics and in the <abbr>MIT</abbr> Computation Center.<a class="footnote_link" id="DOCF1" href="#FOOT1"><sup>1</sup></a>  Lisp, whose name is an acronym for
-LISt Processing, was designed to provide symbol-manipulating capabilities for
-attacking programming problems such as the symbolic differentiation and
-integration of algebraic expressions.  It included for this purpose new data
-objects known as atoms and lists, which most strikingly set it apart from all
-other languages of the period.
+<p>Несмотря на своё происхождение как математического формализма, Lisp —
+практический язык программирования.  <a id="index-Interpretator"></a>
+<em>Интерпретатор</em> Lisp — это машина,
+выполняющая процессы, описанные на языке Lisp.  Первый интерпретатор Lisp был
+реализован Маккарти при участии коллег и студентов из Группы искусственного
+интеллекта Исследовательской лаборатории электроники <abbr>MIT</abbr> и в
+Вычислительном центре <abbr>MIT</abbr>.<a class="footnote_link" id="DOCF1" href="#FOOT1"><sup>1</sup></a>
+Lisp, чьё название — акроним от LISt Processing (обработка списков), был
+разработан, чтобы дать средства манипулирования символами для решения таких задач
+программирования, как символьное дифференцирование и интегрирование алгебраических
+выражений.  С этой целью в него были включены новые объекты данных, известные как
+атомы и списки, что ярче всего отличало его от всех прочих языков того времени.
 </p>
-<p>Lisp was not the product of a concerted design effort.  Instead, it evolved
-informally in an experimental manner in response to users’ needs and to
-pragmatic implementation considerations.  Lisp’s informal evolution has
-continued through the years, and the community of Lisp users has traditionally
-resisted attempts to promulgate any “official” definition of the language.
-This evolution, together with the flexibility and elegance of the initial
-conception, has enabled Lisp, which is the second oldest language in widespread
-use today (only Fortran is older), to continually adapt to encompass the most
-modern ideas about program design.  Thus, Lisp is by now a family of dialects,
-which, while sharing most of the original features, may differ from one another
-in significant ways.  The dialect of Lisp used in this book is called
-Scheme.<a class="footnote_link" id="DOCF2" href="#FOOT2"><sup>2</sup></a>
+<p>Lisp не был плодом согласованных проектных усилий.  Напротив, он развивался
+неформально, экспериментальным путём, в ответ на нужды пользователей и на
+прагматические соображения реализации.  Неформальная эволюция Lisp продолжалась
+многие годы, и сообщество его пользователей традиционно сопротивлялось попыткам
+провозгласить какое-либо «официальное» определение языка.  Эта эволюция вместе с
+гибкостью и изяществом первоначального замысла позволила Lisp — второму по
+старшинству из широко используемых сегодня языков (старше только Fortran) —
+постоянно адаптироваться, вбирая самые современные идеи о проектировании
+программ.  Так что Lisp сейчас — это целое семейство диалектов, которые, разделяя
+большинство исходных черт, могут существенно отличаться друг от друга.  Диалект
+Lisp, используемый в этой книге, называется Scheme.<a class="footnote_link" id="DOCF2" href="#FOOT2"><sup>2</sup></a>
 </p>
-<p>Because of its experimental character and its emphasis on symbol manipulation,
-Lisp was at first very inefficient for numerical computations, at least in
-comparison with Fortran.  Over the years, however, Lisp compilers have been
-developed that translate programs into machine code that can perform numerical
-computations reasonably efficiently.  And for special applications, Lisp has
-been used with great effectiveness.<a class="footnote_link" id="DOCF3" href="#FOOT3"><sup>3</sup></a>  
-Although Lisp has not yet overcome its old reputation as
-hopelessly inefficient, Lisp is now used in many applications where efficiency
-is not the central concern.  For example, Lisp has become a language of choice
-for operating-system shell languages and for extension languages for editors
-and computer-aided design systems.
+<p>Из-за своего экспериментального характера и упора на манипулирование символами
+Lisp поначалу был весьма неэффективен для численных вычислений — по крайней мере,
+в сравнении с Fortran.  Однако с годами были разработаны компиляторы Lisp,
+переводящие программы в машинный код, способный выполнять численные вычисления
+достаточно эффективно.  А для специальных приложений Lisp применялся с большим
+успехом.<a class="footnote_link" id="DOCF3" href="#FOOT3"><sup>3</sup></a>
+Хотя Lisp пока не избавился от старой репутации безнадёжно неэффективного, теперь
+он используется во многих приложениях, где эффективность не является главной
+заботой.  Например, Lisp стал предпочтительным языком для командных языков
+операционных систем и для языков расширения редакторов и систем
+автоматизированного проектирования.
 </p>
-<p>If Lisp is not a mainstream language, why are we using it as the framework for
-our discussion of programming?  Because the language possesses unique features
-that make it an excellent medium for studying important programming constructs
-and data structures and for relating them to the linguistic features that
-support them.  The most significant of these features is the fact that Lisp
-descriptions of processes, called <a id="index-procedures"></a>
-<em>procedures</em>, can themselves be
-represented and manipulated as Lisp data.  The importance of this is that there
-are powerful program-design techniques that rely on the ability to blur the
-traditional distinction between “passive” data and “active” processes.  As
-we shall discover, Lisp’s flexibility in handling procedures as data makes it
-one of the most convenient languages in existence for exploring these
-techniques.  The ability to represent procedures as data also makes Lisp an
-excellent language for writing programs that must manipulate other programs as
-data, such as the interpreters and compilers that support computer languages.
-Above and beyond these considerations, programming in Lisp is great fun.
+<p>Если Lisp — не мейнстримный язык, почему же мы используем его как основу для
+нашего разговора о программировании?  Потому что этот язык обладает уникальными
+чертами, которые делают его превосходной средой для изучения важных программных
+конструкций и структур данных и для связывания их с языковыми возможностями,
+которые их поддерживают.  Самая значимая из этих черт — то, что описания
+процессов на Lisp, называемые <a id="index-procedurami"></a>
+<em>процедурами</em>, сами могут быть представлены
+и обработаны как данные Lisp.  Важность этого в том, что существуют мощные приёмы
+проектирования программ, опирающиеся на способность размывать традиционное
+различие между «пассивными» данными и «активными» процессами.  Как мы обнаружим,
+гибкость Lisp в обращении с процедурами как с данными делает его одним из самых
+удобных существующих языков для исследования этих приёмов.  Способность
+представлять процедуры как данные делает Lisp также превосходным языком для
+написания программ, которые должны обрабатывать другие программы как данные, —
+таких как интерпретаторы и компиляторы, поддерживающие компьютерные языки.  И
+сверх всех этих соображений: программировать на Lisp — большое удовольствие.
 </p>
 
 <div class="footnote">
 <h4 class="footnotes-heading">Footnotes</h4>
 
 <div id="FOOT1"><p><a class="footnote_backlink" href="#DOCF1"><sup>1</sup></a>
-The
-<cite>Lisp 1 Programmer’s Manual</cite> appeared in 1960 and the <cite>Lisp 1.5
-Programmer’s Manual</cite> (<a href="References.xhtml#McCarthy-et-al_002e-1965">McCarthy et al. 1965</a>) was published in 1962.  The early history
-of Lisp is described in <a href="References.xhtml#McCarthy-1978">McCarthy 1978</a>.</p>
+<cite>Lisp 1 Programmer’s Manual</cite>
+вышло в 1960 году, а <cite>Lisp 1.5 Programmer’s Manual</cite> (<a href="References.xhtml#McCarthy-et-al_002e-1965">McCarthy et al. 1965</a>)
+было опубликовано в 1962-м.  Ранняя история Lisp описана в <a href="References.xhtml#McCarthy-1978">McCarthy 1978</a>.</p>
 </div>
 <div id="FOOT2"><p><a class="footnote_backlink" href="#DOCF2"><sup>2</sup></a>
-The two dialects in which most major Lisp programs of the
-1970s were written are MacLisp (<a href="References.xhtml#Moon-1978">Moon 1978</a>; <a href="References.xhtml#Pitman-1983">Pitman 1983</a>), developed at the
-<abbr>MIT</abbr> Project <abbr>MAC</abbr>, and Interlisp (<a href="References.xhtml#Teitelman-1974">Teitelman 1974</a>), developed
-at Bolt Beranek and Newman Inc. and the Xerox Palo Alto Research Center.
-Portable Standard Lisp (<a href="References.xhtml#Hearn-1969">Hearn 1969</a>; <a href="References.xhtml#Griss-1981">Griss 1981</a>) was a Lisp dialect designed to
-be easily portable between different machines.  MacLisp spawned a number of
-subdialects, such as Franz Lisp, which was developed at the University of
-California at Berkeley, and Zetalisp (<a href="References.xhtml#Moon-and-Weinreb-1981">Moon and Weinreb 1981</a>), which was based on a
-special-purpose processor designed at the <abbr>MIT</abbr> Artificial Intelligence
-Laboratory to run Lisp very efficiently.  The Lisp dialect used in this book,
-called Scheme (<a href="References.xhtml#Steele-and-Sussman-1975">Steele and Sussman 1975</a>), was invented in 1975 by Guy Lewis Steele Jr. and
-Gerald Jay Sussman of the <abbr>MIT</abbr> Artificial Intelligence Laboratory and
-later reimplemented for instructional use at <abbr>MIT</abbr>.  Scheme became an
-<abbr>IEEE</abbr> standard in 1990 (<a href="References.xhtml#IEEE-1990">IEEE 1990</a>).  The Common Lisp dialect
-(<a href="References.xhtml#Steele-1982">Steele 1982</a>, <a href="References.xhtml#Steele-1990">Steele 1990</a>) was developed by the Lisp community to combine
-features from the earlier Lisp dialects to make an industrial standard for
-Lisp.  Common Lisp became an <abbr>ANSI</abbr> standard in 1994 (<a href="References.xhtml#ANSI-1994">ANSI 1994</a>).</p>
+Два диалекта, на
+которых были написаны большинство крупных программ на Lisp в 1970-е годы, — это
+MacLisp (<a href="References.xhtml#Moon-1978">Moon 1978</a>; <a href="References.xhtml#Pitman-1983">Pitman 1983</a>), разработанный в рамках <abbr>MIT</abbr>
+Project <abbr>MAC</abbr>, и Interlisp (<a href="References.xhtml#Teitelman-1974">Teitelman 1974</a>), разработанный в Bolt
+Beranek and Newman Inc. и в Исследовательском центре Xerox в Пало-Альто.  Portable
+Standard Lisp (<a href="References.xhtml#Hearn-1969">Hearn 1969</a>; <a href="References.xhtml#Griss-1981">Griss 1981</a>) был диалектом Lisp,
+спроектированным для лёгкого переноса между разными машинами.  MacLisp породил
+ряд поддиалектов, таких как Franz Lisp, разработанный в Калифорнийском
+университете в Беркли, и Zetalisp (<a href="References.xhtml#Moon-and-Weinreb-1981">Moon and Weinreb 1981</a>), основанный на
+специализированном процессоре, спроектированном в Лаборатории искусственного
+интеллекта <abbr>MIT</abbr> для очень эффективного выполнения Lisp.  Диалект Lisp,
+используемый в этой книге и называемый Scheme (<a href="References.xhtml#Steele-and-Sussman-1975">Steele and Sussman 1975</a>),
+был изобретён в 1975 году Гаем Льюисом Стилом-младшим и Джеральдом Джеем Сассманом
+из Лаборатории искусственного интеллекта <abbr>MIT</abbr>, а позднее заново реализован
+для учебных целей в <abbr>MIT</abbr>.  Scheme стал стандартом <abbr>IEEE</abbr> в 1990 году
+(<a href="References.xhtml#IEEE-1990">IEEE 1990</a>).  Диалект Common Lisp (<a href="References.xhtml#Steele-1982">Steele 1982</a>, <a href="References.xhtml#Steele-1990">Steele 1990</a>)
+был разработан сообществом Lisp, чтобы объединить черты более ранних диалектов и
+создать промышленный стандарт Lisp.  Common Lisp стал стандартом <abbr>ANSI</abbr> в
+1994 году (<a href="References.xhtml#ANSI-1994">ANSI 1994</a>).</p>
 </div>
 <div id="FOOT3"><p><a class="footnote_backlink" href="#DOCF3"><sup>3</sup></a>
-One such special application was a
-breakthrough computation of scientific importance—an integration of the
-motion of the Solar System that extended previous results by nearly two orders
-of magnitude, and demonstrated that the dynamics of the Solar System is
-chaotic.  This computation was made possible by new integration algorithms, a
-special-purpose compiler, and a special-purpose computer all implemented with
-the aid of software tools written in Lisp (<a href="References.xhtml#Abelson-et-al_002e-1992">Abelson et al. 1992</a>; <a href="References.xhtml#Sussman-and-Wisdom-1992">Sussman and Wisdom 1992</a>).</p>
+Одним из таких специальных приложений стало прорывное
+вычисление, важное для науки, — интегрирование движения Солнечной системы,
+которое расширило предыдущие результаты почти на два порядка и показало, что
+динамика Солнечной системы хаотична.  Это вычисление стало возможным благодаря
+новым алгоритмам интегрирования, специализированному компилятору и
+специализированному компьютеру — всё это было реализовано с помощью программных
+инструментов, написанных на Lisp (<a href="References.xhtml#Abelson-et-al_002e-1992">Abelson et al. 1992</a>;
+<a href="References.xhtml#Sussman-and-Wisdom-1992">Sussman and Wisdom 1992</a>).</p>
 </div>
 </div>
 <nav class="header">

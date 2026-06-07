@@ -31,54 +31,52 @@
 <p>
 Next: <a href="Chapter-2.xhtml#Chapter-2" accesskey="n" rel="next">Chapter 2</a>, Prev: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="p" rel="prev">1.2</a>, Up: <a href="Chapter-1.xhtml#Chapter-1" accesskey="u" rel="prev">Chapter 1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
-<a id="Formulating-Abstractions-with-Higher_002dOrder-Procedures"></a>
-<h3 class="section"><span class="secnum">1.3</span><span class="sectitle">Formulating Abstractions with Higher-Order Procedures</span></h3>
+<a id="Formulirovanie-abstrakcii-cherez-procedury-vysshego-poryadka"></a>
+<h3 class="section"><span class="secnum">1.3</span><span class="sectitle">Формулирование абстракций через процедуры высшего порядка</span></h3>
 
-<p>We have seen that procedures are, in effect, abstractions that describe
-compound operations on numbers independent of the particular numbers.  For
-example, when we
+<p>Мы видели, что процедуры — это, по сути, абстракции, описывающие составные операции
+над числами независимо от конкретных чисел.  Например, когда мы пишем
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x x</span><span class="clo">))</span></pre></div>
 
-<p>we are not talking about the cube of a particular number, but rather about a
-method for obtaining the cube of any number.  Of course we could get along
-without ever defining this procedure, by always writing expressions such as
+<p>мы говорим не о кубе какого-то конкретного числа, а о методе получения куба любого
+числа.  Конечно, мы могли бы обойтись и без определения этой процедуры, всякий раз
+записывая выражения вроде
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)</span><span class="pln">
 </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x x</span><span class="clo">)</span><span class="pln">
 </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y y y</span><span class="clo">)</span></pre></div>
 
-<p>and never mentioning <code>cube</code> explicitly.  This would place us at a serious
-disadvantage, forcing us to work always at the level of the particular
-operations that happen to be primitives in the language (multiplication, in
-this case) rather than in terms of higher-level operations.  Our programs would
-be able to compute cubes, but our language would lack the ability to express
-the concept of cubing.  One of the things we should demand from a powerful
-programming language is the ability to build abstractions by assigning names to
-common patterns and then to work in terms of the abstractions directly.
-Procedures provide this ability.  This is why all but the most primitive
-programming languages include mechanisms for defining procedures.
+<p>и никогда не упоминая <code>cube</code> явно.  Это поставило бы нас в серьёзно невыгодное
+положение, вынуждая работать всегда на уровне тех конкретных операций, которые
+случайно оказались примитивами языка (в данном случае умножения), а не в терминах
+операций более высокого уровня.  Наши программы умели бы вычислять кубы, но нашему
+языку недоставало бы способности выразить понятие возведения в куб.  Одно из того,
+чего мы должны требовать от мощного языка программирования, — это способность
+строить абстракции, присваивая имена общим образцам, и затем работать прямо в
+терминах абстракций.  Процедуры дают эту способность.  Вот почему все языки
+программирования, кроме самых примитивных, включают механизмы определения процедур.
 </p>
-<p>Yet even in numerical processing we will be severely limited in our ability to
-create abstractions if we are restricted to procedures whose parameters must be
-numbers.  Often the same programming pattern will be used with a number of
-different procedures.  To express such patterns as concepts, we will need to
-construct procedures that can accept procedures as arguments or return
-procedures as values.  Procedures that manipulate procedures are called
-<a id="index-higher_002dorder-procedures"></a>
-<em>higher-order procedures</em>.  This section shows how higher-order
-procedures can serve as powerful abstraction mechanisms, vastly increasing the
-expressive power of our language.
+<p>Однако даже в числовой обработке мы будем сильно ограничены в своей способности
+создавать абстракции, если будем ограничены процедурами, чьи параметры обязаны быть
+числами.  Часто один и тот же программный образец используется с рядом различных
+процедур.  Чтобы выражать такие образцы как понятия, нам понадобится строить
+процедуры, которые могут принимать процедуры в качестве аргументов или возвращать
+процедуры в качестве значений.  Процедуры, манипулирующие процедурами, называются
+<a id="index-procedurami-vysshego-poryadka"></a>
+<em>процедурами высшего порядка</em>.  Этот раздел показывает, как процедуры высшего
+порядка могут служить мощными механизмами абстракции, колоссально увеличивая
+выразительную силу нашего языка.
 </p>
 
 <a id="g_t1_002e3_002e1"></a>
-<a id="Procedures-as-Arguments"></a>
-<h4 class="subsection"><span class="secnum">1.3.1</span><span class="sectitle">Procedures as Arguments</span></h4>
+<a id="Procedury-kak-argumenty"></a>
+<h4 class="subsection"><span class="secnum">1.3.1</span><span class="sectitle">Процедуры как аргументы</span></h4>
 
-<p>Consider the following three procedures.  The first computes the sum of the
-integers from <code>a</code> through <code>b</code>:
+<p>Рассмотрим следующие три процедуры.  Первая вычисляет сумму целых чисел от <code>a</code>
+до <code>b</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-integers a b</span><span class="clo">)</span><span class="pln">
@@ -86,7 +84,7 @@ integers from <code>a</code> through <code>b</code>:
       </span><span class="lit">0</span><span class="pln"> 
       </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="opn">(</span><span class="pln">sum-integers </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span></pre></div>
 
-<p>The second computes the sum of the cubes of the integers in the given range:
+<p>Вторая вычисляет сумму кубов целых чисел в заданном диапазоне:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-cubes a b</span><span class="clo">)</span><span class="pln">
@@ -95,7 +93,7 @@ integers from <code>a</code> through <code>b</code>:
       </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube a</span><span class="clo">)</span><span class="pln"> 
          </span><span class="opn">(</span><span class="pln">sum-cubes </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span></pre></div>
 
-<p>The third computes the sum of a sequence of terms in the series
+<p>Третья вычисляет сумму последовательности членов ряда
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mfrac>
@@ -131,7 +129,7 @@ integers from <code>a</code> through <code>b</code>:
   </mrow>
 </math>
 
-which converges to <math xmlns="http://www.w3.org/1998/Math/MathML">
+который сходится к <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>π<!-- π --></mi>
     <mrow class="MJX-TeXAtom-ORD">
@@ -139,7 +137,7 @@ which converges to <math xmlns="http://www.w3.org/1998/Math/MathML">
     </mrow>
     <mn>8</mn>
   </mrow>
-</math> (very slowly):<a class="footnote_link" id="DOCF49" href="#FOOT49"><sup>49</sup></a>
+</math> (очень медленно):<a class="footnote_link" id="DOCF49" href="#FOOT49"><sup>49</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pi-sum a b</span><span class="clo">)</span><span class="pln">
@@ -148,24 +146,24 @@ which converges to <math xmlns="http://www.w3.org/1998/Math/MathML">
       </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1.0</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">2</span><span class="clo">)))</span><span class="pln"> 
          </span><span class="opn">(</span><span class="pln">pi-sum </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">4</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span></pre></div>
 
-<p>These three procedures clearly share a common underlying pattern.  They are for
-the most part identical, differing only in the name of the procedure, the
-function of <code>a</code> used to compute the term to be added, and the function
-that provides the next value of <code>a</code>.  We could generate each of the
-procedures by filling in slots in the same template:
+<p>Эти три процедуры явно разделяют общий лежащий в основе образец.  Они по большей
+части идентичны, различаясь лишь именем процедуры, функцией от <code>a</code>,
+используемой для вычисления прибавляемого члена, и функцией, дающей следующее
+значение <code>a</code>.  Мы могли бы породить каждую из процедур, заполнив прорези в одном
+и том же шаблоне:
 </p>
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">name</span></var><span class="pln">⟩ a b</span><span class="clo">)</span><span class="pln">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">имя</span></var><span class="pln">⟩ a b</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln">
       </span><span class="lit">0</span><span class="pln">
-      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">term</span></var><span class="pln">⟩ a</span><span class="clo">)</span><span class="pln"> 
-         </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">name</span></var><span class="pln">⟩ </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">next</span></var><span class="pln">⟩ a</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span></pre></div>
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">слагаемое</span></var><span class="pln">⟩ a</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">имя</span></var><span class="pln">⟩ </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">следующий</span></var><span class="pln">⟩ a</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span></pre></div>
 
-<p>The presence of such a common pattern is strong evidence that there is a useful
-abstraction waiting to be brought to the surface.  Indeed, mathematicians long
-ago identified the abstraction of <a id="index-summation-of-a-series"></a>
-<em>summation of a series</em> and invented
-“sigma notation,” for example
+<p>Наличие такого общего образца — сильное свидетельство того, что есть полезная
+абстракция, ждущая, чтобы её вывели на поверхность.  И в самом деле, математики
+давным-давно выделили абстракцию <a id="index-summirovaniya-ryada"></a>
+<em>суммирования ряда</em> и изобрели
+«сигма-обозначения», например
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
@@ -204,16 +202,16 @@ ago identified the abstraction of <a id="index-summation-of-a-series"></a>
   </mrow>
 </math>
 
-to express this concept.  The power of sigma notation is that it allows
-mathematicians to deal with the concept of summation itself rather than only
-with particular sums—for example, to formulate general results about sums
-that are independent of the particular series being summed.
+чтобы выразить это понятие.  Сила сигма-обозначений в том, что они позволяют
+математикам иметь дело с самим понятием суммирования, а не только с конкретными
+суммами — например, формулировать общие результаты о суммах, не зависящие от
+конкретного суммируемого ряда.
 </p>
-<p>Similarly, as program designers, we would like our language to be powerful
-enough so that we can write a procedure that expresses the concept of summation
-itself rather than only procedures that compute particular sums.  We can do so
-readily in our procedural language by taking the common template shown above
-and transforming the “slots” into formal parameters:
+<p>Аналогично, как проектировщики программ, мы хотели бы, чтобы наш язык был достаточно
+мощным, чтобы мы могли написать процедуру, выражающую само понятие суммирования, а не
+только процедуры, вычисляющие конкретные суммы.  Мы легко можем сделать это в нашем
+процедурном языке, взяв показанный выше общий шаблон и превратив «прорези» в
+формальные параметры:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum term a next b</span><span class="clo">)</span><span class="pln">
@@ -222,11 +220,11 @@ and transforming the “slots” into formal parameters:
       </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">term a</span><span class="clo">)</span><span class="pln">
          </span><span class="opn">(</span><span class="pln">sum term </span><span class="opn">(</span><span class="pln">next a</span><span class="clo">)</span><span class="pln"> next b</span><span class="clo">))))</span></pre></div>
 
-<p>Notice that <code>sum</code> takes as its arguments the lower and upper bounds
-<code>a</code> and <code>b</code> together with the procedures <code>term</code> and <code>next</code>.
-We can use <code>sum</code> just as we would any procedure.  For example, we can use
-it (along with a procedure <code>inc</code> that increments its argument by 1) to
-define <code>sum-cubes</code>:
+<p>Заметьте, что <code>sum</code> принимает в качестве своих аргументов нижнюю и верхнюю
+границы <code>a</code> и <code>b</code> вместе с процедурами <code>term</code> и <code>next</code>.  Мы
+можем пользоваться <code>sum</code> так же, как любой процедурой.  Например, мы можем
+воспользоваться ею (вместе с процедурой <code>inc</code>, увеличивающей свой аргумент на
+1), чтобы определить <code>sum-cubes</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">inc n</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
@@ -234,15 +232,15 @@ define <code>sum-cubes</code>:
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-cubes a b</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">sum cube a inc b</span><span class="clo">))</span></pre></div>
 
-<p>Using this, we can compute the sum of the cubes of the integers from 1 to 10:
+<p>Пользуясь этим, мы можем вычислить сумму кубов целых чисел от 1 до 10:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">sum-cubes </span><span class="lit">1</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
 </span><i><span class="lit">3025</span></i>
 </pre></div>
 
-<p>With the aid of an identity procedure to compute the term, we can define
-<code>sum-integers</code> in terms of <code>sum</code>:
+<p>С помощью тождественной процедуры для вычисления члена мы можем определить
+<code>sum-integers</code> через <code>sum</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">identity x</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
@@ -250,14 +248,14 @@ define <code>sum-cubes</code>:
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-integers a b</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">sum identity a inc b</span><span class="clo">))</span></pre></div>
 
-<p>Then we can add up the integers from 1 to 10:
+<p>Тогда мы можем сложить целые числа от 1 до 10:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">sum-integers </span><span class="lit">1</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
 </span><i><span class="lit">55</span></i>
 </pre></div>
 
-<p>We can also define <code>pi-sum</code> in the same way:<a class="footnote_link" id="DOCF50" href="#FOOT50"><sup>50</sup></a>
+<p>Точно так же мы можем определить <code>pi-sum</code>:<a class="footnote_link" id="DOCF50" href="#FOOT50"><sup>50</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pi-sum a b</span><span class="clo">)</span><span class="pln">
@@ -267,7 +265,7 @@ define <code>sum-cubes</code>:
     </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">sum pi-term a pi-next b</span><span class="clo">))</span></pre></div>
 
-<p>Using these procedures, we can compute an approximation to <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Пользуясь этими процедурами, мы можем вычислить приближение к <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>π<!-- π --></mi>
 </math>:
 </p>
@@ -276,16 +274,15 @@ define <code>sum-cubes</code>:
 </span><i><span class="lit">3.139592655589783</span></i>
 </pre></div>
 
-<p>Once we have <code>sum</code>, we can use it as a building block in formulating
-further concepts.  For instance, the definite integral of a function <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Как только у нас есть <code>sum</code>, мы можем использовать её как строительный блок при
+формулировании дальнейших понятий.  Например, определённый интеграл функции <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
 </math>
-between the limits <math xmlns="http://www.w3.org/1998/Math/MathML">
+между пределами <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math> can be approximated numerically using the
-formula
+</math> можно численно приблизить по формуле
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
@@ -377,12 +374,12 @@ formula
   </mrow>
 </math>
 
-for small values of <math xmlns="http://www.w3.org/1998/Math/MathML">
+для малых значений <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>d</mi>
     <mi>x</mi>
   </mrow>
-</math>.  We can express this directly as a procedure:
+</math>.  Это можно выразить прямо как процедуру:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">integral f a b dx</span><span class="clo">)</span><span class="pln">
@@ -397,19 +394,18 @@ for small values of <math xmlns="http://www.w3.org/1998/Math/MathML">
 </span><i><span class="lit">.249999875000001</span></i>
 </pre></div>
 
-<p>(The exact value of the integral of <code>cube</code> between 0 and 1 is 1/4.)
+<p>(Точное значение интеграла <code>cube</code> между 0 и 1 равно 1/4.)
 </p>
 <blockquote>
-<p><strong><a id="Exercise-1_002e29"></a>Exercise 1.29:</strong> Simpson’s Rule is a more accurate
-method of numerical integration than the method illustrated above.  Using
-Simpson’s Rule, the integral of a function <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-1_002e29"></a>Exercise 1.29:</strong> Правило Симпсона — более точный метод
+численного интегрирования, чем метод, проиллюстрированный выше.  По правилу Симпсона
+интеграл функции <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> between <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> между <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math> is
-approximated as
+</math> приближается как
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mfrac>
@@ -488,7 +484,7 @@ approximated as
   </mrow>
 </math>
 
-where <math xmlns="http://www.w3.org/1998/Math/MathML">
+где <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>h</mi>
     <mo>=</mo>
@@ -502,9 +498,9 @@ where <math xmlns="http://www.w3.org/1998/Math/MathML">
     </mrow>
     <mi>n</mi>
   </mrow>
-</math>, for some even integer <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> для некоторого чётного целого <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>n</mi>
-</math>, and
+</math>, а
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>y</mi>
@@ -520,41 +516,41 @@ where <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>h</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>.  (Increasing <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  (Увеличение <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>n</mi>
-</math> increases the
-accuracy of the approximation.)  Define a procedure that takes as arguments
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> увеличивает точность приближения.)
+Определите процедуру, которая принимает в качестве аргументов <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
 </math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>,
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>n</mi>
-</math> and returns the value of the integral, computed
-using Simpson’s Rule.  Use your procedure to integrate <code>cube</code> between 0
-and 1 (with <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и возвращает значение интеграла, вычисленное по правилу Симпсона.
+Воспользуйтесь своей процедурой, чтобы проинтегрировать <code>cube</code> между 0 и 1 (при
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>n</mi>
     <mo>=</mo>
     <mn>100</mn>
   </mrow>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>n</mi>
     <mo>=</mo>
     <mn>1000</mn>
   </mrow>
-</math>), and compare the results to those of
-the <code>integral</code> procedure shown above.
+</math>), и сравните результаты с результатами процедуры
+<code>integral</code>, показанной выше.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e30"></a>Exercise 1.30:</strong> The <code>sum</code> procedure above
-generates a linear recursion.  The procedure can be rewritten so that the sum
-is performed iteratively.  Show how to do this by filling in the missing
-expressions in the following definition:
+<p><strong><a id="Exercise-1_002e30"></a>Exercise 1.30:</strong> Процедура <code>sum</code> выше порождает
+линейную рекурсию.  Процедуру можно переписать так, чтобы суммирование выполнялось
+итеративно.  Покажите, как это сделать, заполнив недостающие выражения в следующем
+определении:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum term a next b</span><span class="clo">)</span><span class="pln">
@@ -569,14 +565,14 @@ expressions in the following definition:
 <p><strong><a id="Exercise-1_002e31"></a>Exercise 1.31:</strong> 
 </p>
 <ol>
-<li> The <code>sum</code> procedure is only the simplest of a vast number of similar
-abstractions that can be captured as higher-order procedures.<a class="footnote_link" id="DOCF51" href="#FOOT51"><sup>51</sup></a>  Write an analogous
-procedure called <code>product</code> that returns the product of the values of a
-function at points over a given range.  Show how to define <code>factorial</code> in
-terms of <code>product</code>.  Also use <code>product</code> to compute approximations to
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+<li> Процедура <code>sum</code> — лишь простейшая из обширного множества похожих абстракций,
+которые можно схватить как процедуры высшего порядка.<a class="footnote_link" id="DOCF51" href="#FOOT51"><sup>51</sup></a>  Напишите аналогичную процедуру под
+названием <code>product</code>, возвращающую произведение значений функции в точках на
+заданном диапазоне.  Покажите, как определить <code>factorial</code> через <code>product</code>.
+Воспользуйтесь также <code>product</code>, чтобы вычислить приближения к <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>π<!-- π --></mi>
-</math> using the formula<a class="footnote_link" id="DOCF52" href="#FOOT52"><sup>52</sup></a>
+</math> по
+формуле<a class="footnote_link" id="DOCF52" href="#FOOT52"><sup>52</sup></a>
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mfrac>
@@ -623,9 +619,9 @@ terms of <code>product</code>.  Also use <code>product</code> to compute approxi
   </mrow>
 </math>
 
-</li><li> If your <code>product</code> procedure generates a recursive process, write one that
-generates an iterative process.  If it generates an iterative process, write
-one that generates a recursive process.
+</li><li> Если ваша процедура <code>product</code> порождает рекурсивный процесс, напишите такую,
+которая порождает итеративный процесс.  Если она порождает итеративный процесс,
+напишите такую, которая порождает рекурсивный процесс.
 
 </li></ol>
 </blockquote>
@@ -634,60 +630,59 @@ one that generates a recursive process.
 <p><strong><a id="Exercise-1_002e32"></a>Exercise 1.32:</strong> 
 </p>
 <ol>
-<li> Show that <code>sum</code> and <code>product</code> (<a href="#Exercise-1_002e31">Exercise 1.31</a>) are both special
-cases of a still more general notion called <code>accumulate</code> that combines a
-collection of terms, using some general accumulation function:
+<li> Покажите, что <code>sum</code> и <code>product</code> (<a href="#Exercise-1_002e31">Exercise 1.31</a>) — оба частные случаи
+ещё более общего понятия, называемого <code>accumulate</code>, которое объединяет набор
+членов, используя некоторую общую функцию накопления:
 
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">accumulate 
  combiner null-value term a next b</span><span class="clo">)</span></pre></div>
 
-<p><code>Accumulate</code> takes as arguments the same term and range specifications as
-<code>sum</code> and <code>product</code>, together with a <code>combiner</code> procedure (of
-two arguments) that specifies how the current term is to be combined with the
-accumulation of the preceding terms and a <code>null-value</code> that specifies what
-base value to use when the terms run out.  Write <code>accumulate</code> and show how
-<code>sum</code> and <code>product</code> can both be defined as simple calls to
-<code>accumulate</code>.
+<p><code>Accumulate</code> принимает в качестве аргументов те же спецификации члена и
+диапазона, что <code>sum</code> и <code>product</code>, вместе с процедурой <code>combiner</code> (от
+двух аргументов), задающей, как текущий член должен объединяться с накоплением
+предыдущих членов, и значением <code>null-value</code>, задающим, какое базовое значение
+использовать, когда члены кончаются.  Напишите <code>accumulate</code> и покажите, как
+<code>sum</code> и <code>product</code> можно определить как простые вызовы <code>accumulate</code>.
 </p>
-</li><li> If your <code>accumulate</code> procedure generates a recursive process, write one
-that generates an iterative process.  If it generates an iterative process,
-write one that generates a recursive process.
+</li><li> Если ваша процедура <code>accumulate</code> порождает рекурсивный процесс, напишите такую,
+которая порождает итеративный процесс.  Если она порождает итеративный процесс,
+напишите такую, которая порождает рекурсивный процесс.
 
 </li></ol>
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e33"></a>Exercise 1.33:</strong> You can obtain an even more
-general version of <code>accumulate</code> (<a href="#Exercise-1_002e32">Exercise 1.32</a>) by introducing the
-notion of a <a id="index-filter"></a>
-<em>filter</em> on the terms to be combined.  That is, combine
-only those terms derived from values in the range that satisfy a specified
-condition.  The resulting <code>filtered-accumulate</code> abstraction takes the same
-arguments as accumulate, together with an additional predicate of one argument
-that specifies the filter.  Write <code>filtered-accumulate</code> as a procedure.
-Show how to express the following using <code>filtered-accumulate</code>:
+<p><strong><a id="Exercise-1_002e33"></a>Exercise 1.33:</strong> Вы можете получить ещё более общую
+версию <code>accumulate</code> (<a href="#Exercise-1_002e32">Exercise 1.32</a>), введя понятие <a id="index-filxtra"></a>
+<em>фильтра</em> на
+объединяемые члены.  То есть объединять только те члены, которые получены из значений
+диапазона, удовлетворяющих заданному условию.  Получающаяся абстракция
+<code>filtered-accumulate</code> принимает те же аргументы, что и accumulate, вместе с
+дополнительным предикатом от одного аргумента, задающим фильтр.  Напишите
+<code>filtered-accumulate</code> как процедуру.  Покажите, как выразить следующее с помощью
+<code>filtered-accumulate</code>:
 </p>
 <ol>
-<li> the sum of the squares of the prime numbers in the interval <math xmlns="http://www.w3.org/1998/Math/MathML">
+<li> сумму квадратов простых чисел в интервале от <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math> to <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> до <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math>
-(assuming that you have a <code>prime?</code> predicate already written)
+</math> (предполагая, что
+предикат <code>prime?</code> у вас уже написан);
 
-</li><li> the product of all the positive integers less than <math xmlns="http://www.w3.org/1998/Math/MathML">
+</li><li> произведение всех положительных целых чисел, меньших <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>n</mi>
-</math> that are relatively
-prime to <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, которые взаимно просты
+с <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>n</mi>
-</math> (i.e., all positive integers <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> (то есть всех положительных целых <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>i</mi>
     <mo>&lt;</mo>
     <mi>n</mi>
   </mrow>
-</math> such that
+</math> таких, что
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mtext>GCD</mtext>
@@ -705,29 +700,28 @@ prime to <math xmlns="http://www.w3.org/1998/Math/MathML">
 </blockquote>
 
 <a id="g_t1_002e3_002e2"></a>
-<a id="Constructing-Procedures-Using-Lambda"></a>
-<h4 class="subsection"><span class="secnum">1.3.2</span><span class="sectitle">Constructing Procedures Using <code>Lambda</code></span></h4>
+<a id="Postroenie-procedur-s-pomoshchxiu-Lambda"></a>
+<h4 class="subsection"><span class="secnum">1.3.2</span><span class="sectitle">Построение процедур с помощью <code>Lambda</code></span></h4>
 
-<p>In using <code>sum</code> as in <a href="#g_t1_002e3_002e1">1.3.1</a>, it seems terribly awkward to
-have to define trivial procedures such as <code>pi-term</code> and <code>pi-next</code>
-just so we can use them as arguments to our higher-order procedure.  Rather
-than define <code>pi-next</code> and <code>pi-term</code>, it would be more convenient to
-have a way to directly specify “the procedure that returns its input
-incremented by 4” and “the procedure that returns the reciprocal of its input
-times its input plus 2.”  We can do this by introducing the special form
-<code>lambda</code>, which creates procedures.  Using <code>lambda</code> we can describe
-what we want as
+<p>При использовании <code>sum</code>, как в <a href="#g_t1_002e3_002e1">1.3.1</a>, кажется ужасно неуклюжим то, что
+приходится определять тривиальные процедуры вроде <code>pi-term</code> и <code>pi-next</code>
+лишь затем, чтобы использовать их как аргументы нашей процедуры высшего порядка.
+Вместо того чтобы определять <code>pi-next</code> и <code>pi-term</code>, удобнее было бы иметь
+способ прямо указать «процедуру, возвращающую свой вход, увеличенный на 4» и
+«процедуру, возвращающую обратную величину произведения своего входа на свой вход
+плюс 2».  Мы можем сделать это, введя специальную форму <code>lambda</code>, создающую
+процедуры.  С помощью <code>lambda</code> мы можем описать то, что нам нужно, как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">))</span></pre></div>
 
-<p>and
+<p>и
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1.0</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">2</span><span class="clo">))))</span></pre></div>
 
-<p>Then our <code>pi-sum</code> procedure can be expressed without defining any
-auxiliary procedures as
+<p>Тогда нашу процедуру <code>pi-sum</code> можно выразить без определения каких-либо
+вспомогательных процедур как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pi-sum a b</span><span class="clo">)</span><span class="pln">
@@ -736,8 +730,8 @@ auxiliary procedures as
        </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
        b</span><span class="clo">))</span></pre></div>
 
-<p>Again using <code>lambda</code>, we can write the <code>integral</code> procedure without
-having to define the auxiliary procedure <code>add-dx</code>:
+<p>Снова используя <code>lambda</code>, мы можем написать процедуру <code>integral</code>, не
+определяя вспомогательной процедуры <code>add-dx</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">integral f a b dx</span><span class="clo">)</span><span class="pln">
@@ -746,49 +740,49 @@ having to define the auxiliary procedure <code>add-dx</code>:
             b</span><span class="clo">)</span><span class="pln">
      dx</span><span class="clo">))</span></pre></div>
 
-<p>In general, <code>lambda</code> is used to create procedures in the same way as
-<code>define</code>, except that no name is specified for the procedure:
+<p>Вообще, <code>lambda</code> используется для создания процедур так же, как <code>define</code>,
+за исключением того, что для процедуры не указывается никакого имени:
 </p>
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">formal-parameters</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">формальные-параметры</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> ⟨</span><var><span class="pun">тело</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
 
-<p>The resulting procedure is just as much a procedure as one that is created
-using <code>define</code>.  The only difference is that it has not been associated
-with any name in the environment.  In fact,
+<p>Получающаяся процедура — точно такая же процедура, как и созданная с помощью
+<code>define</code>.  Единственное различие в том, что она не связана ни с каким именем в
+окружении.  В самом деле,
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">plus4 x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">))</span></pre></div>
 
-<p>is equivalent to
+<p>эквивалентно
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> plus4 </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">)))</span></pre></div>
 
-<p>We can read a <code>lambda</code> expression as follows:
+<p>Выражение <code>lambda</code> можно прочитать так:
 </p>
 <div class="example">
-<pre class="example">(lambda                     (x)     (+   x     4))
-    |                        |       |   |     |
-the procedure of an argument x that adds x and 4
+<pre class="example">(lambda                (x) (+           x  4))
+   |                    |  |            |  |
+процедура от аргумента  x  складывающая x  и 4
 </pre></div>
 
-<p>Like any expression that has a procedure as its value, a <code>lambda</code>
-expression can be used as the operator in a combination such as
+<p>Как и любое выражение, имеющее процедуру своим значением, выражение <code>lambda</code>
+можно использовать как оператор в комбинации, такой как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x y </span><span class="opn">(</span><span class="pln">square z</span><span class="clo">)))</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)</span><span class="pln">
 </span><i><span class="lit">12</span></i>
 </pre></div>
 
-<p>or, more generally, in any context where we would normally use a procedure
-name.<a class="footnote_link" id="DOCF53" href="#FOOT53"><sup>53</sup></a>
+<p>или, более общо, в любом контексте, где мы обычно использовали бы имя
+процедуры.<a class="footnote_link" id="DOCF53" href="#FOOT53"><sup>53</sup></a>
 </p>
-<a id="Using-let-to-create-local-variables"></a>
-<h5 class="subsubheading">Using <code>let</code> to create local variables</h5>
+<a id="Ispolxzovanie-let-dlya-sozdaniya-lokalxnykh-peremennykh"></a>
+<h5 class="subsubheading">Использование <code>let</code> для создания локальных переменных</h5>
 
-<p>Another use of <code>lambda</code> is in creating local variables.  We often need
-local variables in our procedures other than those that have been bound as
-formal parameters.  For example, suppose we wish to compute the function
+<p>Ещё одно применение <code>lambda</code> — создание локальных переменных.  Нам часто нужны
+в наших процедурах локальные переменные помимо тех, что связаны как формальные
+параметры.  Например, предположим, что мы хотим вычислить функцию
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
@@ -840,7 +834,7 @@ formal parameters.  For example, suppose we wish to compute the function
   </mrow>
 </math>
 
-which we could also express as
+которую мы могли бы также выразить как
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
@@ -926,20 +920,20 @@ which we could also express as
   </mtable>
 </math>
 
-In writing a procedure to compute <math xmlns="http://www.w3.org/1998/Math/MathML">
+Записывая процедуру для вычисления <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math>, we would like to include as local
-variables not only <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, мы хотели бы включить в качестве
+локальных переменных не только <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
-</math> but also the names of intermediate
-quantities like <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, но и имена промежуточных величин
+вроде <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math>.  One way to accomplish this is to use an
-auxiliary procedure to bind the local variables:
+</math>.  Один способ добиться этого — использовать
+вспомогательную процедуру, чтобы связать локальные переменные:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x y</span><span class="clo">)</span><span class="pln">
@@ -950,9 +944,9 @@ auxiliary procedure to bind the local variables:
   </span><span class="opn">(</span><span class="pln">f-helper </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln"> 
             </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">)))</span></pre></div>
 
-<p>Of course, we could use a <code>lambda</code> expression to specify an anonymous
-procedure for binding our local variables.  The body of <code>f</code> then becomes a
-single call to that procedure:
+<p>Конечно, мы могли бы использовать выражение <code>lambda</code>, чтобы задать анонимную
+процедуру для связывания наших локальных переменных.  Тело <code>f</code> тогда становится
+единственным вызовом этой процедуры:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x y</span><span class="clo">)</span><span class="pln">
@@ -963,9 +957,9 @@ single call to that procedure:
    </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
    </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">)))</span></pre></div>
 
-<p>This construct is so useful that there is a special form called <code>let</code> to
-make its use more convenient.  Using <code>let</code>, the <code>f</code> procedure could
-be written as
+<p>Эта конструкция настолько полезна, что существует специальная форма под названием
+<code>let</code>, делающая её использование более удобным.  С помощью <code>let</code> процедуру
+<code>f</code> можно было бы записать как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x y</span><span class="clo">)</span><span class="pln">
@@ -975,76 +969,75 @@ be written as
        </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y b</span><span class="clo">)</span><span class="pln">
        </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b</span><span class="clo">))))</span></pre></div>
 
-<p>The general form of a <code>let</code> expression is
+<p>Общая форма выражения <code>let</code> такова:
 </p>
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">⟨</span><var><span class="pln">var</span><span class="pun">₁</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">exp</span><span class="pun">₁</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
-      </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">var</span><span class="pun">₂</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">exp</span><span class="pun">₂</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">⟨</span><var><span class="pun">перем₁</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">выр₁</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">перем₂</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">выр₂</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
       </span><span class="roman"><span class="pun">…</span></span><span class="pln">
-      </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">var</span><span class="pun">ₙ</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">exp</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
-  ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+      </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">перемₙ</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">вырₙ</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+  ⟨</span><var><span class="pun">тело</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
 
-<p>which can be thought of as saying
+<p>что можно мыслить как утверждение
 </p>
 <div class="example">
-<pre class="example">let ⟨<var>var₁</var>⟩ <span class="roman">have the value</span> ⟨<var>exp₁</var>⟩ <span class="roman">and</span>
-    ⟨<var>var₂</var>⟩ <span class="roman">have the value</span> ⟨<var>exp₂</var>⟩ <span class="roman">and</span>
+<pre class="example">let ⟨<var>перем₁</var>⟩ <span class="roman">имеет значение</span> ⟨<var>выр₁</var>⟩ <span class="roman">и</span>
+    ⟨<var>перем₂</var>⟩ <span class="roman">имеет значение</span> ⟨<var>выр₂</var>⟩ <span class="roman">и</span>
     <span class="roman">…</span>
-    ⟨<var>varₙ</var>⟩ <span class="roman">have the value</span> ⟨<var>expₙ</var>⟩
-  <span class="roman">in</span> ⟨<var>body</var>⟩
+    ⟨<var>перемₙ</var>⟩ <span class="roman">имеет значение</span> ⟨<var>вырₙ</var>⟩
+  <span class="roman">в</span> ⟨<var>тело</var>⟩
 </pre></div>
 
-<p>The first part of the <code>let</code> expression is a list of name-expression pairs.
-When the <code>let</code> is evaluated, each name is associated with the value of the
-corresponding expression.  The body of the <code>let</code> is evaluated with these
-names bound as local variables.  The way this happens is that the <code>let</code>
-expression is interpreted as an alternate syntax for
+<p>Первая часть выражения <code>let</code> — это список пар «имя—выражение».  Когда <code>let</code>
+вычисляется, каждое имя связывается со значением соответствующего выражения.  Тело
+<code>let</code> вычисляется с этими именами, связанными как локальные переменные.
+Происходит это так, что выражение <code>let</code> интерпретируется как альтернативный
+синтаксис для
 </p>
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">var</span><span class="pun">₁</span></var><span class="pln">⟩ </span><span class="roman"><span class="pun">…</span></span><span class="pln"> ⟨</span><var><span class="pln">var</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
-   ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
- ⟨</span><var><span class="pln">exp</span><span class="pun">₁</span></var><span class="pln">⟩
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">перем₁</span></var><span class="pln">⟩ </span><span class="roman"><span class="pun">…</span></span><span class="pln"> ⟨</span><var><span class="pun">перемₙ</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+   ⟨</span><var><span class="pun">тело</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+ ⟨</span><var><span class="pun">выр₁</span></var><span class="pln">⟩
  </span><span class="roman"><span class="pun">…</span></span><span class="pln">
- ⟨</span><var><span class="pln">exp</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+ ⟨</span><var><span class="pun">вырₙ</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
 
-<p>No new mechanism is required in the interpreter in order to provide local
-variables.  A <code>let</code> expression is simply syntactic sugar for the
-underlying <code>lambda</code> application.
+<p>Никакого нового механизма в интерпретаторе для предоставления локальных переменных
+не требуется.  Выражение <code>let</code> — просто синтаксический сахар для лежащего в
+основе применения <code>lambda</code>.
 </p>
-<p>We can see from this equivalence that the scope of a variable specified by a
-<code>let</code> expression is the body of the <code>let</code>.  This implies that:
+<p>Из этой эквивалентности видно, что область действия переменной, заданной выражением
+<code>let</code>, — это тело <code>let</code>.  Это влечёт, что:
 </p>
 <ul>
-<li> <code>Let</code> allows one to bind variables as locally as possible to where they
-are to be used.  For example, if the value of <code>x</code> is 5, the value of the
-expression
+<li> <code>Let</code> позволяет связывать переменные настолько локально, насколько возможно, к
+тому месту, где они будут использоваться.  Например, если значение <code>x</code> равно 5,
+то значение выражения
 
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">x </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="lit">10</span><span class="clo">)))</span><span class="pln">
    x</span><span class="clo">)</span></pre></div>
 
-<p>is 38.  Here, the <code>x</code> in the body of the <code>let</code> is 3, so the value of
-the <code>let</code> expression is 33.  On the other hand, the <code>x</code> that is the
-second argument to the outermost <code>+</code> is still 5.
+<p>равно 38.  Здесь <code>x</code> в теле <code>let</code> равен 3, так что значение выражения
+<code>let</code> равно 33.  С другой стороны, <code>x</code>, являющийся вторым аргументом
+самого внешнего <code>+</code>, по-прежнему равен 5.
 </p>
-</li><li> The variables’ values are computed outside the <code>let</code>.  This matters when
-the expressions that provide the values for the local variables depend upon
-variables having the same names as the local variables themselves.  For
-example, if the value of <code>x</code> is 2, the expression
+</li><li> Значения переменных вычисляются вне <code>let</code>.  Это важно, когда выражения, дающие
+значения локальным переменным, зависят от переменных, имеющих те же имена, что и сами
+локальные переменные.  Например, если значение <code>x</code> равно 2, выражение
 
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">x </span><span class="lit">3</span><span class="clo">)</span><span class="pln">
       </span><span class="opn">(</span><span class="pln">y </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">2</span><span class="clo">)))</span><span class="pln">
   </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">))</span></pre></div>
 
-<p>will have the value 12 because, inside the body of the <code>let</code>, <code>x</code>
-will be 3 and <code>y</code> will be 4 (which is the outer <code>x</code> plus 2).
+<p>будет иметь значение 12, потому что внутри тела <code>let</code> <code>x</code> будет равен 3, а
+<code>y</code> будет равен 4 (что есть внешний <code>x</code> плюс 2).
 </p>
 </li></ul>
 
-<p>Sometimes we can use internal definitions to get the same effect as with
-<code>let</code>.  For example, we could have defined the procedure <code>f</code> above as
+<p>Иногда мы можем использовать внутренние определения, чтобы получить тот же эффект,
+что и с <code>let</code>.  Например, мы могли бы определить процедуру <code>f</code> выше как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x y</span><span class="clo">)</span><span class="pln">
@@ -1055,16 +1048,16 @@ will be 3 and <code>y</code> will be 4 (which is the outer <code>x</code> plus 2
      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y b</span><span class="clo">)</span><span class="pln">
      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b</span><span class="clo">)))</span></pre></div>
 
-<p>We prefer, however, to use <code>let</code> in situations like this and to use
-internal <code>define</code> only for internal procedures.<a class="footnote_link" id="DOCF54" href="#FOOT54"><sup>54</sup></a>
+<p>Однако мы предпочитаем использовать <code>let</code> в подобных ситуациях, а внутренний
+<code>define</code> — только для внутренних процедур.<a class="footnote_link" id="DOCF54" href="#FOOT54"><sup>54</sup></a>
 </p>
 <blockquote>
-<p><strong><a id="Exercise-1_002e34"></a>Exercise 1.34:</strong> Suppose we define the procedure
+<p><strong><a id="Exercise-1_002e34"></a>Exercise 1.34:</strong> Предположим, мы определяем процедуру
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f g</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">g </span><span class="lit">2</span><span class="clo">))</span></pre></div>
 
-<p>Then we have
+<p>Тогда мы имеем
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">f square</span><span class="clo">)</span><span class="pln">
@@ -1074,30 +1067,29 @@ internal <code>define</code> only for internal procedures.<a class="footnote_lin
 </span><i><span class="lit">6</span></i>
 </pre></div>
 
-<p>What happens if we (perversely) ask the interpreter to evaluate the combination
-<code>(f f)</code>?  Explain.
+<p>Что произойдёт, если мы (извращённо) попросим интерпретатор вычислить комбинацию
+<code>(f f)</code>?  Объясните.
 </p></blockquote>
 
 <a id="g_t1_002e3_002e3"></a>
-<a id="Procedures-as-General-Methods"></a>
-<h4 class="subsection"><span class="secnum">1.3.3</span><span class="sectitle">Procedures as General Methods</span></h4>
+<a id="Procedury-kak-obobshchionnye-metody"></a>
+<h4 class="subsection"><span class="secnum">1.3.3</span><span class="sectitle">Процедуры как обобщённые методы</span></h4>
 
-<p>We introduced compound procedures in <a href="1_002e1.xhtml#g_t1_002e1_002e4">1.1.4</a> as a mechanism for
-abstracting patterns of numerical operations so as to make them independent of
-the particular numbers involved.  With higher-order procedures, such as the
-<code>integral</code> procedure of <a href="#g_t1_002e3_002e1">1.3.1</a>, we began to see a more
-powerful kind of abstraction: procedures used to express general methods of
-computation, independent of the particular functions involved.  In this section
-we discuss two more elaborate examples—general methods for finding zeros and
-fixed points of functions—and show how these methods can be expressed
-directly as procedures.
+<p>Мы ввели составные процедуры в <a href="1_002e1.xhtml#g_t1_002e1_002e4">1.1.4</a> как механизм абстрагирования образцов
+числовых операций, чтобы сделать их независимыми от конкретных участвующих чисел.  С
+процедурами высшего порядка, такими как процедура <code>integral</code> из <a href="#g_t1_002e3_002e1">1.3.1</a>, мы
+начали видеть более мощный вид абстракции: процедуры, используемые для выражения
+обобщённых методов вычисления, независимых от конкретных участвующих функций.  В этом
+разделе мы обсудим два более сложных примера — обобщённые методы нахождения нулей и
+неподвижных точек функций — и покажем, как эти методы можно выразить прямо как
+процедуры.
 </p>
-<a id="Finding-roots-of-equations-by-the-half_002dinterval-method"></a>
-<h5 class="subsubheading">Finding roots of equations by the half-interval method</h5>
+<a id="Poisk-kornei-uravnenii-metodom-polovinnogo-deleniya"></a>
+<h5 class="subsubheading">Поиск корней уравнений методом половинного деления</h5>
 
-<p>The <a id="index-half_002dinterval-method"></a>
-<em>half-interval method</em> is a simple but powerful technique for
-finding roots of an equation <math xmlns="http://www.w3.org/1998/Math/MathML">
+<a id="index-Metod-polovinnogo-deleniya"></a>
+<p><em>Метод половинного деления</em> — простой, но мощный приём нахождения корней
+уравнения <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
@@ -1106,15 +1098,14 @@ finding roots of an equation <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>=</mo>
     <mn>0</mn>
   </mrow>
-</math>, where <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> is a continuous
-function.  The idea is that, if we are given points <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — непрерывная функция.  Идея в том, что
+если нам даны точки <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math> such that
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> такие, что <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
@@ -1128,28 +1119,29 @@ function.  The idea is that, if we are given points <math xmlns="http://www.w3.o
     <mi>b</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>, then <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>f</mi>
-</math> must have at least one zero between
+</math>, то у
 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> должен быть по крайней мере один нуль между <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math>.  To locate a zero, let <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Чтобы
+найти нуль, пусть <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> be the average of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — среднее <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math>,
-and compute <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, и вычислим <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
     <mi>x</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>.  If <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.
+Если <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
@@ -1158,14 +1150,14 @@ and compute <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>&gt;</mo>
     <mn>0</mn>
   </mrow>
-</math>, then <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, то у <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> must have a zero
-between <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> должен быть нуль между <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math>.  If <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.
+Если <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
@@ -1174,20 +1166,20 @@ between <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>&lt;</mo>
     <mn>0</mn>
   </mrow>
-</math>, then <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, то у <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> must have a zero
-between <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> должен быть нуль между <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math>.  Continuing in this way, we can identify smaller and
-smaller intervals on which <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.
+Продолжая таким образом, мы можем выделять всё меньшие и меньшие интервалы, на которых
+у <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> must have a zero.  When we reach a point where
-the interval is small enough, the process stops.  Since the interval of
-uncertainty is reduced by half at each step of the process, the number of steps
-required grows as <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> должен быть нуль.  Когда мы достигаем точки, где интервал достаточно мал,
+процесс останавливается.  Поскольку интервал неопределённости уменьшается вдвое на
+каждом шаге процесса, требуемое число шагов растёт как
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi mathvariant="normal">Θ<!-- Θ --></mi>
     <mo stretchy="false">(</mo>
@@ -1204,14 +1196,13 @@ required grows as <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo stretchy="false">)</mo>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>, where <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>L</mi>
-</math> is the
-length of the original interval and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — длина исходного интервала, а <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>T</mi>
-</math> is the error tolerance (that is, the
-size of the interval we will consider “small enough”).  Here is a procedure
-that implements this strategy:
+</math>
+— допуск ошибки (то есть размер интервала, который мы будем считать «достаточно
+малым»).  Вот процедура, реализующая эту стратегию:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">search f neg-point pos-point</span><span class="clo">)</span><span class="pln">
@@ -1227,39 +1218,39 @@ that implements this strategy:
             </span><span class="opn">(</span><span class="pln">search f midpoint pos-point</span><span class="clo">))</span><span class="pln">
            </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> midpoint</span><span class="clo">))))))</span></pre></div>
 
-<p>We assume that we are initially given the function <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Мы предполагаем, что изначально нам даны функция <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> together with points
-at which its values are negative and positive.  We first compute the midpoint
-of the two given points.  Next we check to see if the given interval is small
-enough, and if so we simply return the midpoint as our answer.  Otherwise, we
-compute as a test value the value of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> вместе с точками, в которых
+её значения отрицательны и положительны.  Сначала мы вычисляем среднюю точку двух
+данных точек.  Затем мы проверяем, достаточно ли мал данный интервал, и если так, то
+просто возвращаем среднюю точку как наш ответ.  Иначе мы вычисляем в качестве
+проверочного значения значение <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> at the midpoint.  If the test value
-is positive, then we continue the process with a new interval running from the
-original negative point to the midpoint.  If the test value is negative, we
-continue with the interval from the midpoint to the positive point.  Finally,
-there is the possibility that the test value is 0, in which case the midpoint
-is itself the root we are searching for.
+</math> в средней точке.  Если проверочное значение
+положительно, то мы продолжаем процесс с новым интервалом, идущим от исходной
+отрицательной точки до средней.  Если проверочное значение отрицательно, мы
+продолжаем с интервалом от средней точки до положительной.  Наконец, есть
+возможность, что проверочное значение равно 0, и в этом случае средняя точка сама
+является искомым корнем.
 </p>
-<p>To test whether the endpoints are “close enough” we can use a procedure
-similar to the one used in <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a> for computing square
-roots:<a class="footnote_link" id="DOCF55" href="#FOOT55"><sup>55</sup></a>
+<p>Чтобы проверить, «достаточно ли близки» концы, мы можем воспользоваться процедурой,
+похожей на ту, что использовалась в <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a> для вычисления квадратных
+корней:<a class="footnote_link" id="DOCF55" href="#FOOT55"><sup>55</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">close-enough? x y</span><span class="clo">)</span><span class="pln"> 
   </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">))</span></pre></div>
 
-<p><code>Search</code> is awkward to use directly, because we can accidentally give it
-points at which <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><code>Search</code> неудобно использовать напрямую, потому что мы можем случайно дать ему
+точки, в которых значения <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math>’s values do not have the required sign, in which case we
-get a wrong answer.  Instead we will use <code>search</code> via the following
-procedure, which checks to see which of the endpoints has a negative function
-value and which has a positive value, and calls the <code>search</code> procedure
-accordingly.  If the function has the same sign on the two given points, the
-half-interval method cannot be used, in which case the procedure signals an
-error.<a class="footnote_link" id="DOCF56" href="#FOOT56"><sup>56</sup></a>
+</math> не имеют требуемого знака, и в этом случае мы
+получим неверный ответ.  Вместо этого мы будем использовать <code>search</code> через
+следующую процедуру, которая проверяет, какой из концов имеет отрицательное значение
+функции, а какой — положительное, и вызывает процедуру <code>search</code>
+соответственно.  Если функция имеет один и тот же знак в двух данных точках, метод
+половинного деления использовать нельзя, и в этом случае процедура сигнализирует об
+ошибке.<a class="footnote_link" id="DOCF56" href="#FOOT56"><sup>56</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">half-interval-method f a b</span><span class="clo">)</span><span class="pln">
@@ -1275,10 +1266,10 @@ error.<a class="footnote_link" id="DOCF56" href="#FOOT56"><sup>56</sup></a>
            </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Values are not of 
                    opposite sign"</span><span class="pln"> a b</span><span class="clo">)))))</span></pre></div>
 
-<p>The following example uses the half-interval method to approximate <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Следующий пример использует метод половинного деления, чтобы приблизить <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>π<!-- π --></mi>
-</math> as
-the root between 2 and 4 of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>
+как корень <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>sin</mi>
     <mo>⁡<!-- ⁡ --></mo>
@@ -1286,15 +1277,15 @@ the root between 2 and 4 of <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>=</mo>
     <mn>0</mn>
   </mrow>
-</math>:
+</math> между 2 и 4:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">half-interval-method sin </span><span class="lit">2.0</span><span class="pln"> </span><span class="lit">4.0</span><span class="clo">)</span><span class="pln">
 </span><i><span class="lit">3.14111328125</span></i>
 </pre></div>
 
-<p>Here is another example, using the half-interval method to search for a root of
-the equation <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Вот другой пример, использующий метод половинного деления для поиска корня уравнения
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <msup>
       <mi>x</mi>
@@ -1308,7 +1299,7 @@ the equation <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>=</mo>
     <mn>0</mn>
   </mrow>
-</math> between 1 and 2:
+</math> между 1 и 2:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">half-interval-method 
@@ -1318,18 +1309,18 @@ the equation <math xmlns="http://www.w3.org/1998/Math/MathML">
 </span><i><span class="lit">1.89306640625</span></i>
 </pre></div>
 
-<a id="Finding-fixed-points-of-functions"></a>
-<h5 class="subsubheading">Finding fixed points of functions</h5>
+<a id="Poisk-nepodvizhnykh-tochek-funkcii"></a>
+<h5 class="subsubheading">Поиск неподвижных точек функций</h5>
 
-<p>A number <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Число <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> is called a <a id="index-fixed-point"></a>
-<em>fixed point</em> of a function <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> называется <a id="index-nepodvizhnoi-tochkoi"></a>
+<em>неподвижной точкой</em> функции <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> if <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, если
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math>
-satisfies the equation <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> удовлетворяет уравнению <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
@@ -1338,13 +1329,13 @@ satisfies the equation <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>=</mo>
     <mi>x</mi>
   </mrow>
-</math>.  For some functions <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>f</mi>
-</math> we can
-locate a fixed point by beginning with an initial guess and applying <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Для некоторых функций <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
 </math>
-repeatedly,
+мы можем найти неподвижную точку, начав с начального предположения и многократно
+применяя <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>,
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
@@ -1386,11 +1377,11 @@ repeatedly,
   </mrow>
 </math>
 
-until the value does not change very much.  Using this idea, we can devise a
-procedure <code>fixed-point</code> that takes as inputs a function and an initial
-guess and produces an approximation to a fixed point of the function.  We apply
-the function repeatedly until we find two successive values whose difference is
-less than some prescribed tolerance:
+пока значение не перестанет сильно меняться.  Пользуясь этой идеей, мы можем
+придумать процедуру <code>fixed-point</code>, которая принимает в качестве входов функцию и
+начальное предположение и выдаёт приближение к неподвижной точке функции.  Мы
+применяем функцию многократно, пока не найдём два последовательных значения, разность
+которых меньше некоторого предписанного допуска:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> tolerance </span><span class="lit">0.00001</span><span class="clo">)</span><span class="pln">
@@ -1406,16 +1397,15 @@ less than some prescribed tolerance:
           </span><span class="opn">(</span><span class="pln">try next</span><span class="clo">))))</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">try first-guess</span><span class="clo">))</span></pre></div>
 
-<p>For example, we can use this method to approximate the fixed point of the
-cosine function, starting with 1 as an initial approximation:<a class="footnote_link" id="DOCF57" href="#FOOT57"><sup>57</sup></a>
+<p>Например, мы можем воспользоваться этим методом, чтобы приблизить неподвижную точку
+функции косинуса, начав с 1 как начального приближения:<a class="footnote_link" id="DOCF57" href="#FOOT57"><sup>57</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">fixed-point cos </span><span class="lit">1.0</span><span class="clo">)</span><span class="pln">
 </span><i><span class="lit">.7390822985224023</span></i>
 </pre></div>
 
-<p>Similarly, we can find a solution to the equation 
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Аналогично мы можем найти решение уравнения <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo>=</mo>
@@ -1435,16 +1425,16 @@ cosine function, starting with 1 as an initial approximation:<a class="footnote_
 </span><i><span class="lit">1.2587315962971173</span></i>
 </pre></div>
 
-<p>The fixed-point process is reminiscent of the process we used for finding
-square roots in <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.  Both are based on the idea of repeatedly
-improving a guess until the result satisfies some criterion.  In fact, we can
-readily formulate the square-root computation as a fixed-point search.
-Computing the square root of some number <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Процесс неподвижной точки напоминает процесс, который мы использовали для нахождения
+квадратных корней в <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.  Оба основаны на идее многократного улучшения
+предположения, пока результат не удовлетворит некоторому критерию.  В самом деле, мы
+легко можем сформулировать вычисление квадратного корня как поиск неподвижной точки.
+Вычисление квадратного корня некоторого числа <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> requires finding a <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> требует нахождения <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
-</math> such
-that <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>
+такого, что <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <msup>
       <mi>y</mi>
@@ -1453,7 +1443,7 @@ that <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>=</mo>
     <mi>x</mi>
   </mrow>
-</math>.  Putting this equation into the equivalent form 
+</math>.  Приведя это уравнение к эквивалентной форме
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
@@ -1464,8 +1454,8 @@ that <math xmlns="http://www.w3.org/1998/Math/MathML">
     </mrow>
     <mi>y</mi>
   </mrow>
-</math>, we recognize that we are looking for a fixed point of the
-function<a class="footnote_link" id="DOCF58" href="#FOOT58"><sup>58</sup></a> <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, мы узнаём, что ищем неподвижную точку
+функции<a class="footnote_link" id="DOCF58" href="#FOOT58"><sup>58</sup></a> <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -1475,21 +1465,21 @@ function<a class="footnote_link" id="DOCF58" href="#FOOT58"><sup>58</sup></a> <m
     </mrow>
     <mi>y</mi>
   </mrow>
-</math>, 
-and we can therefore try to compute square roots as
+</math>, и поэтому мы можем попытаться вычислять
+квадратные корни как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">fixed-point </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
                </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
 
-<p>Unfortunately, this fixed-point search does not converge.  Consider an initial
-guess <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>К сожалению, этот поиск неподвижной точки не сходится.  Рассмотрим начальное
+предположение <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>y</mi>
     <mn>1</mn>
   </msub>
-</math>.  The next guess is <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Следующее предположение — <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <msub>
       <mi>y</mi>
@@ -1505,8 +1495,8 @@ guess <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>1</mn>
     </msub>
   </mrow>
-</math> and the next guess is
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, а
+следующее — <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>y</mi>
     <mn>3</mn>
@@ -1544,24 +1534,24 @@ guess <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>y</mi>
     <mn>1</mn>
   </msub>
-</math>.  This results in an
-infinite loop in which the two guesses <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Это приводит к
+бесконечному циклу, в котором два предположения <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>y</mi>
     <mn>1</mn>
   </msub>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>y</mi>
     <mn>2</mn>
   </msub>
-</math> repeat over and
-over, oscillating about the answer.
+</math> повторяются
+снова и снова, колеблясь вокруг ответа.
 </p>
-<p>One way to control such oscillations is to prevent the guesses from changing so
-much.  Since the answer is always between our guess <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Один способ управлять такими колебаниями — не давать предположениям меняться так
+сильно.  Поскольку ответ всегда между нашим предположением <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mrow class="MJX-TeXAtom-ORD">
@@ -1569,21 +1559,11 @@ much.  Since the answer is always between our guess <math xmlns="http://www.w3.o
     </mrow>
     <mi>y</mi>
   </mrow>
-</math>, we
-can make a new guess that is not as far from <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>,
+мы можем сделать новое предположение, которое не так далеко от <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
-</math> as <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow class="MJX-TeXAtom-ORD">
-    <mi>x</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo>/</mo>
-    </mrow>
-    <mi>y</mi>
-  </mrow>
-</math> by averaging
+</math>, как
 <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>y</mi>
-</math> with <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mrow class="MJX-TeXAtom-ORD">
@@ -1591,10 +1571,20 @@ can make a new guess that is not as far from <math xmlns="http://www.w3.org/1998
     </mrow>
     <mi>y</mi>
   </mrow>
-</math>, so that the next guess after <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, усреднив <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
-</math> is 
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>, так что следующее предположение
+после <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> будет <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mrow class="MJX-TeXAtom-ORD">
       <mfrac>
@@ -1612,8 +1602,7 @@ can make a new guess that is not as far from <math xmlns="http://www.w3.org/1998
     <mi>y</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math> 
-instead of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> вместо <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mrow class="MJX-TeXAtom-ORD">
@@ -1621,9 +1610,9 @@ instead of <math xmlns="http://www.w3.org/1998/Math/MathML">
     </mrow>
     <mi>y</mi>
   </mrow>
-</math>.  The process of making such a sequence of
-guesses is simply the process of looking for a fixed point of 
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Процесс
+построения такой последовательности предположений — это просто процесс поиска
+неподвижной точки <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
   <mo stretchy="false">↦<!-- ↦ --></mo>
   <mrow class="MJX-TeXAtom-ORD">
@@ -1643,7 +1632,7 @@ guesses is simply the process of looking for a fixed point of
     <mi>y</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>: 
+</math>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
@@ -1651,7 +1640,7 @@ guesses is simply the process of looking for a fixed point of
    </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">average y </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x y</span><span class="clo">)))</span><span class="pln">
    </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
 
-<p>(Note that <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>(Заметьте, что <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
   <mo>=</mo>
   <mrow class="MJX-TeXAtom-ORD">
@@ -1671,8 +1660,8 @@ guesses is simply the process of looking for a fixed point of
     <mi>y</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math> is a simple transformation of the
-equation <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — простое преобразование уравнения
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo>=</mo>
@@ -1683,24 +1672,24 @@ equation <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>y</mi>
     <mo>;</mo>
   </mrow>
-</math> to derive it, add <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> чтобы вывести его, прибавьте <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
-</math> to both sides of the
-equation and divide by 2.)
+</math> к обеим сторонам уравнения
+и поделите на 2.)
 </p>
-<p>With this modification, the square-root procedure works.  In fact, if we
-unravel the definitions, we can see that the sequence of approximations to the
-square root generated here is precisely the same as the one generated by our
-original square-root procedure of <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.  This approach of
-averaging successive approximations to a solution, a technique that we call
-<a id="index-average-damping"></a>
-<em>average damping</em>, often aids the convergence of fixed-point searches.
+<p>С этой модификацией процедура квадратного корня работает.  В самом деле, если
+размотать определения, можно увидеть, что порождаемая здесь последовательность
+приближений к квадратному корню в точности та же, что и порождаемая нашей исходной
+процедурой квадратного корня из <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.  Этот подход усреднения последовательных
+приближений к решению — приём, который мы называем <a id="index-usrednionnym-zatukhaniem"></a>
+<em>усреднённым затуханием</em>, —
+часто помогает сходимости поисков неподвижной точки.
 </p>
 <blockquote>
-<p><strong><a id="Exercise-1_002e35"></a>Exercise 1.35:</strong> Show that the golden ratio
+<p><strong><a id="Exercise-1_002e35"></a>Exercise 1.35:</strong> Покажите, что золотое сечение
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>φ<!-- φ --></mi>
-</math> (<a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>) is a fixed point of the transformation 
+</math> (<a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>) — неподвижная точка преобразования
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
@@ -1713,17 +1702,17 @@ averaging successive approximations to a solution, a technique that we call
     </mrow>
     <mi>x</mi>
   </mrow>
-</math>, and use this fact to compute <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, и воспользуйтесь этим фактом, чтобы вычислить
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>φ<!-- φ --></mi>
-</math> by means 
-of the <code>fixed-point</code> procedure.
+</math> с помощью процедуры <code>fixed-point</code>.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e36"></a>Exercise 1.36:</strong> Modify <code>fixed-point</code> so that
-it prints the sequence of approximations it generates, using the <code>newline</code>
-and <code>display</code> primitives shown in <a href="1_002e2.xhtml#Exercise-1_002e22">Exercise 1.22</a>.  Then find a
-solution to <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-1_002e36"></a>Exercise 1.36:</strong> Измените <code>fixed-point</code> так,
+чтобы она печатала порождаемую ею последовательность приближений, используя примитивы
+<code>newline</code> и <code>display</code>, показанные в <a href="1_002e2.xhtml#Exercise-1_002e22">Exercise 1.22</a>.  Затем найдите
+решение <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <msup>
       <mi>x</mi>
@@ -1732,7 +1721,8 @@ solution to <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>=</mo>
     <mn>1000</mn>
   </mrow>
-</math> by finding a fixed point of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, найдя неподвижную точку
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
   <mo stretchy="false">↦<!-- ↦ --></mo>
   <mrow class="MJX-TeXAtom-ORD">
@@ -1750,10 +1740,10 @@ solution to <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>x</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>.  (Use Scheme’s primitive <code>log</code>
-procedure, which computes natural logarithms.)  Compare the number of steps
-this takes with and without average damping.  (Note that you cannot start
-<code>fixed-point</code> with a guess of 1, as this would cause division by
+</math>.  (Используйте примитивную процедуру Scheme
+<code>log</code>, вычисляющую натуральные логарифмы.)  Сравните число шагов, которое это
+занимает, с усреднённым затуханием и без него.  (Заметьте, что вы не можете запустить
+<code>fixed-point</code> с предположением 1, так как это привело бы к делению на
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>log</mi>
@@ -1771,8 +1761,8 @@ this takes with and without average damping.  (Note that you cannot start
 <p><strong><a id="Exercise-1_002e37"></a>Exercise 1.37:</strong> 
 </p>
 <ol>
-<li> An infinite <a id="index-continued-fraction"></a>
-<em>continued fraction</em> is an expression of the form
+<li> Бесконечная <a id="index-nepreryvnaya-drobx"></a>
+<em>непрерывная дробь</em> — это выражение вида
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mi>f</mi>
@@ -1824,18 +1814,18 @@ this takes with and without average damping.  (Note that you cannot start
   </mrow>
 </math>
 
-As an example, one can show that the infinite continued fraction expansion with
-the <math xmlns="http://www.w3.org/1998/Math/MathML">
+В качестве примера можно показать, что разложение в бесконечную непрерывную дробь, у
+которого все <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>N</mi>
     <mi>i</mi>
   </msub>
-</math> and the <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>D</mi>
     <mi>i</mi>
   </msub>
-</math> all equal to 1 produces <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> равны 1, даёт <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mn>1</mn>
     <mrow class="MJX-TeXAtom-ORD">
@@ -1843,15 +1833,14 @@ the <math xmlns="http://www.w3.org/1998/Math/MathML">
     </mrow>
     <mi>φ<!-- φ --></mi>
   </mrow>
-</math>, where
+</math>, где
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>φ<!-- φ --></mi>
-</math> is the golden ratio (described in <a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>).  One way to
-approximate an infinite continued fraction is to truncate the expansion after a
-given number of terms.  Such a truncation—a so-called <a id="index-k_002dterm"></a>
-finite continued fraction
-<em><i>k</i>-term
-finite continued fraction</em>—has the form
+</math> — золотое сечение (описанное в <a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>).  Один способ приблизить
+бесконечную непрерывную дробь — оборвать разложение после заданного числа членов.
+Такой обрыв — так называемая <a id="index-k_002dchlennaya-konechnaya-nepreryvnaya-drobx"></a>
+<em><i>k</i>-членная конечная непрерывная дробь</em> —
+имеет вид
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
@@ -1892,25 +1881,25 @@ finite continued fraction</em>—has the form
   </mrow>
 </math>
 
-Suppose that <code>n</code> and <code>d</code> are procedures of one argument (the term
-index <math xmlns="http://www.w3.org/1998/Math/MathML">
+Предположим, что <code>n</code> и <code>d</code> — процедуры одного аргумента (индекса члена
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>i</mi>
-</math>) that return the <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>), возвращающие <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>N</mi>
     <mi>i</mi>
   </msub>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>D</mi>
     <mi>i</mi>
   </msub>
-</math> of the terms of the
-continued fraction.  Define a procedure <code>cont-frac</code> such that evaluating
-<code>(cont-frac n d k)</code> computes the value of the <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> членов непрерывной дроби.  Определите
+процедуру <code>cont-frac</code> такую, чтобы вычисление <code>(cont-frac n d k)</code> вычисляло
+значение <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>k</mi>
-</math>-term finite continued
-fraction.  Check your procedure by approximating <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>-членной конечной непрерывной дроби.  Проверьте свою процедуру,
+приближая <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mn>1</mn>
     <mrow class="MJX-TeXAtom-ORD">
@@ -1918,57 +1907,57 @@ fraction.  Check your procedure by approximating <math xmlns="http://www.w3.org/
     </mrow>
     <mi>φ<!-- φ --></mi>
   </mrow>
-</math> using
+</math> с помощью
 
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">cont-frac </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">i</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1.0</span><span class="clo">)</span><span class="pln">
            </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">i</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1.0</span><span class="clo">)</span><span class="pln">
            k</span><span class="clo">)</span></pre></div>
 
-<p>for successive values of <code>k</code>.  How large must you make <code>k</code> in order
-to get an approximation that is accurate to 4 decimal places?
+<p>для последовательных значений <code>k</code>.  Насколько большим нужно сделать <code>k</code>,
+чтобы получить приближение, точное до 4 десятичных знаков?
 </p>
-</li><li> If your <code>cont-frac</code> procedure generates a recursive process, write one
-that generates an iterative process.  If it generates an iterative process,
-write one that generates a recursive process.
+</li><li> Если ваша процедура <code>cont-frac</code> порождает рекурсивный процесс, напишите такую,
+которая порождает итеративный процесс.  Если она порождает итеративный процесс,
+напишите такую, которая порождает рекурсивный процесс.
 
 </li></ol>
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e38"></a>Exercise 1.38:</strong> In 1737, the Swiss mathematician
-Leonhard Euler published a memoir <cite>De Fractionibus Continuis</cite>, which
-included a continued fraction expansion for <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-1_002e38"></a>Exercise 1.38:</strong> В 1737 году швейцарский математик
+Леонард Эйлер опубликовал мемуар <cite>De Fractionibus Continuis</cite>, который включал
+разложение в непрерывную дробь для <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>e</mi>
     <mo>−<!-- − --></mo>
     <mn>2</mn>
   </mrow>
-</math>, where <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>e</mi>
-</math> is the base
-of the natural logarithms.  In this fraction, the <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — основание
+натуральных логарифмов.  В этой дроби все <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>N</mi>
     <mi>i</mi>
   </msub>
-</math> are all 1, and
-the <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> равны 1, а <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>D</mi>
     <mi>i</mi>
   </msub>
-</math> are successively 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, ….
-Write a program that uses your <code>cont-frac</code> procedure from <a href="#Exercise-1_002e37">Exercise 1.37</a> 
-to approximate <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>
+последовательно равны 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, ….  Напишите программу,
+использующую вашу процедуру <code>cont-frac</code> из <a href="#Exercise-1_002e37">Exercise 1.37</a>, чтобы приблизить
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>e</mi>
-</math>, based on Euler’s expansion.
+</math>, на основе разложения Эйлера.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e39"></a>Exercise 1.39:</strong> A continued fraction
-representation of the tangent function was published in 1770 by the German
-mathematician J.H. Lambert:
+<p><strong><a id="Exercise-1_002e39"></a>Exercise 1.39:</strong> Представление функции тангенса
+непрерывной дробью было опубликовано в 1770 году немецким математиком
+И. Г. Ламбертом:
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
@@ -2013,30 +2002,30 @@ mathematician J.H. Lambert:
   </mrow>
 </math>
 
-where <math xmlns="http://www.w3.org/1998/Math/MathML">
+где <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> is in radians.  Define a procedure <code>(tan-cf x k)</code> that
-computes an approximation to the tangent function based on Lambert’s formula.
-<code>k</code> specifies the number of terms to compute, as in <a href="#Exercise-1_002e37">Exercise 1.37</a>.
+</math> в радианах.  Определите процедуру <code>(tan-cf x k)</code>, вычисляющую
+приближение к функции тангенса на основе формулы Ламберта.  <code>k</code> задаёт число
+вычисляемых членов, как в <a href="#Exercise-1_002e37">Exercise 1.37</a>.
 </p></blockquote>
 
 <a id="g_t1_002e3_002e4"></a>
-<a id="Procedures-as-Returned-Values"></a>
-<h4 class="subsection"><span class="secnum">1.3.4</span><span class="sectitle">Procedures as Returned Values</span></h4>
+<a id="Procedury-kak-vozvrashchaemye-znacheniya"></a>
+<h4 class="subsection"><span class="secnum">1.3.4</span><span class="sectitle">Процедуры как возвращаемые значения</span></h4>
 
-<p>The above examples demonstrate how the ability to pass procedures as arguments
-significantly enhances the expressive power of our programming language.  We
-can achieve even more expressive power by creating procedures whose returned
-values are themselves procedures.
+<p>Приведённые выше примеры показывают, как способность передавать процедуры в качестве
+аргументов значительно усиливает выразительную силу нашего языка программирования.  Мы
+можем достичь ещё большей выразительной силы, создавая процедуры, возвращаемые
+значения которых сами являются процедурами.
 </p>
-<p>We can illustrate this idea by looking again at the fixed-point example
-described at the end of <a href="#g_t1_002e3_002e3">1.3.3</a>.  We formulated a new version of
-the square-root procedure as a fixed-point search, starting with the
-observation that <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Мы можем проиллюстрировать эту идею, снова взглянув на пример с неподвижной точкой,
+описанный в конце <a href="#g_t1_002e3_002e3">1.3.3</a>.  Мы сформулировали новую версию процедуры квадратного
+корня как поиск неподвижной точки, начав с наблюдения, что <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msqrt>
     <mi>x</mi>
   </msqrt>
-</math> is a fixed-point of the function <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> —
+неподвижная точка функции <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2046,16 +2035,17 @@ observation that <math xmlns="http://www.w3.org/1998/Math/MathML">
     </mrow>
     <mi>y</mi>
   </mrow>
-</math>.  Then we used average damping to make the approximations converge.
-Average damping is a useful general technique in itself.  Namely, given a
-function <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Затем мы воспользовались
+усреднённым затуханием, чтобы заставить приближения сходиться.  Усреднённое затухание
+— полезный обобщённый приём сам по себе.  А именно, для данной функции <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math>, we consider the function whose value at <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> мы
+рассматриваем функцию, значение которой в <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> is equal to the
-average of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> равно среднему <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
@@ -2064,37 +2054,37 @@ average of <math xmlns="http://www.w3.org/1998/Math/MathML">
   </mrow>
 </math>.
 </p>
-<p>We can express the idea of average damping by means of the following procedure:
+<p>Мы можем выразить идею усреднённого затухания с помощью следующей процедуры:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">average-damp f</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> 
     </span><span class="opn">(</span><span class="pln">average x </span><span class="opn">(</span><span class="pln">f x</span><span class="clo">))))</span></pre></div>
 
-<p><code>Average-damp</code> is a procedure that takes as its argument a procedure
-<code>f</code> and returns as its value a procedure (produced by the <code>lambda</code>)
-that, when applied to a number <code>x</code>, produces the average of <code>x</code> and
-<code>(f x)</code>.  For example, applying <code>average-damp</code> to the <code>square</code>
-procedure produces a procedure whose value at some number <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><code>Average-damp</code> — это процедура, которая принимает в качестве аргумента процедуру
+<code>f</code> и возвращает в качестве значения процедуру (порождённую <code>lambda</code>),
+которая, будучи применена к числу <code>x</code>, выдаёт среднее <code>x</code> и <code>(f x)</code>.
+Например, применение <code>average-damp</code> к процедуре <code>square</code> даёт процедуру,
+значение которой в некотором числе <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> is the average
-of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> есть среднее <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msup>
     <mi>x</mi>
     <mn>2</mn>
   </msup>
-</math>.  Applying this resulting procedure to 10 returns the
-average of 10 and 100, or 55:<a class="footnote_link" id="DOCF59" href="#FOOT59"><sup>59</sup></a>
+</math>.
+Применение этой получившейся процедуры к 10 возвращает среднее 10 и 100, то есть
+55:<a class="footnote_link" id="DOCF59" href="#FOOT59"><sup>59</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">average-damp square</span><span class="clo">)</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
 </span><i><span class="lit">55</span></i>
 </pre></div>
 
-<p>Using <code>average-damp</code>, we can reformulate the square-root procedure as
-follows:
+<p>Пользуясь <code>average-damp</code>, мы можем переформулировать процедуру квадратного корня
+так:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
@@ -2103,8 +2093,8 @@ follows:
     </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x y</span><span class="clo">)))</span><span class="pln">
    </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
 
-<p>Notice how this formulation makes explicit the three ideas in the method:
-fixed-point search, average damping, and the function <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Заметьте, как эта формулировка делает явными три идеи метода: поиск неподвижной точки,
+усреднённое затухание и функцию <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2114,19 +2104,18 @@ fixed-point search, average damping, and the function <math xmlns="http://www.w3
     </mrow>
     <mi>y</mi>
   </mrow>
-</math>.
-It is instructive to compare this formulation of the square-root method with
-the original version given in <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.  Bear in mind that these
-procedures express the same process, and notice how much clearer the idea
-becomes when we express the process in terms of these abstractions.  In
-general, there are many ways to formulate a process as a procedure.
-Experienced programmers know how to choose procedural formulations that are
-particularly perspicuous, and where useful elements of the process are exposed
-as separate entities that can be reused in other applications.  As a simple
-example of reuse, notice that the cube root of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Поучительно сравнить эту
+формулировку метода квадратного корня с исходной версией, данной в <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.
+Помните, что эти процедуры выражают один и тот же процесс, и заметьте, насколько яснее
+становится идея, когда мы выражаем процесс в терминах этих абстракций.  Вообще,
+существует много способов сформулировать процесс как процедуру.  Опытные программисты
+умеют выбирать процедурные формулировки, которые особенно прозрачны и в которых
+полезные элементы процесса выставлены как отдельные сущности, пригодные для повторного
+использования в других приложениях.  Как простой пример повторного использования,
+заметьте, что кубический корень <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> is a fixed point of the
-function <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — неподвижная точка функции
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2139,8 +2128,8 @@ function <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>2</mn>
     </msup>
   </mrow>
-</math>, so we can immediately generalize our
-square-root procedure to one that extracts cube roots:<a class="footnote_link" id="DOCF60" href="#FOOT60"><sup>60</sup></a>
+</math>, так что мы можем немедленно обобщить нашу процедуру
+квадратного корня до процедуры, извлекающей кубические корни:<a class="footnote_link" id="DOCF60" href="#FOOT60"><sup>60</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube-root x</span><span class="clo">)</span><span class="pln">
@@ -2150,13 +2139,12 @@ square-root procedure to one that extracts cube roots:<a class="footnote_link" i
       </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">))))</span><span class="pln">
    </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
 
-<a id="Newton_0027s-method"></a>
-<h5 class="subsubheading">Newton’s method</h5>
+<a id="Metod-Nxiutona"></a>
+<h5 class="subsubheading">Метод Ньютона</h5>
 
-<p>When we first introduced the square-root procedure, in <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>, we
-mentioned that this was a special case of <a id="index-Newton_0027s-method"></a>
-<em>Newton’s method</em>.  
-If <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Когда мы впервые ввели процедуру квадратного корня, в <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>, мы упомянули, что
+это частный случай <a id="index-metoda-Nxiutona"></a>
+<em>метода Ньютона</em>.  Если <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2165,8 +2153,8 @@ If <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>x</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math> is a differentiable function, then a solution of the equation
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> —
+дифференцируемая функция, то решение уравнения <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>g</mi>
     <mo stretchy="false">(</mo>
@@ -2175,7 +2163,8 @@ If <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>=</mo>
     <mn>0</mn>
   </mrow>
-</math> is a fixed point of the function <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> есть неподвижная
+точка функции <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2184,7 +2173,7 @@ If <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>x</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math> where
+</math>, где
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
@@ -2215,7 +2204,7 @@ If <math xmlns="http://www.w3.org/1998/Math/MathML">
   </mfrac>
 </math>
 
-and <math xmlns="http://www.w3.org/1998/Math/MathML">
+а <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>D</mi>
     <mi>g</mi>
@@ -2223,25 +2212,26 @@ and <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>x</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math> is the derivative of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — производная <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>g</mi>
-</math> evaluated at <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, вычисленная в <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math>.  Newton’s
-method is the use of the fixed-point method we saw above to approximate a
-solution of the equation by finding a fixed point of the function
+</math>.  Метод Ньютона —
+это использование метода неподвижной точки, который мы видели выше, для приближения
+решения уравнения путём нахождения неподвижной точки функции
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
   </mrow>
 </math>.<a class="footnote_link" id="DOCF61" href="#FOOT61"><sup>61</sup></a>
 </p>
-<p>For many functions <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Для многих функций <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>g</mi>
-</math> and for sufficiently good initial guesses for <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и для достаточно хороших начальных предположений о <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math>,
-Newton’s method converges very rapidly to a solution of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>
+метод Ньютона очень быстро сходится к решению
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>g</mi>
     <mo stretchy="false">(</mo>
@@ -2252,10 +2242,10 @@ Newton’s method converges very rapidly to a solution of <math xmlns="http://ww
   </mrow>
 </math>.<a class="footnote_link" id="DOCF62" href="#FOOT62"><sup>62</sup></a>
 </p>
-<p>In order to implement Newton’s method as a procedure, we must first express the
-idea of derivative.  Note that “derivative,” like average damping, is
-something that transforms a function into another function.  For instance, the
-derivative of the function <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Чтобы реализовать метод Ньютона как процедуру, мы должны сначала выразить идею
+производной.  Заметьте, что «производная», как и усреднённое затухание, — это нечто,
+преобразующее одну функцию в другую.  Например, производная функции
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2264,7 +2254,7 @@ derivative of the function <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>3</mn>
     </msup>
   </mrow>
-</math> is the function <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — это функция <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2274,31 +2264,31 @@ derivative of the function <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>2</mn>
     </msup>
   </mrow>
-</math>.
-In general, if <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Вообще, если <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>g</mi>
-</math> is a function and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> —
+функция, а <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>d</mi>
     <mi>x</mi>
   </mrow>
-</math> is a small number,
-then the derivative <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — малое число, то производная <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>D</mi>
     <mi>g</mi>
   </mrow>
-</math> of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> функции <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>g</mi>
-</math> is the function whose value at any
-number <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> —
+это функция, значение которой в любом числе <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> is given (in the limit of small <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> задаётся (в пределе малого
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>d</mi>
     <mi>x</mi>
   </mrow>
-</math>) by
+</math>) выражением
 
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mi>D</mi>
@@ -2334,13 +2324,13 @@ number <math xmlns="http://www.w3.org/1998/Math/MathML">
   </mrow>
 </math>
 
-Thus, we can express the idea of derivative (taking <math xmlns="http://www.w3.org/1998/Math/MathML">
+Таким образом, мы можем выразить идею производной (взяв <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>d</mi>
     <mi>x</mi>
   </mrow>
-</math> to be, say,
-0.00001) as the procedure
+</math> равным, скажем,
+0.00001) как процедуру
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">deriv g</span><span class="clo">)</span><span class="pln">
@@ -2348,14 +2338,14 @@ Thus, we can express the idea of derivative (taking <math xmlns="http://www.w3.o
     </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">g </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x dx</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pln">g x</span><span class="clo">))</span><span class="pln">
        dx</span><span class="clo">)))</span></pre></div>
 
-<p>along with the definition
+<p>вместе с определением
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> dx </span><span class="lit">0.00001</span><span class="clo">)</span></pre></div>
 
-<p>Like <code>average-damp</code>, <code>deriv</code> is a procedure that takes a procedure as
-argument and returns a procedure as value.  For example, to approximate the
-derivative of <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Как и <code>average-damp</code>, <code>deriv</code> — это процедура, которая принимает процедуру
+в качестве аргумента и возвращает процедуру в качестве значения.  Например, чтобы
+приблизить производную <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2364,7 +2354,8 @@ derivative of <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>3</mn>
     </msup>
   </mrow>
-</math> at 5 (whose exact value is 75) we can evaluate
+</math> в 5 (чьё точное значение равно 75), мы
+можем вычислить
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x x</span><span class="clo">))</span><span class="pln">
@@ -2373,8 +2364,7 @@ derivative of <math xmlns="http://www.w3.org/1998/Math/MathML">
 </span><i><span class="lit">75.00014999664018</span></i>
 </pre></div>
 
-<p>With the aid of <code>deriv</code>, we can express Newton’s method as a fixed-point
-process:
+<p>С помощью <code>deriv</code> мы можем выразить метод Ньютона как процесс неподвижной точки:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">newton-transform g</span><span class="clo">)</span><span class="pln">
@@ -2386,14 +2376,13 @@ process:
   </span><span class="opn">(</span><span class="pln">fixed-point </span><span class="opn">(</span><span class="pln">newton-transform g</span><span class="clo">)</span><span class="pln"> 
                guess</span><span class="clo">))</span></pre></div>
 
-<p>The <code>newton-transform</code> procedure expresses the formula at the beginning of
-this section, and <code>newtons-method</code> is readily defined in terms of this.
-It takes as arguments a procedure that computes the function for which we want
-to find a zero, together with an initial guess.  For instance, to find the
-square root of <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Процедура <code>newton-transform</code> выражает формулу из начала этого раздела, а
+<code>newtons-method</code> легко определяется через неё.  Она принимает в качестве
+аргументов процедуру, вычисляющую функцию, для которой мы хотим найти нуль, вместе с
+начальным предположением.  Например, чтобы найти квадратный корень <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math>, we can use Newton’s method to find a zero of the function
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, мы можем
+воспользоваться методом Ньютона для нахождения нуля функции <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2404,9 +2393,10 @@ square root of <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>−<!-- − --></mo>
     <mi>x</mi>
   </mrow>
-</math> starting with an initial guess of 1.<a class="footnote_link" id="DOCF63" href="#FOOT63"><sup>63</sup></a>
+</math>,
+начав с начального предположения 1.<a class="footnote_link" id="DOCF63" href="#FOOT63"><sup>63</sup></a>
 </p>
-<p>This provides yet another form of the square-root procedure:
+<p>Это даёт ещё одну форму процедуры квадратного корня:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
@@ -2415,27 +2405,27 @@ square root of <math xmlns="http://www.w3.org/1998/Math/MathML">
      </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> 
    </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
 
-<a id="Abstractions-and-first_002dclass-procedures"></a>
-<h5 class="subsubheading">Abstractions and first-class procedures</h5>
+<a id="Abstrakcii-i-pervoklassnye-procedury"></a>
+<h5 class="subsubheading">Абстракции и первоклассные процедуры</h5>
 
-<p>We’ve seen two ways to express the square-root computation as an instance of a
-more general method, once as a fixed-point search and once using Newton’s
-method.  Since Newton’s method was itself expressed as a fixed-point process,
-we actually saw two ways to compute square roots as fixed points.  Each method
-begins with a function and finds a fixed point of some transformation of the
-function.  We can express this general idea itself as a procedure:
+<p>Мы видели два способа выразить вычисление квадратного корня как частный случай более
+обобщённого метода: один раз как поиск неподвижной точки и один раз с помощью метода
+Ньютона.  Поскольку сам метод Ньютона был выражен как процесс неподвижной точки, мы на
+самом деле видели два способа вычислять квадратные корни как неподвижные точки.  Каждый
+метод начинается с функции и находит неподвижную точку некоторого преобразования этой
+функции.  Мы можем выразить саму эту обобщённую идею как процедуру:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fixed-point-of-transform 
          g transform guess</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">fixed-point </span><span class="opn">(</span><span class="pln">transform g</span><span class="clo">)</span><span class="pln"> guess</span><span class="clo">))</span></pre></div>
 
-<p>This very general procedure takes as its arguments a procedure <code>g</code> that
-computes some function, a procedure that transforms <code>g</code>, and an initial
-guess.  The returned result is a fixed point of the transformed function.
+<p>Эта очень обобщённая процедура принимает в качестве своих аргументов процедуру
+<code>g</code>, вычисляющую некоторую функцию, процедуру, преобразующую <code>g</code>, и начальное
+предположение.  Возвращаемый результат — неподвижная точка преобразованной функции.
 </p>
-<p>Using this abstraction, we can recast the first square-root computation from
-this section (where we look for a fixed point of the average-damped version of
+<p>Пользуясь этой абстракцией, мы можем переформулировать первое вычисление квадратного
+корня из этого раздела (где мы ищем неподвижную точку усреднённо-затухающей версии
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
@@ -2446,7 +2436,7 @@ this section (where we look for a fixed point of the average-damped version of
     </mrow>
     <mi>y</mi>
   </mrow>
-</math>) as an instance of this general method:
+</math>) как частный случай этого обобщённого метода:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
@@ -2455,9 +2445,9 @@ this section (where we look for a fixed point of the average-damped version of
    average-damp
    </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
 
-<p>Similarly, we can express the second square-root computation from this section
-(an instance of Newton’s method that finds a fixed point of the Newton
-transform of <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Аналогично мы можем выразить второе вычисление квадратного корня из этого раздела
+(частный случай метода Ньютона, который находит неподвижную точку ньютонова
+преобразования <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2468,7 +2458,7 @@ transform of <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>−<!-- − --></mo>
     <mi>x</mi>
   </mrow>
-</math>) as
+</math>) как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
@@ -2477,53 +2467,51 @@ transform of <math xmlns="http://www.w3.org/1998/Math/MathML">
    newton-transform
    </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
 
-<p>We began section <a href="#g_t1_002e3">1.3</a> with the observation that compound procedures are a
-crucial abstraction mechanism, because they permit us to express general
-methods of computing as explicit elements in our programming language.  Now
-we’ve seen how higher-order procedures permit us to manipulate these general
-methods to create further abstractions.
+<p>Мы начали раздел <a href="#g_t1_002e3">1.3</a> с наблюдения, что составные процедуры — критически важный
+механизм абстракции, поскольку они позволяют нам выражать обобщённые методы вычисления
+как явные элементы нашего языка программирования.  Теперь мы увидели, как процедуры
+высшего порядка позволяют нам манипулировать этими обобщёнными методами, чтобы
+создавать дальнейшие абстракции.
 </p>
-<p>As programmers, we should be alert to opportunities to identify the underlying
-abstractions in our programs and to build upon them and generalize them to
-create more powerful abstractions.  This is not to say that one should always
-write programs in the most abstract way possible; expert programmers know how
-to choose the level of abstraction appropriate to their task.  But it is
-important to be able to think in terms of these abstractions, so that we can be
-ready to apply them in new contexts.  The significance of higher-order
-procedures is that they enable us to represent these abstractions explicitly as
-elements in our programming language, so that they can be handled just like
-other computational elements.
+<p>Как программисты, мы должны быть внимательны к возможностям выявить лежащие в основе
+наших программ абстракции, строить на них и обобщать их, чтобы создавать более мощные
+абстракции.  Это не значит, что программы всегда следует писать в максимально
+абстрактном виде; знатоки-программисты умеют выбирать уровень абстракции, подходящий
+их задаче.  Но важно уметь мыслить в терминах этих абстракций, чтобы быть готовыми
+применить их в новых контекстах.  Значимость процедур высшего порядка в том, что они
+позволяют нам представлять эти абстракции явно, как элементы нашего языка
+программирования, так что с ними можно обращаться так же, как с прочими вычислительными
+элементами.
 </p>
-<p>In general, programming languages impose restrictions on the ways in which
-computational elements can be manipulated.  Elements with the fewest
-restrictions are said to have <a id="index-first_002dclass"></a>
-<em>first-class</em> status.  Some of the
-“rights and privileges” of first-class elements are:<a class="footnote_link" id="DOCF64" href="#FOOT64"><sup>64</sup></a>
+<p>Вообще, языки программирования налагают ограничения на способы, которыми можно
+манипулировать вычислительными элементами.  Об элементах с наименьшими ограничениями
+говорят, что они обладают <a id="index-pervoklassnym"></a>
+<em>первоклассным</em> статусом.  Вот некоторые «права и
+привилегии» первоклассных элементов:<a class="footnote_link" id="DOCF64" href="#FOOT64"><sup>64</sup></a>
 </p>
 <ul>
-<li> They may be named by variables.
+<li> их можно именовать переменными;
 
-</li><li> They may be passed as arguments to procedures.
+</li><li> их можно передавать как аргументы процедурам;
 
-</li><li> They may be returned as the results of procedures.
+</li><li> их можно возвращать как результаты процедур;
 
-</li><li> They may be included in data structures.<a class="footnote_link" id="DOCF65" href="#FOOT65"><sup>65</sup></a>
+</li><li> их можно включать в структуры данных.<a class="footnote_link" id="DOCF65" href="#FOOT65"><sup>65</sup></a>
 
 </li></ul>
 
-<p>Lisp, unlike other common programming languages, awards procedures full
-first-class status.  This poses challenges for efficient implementation, but
-the resulting gain in expressive power is enormous.<a class="footnote_link" id="DOCF66" href="#FOOT66"><sup>66</sup></a>
+<p>Lisp, в отличие от других распространённых языков программирования, наделяет процедуры
+полным первоклассным статусом.  Это создаёт трудности для эффективной реализации, но
+получающийся выигрыш в выразительной силе огромен.<a class="footnote_link" id="DOCF66" href="#FOOT66"><sup>66</sup></a>
 </p>
 <blockquote>
-<p><strong><a id="Exercise-1_002e40"></a>Exercise 1.40:</strong> Define a procedure <code>cubic</code>
-that can be used together with the <code>newtons-method</code> procedure in
-expressions of the form
+<p><strong><a id="Exercise-1_002e40"></a>Exercise 1.40:</strong> Определите процедуру <code>cubic</code>,
+которую можно использовать вместе с процедурой <code>newtons-method</code> в выражениях вида
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">newtons-method </span><span class="opn">(</span><span class="pln">cubic a b c</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span></pre></div>
 
-<p>to approximate zeros of the cubic <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>для приближения нулей кубического многочлена <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <msup>
       <mi>x</mi>
@@ -2545,29 +2533,29 @@ expressions of the form
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e41"></a>Exercise 1.41:</strong> Define a procedure <code>double</code>
-that takes a procedure of one argument as argument and returns a procedure that
-applies the original procedure twice.  For example, if <code>inc</code> is a
-procedure that adds 1 to its argument, then <code>(double inc)</code> should be a
-procedure that adds 2.  What value is returned by
+<p><strong><a id="Exercise-1_002e41"></a>Exercise 1.41:</strong> Определите процедуру <code>double</code>,
+которая принимает в качестве аргумента процедуру одного аргумента и возвращает
+процедуру, применяющую исходную процедуру дважды.  Например, если <code>inc</code> —
+процедура, прибавляющая 1 к своему аргументу, то <code>(double inc)</code> должна быть
+процедурой, прибавляющей 2.  Какое значение возвращает
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(((</span><span class="pln">double </span><span class="opn">(</span><span class="pln">double double</span><span class="clo">))</span><span class="pln"> inc</span><span class="clo">)</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span></pre></div>
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e42"></a>Exercise 1.42:</strong> Let <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-1_002e42"></a>Exercise 1.42:</strong> Пусть <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>g</mi>
-</math> be two
-one-argument functions.  The <a id="index-composition"></a>
-<em>composition</em> <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — две функции
+одного аргумента.  <a id="index-Kompoziciya"></a>
+<em>Композиция</em> <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> after <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> после <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>g</mi>
-</math> is defined
-to be the function <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> определяется как
+функция <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2579,9 +2567,9 @@ to be the function <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo stretchy="false">)</mo>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>.  Define a procedure
-<code>compose</code> that implements composition.  For example, if <code>inc</code> is a
-procedure that adds 1 to its argument,
+</math>.  Определите процедуру <code>compose</code>,
+реализующую композицию.  Например, если <code>inc</code> — процедура, прибавляющая 1 к
+своему аргументу,
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">compose square inc</span><span class="clo">)</span><span class="pln"> </span><span class="lit">6</span><span class="clo">)</span><span class="pln">
@@ -2590,25 +2578,20 @@ procedure that adds 1 to its argument,
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e43"></a>Exercise 1.43:</strong> If <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-1_002e43"></a>Exercise 1.43:</strong> Если <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> is a numerical function
-and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — числовая функция, а
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>n</mi>
-</math> is a positive integer, then we can form the <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>n</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mtext>th</mtext>
-    </mrow>
-  </msup>
-</math> repeated
-application of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — положительное целое число, то мы можем образовать <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-кратное
+повторное применение <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math>, which is defined to be the function whose value at <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, которое определяется как функция, значение которой в
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math>
-is <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> равно <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
@@ -2625,10 +2608,10 @@ is <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo stretchy="false">)</mo>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>.  For example, if <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Например, если <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> is the
-function <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — функция
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2636,17 +2619,12 @@ function <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>+</mo>
     <mn>1</mn>
   </mrow>
-</math>, then the <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>n</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mtext>th</mtext>
-    </mrow>
-  </msup>
-</math> repeated application of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, то <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-кратное повторное применение <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> is
-the function <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — это
+функция <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2654,70 +2632,58 @@ the function <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mo>+</mo>
     <mi>n</mi>
   </mrow>
-</math>.  If <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Если <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> is the operation of squaring a
-number, then the <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>n</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mtext>th</mtext>
-    </mrow>
-  </msup>
-</math> repeated application of <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>f</mi>
-</math> is the function that
-raises its argument to the <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow class="MJX-TeXAtom-ORD">
-    <msup>
-      <mn>2</mn>
-      <mi>n</mi>
-    </msup>
-    <mtext>-th</mtext>
-  </mrow>
-</math> power.  Write a procedure that takes as
-inputs a procedure that computes <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>f</mi>
-</math> and a positive integer <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — операция возведения числа в
+квадрат, то <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>n</mi>
-</math> and returns
-the procedure that computes the <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>n</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mtext>th</mtext>
-    </mrow>
-  </msup>
-</math> repeated application of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>-кратное повторное применение <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math>.  Your
-procedure should be able to be used as follows:
+</math> — это функция, возводящая
+свой аргумент в степень <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mn>2</mn>
+    <mi>n</mi>
+  </msup>
+</math>.  Напишите процедуру, которая принимает на вход
+процедуру, вычисляющую <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, и положительное целое число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и возвращает
+процедуру, вычисляющую <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-кратное повторное применение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>.  Вашу процедуру
+должно быть можно использовать так:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">repeated square </span><span class="lit">2</span><span class="clo">)</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
 </span><i><span class="lit">625</span></i>
 </pre></div>
 
-<p>Hint: You may find it convenient to use <code>compose</code> from <a href="#Exercise-1_002e42">Exercise 1.42</a>.
+<p>Подсказка: вам может оказаться удобным воспользоваться <code>compose</code> из
+<a href="#Exercise-1_002e42">Exercise 1.42</a>.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e44"></a>Exercise 1.44:</strong> The idea of <a id="index-smoothing"></a>
-<em>smoothing</em> a
-function is an important concept in signal processing.  If <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-1_002e44"></a>Exercise 1.44:</strong> Идея <a id="index-sglazhivaniya"></a>
+<em>сглаживания</em> функции —
+важное понятие в обработке сигналов.  Если <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> is a function
-and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — функция, а <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>d</mi>
     <mi>x</mi>
   </mrow>
-</math> is some small number, then the smoothed version of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> —
+некоторое малое число, то сглаженная версия <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> is the
-function whose value at a point <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — это функция, значение которой в
+точке <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> is the average of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> есть среднее <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
@@ -2727,15 +2693,14 @@ function whose value at a point <math xmlns="http://www.w3.org/1998/Math/MathML"
     <mi>x</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>, 
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
     <mi>x</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>f</mi>
     <mo stretchy="false">(</mo>
@@ -2745,23 +2710,23 @@ function whose value at a point <math xmlns="http://www.w3.org/1998/Math/MathML"
     <mi>x</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>.  Write a procedure
-<code>smooth</code> that takes as input a procedure that computes <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.
+Напишите процедуру <code>smooth</code>, которая принимает на вход процедуру, вычисляющую
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math> and returns a
-procedure that computes the smoothed <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, и возвращает процедуру, вычисляющую сглаженную <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>f</mi>
-</math>.  It is sometimes valuable to
-repeatedly smooth a function (that is, smooth the smoothed function, and so on)
-to obtain the <a id="index-n_002dfold-smoothed-function"></a>
-<em><i>n</i>-fold smoothed function</em>.  Show how to generate
-the <i>n</i>-fold smoothed function of any given function using <code>smooth</code> and
-<code>repeated</code> from <a href="#Exercise-1_002e43">Exercise 1.43</a>.
+</math>.  Иногда бывает
+ценно сглаживать функцию многократно (то есть сглаживать сглаженную функцию, и так
+далее), чтобы получить <a id="index-n_002dkratno-sglazhennuiu-funkciiu"></a>
+<em><i>n</i>-кратно сглаженную функцию</em>.  Покажите, как
+породить <i>n</i>-кратно сглаженную функцию любой данной функции, используя <code>smooth</code>
+и <code>repeated</code> из <a href="#Exercise-1_002e43">Exercise 1.43</a>.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e45"></a>Exercise 1.45:</strong> We saw in <a href="#g_t1_002e3_002e3">1.3.3</a>
-that attempting to compute square roots by naively finding a fixed point of
+<p><strong><a id="Exercise-1_002e45"></a>Exercise 1.45:</strong> В <a href="#g_t1_002e3_002e3">1.3.3</a> мы видели, что попытка
+вычислять квадратные корни наивным нахождением неподвижной точки
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
@@ -2772,9 +2737,9 @@ that attempting to compute square roots by naively finding a fixed point of
     </mrow>
     <mi>y</mi>
   </mrow>
-</math> does not converge, and that this can be fixed by average
-damping.  The same method works for finding cube roots as fixed points of the
-average-damped <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> не сходится и что это можно исправить усреднённым затуханием.
+Тот же метод работает для нахождения кубических корней как неподвижных точек
+усреднённо-затухающей <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2787,9 +2752,9 @@ average-damped <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>2</mn>
     </msup>
   </mrow>
-</math>.  Unfortunately, the process does not
-work for fourth roots—a single average damp is not enough to make a
-fixed-point search for <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  К сожалению, процесс не работает для
+корней четвёртой степени — одного усреднённого затухания недостаточно, чтобы поиск
+неподвижной точки для <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2802,9 +2767,9 @@ fixed-point search for <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>3</mn>
     </msup>
   </mrow>
-</math> converge.  On the other hand, if
-we average damp twice (i.e., use the average damp of the average damp of 
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> сошёлся.  С другой стороны, если мы
+применяем усреднённое затухание дважды (то есть используем усреднённое затухание от
+усреднённого затухания <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2817,16 +2782,12 @@ we average damp twice (i.e., use the average damp of the average damp of
       <mn>3</mn>
     </msup>
   </mrow>
-</math>) the fixed-point search does converge.  Do some experiments
-to determine how many average damps are required to compute <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>n</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mtext>th</mtext>
-    </mrow>
-  </msup>
-</math> roots as a
-fixed-point search based upon repeated average damping of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>), поиск неподвижной точки сходится.
+Проделайте некоторые эксперименты, чтобы определить, сколько усреднённых затуханий
+требуется для вычисления корней <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-й степени как поиска неподвижной точки,
+основанного на повторном усреднённом затухании <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2844,43 +2805,37 @@ fixed-point search based upon repeated average damping of <math xmlns="http://ww
       </mrow>
     </msup>
   </mrow>
-</math>.  
-Use this to implement a simple procedure for computing
-<math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>n</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mtext>th</mtext>
-    </mrow>
-  </msup>
-</math> roots using <code>fixed-point</code>, <code>average-damp</code>, and the
-<code>repeated</code> procedure of <a href="#Exercise-1_002e43">Exercise 1.43</a>.  Assume that any arithmetic
-operations you need are available as primitives.
+</math>.
+Воспользуйтесь этим, чтобы реализовать простую процедуру вычисления корней <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-й
+степени, используя <code>fixed-point</code>, <code>average-damp</code> и процедуру
+<code>repeated</code> из <a href="#Exercise-1_002e43">Exercise 1.43</a>.  Предполагайте, что любые нужные вам
+арифметические операции доступны как примитивы.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-1_002e46"></a>Exercise 1.46:</strong> Several of the numerical methods
-described in this chapter are instances of an extremely general computational
-strategy known as <a id="index-iterative-improvement"></a>
-<em>iterative improvement</em>.  Iterative improvement says
-that, to compute something, we start with an initial guess for the answer, test
-if the guess is good enough, and otherwise improve the guess and continue the
-process using the improved guess as the new guess.  Write a procedure
-<code>iterative-improve</code> that takes two procedures as arguments: a method for
-telling whether a guess is good enough and a method for improving a guess.
-<code>Iterative-improve</code> should return as its value a procedure that takes a
-guess as argument and keeps improving the guess until it is good enough.
-Rewrite the <code>sqrt</code> procedure of <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a> and the
-<code>fixed-point</code> procedure of <a href="#g_t1_002e3_002e3">1.3.3</a> in terms of
-<code>iterative-improve</code>.
+<p><strong><a id="Exercise-1_002e46"></a>Exercise 1.46:</strong> Несколько численных методов,
+описанных в этой главе, — частные случаи чрезвычайно обобщённой вычислительной
+стратегии, известной как <a id="index-iterativnoe-uluchshenie"></a>
+<em>итеративное улучшение</em>.  Итеративное улучшение
+говорит, что для вычисления чего-либо мы начинаем с начального предположения об ответе,
+проверяем, достаточно ли хорошо предположение, и иначе улучшаем предположение и
+продолжаем процесс, используя улучшенное предположение как новое.  Напишите процедуру
+<code>iterative-improve</code>, которая принимает в качестве аргументов две процедуры: метод,
+сообщающий, достаточно ли хорошо предположение, и метод улучшения предположения.
+<code>Iterative-improve</code> должна возвращать в качестве своего значения процедуру,
+которая принимает предположение как аргумент и продолжает улучшать предположение, пока
+оно не станет достаточно хорошим.  Перепишите процедуру <code>sqrt</code> из <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a> и
+процедуру <code>fixed-point</code> из <a href="#g_t1_002e3_002e3">1.3.3</a> в терминах <code>iterative-improve</code>.
 </p></blockquote>
 
 <div class="footnote">
 <h4 class="footnotes-heading">Footnotes</h4>
 
 <div id="FOOT49"><p><a class="footnote_backlink" href="#DOCF49"><sup>49</sup></a>
-This series, usually
-written in the equivalent form 
+Этот ряд, обычно
+записываемый в эквивалентной форме
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mfrac>
@@ -2917,76 +2872,72 @@ written in the equivalent form
     <mo>+</mo>
     <mo>…<!-- … --></mo>
   </mrow>
-</math>, 
-is due to Leibniz.  We’ll see how to use this as the basis for some
-fancy numerical tricks in <a href="3_002e5.xhtml#g_t3_002e5_002e3">3.5.3</a>.</p>
+</math>, принадлежит
+Лейбницу.  Как использовать его как основу для некоторых хитрых числовых трюков, мы
+увидим в <a href="3_002e5.xhtml#g_t3_002e5_002e3">3.5.3</a>.</p>
 </div>
 <div id="FOOT50"><p><a class="footnote_backlink" href="#DOCF50"><sup>50</sup></a>
-Notice that we have
-used block structure (<a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a>) to embed the definitions of
-<code>pi-next</code> and <code>pi-term</code> within <code>pi-sum</code>, since these procedures
-are unlikely to be useful for any other purpose.  We will see how to get rid of
-them altogether in <a href="#g_t1_002e3_002e2">1.3.2</a>.</p>
+Заметьте, что мы
+воспользовались блочной структурой (<a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a>), чтобы вложить определения
+<code>pi-next</code> и <code>pi-term</code> внутрь <code>pi-sum</code>, поскольку эти процедуры вряд ли
+будут полезны для какой-либо иной цели.  Как избавиться от них совсем, мы увидим в
+<a href="#g_t1_002e3_002e2">1.3.2</a>.</p>
 </div>
 <div id="FOOT51"><p><a class="footnote_backlink" href="#DOCF51"><sup>51</sup></a>
-The
-intent of <a href="#Exercise-1_002e31">Exercise 1.31</a> through <a href="#Exercise-1_002e33">Exercise 1.33</a> is to demonstrate the
-expressive power that is attained by using an appropriate abstraction to
-consolidate many seemingly disparate operations.  However, though accumulation
-and filtering are elegant ideas, our hands are somewhat tied in using them at
-this point since we do not yet have data structures to provide suitable means
-of combination for these abstractions.  We will return to these ideas in
-<a href="2_002e2.xhtml#g_t2_002e2_002e3">2.2.3</a> when we show how to use <a id="index-sequences"></a>
-<em>sequences</em> as interfaces
-for combining filters and accumulators to build even more powerful
-abstractions.  We will see there how these methods really come into their own
-as a powerful and elegant approach to designing programs.</p>
+Цель <a href="#Exercise-1_002e31">Exercise 1.31</a>
+— <a href="#Exercise-1_002e33">Exercise 1.33</a> — продемонстрировать выразительную силу, достигаемую
+использованием подходящей абстракции для объединения многих внешне разрозненных
+операций.  Однако, хотя накопление и фильтрация — изящные идеи, наши руки сейчас
+несколько связаны в их использовании, поскольку у нас пока нет структур данных,
+дающих подходящие средства объединения для этих абстракций.  Мы вернёмся к этим идеям
+в <a href="2_002e2.xhtml#g_t2_002e2_002e3">2.2.3</a>, когда покажем, как использовать <a id="index-posledovatelxnosti"></a>
+<em>последовательности</em> как
+интерфейсы для объединения фильтров и накопителей, чтобы строить ещё более мощные
+абстракции.  Там мы увидим, как эти методы по-настоящему раскрываются как мощный и
+изящный подход к проектированию программ.</p>
 </div>
 <div id="FOOT52"><p><a class="footnote_backlink" href="#DOCF52"><sup>52</sup></a>
-This formula was discovered by the
-seventeenth-century English mathematician John Wallis.</p>
+Эту формулу открыл английский математик XVII века Джон Уоллис.</p>
 </div>
 <div id="FOOT53"><p><a class="footnote_backlink" href="#DOCF53"><sup>53</sup></a>
-It would be clearer and less intimidating to people learning
-Lisp if a name more obvious than <code>lambda</code>, such as <code>make-procedure</code>,
-were used.  But the convention is firmly entrenched.  The notation is adopted
-from the λ-calculus, a mathematical formalism introduced by the
-mathematical logician Alonzo <a href="References.xhtml#Church-_00281941_0029">Church (1941)</a>.  Church developed the 
-λ-calculus to provide a rigorous foundation for studying the 
-notions of function
-and function application.  The λ-calculus has become a basic tool
-for mathematical investigations of the semantics of programming languages.</p>
+Людям, изучающим Lisp, было бы яснее и менее устрашающе, если бы
+использовалось имя более очевидное, чем <code>lambda</code>, — например,
+<code>make-procedure</code>.  Но это соглашение прочно укоренилось.  Обозначение
+позаимствовано из λ-исчисления — математического формализма, введённого
+математическим логиком Алонзо <a href="References.xhtml#Church-_00281941_0029">Church (1941)</a>.  Чёрч разработал λ-исчисление,
+чтобы дать строгое основание для изучения понятий функции и применения функции.
+λ-исчисление стало основным инструментом для математических исследований семантики
+языков программирования.</p>
 </div>
 <div id="FOOT54"><p><a class="footnote_backlink" href="#DOCF54"><sup>54</sup></a>
-Understanding
-internal definitions well enough to be sure a program means what we intend it
-to mean requires a more elaborate model of the evaluation process than we have
-presented in this chapter.  The subtleties do not arise with internal
-definitions of procedures, however.  We will return to this issue in 
-<a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a>, after we learn more about evaluation.</p>
+Понимание внутренних
+определений достаточно хорошо, чтобы быть уверенным, что программа означает то, что
+мы намереваемся, требует более сложной модели процесса вычисления, чем та, что мы
+представили в этой главе.  Однако с внутренними определениями процедур эти тонкости
+не возникают.  Мы вернёмся к этому вопросу в <a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a>, после того как узнаем
+больше о вычислении.</p>
 </div>
 <div id="FOOT55"><p><a class="footnote_backlink" href="#DOCF55"><sup>55</sup></a>
-We have used 0.001 as a representative “small” number to
-indicate a tolerance for the acceptable error in a calculation.  The
-appropriate tolerance for a real calculation depends upon the problem to be
-solved and the limitations of the computer and the algorithm.  This is often a
-very subtle consideration, requiring help from a numerical analyst or some
-other kind of magician.</p>
+Мы использовали 0.001 как представительное «малое» число, чтобы
+обозначить допуск приемлемой ошибки в вычислении.  Подходящий допуск для реального
+вычисления зависит от решаемой задачи и от ограничений компьютера и алгоритма.  Это
+часто очень тонкое соображение, требующее помощи специалиста по численному анализу
+или какого-нибудь иного волшебника.</p>
 </div>
 <div id="FOOT56"><p><a class="footnote_backlink" href="#DOCF56"><sup>56</sup></a>
-This can be accomplished using <code>error</code>, which takes as
-arguments a number of items that are printed as error messages.</p>
+Этого можно добиться с помощью <code>error</code>, которая принимает в
+качестве аргументов некоторое число элементов, печатаемых как сообщения об ошибке.</p>
 </div>
 <div id="FOOT57"><p><a class="footnote_backlink" href="#DOCF57"><sup>57</sup></a>
-Try this
-during a boring lecture: Set your calculator to radians mode and then
-repeatedly press the <code>cos</code> button until you obtain the fixed point.</p>
+Попробуйте это во
+время скучной лекции: установите свой калькулятор в режим радиан и затем многократно
+нажимайте кнопку <code>cos</code>, пока не получите неподвижную точку.</p>
 </div>
 <div id="FOOT58"><p><a class="footnote_backlink" href="#DOCF58"><sup>58</sup></a>
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mo stretchy="false">↦<!-- ↦ --></mo>
-</math> (pronounced “maps to”) is the mathematician’s way of
-writing <code>lambda</code>.  <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> (читается «отображается в») — это способ, которым
+математик записывает <code>lambda</code>.  <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>y</mi>
     <mo stretchy="false">↦<!-- ↦ --></mo>
@@ -2996,10 +2947,11 @@ writing <code>lambda</code>.  <math xmlns="http://www.w3.org/1998/Math/MathML">
     </mrow>
     <mi>y</mi>
   </mrow>
-</math> means <code>(lambda (y) (/ x y))</code>,
-that is, the function whose value at <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> означает
+<code>(lambda (y) (/ x y))</code>, то есть функцию, значение которой в <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
-</math> is <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> равно
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>x</mi>
     <mrow class="MJX-TeXAtom-ORD">
@@ -3010,19 +2962,20 @@ that is, the function whose value at <math xmlns="http://www.w3.org/1998/Math/Ma
 </math>.</p>
 </div>
 <div id="FOOT59"><p><a class="footnote_backlink" href="#DOCF59"><sup>59</sup></a>
-Observe that this is a combination whose
-operator is itself a combination.  <a href="1_002e1.xhtml#Exercise-1_002e4">Exercise 1.4</a> already demonstrated the
-ability to form such combinations, but that was only a toy example.  Here we
-begin to see the real need for such combinations—when applying a procedure
-that is obtained as the value returned by a higher-order procedure.</p>
+Заметьте, что это комбинация, оператор которой сам является комбинацией.
+<a href="1_002e1.xhtml#Exercise-1_002e4">Exercise 1.4</a> уже демонстрировало способность образовывать такие комбинации, но
+то был лишь игрушечный пример.  Здесь же мы начинаем видеть настоящую нужду в таких
+комбинациях — когда применяем процедуру, полученную как значение, возвращённое
+процедурой высшего порядка.</p>
 </div>
 <div id="FOOT60"><p><a class="footnote_backlink" href="#DOCF60"><sup>60</sup></a>
-See
-<a href="#Exercise-1_002e45">Exercise 1.45</a> for a further generalization.</p>
+См.
+<a href="#Exercise-1_002e45">Exercise 1.45</a> для дальнейшего обобщения.</p>
 </div>
 <div id="FOOT61"><p><a class="footnote_backlink" href="#DOCF61"><sup>61</sup></a>
-Elementary calculus books usually describe Newton’s method in
-terms of the sequence of approximations <math xmlns="http://www.w3.org/1998/Math/MathML">
+Учебники элементарного анализа обычно описывают метод Ньютона в
+терминах последовательности приближений
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>x</mi>
     <mrow class="MJX-TeXAtom-ORD">
@@ -3058,38 +3011,34 @@ terms of the sequence of approximations <math xmlns="http://www.w3.org/1998/Math
     </msub>
     <mo stretchy="false">)</mo>
   </mrow>
-</math>. 
-Having language for talking about processes and using the idea of fixed points 
-simplifies the description of the method.</p>
+</math>.  Наличие языка для разговора о процессах и
+использование идеи неподвижных точек упрощает описание метода.</p>
 </div>
 <div id="FOOT62"><p><a class="footnote_backlink" href="#DOCF62"><sup>62</sup></a>
-Newton’s
-method does not always converge to an answer, but it can
-be shown that in favorable cases each iteration doubles the number-of-digits
-accuracy of the approximation to the solution.  In such cases, Newton’s method
-will converge much more rapidly than the half-interval method.</p>
+Метод Ньютона не всегда сходится к ответу, но можно
+показать, что в благоприятных случаях каждая итерация удваивает точность приближения к
+решению по числу цифр.  В таких случаях метод Ньютона будет сходиться гораздо быстрее
+метода половинного деления.</p>
 </div>
 <div id="FOOT63"><p><a class="footnote_backlink" href="#DOCF63"><sup>63</sup></a>
-For
-finding square roots, Newton’s method converges rapidly to the correct solution
-from any starting point.</p>
+Для нахождения квадратных корней метод
+Ньютона быстро сходится к верному решению из любой начальной точки.</p>
 </div>
 <div id="FOOT64"><p><a class="footnote_backlink" href="#DOCF64"><sup>64</sup></a>
-The notion of
-first-class status of programming-language elements is due to the British
-computer scientist Christopher Strachey (1916-1975).</p>
+Понятие первоклассного статуса элементов
+языка программирования принадлежит британскому информатику Кристоферу Стрэчи
+(1916–1975).</p>
 </div>
 <div id="FOOT65"><p><a class="footnote_backlink" href="#DOCF65"><sup>65</sup></a>
-We’ll see examples of this
-after we introduce data structures in <a href="Chapter-2.xhtml#Chapter-2">Chapter 2<!-- /@w --></a>.</p>
+Примеры этого мы увидим после того,
+как введём структуры данных в <a href="Chapter-2.xhtml#Chapter-2">Chapter 2<!-- /@w --></a>.</p>
 </div>
 <div id="FOOT66"><p><a class="footnote_backlink" href="#DOCF66"><sup>66</sup></a>
-The major
-implementation cost of first-class procedures is that allowing procedures to be
-returned as values requires reserving storage for a procedure’s free variables
-even while the procedure is not executing.  In the Scheme implementation we
-will study in <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>, these variables are stored in the procedure’s
-environment.</p>
+Главные затраты на
+реализацию первоклассных процедур состоят в том, что возможность возвращать процедуры
+как значения требует резервировать память для свободных переменных процедуры даже
+тогда, когда процедура не выполняется.  В реализации Scheme, которую мы будем изучать
+в <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>, эти переменные хранятся в окружении процедуры.</p>
 </div>
 </div>
 <nav class="header">
