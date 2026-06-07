@@ -1,0 +1,167 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index ad0b23e..4397aa0 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -6640,23 +6640,22 @@ R_1 + R_2
+ @end quotation
+ 
+ @node	2.2, 2.3, 2.1, Chapter 2
+-@section Hierarchical Data and the Closure Property
+-
+-As we have seen, pairs provide a primitive ``glue'' that we can use to
+-construct compound data objects.  @ref{Figure 2.2} shows a standard way to
+-visualize a pair---in this case, the pair formed by @code{(cons 1 2)}.  In this
+-representation, which is called @newterm{box-and-pointer notation}, each object
+-is shown as a @newterm{pointer} to a box.  The box for a primitive object
+-contains a representation of the object.  For example, the box for a number
+-contains a numeral.  The box for a pair is actually a double box, the left part
+-containing (a pointer to) the @code{car} of the pair and the right part
+-containing the @code{cdr}.
++@section Иерархические данные и свойство замкнутости
++
++Как мы видели, пары предоставляют примитивный «клей», который мы можем использовать
++для построения составных объектов данных.  @ref{Figure 2.2} показывает стандартный
++способ визуализации пары — в данном случае пары, образованной @code{(cons 1 2)}.  В
++этом представлении, которое называется @newterm{нотацией «коробки и указатели»},
++каждый объект показан как @newterm{указатель} на коробку.  Коробка примитивного
++объекта содержит представление объекта.  Например, коробка числа содержит числовой
++литерал.  Коробка пары — это на самом деле двойная коробка, левая часть которой
++содержит (указатель на) @code{car} пары, а правая часть содержит @code{cdr}.
+ 
+ @float
+ @anchor{Figure 2.2}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.2:} Box-and-pointer representation of @code{(cons 1 2)}.
++@strong{Figure 2.2:} Представление @code{(cons 1 2)} в нотации «коробки и указатели».
+ 
+ @example
+      +---+---+     +---+
+@@ -6673,22 +6672,22 @@ containing the @code{cdr}.
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.2e,57mm,,,.std.svg}
+-@caption{@strong{Figure 2.2:} Box-and-pointer representation of @code{(cons 1 2)}.}
++@caption{@strong{Figure 2.2:} Представление @code{(cons 1 2)} в нотации «коробки и указатели».}
+ @end iftex
+ @end float
+ 
+-We have already seen that @code{cons} can be used to combine not only numbers
+-but pairs as well.  (You made use of this fact, or should have, in doing
+-@ref{Exercise 2.2} and @ref{Exercise 2.3}.)  As a consequence, pairs provide a
+-universal building block from which we can construct all sorts of data
+-structures.  @ref{Figure 2.3} shows two ways to use pairs to combine the
+-numbers 1, 2, 3, and 4.
++Мы уже видели, что @code{cons} можно использовать для комбинирования не только чисел,
++но и пар.  (Вы воспользовались этим фактом — или должны были — при выполнении
++@ref{Exercise 2.2} и @ref{Exercise 2.3}.)  Как следствие, пары предоставляют
++универсальный строительный блок, из которого мы можем конструировать всевозможные
++структуры данных.  @ref{Figure 2.3} показывает два способа использовать пары для
++комбинирования чисел 1, 2, 3 и 4.
+ 
+ @float
+ @anchor{Figure 2.3}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.3:} Two ways to combine 1, 2, 3, and 4 using pairs.
++@strong{Figure 2.3:} Два способа скомбинировать 1, 2, 3 и 4 с помощью пар.
+ 
+ @example
+      +---+---+     +---+---+         +---+---+     +---+
+@@ -6714,55 +6713,53 @@ numbers 1, 2, 3, and 4.
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.3e,147mm,,,.std.svg}
+-@caption{@strong{Figure 2.3:} Two ways to combine 1, 2, 3, and 4 using pairs.}
++@caption{@strong{Figure 2.3:} Два способа скомбинировать 1, 2, 3 и 4 с помощью пар.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-The ability to create pairs whose elements are pairs is the essence of list
+-structure's importance as a representational tool.  We refer to this ability as
+-the @newterm{closure property} of @code{cons}.  In general, an operation for
+-combining data objects satisfies the closure property if the results of
+-combining things with that operation can themselves be combined using the same
+-operation.@footnote{The use of the word ``closure'' here comes from abstract
+-algebra, where a set of elements is said to be closed under an operation if
+-applying the operation to elements in the set produces an element that is again
+-an element of the set.  The Lisp community also (unfortunately) uses the word
+-``closure'' to describe a totally unrelated concept: A closure is an
+-implementation technique for representing procedures with free variables.  We
+-do not use the word ``closure'' in this second sense in this book.  } Closure
+-is the key to power in any means of combination because it permits us to create
+-@newterm{hierarchical} structures---structures made up of parts, which
+-themselves are made up of parts, and so on.
+-
+-From the outset of @ref{Chapter 1}, we've made essential use of closure in
+-dealing with procedures, because all but the very simplest programs rely on the
+-fact that the elements of a combination can themselves be combinations.  In
+-this section, we take up the consequences of closure for compound data.  We
+-describe some conventional techniques for using pairs to represent sequences
+-and trees, and we exhibit a graphics language that illustrates closure in a
+-vivid way.@footnote{The notion that a means of combination should satisfy
+-closure is a straightforward idea.  Unfortunately, the data combiners provided
+-in many popular programming languages do not satisfy closure, or make closure
+-cumbersome to exploit.  In Fortran or Basic, one typically combines data
+-elements by assembling them into arrays---but one cannot form arrays whose
+-elements are themselves arrays.  Pascal and C admit structures whose elements
+-are structures.  However, this requires that the programmer manipulate pointers
+-explicitly, and adhere to the restriction that each field of a structure can
+-contain only elements of a prespecified form.  Unlike Lisp with its pairs,
+-these languages have no built-in general-purpose glue that makes it easy to
+-manipulate compound data in a uniform way.  This limitation lies behind Alan
+-Perlis's comment in his foreword to this book: ``In Pascal the plethora of
+-declarable data structures induces a specialization within functions that
+-inhibits and penalizes casual cooperation.  It is better to have 100 functions
+-operate on one data structure than to have 10 functions operate on 10 data
+-structures.''}
++Способность создавать пары, элементы которых сами являются парами, — это суть
++важности списочной структуры как инструмента представления.  Мы называем эту
++способность @newterm{свойством замкнутости} @code{cons}.  Вообще, операция
++комбинирования объектов данных удовлетворяет свойству замкнутости, если результаты
++комбинирования вещей этой операцией сами могут быть скомбинированы той же
++операцией.@footnote{Использование здесь слова «замкнутость» (в оригинале ``closure'')
++идёт из абстрактной алгебры, где про множество элементов говорят, что оно замкнуто
++относительно операции, если применение операции к элементам множества даёт элемент,
++снова принадлежащий множеству.  Сообщество Lisp также (к сожалению) использует слово
++``closure'' для совершенно не связанного понятия, которое по-русски называют
++«замыканием»: замыкание — это приём реализации, представляющий процедуры со свободными
++переменными.  В этом втором смысле слово «замыкание» в данной книге мы не используем.}
++Замкнутость — это ключ к мощи любого средства комбинирования, потому что она позволяет
++нам создавать @newterm{иерархические} структуры — структуры, составленные из частей,
++которые сами составлены из частей, и так далее.
++
++С самого начала @ref{Chapter 1} мы существенно использовали замкнутость в работе с
++процедурами, потому что все программы, кроме самых простейших, полагаются на тот факт,
++что элементы комбинации сами могут быть комбинациями.  В этом разделе мы рассмотрим
++следствия замкнутости для составных данных.  Мы опишем некоторые традиционные приёмы
++использования пар для представления последовательностей и деревьев и продемонстрируем
++графический язык, который ярко иллюстрирует замкнутость.@footnote{Представление о том,
++что средство комбинирования должно удовлетворять замкнутости, — простая идея.  К
++сожалению, комбинаторы данных, предоставляемые во многих популярных языках
++программирования, не удовлетворяют замкнутости или делают её использование громоздким.
++В Fortran или Basic данные обычно комбинируют, собирая их в массивы, — но нельзя
++образовать массивы, элементы которых сами являются массивами.  Pascal и C допускают
++структуры, элементы которых — структуры.  Однако это требует, чтобы программист
++манипулировал указателями явно и придерживался ограничения, что каждое поле структуры
++может содержать только элементы заранее заданного вида.  В отличие от Lisp с его
++парами, в этих языках нет встроенного универсального клея, который облегчал бы
++единообразное манипулирование составными данными.  Это ограничение стоит за замечанием
++Алана Перлиса в его предисловии к этой книге: «В Паскале изобилие объявляемых структур
++данных порождает специализацию внутри функций, которая препятствует случайному
++сотрудничеству и штрафует за него.  Лучше иметь 100 функций, работающих с одной
++структурой данных, чем 10 функций, работающих с 10 структурами данных».}
+ 
+ @menu
+-* 2.2.1::            Representing Sequences
+-* 2.2.2::            Hierarchical Structures
+-* 2.2.3::            Sequences as Conventional Interfaces
+-* 2.2.4::            Example: A Picture Language
++* 2.2.1::            Представление последовательностей
++* 2.2.2::            Иерархические структуры
++* 2.2.3::            Последовательности как общепринятые интерфейсы
++* 2.2.4::            Пример: язык изображений
+ @end menu
+ 
+ @node	2.2.1, 2.2.2, 2.2, 2.2

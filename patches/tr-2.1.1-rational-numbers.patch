@@ -1,0 +1,277 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index c72c719..5a5b647 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -5826,41 +5826,40 @@ Lisp, в отличие от других распространённых яз
+ @end menu
+ 
+ @node	2.1.1, 2.1.2, 2.1, 2.1
+-@subsection Example: Arithmetic Operations for Rational Numbers
++@subsection Пример: арифметические операции над рациональными числами
+ 
+-Suppose we want to do arithmetic with rational numbers.  We want to be able to
+-add, subtract, multiply, and divide them and to test whether two rational
+-numbers are equal.
++Предположим, мы хотим выполнять арифметику с рациональными числами.  Мы хотим уметь
++складывать, вычитать, умножать и делить их, а также проверять, равны ли два
++рациональных числа.
+ 
+-Let us begin by assuming that we already have a way of constructing a rational
+-number from a numerator and a denominator.  We also assume that, given a
+-rational number, we have a way of extracting (or selecting) its numerator and
+-its denominator.  Let us further assume that the constructor and selectors are
+-available as procedures:
++Начнём с предположения, что у нас уже есть способ построить рациональное число из
++числителя и знаменателя.  Мы также предполагаем, что для данного рационального числа
++у нас есть способ извлечь (или выбрать) его числитель и знаменатель.  Предположим
++далее, что конструктор и селекторы доступны как процедуры:
+ 
+ @itemize @bullet
+ 
+ @item
+-@code{(make-rat ⟨@var{n}⟩ ⟨@var{d}⟩)} returns the rational number whose numerator 
+-is the integer @code{⟨@var{n}⟩} and whose denominator is the integer 
++@code{(make-rat ⟨@var{n}⟩ ⟨@var{d}⟩)} возвращает рациональное число, числитель
++которого — целое число @code{⟨@var{n}⟩}, а знаменатель — целое число
+ @code{⟨@var{d}⟩}.
+ 
+ @item
+-@code{(numer ⟨@var{x}⟩)} returns the numerator of the rational number 
++@code{(numer ⟨@var{x}⟩)} возвращает числитель рационального числа
+ @code{⟨@var{x}⟩}.
+ 
+ @item
+-@code{(denom ⟨@var{x}⟩)} returns the denominator of the rational number 
++@code{(denom ⟨@var{x}⟩)} возвращает знаменатель рационального числа
+ @code{⟨@var{x}⟩}.
+ 
+ @end itemize
+ 
+ @noindent
+-We are using here a powerful strategy of synthesis: @newterm{wishful thinking}.
+-We haven't yet said how a rational number is represented, or how the procedures
+-@code{numer}, @code{denom}, and @code{make-rat} should be implemented.  Even
+-so, if we did have these three procedures, we could then add, subtract,
+-multiply, divide, and test equality by using the following relations:
++Мы пользуемся здесь мощной стратегией синтеза — @newterm{мышлением о желаемом}.  Мы
++ещё не сказали, как представлено рациональное число и как должны быть реализованы
++процедуры @code{numer}, @code{denom} и @code{make-rat}.  И всё же, если бы у нас были
++эти три процедуры, мы могли бы складывать, вычитать, умножать, делить и проверять
++равенство, пользуясь следующими соотношениями:
+ @ifinfo
+ 
+ @example
+@@ -5901,7 +5900,7 @@ d_1   d_2
+ \]
+ @end tex
+ @noindent
+-We can express these rules as procedures:
++Мы можем выразить эти правила как процедуры:
+ 
+ @lisp
+ (define (add-rat x y)
+@@ -5928,26 +5927,26 @@ We can express these rules as procedures:
+ @end lisp
+ 
+ @noindent
+-Now we have the operations on rational numbers defined in terms of the selector
+-and constructor procedures @code{numer}, @code{denom}, and @code{make-rat}.
+-But we haven't yet defined these.  What we need is some way to glue together a
+-numerator and a denominator to form a rational number.
++Теперь у нас есть операции над рациональными числами, определённые через
++процедуры-селекторы и процедуру-конструктор @code{numer}, @code{denom} и
++@code{make-rat}.  Но мы их ещё не определили.  Нам нужен какой-то способ склеить
++числитель и знаменатель, образуя рациональное число.
+ 
+-@subsubheading Pairs
++@subsubheading Пары
+ 
+-To enable us to implement the concrete level of our data abstraction, our
+-language provides a compound structure called a @newterm{pair}, which can be
+-constructed with the primitive procedure @code{cons}.  This procedure takes two
+-arguments and returns a compound data object that contains the two arguments as
+-parts.  Given a pair, we can extract the parts using the primitive procedures
+-@code{car} and @code{cdr}.@footnote{The name @code{cons} stands for
+-``construct.''  The names @code{car} and @code{cdr} derive from the original
+-implementation of Lisp on the IBM 704.  That machine had an addressing scheme
+-that allowed one to reference the ``address'' and ``decrement'' parts of a
+-memory location.  @code{Car} stands for ``Contents of Address part of
+-Register'' and @code{cdr} (pronounced ``could-er'') stands for ``Contents of
+-Decrement part of Register.''} Thus, we can use @code{cons}, @code{car}, and
+-@code{cdr} as follows:
++Чтобы дать нам возможность реализовать конкретный уровень нашей абстракции данных,
++наш язык предоставляет составную структуру под названием @newterm{пара}, которую можно
++построить примитивной процедурой @code{cons}.  Эта процедура принимает два аргумента и
++возвращает составной объект данных, содержащий два аргумента как части.  Имея пару, мы
++можем извлечь части примитивными процедурами @code{car} и @code{cdr}.@footnote{Имя
++@code{cons} происходит от «construct» («сконструировать»).  Имена @code{car} и
++@code{cdr} восходят к первоначальной реализации Lisp на IBM 704.  У той машины была
++схема адресации, позволявшая обращаться к «адресной» («address») и «декрементной»
++(«decrement») частям ячейки памяти.  @code{Car} означает «Contents of Address part of
++Register» (содержимое адресной части регистра), а @code{cdr} (произносится «куд-эр»)
++означает «Contents of Decrement part of Register» (содержимое декрементной части
++регистра).} Таким образом, мы можем использовать @code{cons}, @code{car} и @code{cdr}
++так:
+ 
+ @lisp
+ (define x (cons 1 2))
+@@ -5960,9 +5959,9 @@ Decrement part of Register.''} Thus, we can use @code{cons}, @code{car}, and
+ @end lisp
+ 
+ @noindent
+-Notice that a pair is a data object that can be given a name and manipulated,
+-just like a primitive data object.  Moreover, @code{cons} can be used to form
+-pairs whose elements are pairs, and so on:
++Заметьте, что пара — это объект данных, которому можно дать имя и которым можно
++манипулировать, в точности как примитивным объектом данных.  Более того, @code{cons}
++можно использовать для образования пар, элементы которых — пары, и так далее:
+ 
+ @lisp
+ (define x (cons 1 2))
+@@ -5977,20 +5976,19 @@ pairs whose elements are pairs, and so on:
+ @end lisp
+ 
+ @noindent
+-In @ref{2.2} we will see how this ability to combine pairs means that
+-pairs can be used as general-purpose building blocks to create all sorts of
+-complex data structures.  The single compound-data primitive @newterm{pair},
+-implemented by the procedures @code{cons}, @code{car}, and @code{cdr}, is the
+-only glue we need.  Data objects constructed from pairs are called
+-@newterm{list-structured} data.
++В @ref{2.2} мы увидим, как эта способность комбинировать пары означает, что пары можно
++использовать как универсальные строительные блоки для создания всевозможных сложных
++структур данных.  Единственный примитив составных данных — @newterm{пара}, реализуемая
++процедурами @code{cons}, @code{car} и @code{cdr}, — это весь клей, который нам нужен.
++Объекты данных, построенные из пар, называются данными со @newterm{списочной
++структурой}.
+ 
+-@subsubheading Representing rational numbers
++@subsubheading Представление рациональных чисел
+ 
+-Pairs offer a natural way to complete the rational-number system.  Simply
+-represent a rational number as a pair of two integers: a numerator and a
+-denominator.  Then @code{make-rat}, @code{numer}, and @code{denom} are readily
+-implemented as follows:@footnote{Another way to define the selectors and
+-constructor is
++Пары дают естественный способ завершить систему рациональных чисел.  Просто представим
++рациональное число как пару двух целых чисел: числителя и знаменателя.  Тогда
++@code{make-rat}, @code{numer} и @code{denom} легко реализуются так:@footnote{Другой
++способ определить селекторы и конструктор —
+ 
+ @lisp
+ (define make-rat cons)
+@@ -5998,20 +5996,19 @@ constructor is
+ (define denom cdr)
+ @end lisp
+ 
+-The first definition associates the name @code{make-rat} with the value of the
+-expression @code{cons}, which is the primitive procedure that constructs pairs.
+-Thus @code{make-rat} and @code{cons} are names for the same primitive
+-constructor.
++Первое определение связывает имя @code{make-rat} со значением выражения @code{cons},
++которое является примитивной процедурой, конструирующей пары.  Таким образом,
++@code{make-rat} и @code{cons} — имена для одного и того же примитивного конструктора.
+ 
+-Defining selectors and constructors in this way is efficient: Instead of
+-@code{make-rat} @emph{calling} @code{cons}, @code{make-rat} @emph{is}
+-@code{cons}, so there is only one procedure called, not two, when
+-@code{make-rat} is called.  On the other hand, doing this defeats debugging
+-aids that trace procedure calls or put breakpoints on procedure calls: You may
+-want to watch @code{make-rat} being called, but you certainly don't want to
+-watch every call to @code{cons}.
++Определять селекторы и конструкторы таким образом эффективно: вместо того чтобы
++@code{make-rat} @emph{вызывала} @code{cons}, @code{make-rat} @emph{есть} @code{cons},
++так что при вызове @code{make-rat} вызывается только одна процедура, а не две.  С
++другой стороны, такой подход сводит на нет средства отладки, которые трассируют вызовы
++процедур или ставят точки останова на вызовах процедур: вы можете захотеть наблюдать
++за вызовами @code{make-rat}, но уж точно не захотите наблюдать за каждым вызовом
++@code{cons}.
+ 
+-We have chosen not to use this style of definition in this book.}
++Мы решили не использовать этот стиль определения в данной книге.}
+ 
+ @lisp
+ (define (make-rat n d) (cons n d))
+@@ -6020,13 +6017,13 @@ We have chosen not to use this style of definition in this book.}
+ @end lisp
+ 
+ @noindent
+-Also, in order to display the results of our computations, we can print
+-rational numbers by printing the numerator, a slash, and the
+-denominator:@footnote{@code{Display} is the Scheme primitive for printing data.
+-The Scheme primitive @code{newline} starts a new line for printing.  Neither of
+-these procedures returns a useful value, so in the uses of @code{print-rat}
+-below, we show only what @code{print-rat} prints, not what the interpreter
+-prints as the value returned by @code{print-rat}.}
++Кроме того, чтобы отображать результаты наших вычислений, мы можем печатать
++рациональные числа, печатая числитель, косую черту и
++знаменатель:@footnote{@code{Display} — примитив Scheme для печати данных.  Примитив
++Scheme @code{newline} начинает новую строку для печати.  Ни одна из этих процедур не
++возвращает полезного значения, поэтому в приведённых ниже применениях @code{print-rat}
++мы показываем только то, что печатает @code{print-rat}, а не то, что интерпретатор
++печатает как значение, возвращённое @code{print-rat}.}
+ 
+ @lisp
+ (define (print-rat x)
+@@ -6037,7 +6034,7 @@ prints as the value returned by @code{print-rat}.}
+ @end lisp
+ 
+ @noindent
+-Now we can try our rational-number procedures:
++Теперь мы можем испытать наши процедуры для рациональных чисел:
+ 
+ @lisp
+ (define one-half (make-rat 1 2))
+@@ -6059,12 +6056,12 @@ Now we can try our rational-number procedures:
+ @end lisp
+ 
+ @noindent
+-As the final example shows, our rational-number implementation does not reduce
+-rational numbers to lowest terms.  We can remedy this by changing
+-@code{make-rat}. If we have a @code{gcd} procedure like the one in 
+-@ref{1.2.5} that produces the greatest common divisor of two integers, we can
+-use @code{gcd} to reduce the numerator and the denominator to lowest terms
+-before constructing the pair:
++Как показывает последний пример, наша реализация рациональных чисел не приводит
++рациональные числа к несократимому виду.  Мы можем исправить это, изменив
++@code{make-rat}.  Если у нас есть процедура @code{gcd}, подобная той, что в
++@ref{1.2.5}, которая выдаёт наибольший общий делитель двух целых чисел, мы можем
++воспользоваться @code{gcd}, чтобы привести числитель и знаменатель к несократимому
++виду перед построением пары:
+ 
+ @lisp
+ (define (make-rat n d)
+@@ -6074,7 +6071,7 @@ before constructing the pair:
+ @end lisp
+ 
+ @noindent
+-Now we have
++Теперь мы имеем
+ 
+ @lisp
+ (print-rat 
+@@ -6083,16 +6080,16 @@ Now we have
+ @end lisp
+ 
+ @noindent
+-as desired.  This modification was accomplished by changing the constructor
+-@code{make-rat} without changing any of the procedures (such as @code{add-rat}
+-and @code{mul-rat}) that implement the actual operations.
++как и хотелось.  Эта модификация была достигнута изменением конструктора
++@code{make-rat} без изменения каких-либо процедур (таких как @code{add-rat} и
++@code{mul-rat}), реализующих собственно операции.
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.1}Exercise 2.1:} Define a better version of
+-@code{make-rat} that handles both positive and negative arguments.
+-@code{Make-rat} should normalize the sign so that if the rational number is
+-positive, both the numerator and denominator are positive, and if the rational
+-number is negative, only the numerator is negative.
++@strong{@anchor{Exercise 2.1}Exercise 2.1:} Определите лучшую версию @code{make-rat},
++которая обрабатывает как положительные, так и отрицательные аргументы.  @code{Make-rat}
++должна нормализовать знак так, чтобы, если рациональное число положительно, и числитель,
++и знаменатель были положительны, а если рациональное число отрицательно, то
++отрицательным был только числитель.
+ @end quotation
+ 
+ @node	2.1.2, 2.1.3, 2.1.1, 2.1

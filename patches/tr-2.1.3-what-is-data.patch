@@ -1,0 +1,263 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 4b717ad..4f8f8af 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -6228,25 +6228,24 @@ Scheme @code{newline} начинает новую строку для печат
+ @end quotation
+ 
+ @node	2.1.3, 2.1.4, 2.1.2, 2.1
+-@subsection What Is Meant by Data?
+-
+-We began the rational-number implementation in @ref{2.1.1} by
+-implementing the rational-number operations @code{add-rat}, @code{sub-rat}, and
+-so on in terms of three unspecified procedures: @code{make-rat}, @code{numer},
+-and @code{denom}.  At that point, we could think of the operations as being
+-defined in terms of data objects---numerators, denominators, and rational
+-numbers---whose behavior was specified by the latter three procedures.
+-
+-But exactly what is meant by @newterm{data}?  It is not enough to say
+-``whatever is implemented by the given selectors and constructors.''  Clearly,
+-not every arbitrary set of three procedures can serve as an appropriate basis
+-for the rational-number implementation.  We need to guarantee that, if we
+-construct a rational number @code{x} from a pair of integers @code{n} and
+-@code{d}, then extracting the @code{numer} and the @code{denom} of @code{x} and
+-dividing them should yield the same result as dividing @code{n} by @code{d}.
+-In other words, @code{make-rat}, @code{numer}, and @code{denom} must satisfy
+-the condition that, for any integer @code{n} and any non-zero integer @code{d},
+-if @code{x} is @code{(make-rat n d)}, then
++@subsection Что понимается под данными?
++
++Мы начали реализацию рациональных чисел в @ref{2.1.1} с реализации операций над
++рациональными числами @code{add-rat}, @code{sub-rat} и так далее в терминах трёх
++неуказанных процедур: @code{make-rat}, @code{numer} и @code{denom}.  В тот момент мы
++могли мыслить операции как определённые в терминах объектов данных — числителей,
++знаменателей и рациональных чисел, — поведение которых задавалось последними тремя
++процедурами.
++
++Но что же именно понимается под @newterm{данными}?  Недостаточно сказать «всё, что
++реализуется данными селекторами и конструкторами».  Ясно, что не всякий произвольный
++набор из трёх процедур может служить подходящей основой для реализации рациональных
++чисел.  Нам нужно гарантировать, что если мы строим рациональное число @code{x} из
++пары целых чисел @code{n} и @code{d}, то извлечение @code{numer} и @code{denom} числа
++@code{x} и их деление должны давать тот же результат, что и деление @code{n} на
++@code{d}.  Иными словами, @code{make-rat}, @code{numer} и @code{denom} должны
++удовлетворять условию, что для любого целого @code{n} и любого ненулевого целого
++@code{d}, если @code{x} есть @code{(make-rat n d)}, то
+ @ifinfo
+ 
+ @example
+@@ -6260,46 +6259,42 @@ if @code{x} is @code{(make-rat n d)}, then
+ \[ % :31:
+   {\text{(numer x)} \over \text{(denom x)}} = {{\text{n} \over \text{d}}.}   \]
+ @end tex
+-In fact, this is the only condition @code{make-rat}, @code{numer}, and
+-@code{denom} must fulfill in order to form a suitable basis for a
+-rational-number representation.  In general, we can think of data as defined by
+-some collection of selectors and constructors, together with specified
+-conditions that these procedures must fulfill in order to be a valid
+-representation.@footnote{Surprisingly, this idea is very difficult to formulate
+-rigorously. There are two approaches to giving such a formulation.  One,
+-pioneered by C. A. R. @ref{Hoare (1972)}, is known as the method of @newterm{abstract models}.  
+-It formalizes the ``procedures plus conditions'' specification as
+-outlined in the rational-number example above.  Note that the condition on the
+-rational-number representation was stated in terms of facts about integers
+-(equality and division).  In general, abstract models define new kinds of data
+-objects in terms of previously defined types of data objects.  Assertions about
+-data objects can therefore be checked by reducing them to assertions about
+-previously defined data objects.  Another approach, introduced by Zilles at
+-@abbr{MIT}, by Goguen, Thatcher, Wagner, and Wright at IBM 
+-(see @ref{Thatcher et al. 1978}), 
+-and by Guttag at Toronto (see @ref{Guttag 1977}), is called
+-@newterm{algebraic specification}.  It regards the ``procedures'' as elements
+-of an abstract algebraic system whose behavior is specified by axioms that
+-correspond to our ``conditions,'' and uses the techniques of abstract algebra
+-to check assertions about data objects.  Both methods are surveyed in the paper
+-by @ref{Liskov and Zilles (1975)}.}
+-
+-This point of view can serve to define not only ``high-level'' data objects,
+-such as rational numbers, but lower-level objects as well.  Consider the notion
+-of a pair, which we used in order to define our rational numbers.  We never
+-actually said what a pair was, only that the language supplied procedures
+-@code{cons}, @code{car}, and @code{cdr} for operating on pairs.  But the only
+-thing we need to know about these three operations is that if we glue two
+-objects together using @code{cons} we can retrieve the objects using @code{car}
+-and @code{cdr}.  That is, the operations satisfy the condition that, for any
+-objects @code{x} and @code{y}, if @code{z} is @code{(cons x y)} then @code{(car
+-z)} is @code{x} and @code{(cdr z)} is @code{y}.  Indeed, we mentioned that
+-these three procedures are included as primitives in our language.  However,
+-any triple of procedures that satisfies the above condition can be used as the
+-basis for implementing pairs.  This point is illustrated strikingly by the fact
+-that we could implement @code{cons}, @code{car}, and @code{cdr} without using
+-any data structures at all but only using procedures.  Here are the
+-definitions:
++В самом деле, это единственное условие, которому @code{make-rat}, @code{numer} и
++@code{denom} должны удовлетворять, чтобы образовать подходящую основу для представления
++рациональных чисел.  Вообще, мы можем мыслить данные как определяемые некоторым
++набором селекторов и конструкторов вместе с заданными условиями, которым эти процедуры
++должны удовлетворять, чтобы быть допустимым представлением.@footnote{Как ни удивительно,
++эту идею очень трудно сформулировать строго.  Есть два подхода к такой формулировке.
++Один, впервые предложенный Ч. Э. Р. @ref{Hoare (1972)}, известен как метод
++@newterm{абстрактных моделей}.  Он формализует спецификацию «процедуры плюс условия»,
++как намечено в примере с рациональными числами выше.  Заметьте, что условие на
++представление рациональных чисел было сформулировано в терминах фактов о целых числах
++(равенства и деления).  Вообще, абстрактные модели определяют новые виды объектов
++данных в терминах ранее определённых типов объектов данных.  Поэтому утверждения об
++объектах данных можно проверять, сводя их к утверждениям о ранее определённых объектах
++данных.  Другой подход, введённый Зиллесом в @abbr{MIT}, Гогеном, Тэтчером, Вагнером и
++Райтом в IBM (см. @ref{Thatcher et al. 1978}) и Гуттагом в Торонто (см.
++@ref{Guttag 1977}), называется @newterm{алгебраической спецификацией}.  Он
++рассматривает «процедуры» как элементы абстрактной алгебраической системы, поведение
++которой задаётся аксиомами, соответствующими нашим «условиям», и использует приёмы
++абстрактной алгебры для проверки утверждений об объектах данных.  Оба метода
++рассмотрены в статье @ref{Liskov and Zilles (1975)}.}
++
++Эта точка зрения может служить для определения не только «высокоуровневых» объектов
++данных, таких как рациональные числа, но и объектов более низкого уровня.  Рассмотрим
++понятие пары, которое мы использовали, чтобы определить наши рациональные числа.  Мы
++на самом деле никогда не говорили, что такое пара, — только что язык предоставляет
++процедуры @code{cons}, @code{car} и @code{cdr} для работы с парами.  Но единственное,
++что нам нужно знать об этих трёх операциях, — это что если мы склеиваем два объекта с
++помощью @code{cons}, то можем извлечь объекты с помощью @code{car} и @code{cdr}.  То
++есть операции удовлетворяют условию, что для любых объектов @code{x} и @code{y}, если
++@code{z} есть @code{(cons x y)}, то @code{(car z)} есть @code{x}, а @code{(cdr z)} есть
++@code{y}.  Действительно, мы упомянули, что эти три процедуры включены в наш язык как
++примитивы.  Однако любая тройка процедур, удовлетворяющая приведённому выше условию,
++может быть использована как основа для реализации пар.  Этот момент поразительно
++иллюстрируется тем фактом, что мы могли бы реализовать @code{cons}, @code{car} и
++@code{cdr} вообще без использования каких-либо структур данных, а только с помощью
++процедур.  Вот определения:
+ 
+ @lisp
+ (define (cons x y)
+@@ -6316,41 +6311,40 @@ definitions:
+ @end lisp
+ 
+ @noindent
+-This use of procedures corresponds to nothing like our intuitive notion of what
+-data should be.  Nevertheless, all we need to do to show that this is a valid
+-way to represent pairs is to verify that these procedures satisfy the condition
+-given above.
+-
+-The subtle point to notice is that the value returned by @code{(cons x y)} is a
+-procedure---namely the internally defined procedure @code{dispatch}, which
+-takes one argument and returns either @code{x} or @code{y} depending on whether
+-the argument is 0 or 1.  Correspondingly, @code{(car z)} is defined to apply
+-@code{z} to 0.  Hence, if @code{z} is the procedure formed by @code{(cons x
+-y)}, then @code{z} applied to 0 will yield @code{x}. Thus, we have shown that
+-@code{(car (cons x y))} yields @code{x}, as desired.  Similarly, @code{(cdr
+-(cons x y))} applies the procedure returned by @code{(cons x y)} to 1, which
+-returns @code{y}.  Therefore, this procedural implementation of pairs is a
+-valid implementation, and if we access pairs using only @code{cons},
+-@code{car}, and @code{cdr} we cannot distinguish this implementation from one
+-that uses ``real'' data structures.
+-
+-The point of exhibiting the procedural representation of pairs is not that our
+-language works this way (Scheme, and Lisp systems in general, implement pairs
+-directly, for efficiency reasons) but that it could work this way.  The
+-procedural representation, although obscure, is a perfectly adequate way to
+-represent pairs, since it fulfills the only conditions that pairs need to
+-fulfill.  This example also demonstrates that the ability to manipulate
+-procedures as objects automatically provides the ability to represent compound
+-data.  This may seem a curiosity now, but procedural representations of data
+-will play a central role in our programming repertoire.  This style of
+-programming is often called @newterm{message passing}, and we will be using it
+-as a basic tool in @ref{Chapter 3} when we address the issues of modeling and
+-simulation.
+-
+-@quotation
+-@strong{@anchor{Exercise 2.4}Exercise 2.4:} Here is an alternative procedural
+-representation of pairs.  For this representation, verify that @code{(car (cons
+-x y))} yields @code{x} for any objects @code{x} and @code{y}.
++Это использование процедур не соответствует ничему похожему на наше интуитивное
++понятие о том, чем должны быть данные.  Тем не менее всё, что нам нужно сделать, чтобы
++показать, что это допустимый способ представления пар, — это проверить, что эти
++процедуры удовлетворяют приведённому выше условию.
++
++Тонкий момент, который стоит заметить, в том, что значение, возвращаемое
++@code{(cons x y)}, — это процедура, а именно внутренне определённая процедура
++@code{dispatch}, которая принимает один аргумент и возвращает либо @code{x}, либо
++@code{y} в зависимости от того, равен ли аргумент 0 или 1.  Соответственно,
++@code{(car z)} определена как применение @code{z} к 0.  Следовательно, если @code{z}
++— процедура, образованная @code{(cons x y)}, то @code{z}, применённая к 0, даст
++@code{x}.  Тем самым мы показали, что @code{(car (cons x y))} даёт @code{x}, как и
++требовалось.  Аналогично @code{(cdr (cons x y))} применяет процедуру, возвращённую
++@code{(cons x y)}, к 1, что возвращает @code{y}.  Поэтому эта процедурная реализация
++пар — допустимая реализация, и если мы обращаемся к парам, используя только
++@code{cons}, @code{car} и @code{cdr}, мы не можем отличить эту реализацию от той, что
++использует «настоящие» структуры данных.
++
++Смысл демонстрации процедурного представления пар не в том, что наш язык работает
++именно так (Scheme и Lisp-системы в целом реализуют пары напрямую, по соображениям
++эффективности), а в том, что он @emph{мог бы} так работать.  Процедурное
++представление, хотя и неочевидное, — вполне адекватный способ представления пар,
++поскольку оно выполняет единственные условия, которым пары должны удовлетворять.  Этот
++пример также показывает, что способность манипулировать процедурами как объектами
++автоматически даёт способность представлять составные данные.  Сейчас это может
++показаться курьёзом, но процедурные представления данных будут играть центральную роль
++в нашем программистском репертуаре.  Этот стиль программирования часто называют
++@newterm{передачей сообщений}, и мы будем использовать его как основной инструмент в
++@ref{Chapter 3}, когда обратимся к вопросам моделирования и имитации.
++
++@quotation
++@strong{@anchor{Exercise 2.4}Exercise 2.4:} Вот альтернативное процедурное
++представление пар.  Для этого представления убедитесь, что @code{(car (cons x y))}
++даёт @code{x} для любых объектов @code{x} и @code{y}.
+ 
+ @lisp
+ (define (cons x y) 
+@@ -6360,24 +6354,23 @@ x y))} yields @code{x} for any objects @code{x} and @code{y}.
+   (z (lambda (p q) p)))
+ @end lisp
+ 
+-What is the corresponding definition of @code{cdr}? (Hint: To verify that this
+-works, make use of the substitution model of @ref{1.1.5}.)
++Каково соответствующее определение @code{cdr}?  (Подсказка: чтобы проверить, что это
++работает, воспользуйтесь подстановочной моделью из @ref{1.1.5}.)
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.5}Exercise 2.5:} Show that we can represent pairs of
+-nonnegative integers using only numbers and arithmetic operations if we
+-represent the pair @math{a} and @math{b} as the integer that is the product @math{{2^a 3^b}}.
+-Give the corresponding definitions of the procedures @code{cons},
+-@code{car}, and @code{cdr}.
++@strong{@anchor{Exercise 2.5}Exercise 2.5:} Покажите, что мы можем представлять пары
++неотрицательных целых чисел, используя только числа и арифметические операции, если
++представим пару @math{a} и @math{b} как целое число, являющееся произведением
++@math{{2^a 3^b}}.  Дайте соответствующие определения процедур @code{cons}, @code{car}
++и @code{cdr}.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.6}Exercise 2.6:} In case representing pairs as
+-procedures wasn't mind-boggling enough, consider that, in a language that can
+-manipulate procedures, we can get by without numbers (at least insofar as
+-nonnegative integers are concerned) by implementing 0 and the operation of
+-adding 1 as
++@strong{@anchor{Exercise 2.6}Exercise 2.6:} Если представления пар процедурами было
++недостаточно умопомрачительно, учтите, что в языке, который может манипулировать
++процедурами, мы можем обойтись без чисел (по крайней мере, в том, что касается
++неотрицательных целых чисел), реализовав 0 и операцию прибавления 1 как
+ 
+ @lisp
+ (define zero (lambda (f) (lambda (x) x)))
+@@ -6386,13 +6379,13 @@ adding 1 as
+   (lambda (f) (lambda (x) (f ((n f) x)))))
+ @end lisp
+ 
+-This representation is known as @newterm{Church numerals}, after its inventor,
+-Alonzo Church, the logician who invented the λ-calculus.
++Это представление известно как @newterm{нумералы Чёрча}, по имени его изобретателя
++Алонзо Чёрча, логика, который изобрёл λ-исчисление.
+ 
+-Define @code{one} and @code{two} directly (not in terms of @code{zero} and
+-@code{add-1}).  (Hint: Use substitution to evaluate @code{(add-1 zero)}).  Give
+-a direct definition of the addition procedure @code{+} (not in terms of
+-repeated application of @code{add-1}).
++Определите @code{one} и @code{two} напрямую (не в терминах @code{zero} и
++@code{add-1}).  (Подсказка: воспользуйтесь подстановкой, чтобы вычислить
++@code{(add-1 zero)}.)  Дайте прямое определение процедуры сложения @code{+} (не в
++терминах повторного применения @code{add-1}).
+ @end quotation
+ 
+ @node	2.1.4, 2.2, Chapter 2, 2.1

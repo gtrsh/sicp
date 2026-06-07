@@ -1,0 +1,942 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index c35f1b1..ca3284e 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -7721,22 +7721,21 @@ x
+ @end quotation
+ 
+ @node	2.2.3, 2.2.4, 2.2.2, 2.2
+-@subsection Sequences as Conventional Interfaces
++@subsection Последовательности как общепринятые интерфейсы
+ 
+-In working with compound data, we've stressed how data abstraction permits us
+-to design programs without becoming enmeshed in the details of data
+-representations, and how abstraction preserves for us the flexibility to
+-experiment with alternative representations.  In this section, we introduce
+-another powerful design principle for working with data structures---the use of
+-@newterm{conventional interfaces}.
++В работе с составными данными мы подчёркивали, как абстракция данных позволяет нам
++проектировать программы, не запутываясь в подробностях представлений данных, и как
++абстракция сохраняет за нами гибкость экспериментировать с альтернативными
++представлениями.  В этом разделе мы введём ещё один мощный принцип проектирования для
++работы со структурами данных — использование @newterm{общепринятых интерфейсов}.
+ 
+-In @ref{1.3} we saw how program abstractions, implemented as
+-higher-order procedures, can capture common patterns in programs that deal with
+-numerical data.  Our ability to formulate analogous operations for working with
+-compound data depends crucially on the style in which we manipulate our data
+-structures.  Consider, for example, the following procedure, analogous to the
+-@code{count-leaves} procedure of @ref{2.2.2}, which takes a tree as
+-argument and computes the sum of the squares of the leaves that are odd:
++В @ref{1.3} мы видели, как программные абстракции, реализованные как процедуры высшего
++порядка, могут схватывать общие образцы в программах, имеющих дело с числовыми данными.
++Наша способность формулировать аналогичные операции для работы с составными данными
++критически зависит от стиля, в котором мы манипулируем нашими структурами данных.
++Рассмотрим, например, следующую процедуру, аналогичную процедуре @code{count-leaves} из
++@ref{2.2.2}, которая принимает дерево как аргумент и вычисляет сумму квадратов листьев,
++являющихся нечётными:
+ 
+ @lisp
+ (define (sum-odd-squares tree)
+@@ -7750,9 +7749,9 @@ argument and computes the sum of the squares of the leaves that are odd:
+ @end lisp
+ 
+ @noindent
+-On the surface, this procedure is very different from the following one, which
+-constructs a list of all the even Fibonacci numbers @math{{\text{Fib}(k)}}, where
+-@math{k} is less than or equal to a given integer @math{n}:
++На первый взгляд эта процедура очень отличается от следующей, которая строит список
++всех чётных чисел Фибоначчи @math{{\text{Fib}(k)}}, где @math{k} меньше или равно
++данному целому числу @math{n}:
+ 
+ @lisp
+ (define (even-fibs n)
+@@ -7767,108 +7766,102 @@ constructs a list of all the even Fibonacci numbers @math{{\text{Fib}(k)}}, wher
+ @end lisp
+ 
+ @noindent
+-Despite the fact that these two procedures are structurally very different, a
+-more abstract description of the two computations reveals a great deal of
+-similarity.  The first program
++Несмотря на то что эти две процедуры структурно очень различны, более абстрактное
++описание двух вычислений выявляет немалое сходство.  Первая программа
+ 
+ @itemize @bullet
+ 
+ @item
+-enumerates the leaves of a tree;
++перечисляет листья дерева;
+ 
+ @item
+-filters them, selecting the odd ones;
++фильтрует их, отбирая нечётные;
+ 
+ @item
+-squares each of the selected ones; and
++возводит каждый из отобранных в квадрат; и
+ 
+ @item
+-accumulates the results using @code{+}, starting with 0.
++накапливает результаты с помощью @code{+}, начиная с 0.
+ 
+ @end itemize
+ 
+ @noindent
+-The second program
++Вторая программа
+ 
+ @itemize @bullet
+ 
+ @item
+-enumerates the integers from 0 to @math{n};
++перечисляет целые числа от 0 до @math{n};
+ 
+ @item
+-computes the Fibonacci number for each integer;
++вычисляет число Фибоначчи для каждого целого числа;
+ 
+ @item
+-filters them, selecting the even ones; and
++фильтрует их, отбирая чётные; и
+ 
+ @item
+-accumulates the results using @code{cons},  starting with the
+-empty list.
++накапливает результаты с помощью @code{cons}, начиная с пустого списка.
+ 
+ @end itemize
+ 
+ @noindent
+-A signal-processing engineer would find it natural to conceptualize these
+-processes in terms of signals flowing through a cascade of stages, each of
+-which implements part of the program plan, as shown in @ref{Figure 2.7}.  In
+-@code{sum-odd-squares}, we begin with an @newterm{enumerator}, which generates
+-a ``signal'' consisting of the leaves of a given tree.  This signal is passed
+-through a @newterm{filter}, which eliminates all but the odd elements.  The
+-resulting signal is in turn passed through a @newterm{map}, which is a
+-``transducer'' that applies the @code{square} procedure to each element.  The
+-output of the map is then fed to an @newterm{accumulator}, which combines the
+-elements using @code{+}, starting from an initial 0.  The plan for
+-@code{even-fibs} is analogous.
++Инженеру по обработке сигналов было бы естественно концептуализировать эти процессы в
++терминах сигналов, текущих через каскад стадий, каждая из которых реализует часть плана
++программы, как показано на @ref{Figure 2.7}.  В @code{sum-odd-squares} мы начинаем с
++@newterm{перечислителя}, который порождает «сигнал», состоящий из листьев данного
++дерева.  Этот сигнал пропускается через @newterm{фильтр}, который устраняет все
++элементы, кроме нечётных.  Получившийся сигнал, в свою очередь, пропускается через
++@newterm{отображение} — «преобразователь», который применяет процедуру @code{square} к
++каждому элементу.  Выход отображения затем подаётся в @newterm{накопитель}, который
++комбинирует элементы с помощью @code{+}, начиная с исходного 0.  План для
++@code{even-fibs} аналогичен.
+ 
+ @float
+ @anchor{Figure 2.7}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.7:} The signal-flow plans for the
+-procedures @code{sum-odd-squares} (top) and @code{even-fibs} (bottom) reveal
+-the commonality between the two programs.
++@strong{Figure 2.7:} Сигнальные планы процедур @code{sum-odd-squares} (вверху) и
++@code{even-fibs} (внизу) выявляют общность двух программ.
+ 
+ @example
+-+-------------+   +-------------+   +-------------+   +-------------+
+-| enumerate:  |-->| filter:     |-->| map:        |-->| accumulate: |
+-| tree leaves |   | odd?        |   | square      |   | +, 0        |
+-+-------------+   +-------------+   +-------------+   +-------------+
+-
+-+-------------+   +-------------+   +-------------+   +-------------+
+-| enumerate:  |-->| map:        |-->| filter:     |-->| accumulate: |
+-| integers    |   | fib         |   | even?       |   | cons, ()    |
+-+-------------+   +-------------+   +-------------+   +-------------+
+++---------------+   +---------------+   +---------------+   +---------------+
++| перечислить:  |-->| фильтр:       |-->| отобразить:   |-->| накопить:     |
++| листья дерева |   | odd?          |   | square        |   | +, 0          |
+++---------------+   +---------------+   +---------------+   +---------------+
++
+++---------------+   +---------------+   +---------------+   +---------------+
++| перечислить:  |-->| отобразить:   |-->| фильтр:       |-->| накопить:     |
++| целые         |   | fib           |   | even?         |   | cons, ()      |
+++---------------+   +---------------+   +---------------+   +---------------+
+ @end example
+ @end quotation
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.7e,147mm,,,.std.svg} 
+-@caption{@strong{Figure 2.7:} The signal-flow plans for the procedures @code{sum-odd-squares} (top) and @code{even-fibs} (bottom) reveal the commonality between the two programs.}
++@caption{@strong{Figure 2.7:} Сигнальные планы процедур @code{sum-odd-squares} (вверху) и @code{even-fibs} (внизу) выявляют общность двух программ.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-Unfortunately, the two procedure definitions above fail to exhibit this
+-signal-flow structure.  For instance, if we examine the @code{sum-odd-squares}
+-procedure, we find that the enumeration is implemented partly by the
+-@code{null?} and @code{pair?} tests and partly by the tree-recursive structure
+-of the procedure.  Similarly, the accumulation is found partly in the tests and
+-partly in the addition used in the recursion.  In general, there are no
+-distinct parts of either procedure that correspond to the elements in the
+-signal-flow description.  Our two procedures decompose the computations in a
+-different way, spreading the enumeration over the program and mingling it with
+-the map, the filter, and the accumulation.  If we could organize our programs
+-to make the signal-flow structure manifest in the procedures we write, this
+-would increase the conceptual clarity of the resulting code.
++К сожалению, два приведённых выше определения процедур не проявляют этой
++сигнальной структуры.  Например, если мы рассмотрим процедуру @code{sum-odd-squares},
++то обнаружим, что перечисление реализовано частично проверками @code{null?} и
++@code{pair?}, а частично — древовидно-рекурсивной структурой процедуры.  Аналогично,
++накопление обнаруживается частично в проверках, а частично — в сложении, используемом в
++рекурсии.  Вообще, ни в одной из процедур нет отдельных частей, которые соответствовали
++бы элементам сигнального описания.  Наши две процедуры разлагают вычисления по-разному,
++размазывая перечисление по программе и смешивая его с отображением, фильтром и
++накоплением.  Если бы мы могли организовать наши программы так, чтобы сделать
++сигнальную структуру явной в процедурах, которые мы пишем, это повысило бы
++концептуальную ясность получающегося кода.
+ 
+-@subsubheading Sequence Operations
++@subsubheading Операции над последовательностями
+ 
+-The key to organizing programs so as to more clearly reflect the signal-flow
+-structure is to concentrate on the ``signals'' that flow from one stage in the
+-process to the next.  If we represent these signals as lists, then we can use
+-list operations to implement the processing at each of the stages.  For
+-instance, we can implement the mapping stages of the signal-flow diagrams using
+-the @code{map} procedure from @ref{2.2.1}:
++Ключ к организации программ так, чтобы яснее отражать сигнальную структуру, — это
++сосредоточиться на «сигналах», текущих от одной стадии процесса к следующей.  Если мы
++представим эти сигналы как списки, то сможем использовать операции над списками для
++реализации обработки на каждой из стадий.  Например, мы можем реализовать стадии
++отображения сигнальных диаграмм с помощью процедуры @code{map} из @ref{2.2.1}:
+ 
+ @lisp
+ (map square (list 1 2 3 4 5))
+@@ -7876,8 +7869,8 @@ the @code{map} procedure from @ref{2.2.1}:
+ @end lisp
+ 
+ @noindent
+-Filtering a sequence to select only those elements that satisfy a given
+-predicate is accomplished by
++Фильтрация последовательности для отбора только тех элементов, которые удовлетворяют
++данному предикату, достигается так:
+ 
+ @lisp
+ (define (filter predicate sequence)
+@@ -7891,7 +7884,7 @@ predicate is accomplished by
+ @end lisp
+ 
+ @noindent
+-For example,
++Например,
+ 
+ @lisp
+ (filter odd? (list 1 2 3 4 5))
+@@ -7899,7 +7892,7 @@ For example,
+ @end lisp
+ 
+ @noindent
+-Accumulations can be implemented by
++Накопления можно реализовать так:
+ 
+ @lisp
+ (define (accumulate op initial sequence)
+@@ -7919,9 +7912,9 @@ Accumulations can be implemented by
+ @end lisp
+ 
+ @noindent
+-All that remains to implement signal-flow diagrams is to enumerate the sequence
+-of elements to be processed.  For @code{even-fibs}, we need to generate the
+-sequence of integers in a given range, which we can do as follows:
++Всё, что остаётся для реализации сигнальных диаграмм, — это перечислить
++последовательность элементов, подлежащих обработке.  Для @code{even-fibs} нам нужно
++породить последовательность целых чисел в данном диапазоне, что мы можем сделать так:
+ 
+ @lisp
+ (define (enumerate-interval low high)
+@@ -7937,10 +7930,10 @@ sequence of integers in a given range, which we can do as follows:
+ @end lisp
+ 
+ @noindent
+-To enumerate the leaves of a tree, we can use@footnote{This is, in fact,
+-precisely the @code{fringe} procedure from @ref{Exercise 2.28}.  Here we've
+-renamed it to emphasize that it is part of a family of general
+-sequence-manipulation procedures.}
++Чтобы перечислить листья дерева, мы можем
++использовать@footnote{Это, на самом деле, в точности процедура @code{fringe} из
++@ref{Exercise 2.28}.  Здесь мы переименовали её, чтобы подчеркнуть, что она входит в
++семейство обобщённых процедур манипулирования последовательностями.}
+ 
+ @lisp
+ (define (enumerate-tree tree)
+@@ -7955,10 +7948,10 @@ sequence-manipulation procedures.}
+ @end lisp
+ 
+ @noindent
+-Now we can reformulate @code{sum-odd-squares} and @code{even-fibs} as in the
+-signal-flow diagrams.  For @code{sum-odd-squares}, we enumerate the sequence of
+-leaves of the tree, filter this to keep only the odd numbers in the sequence,
+-square each element, and sum the results:
++Теперь мы можем переформулировать @code{sum-odd-squares} и @code{even-fibs} как в
++сигнальных диаграммах.  Для @code{sum-odd-squares} мы перечисляем последовательность
++листьев дерева, фильтруем её, чтобы оставить только нечётные числа в
++последовательности, возводим каждый элемент в квадрат и суммируем результаты:
+ 
+ @lisp
+ (define (sum-odd-squares tree)
+@@ -7971,9 +7964,9 @@ square each element, and sum the results:
+ @end lisp
+ 
+ @noindent
+-For @code{even-fibs}, we enumerate the integers from 0 to @math{n}, generate the
+-Fibonacci number for each of these integers, filter the resulting sequence to
+-keep only the even elements, and accumulate the results into a list:
++Для @code{even-fibs} мы перечисляем целые числа от 0 до @math{n}, порождаем число
++Фибоначчи для каждого из этих целых, фильтруем получившуюся последовательность, чтобы
++оставить только чётные элементы, и накапливаем результаты в список:
+ 
+ @lisp
+ (define (even-fibs n)
+@@ -7986,20 +7979,20 @@ keep only the even elements, and accumulate the results into a list:
+ @end lisp
+ 
+ @noindent
+-The value of expressing programs as sequence operations is that this helps us
+-make program designs that are modular, that is, designs that are constructed by
+-combining relatively independent pieces.  We can encourage modular design by
+-providing a library of standard components together with a conventional
+-interface for connecting the components in flexible ways.
++Ценность выражения программ как операций над последовательностями в том, что это
++помогает нам делать модульные проекты программ, то есть проекты, построенные
++комбинированием относительно независимых частей.  Мы можем поощрять модульное
++проектирование, предоставляя библиотеку стандартных компонентов вместе с общепринятым
++интерфейсом для гибкого соединения компонентов.
+ 
+-Modular construction is a powerful strategy for controlling complexity in
+-engineering design.  In real signal-processing applications, for example,
+-designers regularly build systems by cascading elements selected from
+-standardized families of filters and transducers.  Similarly, sequence
+-operations provide a library of standard program elements that we can mix and
+-match.  For instance, we can reuse pieces from the @code{sum-odd-squares} and
+-@code{even-fibs} procedures in a program that constructs a list of the squares
+-of the first @math{{n + 1}} Fibonacci numbers:
++Модульное построение — мощная стратегия управления сложностью в инженерном
++проектировании.  В реальных приложениях обработки сигналов, например, проектировщики
++регулярно строят системы, каскадируя элементы, выбранные из стандартизированных
++семейств фильтров и преобразователей.  Аналогично, операции над последовательностями
++предоставляют библиотеку стандартных программных элементов, которые мы можем смешивать
++и сочетать.  Например, мы можем повторно использовать части процедур
++@code{sum-odd-squares} и @code{even-fibs} в программе, которая строит список квадратов
++первых @math{{n + 1}} чисел Фибоначчи:
+ 
+ @lisp
+ (define (list-fib-squares n)
+@@ -8015,8 +8008,8 @@ of the first @math{{n + 1}} Fibonacci numbers:
+ @end lisp
+ 
+ @noindent
+-We can rearrange the pieces and use them in computing the product of the squares of the odd
+-integers in a sequence:
++Мы можем переставить части и использовать их при вычислении произведения квадратов
++нечётных целых чисел в последовательности:
+ 
+ @lisp
+ (define 
+@@ -8033,12 +8026,12 @@ integers in a sequence:
+ @end lisp
+ 
+ @noindent
+-We can also formulate conventional data-processing applications in terms of
+-sequence operations.  Suppose we have a sequence of personnel records and we
+-want to find the salary of the highest-paid programmer.  Assume that we have a
+-selector @code{salary} that returns the salary of a record, and a predicate
+-@code{programmer?} that tests if a record is for a programmer.  Then we can
+-write
++Мы можем также формулировать традиционные приложения обработки данных в терминах
++операций над последовательностями.  Предположим, у нас есть последовательность записей
++о сотрудниках, и мы хотим найти зарплату наиболее высокооплачиваемого программиста.
++Предположим, что у нас есть селектор @code{salary}, возвращающий зарплату записи, и
++предикат @code{programmer?}, который проверяет, относится ли запись к программисту.
++Тогда мы можем написать
+ 
+ @lisp
+ (define 
+@@ -8052,31 +8045,31 @@ write
+ @end lisp
+ 
+ @noindent
+-These examples give just a hint of the vast range of operations that can be
+-expressed as sequence operations.@footnote{Richard @ref{Waters (1979)} developed a
+-program that automatically analyzes traditional Fortran programs, viewing them
+-in terms of maps, filters, and accumulations.  He found that fully 90 percent
+-of the code in the Fortran Scientific Subroutine Package fits neatly into this
+-paradigm.  One of the reasons for the success of Lisp as a programming language
+-is that lists provide a standard medium for expressing ordered collections so
+-that they can be manipulated using higher-order operations.  The programming
+-language APL owes much of its power and appeal to a similar choice. In APL all
+-data are represented as arrays, and there is a universal and convenient set of
+-generic operators for all sorts of array operations.}
++Эти примеры дают лишь намёк на обширный диапазон операций, которые можно выразить как
++операции над последовательностями.@footnote{Ричард @ref{Waters (1979)} разработал
++программу, которая автоматически анализирует традиционные программы на Fortran,
++рассматривая их в терминах отображений, фильтров и накоплений.  Он обнаружил, что
++целых 90 процентов кода в Fortran Scientific Subroutine Package аккуратно
++укладывается в эту парадигму.  Одна из причин успеха Lisp как языка программирования в
++том, что списки предоставляют стандартную среду для выражения упорядоченных наборов,
++так что ими можно манипулировать с помощью операций высшего порядка.  Язык
++программирования APL обязан большой частью своей мощи и привлекательности похожему
++выбору.  В APL все данные представлены как массивы, и есть универсальный и удобный
++набор обобщённых операторов для всевозможных операций над массивами.}
+ 
+-Sequences, implemented here as lists, serve as a conventional interface that
+-permits us to combine processing modules.  Additionally, when we uniformly
+-represent structures as sequences, we have localized the data-structure
+-dependencies in our programs to a small number of sequence operations.  By
+-changing these, we can experiment with alternative representations of
+-sequences, while leaving the overall design of our programs intact.  We will
+-exploit this capability in @ref{3.5}, when we generalize the
+-sequence-processing paradigm to admit infinite sequences.
++Последовательности, реализованные здесь как списки, служат общепринятым интерфейсом,
++который позволяет нам комбинировать модули обработки.  Кроме того, когда мы единообразно
++представляем структуры как последовательности, мы локализовали зависимости от структуры
++данных в наших программах до небольшого числа операций над последовательностями.
++Изменяя их, мы можем экспериментировать с альтернативными представлениями
++последовательностей, оставляя при этом общий проект наших программ нетронутым.  Мы
++воспользуемся этой возможностью в @ref{3.5}, когда обобщим парадигму обработки
++последовательностей, чтобы допустить бесконечные последовательности.
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.33}Exercise 2.33:} Fill in the missing expressions
+-to complete the following definitions of some basic list-manipulation
+-operations as accumulations:
++@strong{@anchor{Exercise 2.33}Exercise 2.33:} Заполните недостающие выражения, чтобы
++завершить следующие определения некоторых основных операций манипулирования списками
++как накоплений:
+ 
+ @lisp
+ (define (map p sequence)
+@@ -8092,9 +8085,8 @@ operations as accumulations:
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.34}Exercise 2.34:} Evaluating a polynomial in @math{x}
+-at a given value of @math{x} can be formulated as an accumulation.  We evaluate
+-the polynomial
++@strong{@anchor{Exercise 2.34}Exercise 2.34:} Вычисление многочлена от @math{x} при
++данном значении @math{x} можно сформулировать как накопление.  Мы вычисляем многочлен
+ @ifinfo
+ 
+ @example
+@@ -8107,8 +8099,8 @@ a_n x^n + a_(n-1) x^(n-1) + ... + a_1 x + a_0
+   {a_n x^n} + {a_{n-1} x^{n-1}} + \dots + {a_1 x} + a_0  \]
+ @end tex
+ @noindent
+-using a well-known algorithm called @newterm{Horner's rule}, which structures
+-the computation as
++с помощью хорошо известного алгоритма, называемого @newterm{правилом Горнера}, которое
++структурирует вычисление как
+ @ifinfo
+ 
+ @example
+@@ -8121,26 +8113,24 @@ the computation as
+   {(\dots (a_n x} + {a_{n-1}) x} + \dots + {a_1) x} + {a_0.}  \]
+ @end tex
+ @noindent
+-In other words, we start with @math{a_n}, multiply by @math{x}, add
+-@math{a_{n-1}}, multiply by @math{x}, and so on, until we reach
+-@math{a_0}.@footnote{According to @ref{Knuth 1981}, this rule was formulated by
+-W. G. Horner early in the nineteenth century, but the method was actually used
+-by Newton over a hundred years earlier.  Horner's rule evaluates the polynomial
+-using fewer additions and multiplications than does the straightforward method
+-of first computing @math{{a_n x^n}}, then adding
+-@math{{a_{n-1}x^{n-1}}}, and so on.  In fact, it is possible to prove
+-that any algorithm for evaluating arbitrary polynomials must use at least as
+-many additions and multiplications as does Horner's rule, and thus Horner's
+-rule is an optimal algorithm for polynomial evaluation.  This was proved (for
+-the number of additions) by A. M. Ostrowski in a 1954 paper that essentially
+-founded the modern study of optimal algorithms.  The analogous statement for
+-multiplications was proved by V. Y. Pan in 1966.  The book by @ref{Borodin and Munro (1975)} 
+-provides an overview of these and other results about optimal
+-algorithms.}
+-
+-Fill in the following template to produce a procedure that evaluates a
+-polynomial using Horner's rule.  Assume that the coefficients of the polynomial
+-are arranged in a sequence, from @math{a_0} through @math{a_n}.
++Иными словами, мы начинаем с @math{a_n}, умножаем на @math{x}, прибавляем
++@math{a_{n-1}}, умножаем на @math{x}, и так далее, пока не достигнем
++@math{a_0}.@footnote{Согласно @ref{Knuth 1981}, это правило было сформулировано
++У. Г. Горнером в начале девятнадцатого века, но метод на самом деле использовался
++Ньютоном более чем на сто лет раньше.  Правило Горнера вычисляет многочлен, используя
++меньше сложений и умножений, чем прямолинейный метод сначала вычислить
++@math{{a_n x^n}}, затем прибавить @math{{a_{n-1}x^{n-1}}}, и так далее.  На самом деле
++можно доказать, что любой алгоритм вычисления произвольных многочленов должен
++использовать по меньшей мере столько же сложений и умножений, сколько правило Горнера,
++и поэтому правило Горнера — оптимальный алгоритм вычисления многочлена.  Это было
++доказано (для числа сложений) А. М. Островским в статье 1954 года, которая по сути
++основала современное изучение оптимальных алгоритмов.  Аналогичное утверждение для
++умножений было доказано В. Я. Паном в 1966 году.  Книга @ref{Borodin and Munro (1975)}
++даёт обзор этих и других результатов об оптимальных алгоритмах.}
++
++Заполните следующий шаблон, чтобы получить процедуру, вычисляющую многочлен по правилу
++Горнера.  Предположите, что коэффициенты многочлена расположены в последовательности,
++от @math{a_0} до @math{a_n}.
+ 
+ @lisp
+ (define 
+@@ -8152,8 +8142,8 @@ are arranged in a sequence, from @math{a_0} through @math{a_n}.
+    coefficient-sequence))
+ @end lisp
+ 
+-For example, to compute @math{{1 + 3x} + {5x^3 + x^5}} at @math{{x = 2}} you
+-would evaluate
++Например, чтобы вычислить @math{{1 + 3x} + {5x^3 + x^5}} при @math{{x = 2}}, вы бы
++вычислили
+ 
+ @lisp
+ (horner-eval 2 (list 1 3 0 5 0 1))
+@@ -8161,8 +8151,8 @@ would evaluate
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.35}Exercise 2.35:} Redefine @code{count-leaves} from
+-@ref{2.2.2} as an accumulation:
++@strong{@anchor{Exercise 2.35}Exercise 2.35:} Переопределите @code{count-leaves} из
++@ref{2.2.2} как накопление:
+ 
+ @lisp
+ (define (count-leaves t)
+@@ -8171,16 +8161,16 @@ would evaluate
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.36}Exercise 2.36:} The procedure @code{accumulate-n}
+-is similar to @code{accumulate} except that it takes as its third argument a
+-sequence of sequences, which are all assumed to have the same number of
+-elements.  It applies the designated accumulation procedure to combine all the
+-first elements of the sequences, all the second elements of the sequences, and
+-so on, and returns a sequence of the results.  For instance, if @code{s} is a
+-sequence containing four sequences, @code{((1 2 3) (4 5 6) (7 8 9) (10 11
+-12)),} then the value of @code{(accumulate-n + 0 s)} should be the sequence
+-@code{(22 26 30)}.  Fill in the missing expressions in the following definition
+-of @code{accumulate-n}:
++@strong{@anchor{Exercise 2.36}Exercise 2.36:} Процедура @code{accumulate-n} похожа на
++@code{accumulate}, за исключением того, что она принимает в качестве третьего аргумента
++последовательность последовательностей, которые все предполагаются имеющими одинаковое
++число элементов.  Она применяет указанную процедуру накопления, чтобы скомбинировать
++все первые элементы последовательностей, все вторые элементы последовательностей, и так
++далее, и возвращает последовательность результатов.  Например, если @code{s} —
++последовательность, содержащая четыре последовательности, @code{((1 2 3) (4 5 6) (7 8 9) (10 11
++12)),} то значением @code{(accumulate-n + 0 s)} должна быть последовательность
++@code{(22 26 30)}.  Заполните недостающие выражения в следующем определении
++@code{accumulate-n}:
+ 
+ @lisp
+ (define (accumulate-n op init seqs)
+@@ -8193,9 +8183,9 @@ of @code{accumulate-n}:
+ 
+ @quotation
+ @strong{@anchor{Exercise 2.37}Exercise 2.37:}
+-Suppose we represent vectors @b{v} = @math{{(v_i)}} as sequences of numbers, and
+-matrices @b{m} = @math{{(m_{ij})}} as sequences of vectors (the rows of the
+-matrix).  For example, the matrix
++Предположим, мы представляем векторы @b{v} = @math{{(v_i)}} как последовательности
++чисел, а матрицы @b{m} = @math{{(m_{ij})}} как последовательности векторов (строк
++матрицы).  Например, матрица
+ @ifinfo
+ 
+ @example
+@@ -8215,10 +8205,10 @@ matrix).  For example, the matrix
+ 		6 & 7 & 8 & 9 \cr }\right)  \]
+ @end tex
+ @noindent
+-is represented as the sequence @code{((1 2 3 4) (4 5 6 6) (6 7 8 9))}.  With
+-this representation, we can use sequence operations to concisely express the
+-basic matrix and vector operations.  These operations (which are described in
+-any book on matrix algebra) are the following:
++представляется как последовательность @code{((1 2 3 4) (4 5 6 6) (6 7 8 9))}.  При
++таком представлении мы можем использовать операции над последовательностями, чтобы
++кратко выразить основные операции с матрицами и векторами.  Эти операции (которые
++описаны в любой книге по матричной алгебре) следующие:
+ @ifinfo
+ 
+ @example
+@@ -8251,17 +8241,16 @@ any book on matrix algebra) are the following:
+ 		& \text{where}\; n_{ij} = m_{ji}. \cr
+ }  \]
+ @end tex
+-We can define the dot product as@footnote{This definition uses the extended
+-version of @code{map} described in @ref{Footnote 78}.}
++Мы можем определить скалярное произведение как@footnote{В этом определении используется
++расширенная версия @code{map}, описанная в @ref{Footnote 78}.}
+ 
+ @lisp
+ (define (dot-product v w)
+   (accumulate + 0 (map * v w)))
+ @end lisp
+ 
+-Fill in the missing expressions in the following procedures for computing the
+-other matrix operations.  (The procedure @code{accumulate-n} is defined in
+-@ref{Exercise 2.36}.)
++Заполните недостающие выражения в следующих процедурах для вычисления других операций с
++матрицами.  (Процедура @code{accumulate-n} определена в @ref{Exercise 2.36}.)
+ 
+ @lisp
+ (define (matrix-*-vector m v)
+@@ -8277,11 +8266,11 @@ other matrix operations.  (The procedure @code{accumulate-n} is defined in
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.38}Exercise 2.38:} The @code{accumulate} procedure
+-is also known as @code{fold-right}, because it combines the first element of
+-the sequence with the result of combining all the elements to the right.  There
+-is also a @code{fold-left}, which is similar to @code{fold-right}, except that
+-it combines elements working in the opposite direction:
++@strong{@anchor{Exercise 2.38}Exercise 2.38:} Процедура @code{accumulate} также
++известна как @code{fold-right}, потому что она комбинирует первый элемент
++последовательности с результатом комбинирования всех элементов справа.  Есть также
++@code{fold-left}, которая похожа на @code{fold-right}, за исключением того, что она
++комбинирует элементы, работая в противоположном направлении:
+ 
+ @lisp
+ (define (fold-left op initial sequence)
+@@ -8293,7 +8282,7 @@ it combines elements working in the opposite direction:
+   (iter initial sequence))
+ @end lisp
+ 
+-What are the values of
++Каковы значения
+ 
+ @lisp
+ (fold-right / 1 (list 1 2 3))
+@@ -8302,15 +8291,15 @@ What are the values of
+ (fold-left  list nil (list 1 2 3))
+ @end lisp
+ 
+-Give a property that @code{op} should satisfy to guarantee that
+-@code{fold-right} and @code{fold-left} will produce the same values for any
+-sequence.
++Приведите свойство, которому должна удовлетворять @code{op}, чтобы гарантировать, что
++@code{fold-right} и @code{fold-left} будут давать одинаковые значения для любой
++последовательности.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.39}Exercise 2.39:} Complete the following
+-definitions of @code{reverse} (@ref{Exercise 2.18}) in terms of
+-@code{fold-right} and @code{fold-left} from @ref{Exercise 2.38}:
++@strong{@anchor{Exercise 2.39}Exercise 2.39:} Дополните следующие определения
++@code{reverse} (@ref{Exercise 2.18}) в терминах @code{fold-right} и @code{fold-left}
++из @ref{Exercise 2.38}:
+ 
+ @lisp
+ (define (reverse sequence)
+@@ -8323,18 +8312,17 @@ definitions of @code{reverse} (@ref{Exercise 2.18}) in terms of
+ @end lisp
+ @end quotation
+ 
+-@subsubheading Nested Mappings
++@subsubheading Вложенные отображения
+ 
+-We can extend the sequence paradigm to include many computations that are
+-commonly expressed using nested loops.@footnote{This approach to nested
+-mappings was shown to us by David Turner, whose languages KRC and Miranda
+-provide elegant formalisms for dealing with these constructs.  The examples in
+-this section (see also @ref{Exercise 2.42}) are adapted from @ref{Turner 1981}.  In
+-@ref{3.5.3}, we'll see how this approach generalizes to infinite
+-sequences.} Consider this problem: Given a positive integer @math{n}, find all
+-ordered pairs of distinct positive integers @math{i} and @math{j}, where 
+-@math{{1 \le j} < {i \le n}}, such that @math{{i + j}} is prime.  For example, if @math{n} is 6,
+-then the pairs are the following:
++Мы можем расширить парадигму последовательностей, чтобы включить многие вычисления,
++которые обычно выражаются с помощью вложенных циклов.@footnote{Этот подход к вложенным
++отображениям был показан нам Дэвидом Тёрнером, чьи языки KRC и Miranda предоставляют
++изящные формализмы для работы с этими конструкциями.  Примеры в этом разделе (см. также
++@ref{Exercise 2.42}) адаптированы из @ref{Turner 1981}.  В @ref{3.5.3} мы увидим, как
++этот подход обобщается на бесконечные последовательности.} Рассмотрим такую задачу: для
++данного положительного целого числа @math{n} найти все упорядоченные пары различных
++положительных целых чисел @math{i} и @math{j}, где @math{{1 \le j} < {i \le n}}, такие,
++что @math{{i + j}} простое.  Например, если @math{n} равно 6, то пары следующие:
+ @ifinfo
+ 
+ @example
+@@ -8356,22 +8344,23 @@ i + j	& 3 & 5 & 5 & 7 & 7 & 7 & 11
+ \end{array}
+ \]
+ @end tex
+-A natural way to organize this computation is to generate the sequence of all
+-ordered pairs of positive integers less than or equal to @math{n}, filter to
+-select those pairs whose sum is prime, and then, for each pair @math{{(i, j)}}
+-that passes through the filter, produce the triple @math{{(i, j, i + j)}}.
+-
+-Here is a way to generate the sequence of pairs: For each integer @math{{i \le n}}, 
+-enumerate the integers @math{{j < i}}, and for each such @math{i} and @math{j}
+-generate the pair @math{{(i, j)}}.  In terms of sequence operations, we map along
+-the sequence @code{(enumerate-interval 1 n)}.  For each @math{i} in this sequence,
+-we map along the sequence @code{(enumerate-interval 1 (- i 1))}.  For each
+-@math{j} in this latter sequence, we generate the pair @code{(list i j)}.  This
+-gives us a sequence of pairs for each @math{i}.  Combining all the sequences for
+-all the @math{i} (by accumulating with @code{append}) produces the required
+-sequence of pairs:@footnote{We're representing a pair here as a list of two
+-elements rather than as a Lisp pair.  Thus, the ``pair'' @math{{(i, j)}} is
+-represented as @code{(list i j)}, not @code{(cons i j)}.}
++Естественный способ организовать это вычисление — породить последовательность всех
++упорядоченных пар положительных целых чисел, меньших или равных @math{n}, отфильтровать,
++чтобы отобрать те пары, сумма которых проста, а затем для каждой пары @math{{(i, j)}},
++прошедшей через фильтр, произвести тройку @math{{(i, j, i + j)}}.
++
++Вот способ породить последовательность пар: для каждого целого числа @math{{i \le n}}
++перечислить целые числа @math{{j < i}}, и для каждого такого @math{i} и @math{j}
++породить пару @math{{(i, j)}}.  В терминах операций над последовательностями мы
++отображаем последовательность @code{(enumerate-interval 1 n)}.  Для каждого @math{i} в
++этой последовательности мы отображаем последовательность
++@code{(enumerate-interval 1 (- i 1))}.  Для каждого @math{j} в этой последней
++последовательности мы порождаем пару @code{(list i j)}.  Это даёт нам последовательность
++пар для каждого @math{i}.  Комбинирование всех последовательностей для всех @math{i}
++(накоплением с помощью @code{append}) производит требуемую последовательность
++пар:@footnote{Мы представляем здесь пару как список из двух элементов, а не как
++Lisp-пару.  Таким образом, «пара» @math{{(i, j)}} представляется как @code{(list i j)},
++а не @code{(cons i j)}.}
+ 
+ @lisp
+ (accumulate 
+@@ -8385,8 +8374,8 @@ represented as @code{(list i j)}, not @code{(cons i j)}.}
+ @end lisp
+ 
+ @noindent
+-The combination of mapping and accumulating with @code{append} is so common in
+-this sort of program that we will isolate it as a separate procedure:
++Комбинация отображения и накопления с помощью @code{append} настолько обычна в такого
++рода программах, что мы выделим её как отдельную процедуру:
+ 
+ @lisp
+ (define (flatmap proc seq)
+@@ -8394,10 +8383,10 @@ this sort of program that we will isolate it as a separate procedure:
+ @end lisp
+ 
+ @noindent
+-Now filter this sequence of pairs to find those whose sum is prime. The filter
+-predicate is called for each element of the sequence; its argument is a pair
+-and it must extract the integers from the pair.  Thus, the predicate to apply
+-to each element in the sequence is
++Теперь отфильтруем эту последовательность пар, чтобы найти те, чья сумма проста.
++Предикат фильтра вызывается для каждого элемента последовательности; его аргумент —
++пара, и он должен извлечь целые числа из пары.  Таким образом, предикат, применяемый к
++каждому элементу последовательности, таков:
+ 
+ @lisp
+ (define (prime-sum? pair)
+@@ -8405,9 +8394,9 @@ to each element in the sequence is
+ @end lisp
+ 
+ @noindent
+-Finally, generate the sequence of results by mapping over the filtered pairs
+-using the following procedure, which constructs a triple consisting of the two
+-elements of the pair along with their sum:
++Наконец, породим последовательность результатов, отображая отфильтрованные пары с
++помощью следующей процедуры, которая строит тройку, состоящую из двух элементов пары
++вместе с их суммой:
+ 
+ @lisp
+ (define (make-pair-sum pair)
+@@ -8417,7 +8406,7 @@ elements of the pair along with their sum:
+ @end lisp
+ 
+ @noindent
+-Combining all these steps yields the complete procedure:
++Комбинирование всех этих шагов даёт полную процедуру:
+ 
+ @lisp
+ (define (prime-sum-pairs n)
+@@ -8435,20 +8424,20 @@ Combining all these steps yields the complete procedure:
+ @end lisp
+ 
+ @noindent
+-Nested mappings are also useful for sequences other than those that enumerate
+-intervals.  Suppose we wish to generate all the permutations of a set @math{{S;}}
+-that is, all the ways of ordering the items in the set.  For instance, the
+-permutations of @math{{\{1, 2, 3\}}} are @math{{\{1, 2, 3\}}}, @math{{\{1, 3, 2\}}}, @math{{\{2, 1, 3\}}}, @math{{\{2, 3, 1\}}},
+-@math{{\{3, 1, 2\}}}, and @math{{\{3, 2, 1\}}}.  Here is a plan for generating the permutations of
+-@math{S}: For each item @math{x} in @math{S}, recursively generate the sequence of
+-permutations of @math{{S - x}},@footnote{The set @math{{S - x}} is the set of all
+-elements of @math{S}, excluding @math{x}.} and adjoin @math{x} to the front of each one.
+-This yields, for each @math{x} in @math{S}, the sequence of permutations of @math{S}
+-that begin with @math{x}.  Combining these sequences for all @math{x} gives all the
+-permutations of @math{S}:@footnote{Semicolons in Scheme code are used to introduce
+-@newterm{comments}.  Everything from the semicolon to the end of the line is
+-ignored by the interpreter.  In this book we don't use many comments; we try to
+-make our programs self-documenting by using descriptive names.}
++Вложенные отображения полезны и для последовательностей, отличных от тех, что
++перечисляют интервалы.  Предположим, мы хотим породить все перестановки множества
++@math{{S;}} то есть все способы упорядочить элементы множества.  Например, перестановки
++@math{{\{1, 2, 3\}}} — это @math{{\{1, 2, 3\}}}, @math{{\{1, 3, 2\}}}, @math{{\{2, 1, 3\}}}, @math{{\{2, 3, 1\}}},
++@math{{\{3, 1, 2\}}} и @math{{\{3, 2, 1\}}}.  Вот план порождения перестановок
++@math{S}: для каждого элемента @math{x} в @math{S} рекурсивно породить последовательность
++перестановок @math{{S - x}},@footnote{Множество @math{{S - x}} — это множество всех
++элементов @math{S}, исключая @math{x}.} и приставить @math{x} к началу каждой из них.
++Это даёт для каждого @math{x} в @math{S} последовательность перестановок @math{S},
++начинающихся с @math{x}.  Комбинирование этих последовательностей для всех @math{x} даёт
++все перестановки @math{S}:@footnote{Точки с запятой в коде Scheme используются для
++введения @newterm{комментариев}.  Всё от точки с запятой до конца строки игнорируется
++интерпретатором.  В этой книге мы не используем много комментариев; мы стараемся делать
++наши программы самодокументируемыми, используя описательные имена.}
+ 
+ @lisp
+ (define (permutations s)
+@@ -8463,14 +8452,13 @@ make our programs self-documenting by using descriptive names.}
+ @end lisp
+ 
+ @noindent
+-Notice how this strategy reduces the problem of generating permutations of
+-@math{S} to the problem of generating the permutations of sets with fewer elements
+-than @math{S}.  In the terminal case, we work our way down to the empty list,
+-which represents a set of no elements.  For this, we generate @code{(list
+-nil)}, which is a sequence with one item, namely the set with no elements.  The
+-@code{remove} procedure used in @code{permutations} returns all the items in a
+-given sequence except for a given item.  This can be expressed as a simple
+-filter:
++Заметьте, как эта стратегия сводит задачу порождения перестановок @math{S} к задаче
++порождения перестановок множеств с меньшим числом элементов, чем @math{S}.  В конечном
++случае мы добираемся до пустого списка, который представляет множество из нуля
++элементов.  Для него мы порождаем @code{(list nil)}, что является последовательностью с
++одним элементом, а именно множеством из нуля элементов.  Процедура @code{remove},
++используемая в @code{permutations}, возвращает все элементы данной последовательности,
++кроме данного элемента.  Это можно выразить как простой фильтр:
+ 
+ @lisp
+ (define (remove item sequence)
+@@ -8479,39 +8467,39 @@ filter:
+ @end lisp
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.40}Exercise 2.40:} Define a procedure
+-@code{unique-pairs} that, given an integer @math{n}, generates the sequence of
+-pairs @math{{(i, j)}} with @math{{1 \le j} < {i \le n}}.  Use @code{unique-pairs}
+-to simplify the definition of @code{prime-sum-pairs} given above.
++@strong{@anchor{Exercise 2.40}Exercise 2.40:} Определите процедуру @code{unique-pairs},
++которая для данного целого числа @math{n} порождает последовательность пар
++@math{{(i, j)}} с @math{{1 \le j} < {i \le n}}.  Используйте @code{unique-pairs}, чтобы
++упростить определение @code{prime-sum-pairs}, данное выше.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.41}Exercise 2.41:} Write a procedure to find all
+-ordered triples of distinct positive integers @math{i}, @math{j}, and @math{k} less than
+-or equal to a given integer @math{n} that sum to a given integer @math{s}.
++@strong{@anchor{Exercise 2.41}Exercise 2.41:} Напишите процедуру, чтобы найти все
++упорядоченные тройки различных положительных целых чисел @math{i}, @math{j} и @math{k},
++меньших или равных данному целому числу @math{n}, которые в сумме дают данное целое
++число @math{s}.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.42}Exercise 2.42:} The ``eight-queens puzzle'' asks
+-how to place eight queens on a chessboard so that no queen is in check from any
+-other (i.e., no two queens are in the same row, column, or diagonal).  One
+-possible solution is shown in @ref{Figure 2.8}.  One way to solve the puzzle is
+-to work across the board, placing a queen in each column.  Once we have placed
+-@math{{k - 1}} queens, we must place the @math{k^{\text{th}}} queen in a position where it does
+-not check any of the queens already on the board.  We can formulate this
+-approach recursively: Assume that we have already generated the sequence of all
+-possible ways to place @math{{k - 1}} queens in the first @math{{k - 1}} columns of the
+-board.  For each of these ways, generate an extended set of positions by
+-placing a queen in each row of the @math{k^{\text{th}}} column.  Now filter these, keeping
+-only the positions for which the queen in the @math{k^{\text{th}}} column is safe with
+-respect to the other queens.  This produces the sequence of all ways to place
+-@math{k} queens in the first @math{k} columns.  By continuing this process, we will
+-produce not only one solution, but all solutions to the puzzle.
++@strong{@anchor{Exercise 2.42}Exercise 2.42:} «Задача о восьми ферзях» спрашивает, как
++разместить восемь ферзей на шахматной доске так, чтобы ни один ферзь не находился под
++боем какого-либо другого (то есть никакие два ферзя не находятся в одной строке, столбце
++или на одной диагонали).  Одно возможное решение показано на @ref{Figure 2.8}.  Один
++способ решить задачу — двигаться по доске, размещая ферзя в каждом столбце.  Как только
++мы разместили @math{{k - 1}} ферзей, мы должны разместить @math{k}-го ферзя в позиции,
++где он не бьёт ни одного из ферзей, уже стоящих на доске.  Мы можем сформулировать этот
++подход рекурсивно: предположим, что мы уже породили последовательность всех возможных
++способов разместить @math{{k - 1}} ферзей в первых @math{{k - 1}} столбцах доски.  Для
++каждого из этих способов породим расширенный набор позиций, размещая ферзя в каждой
++строке @math{k}-го столбца.  Теперь отфильтруем их, оставляя только те позиции, для
++которых ферзь в @math{k}-м столбце безопасен относительно других ферзей.  Это производит
++последовательность всех способов разместить @math{k} ферзей в первых @math{k} столбцах.
++Продолжая этот процесс, мы произведём не только одно решение, но и все решения задачи.
+ 
+ @float
+ @anchor{Figure 2.8}
+ @ifinfo
+-@strong{Figure 2.8:} A solution to the eight-queens puzzle.
++@strong{Figure 2.8:} Решение задачи о восьми ферзях.
+ 
+ @example
+ +---+---+---+---+---+---+---+---+
+@@ -8535,15 +8523,15 @@ produce not only one solution, but all solutions to the puzzle.
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.8c,73mm,,,.std.svg}
+-@caption{@strong{Figure 2.8:} A solution to the eight-queens puzzle.}
++@caption{@strong{Figure 2.8:} Решение задачи о восьми ферзях.}
+ @end iftex
+ @end float
+ 
+-We implement this solution as a procedure @code{queens}, which returns a
+-sequence of all solutions to the problem of placing @math{n} queens on an
+-@math{{n \times n}} chessboard.  @code{Queens} has an internal procedure
+-@code{queen-cols} that returns the sequence of all ways to place queens in the
+-first @math{k} columns of the board.
++Мы реализуем это решение как процедуру @code{queens}, которая возвращает
++последовательность всех решений задачи размещения @math{n} ферзей на доске
++@math{{n \times n}}.  У @code{Queens} есть внутренняя процедура @code{queen-cols},
++которая возвращает последовательность всех способов разместить ферзей в первых @math{k}
++столбцах доски.
+ 
+ @lisp
+ (define (queens board-size)
+@@ -8567,25 +8555,23 @@ first @math{k} columns of the board.
+   (queen-cols board-size))
+ @end lisp
+ 
+-In this procedure @code{rest-of-queens} is a way to place @math{{k - 1}} queens in
+-the first @math{{k - 1}} columns, and @code{new-row} is a proposed row in which to
+-place the queen for the @math{k^{\text{th}}} column.  Complete the program by implementing
+-the representation for sets of board positions, including the procedure
+-@code{adjoin-position}, which adjoins a new row-column position to a set of
+-positions, and @code{empty-board}, which represents an empty set of positions.
+-You must also write the procedure @code{safe?}, which determines for a set of
+-positions, whether the queen in the @math{k^{\text{th}}} column is safe with respect to the
+-others.  (Note that we need only check whether the new queen is safe---the
+-other queens are already guaranteed safe with respect to each other.)
++В этой процедуре @code{rest-of-queens} — это способ разместить @math{{k - 1}} ферзей в
++первых @math{{k - 1}} столбцах, а @code{new-row} — предлагаемая строка, в которую
++поместить ферзя для @math{k}-го столбца.  Завершите программу, реализовав представление
++для наборов позиций на доске, включая процедуру @code{adjoin-position}, которая
++присоединяет новую позицию «строка—столбец» к набору позиций, и @code{empty-board},
++которая представляет пустой набор позиций.  Вы также должны написать процедуру
++@code{safe?}, которая для набора позиций определяет, безопасен ли ферзь в @math{k}-м
++столбце относительно остальных.  (Заметьте, что нам нужно проверить только, безопасен ли
++новый ферзь, — остальные ферзи уже гарантированно безопасны относительно друг друга.)
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.43}Exercise 2.43:} Louis Reasoner is having a
+-terrible time doing @ref{Exercise 2.42}.  His @code{queens} procedure seems to
+-work, but it runs extremely slowly.  (Louis never does manage to wait long
+-enough for it to solve even the @math{{6\times6}} case.)  When Louis asks Eva Lu Ator for
+-help, she points out that he has interchanged the order of the nested mappings
+-in the @code{flatmap}, writing it as
++@strong{@anchor{Exercise 2.43}Exercise 2.43:} У Луи Резонера ужасные мучения с
++@ref{Exercise 2.42}.  Его процедура @code{queens}, кажется, работает, но выполняется
++крайне медленно.  (Луи так и не удаётся дождаться, пока она решит хотя бы случай
++@math{{6\times6}}.)  Когда Луи просит Эву Лу Атор о помощи, она указывает, что он
++переставил порядок вложенных отображений в @code{flatmap}, написав его как
+ 
+ @lisp
+ (flatmap
+@@ -8597,9 +8583,9 @@ in the @code{flatmap}, writing it as
+  (enumerate-interval 1 board-size))
+ @end lisp
+ 
+-Explain why this interchange makes the program run slowly.  Estimate how long
+-it will take Louis's program to solve the eight-queens puzzle, assuming that
+-the program in @ref{Exercise 2.42} solves the puzzle in time @math{T}.
++Объясните, почему эта перестановка заставляет программу выполняться медленно.  Оцените,
++сколько времени займёт у программы Луи решение задачи о восьми ферзях, предполагая, что
++программа из @ref{Exercise 2.42} решает задачу за время @math{T}.
+ @end quotation
+ 
+ @node	2.2.4, 2.3, 2.1, 2.2

@@ -1,0 +1,415 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index fb6e376..c35f1b1 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -7326,27 +7326,28 @@ Scheme стандартно предоставляет процедуру @code{
+ @end quotation
+ 
+ @node	2.2.2, 2.2.3, 2.2.1, 2.2
+-@subsection Hierarchical Structures
++@subsection Иерархические структуры
+ 
+-The representation of sequences in terms of lists generalizes naturally to
+-represent sequences whose elements may themselves be sequences.  For example,
+-we can regard the object @code{((1 2) 3 4)} constructed by
++Представление последовательностей в терминах списков естественно обобщается на
++представление последовательностей, элементы которых сами могут быть
++последовательностями.  Например, мы можем рассматривать объект @code{((1 2) 3 4)},
++построенный
+ 
+ @lisp
+ (cons (list 1 2) (list 3 4))
+ @end lisp
+ 
+ @noindent
+-as a list of three items, the first of which is itself a list, @code{(1 2)}.
+-Indeed, this is suggested by the form in which the result is printed by the
+-interpreter.  @ref{Figure 2.5} shows the representation of
+-this structure in terms of pairs.
++как список из трёх элементов, первый из которых сам является списком, @code{(1 2)}.
++Действительно, это подсказывается формой, в которой результат печатается
++интерпретатором.  @ref{Figure 2.5} показывает представление этой структуры в терминах
++пар.
+ 
+ @float
+ @anchor{Figure 2.5}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.5:} Structure formed by @code{(cons (list 1 2) (list 3 4))}.
++@strong{Figure 2.5:} Структура, образованная @code{(cons (list 1 2) (list 3 4))}.
+ 
+ @example
+                                           (3 4)
+@@ -7370,20 +7371,20 @@ this structure in terms of pairs.
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.5e,140mm,,,.std.svg}
+-@caption{@strong{Figure 2.5:} Structure formed by @code{(cons (list 1 2) (list 3 4))}.}
++@caption{@strong{Figure 2.5:} Структура, образованная @code{(cons (list 1 2) (list 3 4))}.}
+ @end iftex
+ @end float
+ 
+-Another way to think of sequences whose elements are sequences is as
+-@newterm{trees}.  The elements of the sequence are the branches of the tree,
+-and elements that are themselves sequences are subtrees.  @ref{Figure 2.6}
+-shows the structure in @ref{Figure 2.5} viewed as a tree.
++Ещё один способ мыслить последовательности, элементы которых — последовательности, —
++это как @newterm{деревья}.  Элементы последовательности — это ветви дерева, а элементы,
++которые сами являются последовательностями, — поддеревья.  @ref{Figure 2.6} показывает
++структуру с @ref{Figure 2.5}, рассматриваемую как дерево.
+ 
+ @float
+ @anchor{Figure 2.6}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.6:} The list structure in @ref{Figure 2.5} viewed as a tree.
++@strong{Figure 2.6:} Списочная структура с @ref{Figure 2.5}, рассматриваемая как дерево.
+ 
+ @example
+  ((1 2) 3 4)
+@@ -7397,17 +7398,16 @@ shows the structure in @ref{Figure 2.5} viewed as a tree.
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.6b,40mm,,,.std.svg}
+-@caption{@strong{Figure 2.6:} The list structure in @ref{Figure 2.5} viewed as a tree.}
++@caption{@strong{Figure 2.6:} Списочная структура с @ref{Figure 2.5}, рассматриваемая как дерево.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-Recursion is a natural tool for dealing with tree structures, since we can
+-often reduce operations on trees to operations on their branches, which reduce
+-in turn to operations on the branches of the branches, and so on, until we
+-reach the leaves of the tree.  As an example, compare the @code{length}
+-procedure of @ref{2.2.1} with the @code{count-leaves} procedure, which
+-returns the total number of leaves of a tree:
++Рекурсия — естественный инструмент для работы с древовидными структурами, поскольку мы
++часто можем свести операции над деревьями к операциям над их ветвями, которые, в свою
++очередь, сводятся к операциям над ветвями ветвей, и так далее, пока мы не достигнем
++листьев дерева.  В качестве примера сравните процедуру @code{length} из @ref{2.2.1} с
++процедурой @code{count-leaves}, которая возвращает общее число листьев дерева:
+ 
+ @lisp
+ (define x (cons (list 1 2) (list 3 4)))
+@@ -7433,60 +7433,59 @@ returns the total number of leaves of a tree:
+ @end lisp
+ 
+ @noindent
+-To implement @code{count-leaves}, recall the recursive plan for computing
++Чтобы реализовать @code{count-leaves}, вспомните рекурсивный план вычисления
+ @code{length}:
+ 
+ @itemize @bullet
+ 
+ @item
+-@code{Length} of a list @code{x} is 1 plus @code{length} of the
+-@code{cdr} of @code{x}.
++@code{Length} списка @code{x} — это 1 плюс @code{length} от @code{cdr} списка
++@code{x}.
+ 
+ @item
+-@code{Length} of the empty list is 0.
++@code{Length} пустого списка равна 0.
+ 
+ @end itemize
+ 
+ @noindent
+-@code{Count-leaves} is similar.  The value for the empty list is the same:
++@code{Count-leaves} аналогична.  Значение для пустого списка такое же:
+ 
+ @itemize @bullet
+ 
+ @item
+-@code{Count-leaves} of the empty list is 0.
++@code{Count-leaves} пустого списка равна 0.
+ 
+ @end itemize
+ 
+ @noindent
+-But in the reduction step, where we strip off the @code{car} of the list, we
+-must take into account that the @code{car} may itself be a tree whose leaves we
+-need to count.  Thus, the appropriate reduction step is
++Но на шаге сведения, где мы отделяем @code{car} списка, мы должны учесть, что
++@code{car} сам может быть деревом, листья которого нам нужно сосчитать.  Таким образом,
++подходящий шаг сведения таков:
+ 
+ @itemize @bullet
+ 
+ @item
+-@code{Count-leaves} of a tree @code{x} is @code{count-leaves} of the @code{car}
+-of @code{x} plus @code{count-leaves} of the @code{cdr} of @code{x}.
++@code{Count-leaves} дерева @code{x} — это @code{count-leaves} от @code{car} списка
++@code{x} плюс @code{count-leaves} от @code{cdr} списка @code{x}.
+ 
+ @end itemize
+ 
+ @noindent
+-Finally, by taking @code{car}s we reach actual leaves, so we need another base
+-case:
++Наконец, беря @code{car}, мы достигаем настоящих листьев, так что нам нужен ещё один
++базовый случай:
+ 
+ @itemize @bullet
+ 
+ @item
+-@code{Count-leaves} of a leaf is 1.
++@code{Count-leaves} листа равна 1.
+ 
+ @end itemize
+ 
+ @noindent
+-To aid in writing recursive procedures on trees, Scheme provides the primitive
+-predicate @code{pair?}, which tests whether its argument is a pair.  Here is
+-the complete procedure:@footnote{The order of the first two clauses in the
+-@code{cond} matters, since the empty list satisfies @code{null?} and also is
+-not a pair.}
++Чтобы помочь в написании рекурсивных процедур на деревьях, Scheme предоставляет
++примитивный предикат @code{pair?}, который проверяет, является ли его аргумент парой.
++Вот полная процедура:@footnote{Порядок первых двух предложений в @code{cond} важен,
++поскольку пустой список удовлетворяет @code{null?} и при этом не является парой.}
+ 
+ @lisp
+ (define (count-leaves x)
+@@ -7497,15 +7496,15 @@ not a pair.}
+ @end lisp
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.24}Exercise 2.24:} Suppose we evaluate the
+-expression @code{(list 1 (list 2 (list 3 4)))}.  Give the result printed by the
+-interpreter, the corresponding box-and-pointer structure, and the
+-interpretation of this as a tree (as in @ref{Figure 2.6}).
++@strong{@anchor{Exercise 2.24}Exercise 2.24:} Предположим, мы вычисляем выражение
++@code{(list 1 (list 2 (list 3 4)))}.  Приведите результат, печатаемый интерпретатором,
++соответствующую структуру «коробки и указатели» и интерпретацию этого как дерева (как на
++@ref{Figure 2.6}).
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.25}Exercise 2.25:} Give combinations of @code{car}s
+-and @code{cdr}s that will pick 7 from each of the following lists:
++@strong{@anchor{Exercise 2.25}Exercise 2.25:} Приведите комбинации @code{car} и
++@code{cdr}, которые выберут 7 из каждого из следующих списков:
+ 
+ @lisp
+ (1 3 (5 7) 9)
+@@ -7515,16 +7514,16 @@ and @code{cdr}s that will pick 7 from each of the following lists:
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.26}Exercise 2.26:} Suppose we define @code{x} and
+-@code{y} to be two lists:
++@strong{@anchor{Exercise 2.26}Exercise 2.26:} Предположим, мы определяем @code{x} и
++@code{y} как два списка:
+ 
+ @lisp
+ (define x (list 1 2 3))
+ (define y (list 4 5 6))
+ @end lisp
+ 
+-What result is printed by the interpreter in response to evaluating each of the
+-following expressions:
++Какой результат печатает интерпретатор в ответ на вычисление каждого из следующих
++выражений:
+ 
+ @lisp
+ (append x y)
+@@ -7534,10 +7533,11 @@ following expressions:
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.27}Exercise 2.27:} Modify your @code{reverse}
+-procedure of @ref{Exercise 2.18} to produce a @code{deep-reverse} procedure
+-that takes a list as argument and returns as its value the list with its
+-elements reversed and with all sublists deep-reversed as well.  For example,
++@strong{@anchor{Exercise 2.27}Exercise 2.27:} Измените свою процедуру @code{reverse}
++из @ref{Exercise 2.18}, чтобы получить процедуру @code{deep-reverse}, которая принимает
++список как аргумент и возвращает в качестве своего значения список с его элементами,
++расположенными в обратном порядке, и со всеми подсписками, также глубоко обращёнными.
++Например,
+ 
+ @lisp
+ (define x 
+@@ -7555,10 +7555,10 @@ x
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.28}Exercise 2.28:} Write a procedure @code{fringe}
+-that takes as argument a tree (represented as a list) and returns a list whose
+-elements are all the leaves of the tree arranged in left-to-right order.  For
+-example,
++@strong{@anchor{Exercise 2.28}Exercise 2.28:} Напишите процедуру @code{fringe},
++которая принимает в качестве аргумента дерево (представленное как список) и возвращает
++список, элементы которого — все листья дерева, расположенные в порядке слева направо.
++Например,
+ 
+ @lisp
+ (define x 
+@@ -7573,20 +7573,19 @@ example,
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.29}Exercise 2.29:} A binary mobile consists of two
+-branches, a left branch and a right branch.  Each branch is a rod of a certain
+-length, from which hangs either a weight or another binary mobile.  We can
+-represent a binary mobile using compound data by constructing it from two
+-branches (for example, using @code{list}):
++@strong{@anchor{Exercise 2.29}Exercise 2.29:} Двоичный мобиль состоит из двух ветвей —
++левой ветви и правой ветви.  Каждая ветвь — это стержень определённой длины, с которого
++свисает либо груз, либо другой двоичный мобиль.  Мы можем представить двоичный мобиль с
++помощью составных данных, построив его из двух ветвей (например, используя @code{list}):
+ 
+ @lisp
+ (define (make-mobile left right)
+   (list left right))
+ @end lisp
+ 
+-A branch is constructed from a @code{length} (which must be a number) together
+-with a @code{structure}, which may be either a number (representing a simple
+-weight) or another mobile:
++Ветвь строится из @code{length} (которая должна быть числом) вместе со
++@code{structure}, которая может быть либо числом (представляющим простой груз), либо
++другим мобилем:
+ 
+ @lisp
+ (define (make-branch length structure)
+@@ -7596,24 +7595,24 @@ weight) or another mobile:
+ @enumerate a
+ 
+ @item
+-Write the corresponding selectors @code{left-branch} and @code{right-branch},
+-which return the branches of a mobile, and @code{branch-length} and
+-@code{branch-structure}, which return the components of a branch.
++Напишите соответствующие селекторы @code{left-branch} и @code{right-branch}, которые
++возвращают ветви мобиля, и @code{branch-length} и @code{branch-structure}, которые
++возвращают компоненты ветви.
+ 
+ @item
+-Using your selectors, define a procedure @code{total-weight} that returns the
+-total weight of a mobile.
++Пользуясь своими селекторами, определите процедуру @code{total-weight}, которая
++возвращает суммарный вес мобиля.
+ 
+ @item
+-A mobile is said to be @newterm{balanced} if the torque applied by its top-left
+-branch is equal to that applied by its top-right branch (that is, if the length
+-of the left rod multiplied by the weight hanging from that rod is equal to the
+-corresponding product for the right side) and if each of the submobiles hanging
+-off its branches is balanced. Design a predicate that tests whether a binary
+-mobile is balanced.
++Мобиль называется @newterm{сбалансированным}, если момент, прикладываемый его верхней
++левой ветвью, равен моменту, прикладываемому его верхней правой ветвью (то есть если
++длина левого стержня, умноженная на груз, свисающий с этого стержня, равна
++соответствующему произведению для правой стороны), и если каждый из подмобилей,
++свисающих с его ветвей, сбалансирован.  Спроектируйте предикат, который проверяет,
++сбалансирован ли двоичный мобиль.
+ 
+ @item
+-Suppose we change the representation of mobiles so that the constructors are
++Предположим, мы меняем представление мобилей так, что конструкторами становятся
+ 
+ @lisp
+ (define (make-mobile left right)
+@@ -7623,21 +7622,20 @@ Suppose we change the representation of mobiles so that the constructors are
+   (cons length structure))
+ @end lisp
+ 
+-How much do you need to change your programs to convert to the new
+-representation?
++Насколько сильно вам нужно изменить свои программы, чтобы перейти к новому
++представлению?
+ 
+ @end enumerate
+ @end quotation
+ 
+-@subsubheading Mapping over trees
++@subsubheading Отображение деревьев
+ 
+-Just as @code{map} is a powerful abstraction for dealing with sequences,
+-@code{map} together with recursion is a powerful abstraction for dealing with
+-trees.  For instance, the @code{scale-tree} procedure, analogous to
+-@code{scale-list} of @ref{2.2.1}, takes as arguments a numeric factor
+-and a tree whose leaves are numbers.  It returns a tree of the same shape,
+-where each number is multiplied by the factor.  The recursive plan for
+-@code{scale-tree} is similar to the one for @code{count-leaves}:
++Точно так же, как @code{map} — мощная абстракция для работы с последовательностями,
++@code{map} вместе с рекурсией — мощная абстракция для работы с деревьями.  Например,
++процедура @code{scale-tree}, аналогичная @code{scale-list} из @ref{2.2.1}, принимает в
++качестве аргументов числовой множитель и дерево, листья которого — числа.  Она
++возвращает дерево той же формы, где каждое число умножено на множитель.  Рекурсивный
++план для @code{scale-tree} похож на план для @code{count-leaves}:
+ 
+ @lisp
+ (define (scale-tree tree factor)
+@@ -7659,10 +7657,10 @@ where each number is multiplied by the factor.  The recursive plan for
+ @end lisp
+ 
+ @noindent
+-Another way to implement @code{scale-tree} is to regard the tree as a sequence
+-of sub-trees and use @code{map}.  We map over the sequence, scaling each
+-sub-tree in turn, and return the list of results.  In the base case, where the
+-tree is a leaf, we simply multiply by the factor:
++Другой способ реализовать @code{scale-tree} — рассматривать дерево как
++последовательность поддеревьев и использовать @code{map}.  Мы отображаем
++последовательность, масштабируя каждое поддерево по очереди, и возвращаем список
++результатов.  В базовом случае, где дерево — лист, мы просто умножаем на множитель:
+ 
+ @lisp
+ (define (scale-tree tree factor)
+@@ -7674,13 +7672,13 @@ tree is a leaf, we simply multiply by the factor:
+ @end lisp
+ 
+ @noindent
+-Many tree operations can be implemented by similar combinations of sequence
+-operations and recursion.
++Многие операции над деревьями можно реализовать похожими комбинациями операций над
++последовательностями и рекурсии.
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.30}Exercise 2.30:} Define a procedure
+-@code{square-tree} analogous to the @code{square-list} procedure of
+-@ref{Exercise 2.21}.  That is, @code{square-tree} should behave as follows:
++@strong{@anchor{Exercise 2.30}Exercise 2.30:} Определите процедуру @code{square-tree},
++аналогичную процедуре @code{square-list} из @ref{Exercise 2.21}.  То есть
++@code{square-tree} должна вести себя так:
+ 
+ @lisp
+ (square-tree
+@@ -7690,14 +7688,14 @@ operations and recursion.
+ @i{(1 (4 (9 16) 25) (36 49))}
+ @end lisp
+ 
+-Define @code{square-tree} both directly (i.e., without using any higher-order
+-procedures) and also by using @code{map} and recursion.
++Определите @code{square-tree} и напрямую (то есть без использования каких-либо процедур
++высшего порядка), и с помощью @code{map} и рекурсии.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.31}Exercise 2.31:} Abstract your answer to
+-@ref{Exercise 2.30} to produce a procedure @code{tree-map} with the property
+-that @code{square-tree} could be defined as
++@strong{@anchor{Exercise 2.31}Exercise 2.31:} Абстрагируйте свой ответ к
++@ref{Exercise 2.30}, чтобы получить процедуру @code{tree-map} со свойством, что
++@code{square-tree} можно было бы определить как
+ 
+ @lisp
+ (define (square-tree tree) 
+@@ -7706,12 +7704,12 @@ that @code{square-tree} could be defined as
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.32}Exercise 2.32:} We can represent a set as a list
+-of distinct elements, and we can represent the set of all subsets of the set as
+-a list of lists.  For example, if the set is @code{(1 2 3)}, then the set of
+-all subsets is @code{(() (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3))}.  Complete the
+-following definition of a procedure that generates the set of subsets of a set
+-and give a clear explanation of why it works:
++@strong{@anchor{Exercise 2.32}Exercise 2.32:} Мы можем представить множество как список
++различных элементов, а множество всех подмножеств множества можем представить как
++список списков.  Например, если множество — @code{(1 2 3)}, то множество всех
++подмножеств — @code{(() (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3))}.  Дополните следующее
++определение процедуры, которая порождает множество подмножеств множества, и дайте ясное
++объяснение, почему она работает:
+ 
+ @lisp
+ (define (subsets s)

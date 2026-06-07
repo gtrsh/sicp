@@ -1,0 +1,325 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 4f8f8af..ad0b23e 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -6389,18 +6389,18 @@ Scheme @code{newline} начинает новую строку для печат
+ @end quotation
+ 
+ @node	2.1.4, 2.2, Chapter 2, 2.1
+-@subsection Extended Exercise: Interval Arithmetic
+-
+-Alyssa P. Hacker is designing a system to help people solve engineering
+-problems.  One feature she wants to provide in her system is the ability to
+-manipulate inexact quantities (such as measured parameters of physical devices)
+-with known precision, so that when computations are done with such approximate
+-quantities the results will be numbers of known precision.
+-
+-Electrical engineers will be using Alyssa's system to compute electrical
+-quantities.  It is sometimes necessary for them to compute the value of a
+-parallel equivalent resistance @math{R_p} of two resistors @math{R_1} and @math{R_2}
+-using the formula
++@subsection Развёрнутое упражнение: интервальная арифметика
++
++Алисса П. Хакер проектирует систему, помогающую людям решать инженерные задачи.  Одна
++из возможностей, которую она хочет предоставить в своей системе, — способность
++манипулировать неточными величинами (такими как измеренные параметры физических
++устройств) с известной точностью, чтобы, когда вычисления выполняются с такими
++приближёнными величинами, результаты были числами известной точности.
++
++Инженеры-электрики будут пользоваться системой Алиссы, чтобы вычислять электрические
++величины.  Им иногда необходимо вычислять значение эквивалентного сопротивления
++@math{R_p} при параллельном соединении двух резисторов @math{R_1} и @math{R_2} по
++формуле
+ @ifinfo
+ 
+ @example
+@@ -6414,28 +6414,26 @@ R_p = -------------
+ \[ % :32:
+   R_p \,=\, {{1 \over 1 / R_1 + 1 / R_2}.}   \]
+ @end tex
+-Resistance values are usually known only up to some tolerance guaranteed by the
+-manufacturer of the resistor.  For example, if you buy a resistor labeled ``6.8
+-ohms with 10% tolerance'' you can only be sure that the resistor has a
+-resistance between 6.8 @math{-} 0.68 = 6.12 and 6.8 + 0.68 = 7.48 ohms.  Thus, if you
+-have a 6.8-ohm 10% resistor in parallel with a 4.7-ohm 5% resistor, the
+-resistance of the combination can range from about 2.58 ohms (if the two
+-resistors are at the lower bounds) to about 2.97 ohms (if the two resistors are
+-at the upper bounds).
+-
+-Alyssa's idea is to implement ``interval arithmetic'' as a set of arithmetic
+-operations for combining ``intervals'' (objects that represent the range of
+-possible values of an inexact quantity).  The result of adding, subtracting,
+-multiplying, or dividing two intervals is itself an interval, representing the
+-range of the result.
+-
+-Alyssa postulates the existence of an abstract object called an ``interval''
+-that has two endpoints: a lower bound and an upper bound.  She also presumes
+-that, given the endpoints of an interval, she can construct the interval using
+-the data constructor @code{make-interval}.  Alyssa first writes a procedure for
+-adding two intervals.  She reasons that the minimum value the sum could be is
+-the sum of the two lower bounds and the maximum value it could be is the sum of
+-the two upper bounds:
++Значения сопротивлений обычно известны лишь с точностью до некоторого допуска,
++гарантированного изготовителем резистора.  Например, если вы покупаете резистор с
++маркировкой «6,8 ома с допуском 10%», вы можете быть уверены лишь в том, что
++сопротивление резистора лежит между 6,8 @math{-} 0,68 = 6,12 и 6,8 + 0,68 = 7,48 ома.
++Таким образом, если у вас есть резистор 6,8 ома с допуском 10%, соединённый
++параллельно с резистором 4,7 ома с допуском 5%, сопротивление соединения может
++варьироваться примерно от 2,58 ома (если оба резистора на нижних границах) примерно до
++2,97 ома (если оба резистора на верхних границах).
++
++Идея Алиссы — реализовать «интервальную арифметику» как набор арифметических операций
++для комбинирования «интервалов» (объектов, представляющих диапазон возможных значений
++неточной величины).  Результат сложения, вычитания, умножения или деления двух
++интервалов сам является интервалом, представляющим диапазон результата.
++
++Алисса постулирует существование абстрактного объекта под названием «интервал», у
++которого есть два конца: нижняя граница и верхняя граница.  Она также предполагает,
++что, имея концы интервала, она может построить интервал с помощью конструктора данных
++@code{make-interval}.  Сначала Алисса пишет процедуру для сложения двух интервалов.
++Она рассуждает, что минимальное значение суммы — это сумма двух нижних границ, а
++максимальное значение — сумма двух верхних границ:
+ 
+ @lisp
+ (define (add-interval x y)
+@@ -6446,10 +6444,9 @@ the two upper bounds:
+ @end lisp
+ 
+ @noindent
+-Alyssa also works out the product of two intervals by finding the minimum and
+-the maximum of the products of the bounds and using them as the bounds of the
+-resulting interval.  (@code{Min} and @code{max} are primitives that find the
+-minimum or maximum of any number of arguments.)
++Алисса также вычисляет произведение двух интервалов, находя минимум и максимум
++произведений границ и используя их как границы получающегося интервала.  (@code{Min}
++и @code{max} — примитивы, находящие минимум или максимум любого числа аргументов.)
+ 
+ @lisp
+ (define (mul-interval x y)
+@@ -6466,9 +6463,9 @@ minimum or maximum of any number of arguments.)
+ @end lisp
+ 
+ @noindent
+-To divide two intervals, Alyssa multiplies the first by the reciprocal of the
+-second.  Note that the bounds of the reciprocal interval are the reciprocal of
+-the upper bound and the reciprocal of the lower bound, in that order.
++Чтобы поделить два интервала, Алисса умножает первый на обратную величину второго.
++Заметьте, что границы обратного интервала — это обратная величина верхней границы и
++обратная величина нижней границы, именно в этом порядке.
+ 
+ @lisp
+ (define (div-interval x y)
+@@ -6479,56 +6476,53 @@ the upper bound and the reciprocal of the lower bound, in that order.
+ @end lisp
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.7}Exercise 2.7:} Alyssa's program is incomplete
+-because she has not specified the implementation of the interval abstraction.
+-Here is a definition of the interval constructor:
++@strong{@anchor{Exercise 2.7}Exercise 2.7:} Программа Алиссы неполна, поскольку она не
++указала реализацию абстракции интервала.  Вот определение конструктора интервала:
+ 
+ @lisp
+ (define (make-interval a b) (cons a b))
+ @end lisp
+ 
+-Define selectors @code{upper-bound} and @code{lower-bound} to complete the
+-implementation.
++Определите селекторы @code{upper-bound} и @code{lower-bound}, чтобы завершить
++реализацию.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.8}Exercise 2.8:} Using reasoning analogous to
+-Alyssa's, describe how the difference of two intervals may be computed.  Define
+-a corresponding subtraction procedure, called @code{sub-interval}.
++@strong{@anchor{Exercise 2.8}Exercise 2.8:} Пользуясь рассуждением, аналогичным
++рассуждению Алиссы, опишите, как можно вычислить разность двух интервалов.  Определите
++соответствующую процедуру вычитания под названием @code{sub-interval}.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.9}Exercise 2.9:} The @newterm{width} of an interval
+-is half of the difference between its upper and lower bounds.  The width is a
+-measure of the uncertainty of the number specified by the interval.  For some
+-arithmetic operations the width of the result of combining two intervals is a
+-function only of the widths of the argument intervals, whereas for others the
+-width of the combination is not a function of the widths of the argument
+-intervals.  Show that the width of the sum (or difference) of two intervals is
+-a function only of the widths of the intervals being added (or subtracted).
+-Give examples to show that this is not true for multiplication or division.
++@strong{@anchor{Exercise 2.9}Exercise 2.9:} @newterm{Ширина} интервала — это половина
++разности его верхней и нижней границ.  Ширина — это мера неопределённости числа,
++задаваемого интервалом.  Для некоторых арифметических операций ширина результата
++комбинирования двух интервалов является функцией только ширин интервалов-аргументов,
++тогда как для других ширина комбинации не является функцией ширин
++интервалов-аргументов.  Покажите, что ширина суммы (или разности) двух интервалов
++является функцией только ширин складываемых (или вычитаемых) интервалов.  Приведите
++примеры, показывающие, что это неверно для умножения или деления.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.10}Exercise 2.10:} Ben Bitdiddle, an expert systems
+-programmer, looks over Alyssa's shoulder and comments that it is not clear what
+-it means to divide by an interval that spans zero.  Modify Alyssa's code to
+-check for this condition and to signal an error if it occurs.
++@strong{@anchor{Exercise 2.10}Exercise 2.10:} Бен Битдидл, опытный системный
++программист, заглядывает Алиссе через плечо и замечает, что неясно, что значит делить
++на интервал, охватывающий ноль.  Измените код Алиссы, чтобы проверять это условие и
++сигнализировать об ошибке, если оно возникает.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.11}Exercise 2.11:} In passing, Ben also cryptically
+-comments: ``By testing the signs of the endpoints of the intervals, it is
+-possible to break @code{mul-interval} into nine cases, only one of which
+-requires more than two multiplications.''  Rewrite this procedure using Ben's
+-suggestion.
++@strong{@anchor{Exercise 2.11}Exercise 2.11:} Между делом Бен также загадочно
++замечает: «Проверяя знаки концов интервалов, можно разбить @code{mul-interval} на
++девять случаев, лишь один из которых требует более двух умножений».  Перепишите эту
++процедуру, воспользовавшись предложением Бена.
+ 
+-After debugging her program, Alyssa shows it to a potential user, who complains
+-that her program solves the wrong problem.  He wants a program that can deal
+-with numbers represented as a center value and an additive tolerance; for
+-example, he wants to work with intervals such as 3.5 @math{\pm} 0.15 rather than
+-[3.35, 3.65].  Alyssa returns to her desk and fixes this problem by supplying
+-an alternate constructor and alternate selectors:
++Отладив свою программу, Алисса показывает её потенциальному пользователю, который
++жалуется, что её программа решает не ту задачу.  Ему нужна программа, которая может
++иметь дело с числами, представленными как центральное значение и аддитивный допуск;
++например, он хочет работать с интервалами вроде 3,5 @math{\pm} 0,15, а не [3,35, 3,65].
++Алисса возвращается к своему столу и устраняет эту проблему, предоставив
++альтернативный конструктор и альтернативные селекторы:
+ 
+ @lisp
+ (define (make-center-width c w)
+@@ -6545,33 +6539,30 @@ an alternate constructor and alternate selectors:
+      2))
+ @end lisp
+ 
+-Unfortunately, most of Alyssa's users are engineers.  Real engineering
+-situations usually involve measurements with only a small uncertainty, measured
+-as the ratio of the width of the interval to the midpoint of the interval.
+-Engineers usually specify percentage tolerances on the parameters of devices,
+-as in the resistor specifications given earlier.
++К сожалению, большинство пользователей Алиссы — инженеры.  Реальные инженерные
++ситуации обычно связаны с измерениями лишь с малой неопределённостью, измеряемой как
++отношение ширины интервала к середине интервала.  Инженеры обычно задают процентные
++допуски на параметры устройств, как в приведённых ранее спецификациях резисторов.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.12}Exercise 2.12:} Define a constructor
+-@code{make-center-percent} that takes a center and a percentage tolerance and
+-produces the desired interval.  You must also define a selector @code{percent}
+-that produces the percentage tolerance for a given interval.  The @code{center}
+-selector is the same as the one shown above.
++@strong{@anchor{Exercise 2.12}Exercise 2.12:} Определите конструктор
++@code{make-center-percent}, который принимает центр и процентный допуск и выдаёт
++требуемый интервал.  Вы также должны определить селектор @code{percent}, который
++выдаёт процентный допуск для данного интервала.  Селектор @code{center} такой же, как
++показанный выше.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.13}Exercise 2.13:} Show that under the assumption of
+-small percentage tolerances there is a simple formula for the approximate
+-percentage tolerance of the product of two intervals in terms of the tolerances
+-of the factors.  You may simplify the problem by assuming that all numbers are
+-positive.
++@strong{@anchor{Exercise 2.13}Exercise 2.13:} Покажите, что в предположении малых
++процентных допусков существует простая формула для приближённого процентного допуска
++произведения двух интервалов в терминах допусков сомножителей.  Вы можете упростить
++задачу, предположив, что все числа положительны.
+ 
+-After considerable work, Alyssa P. Hacker delivers her finished system.
+-Several years later, after she has forgotten all about it, she gets a frenzied
+-call from an irate user, Lem E. Tweakit.  It seems that Lem has noticed that
+-the formula for parallel resistors can be written in two algebraically
+-equivalent ways:
++После значительной работы Алисса П. Хакер сдаёт свою законченную систему.  Несколько
++лет спустя, после того как она совсем о ней забыла, ей звонит разъярённый
++пользователь, Лем И. Твикит.  Оказывается, Лем заметил, что формулу для параллельных
++резисторов можно записать двумя алгебраически эквивалентными способами:
+ @ifinfo
+ 
+ @example
+@@ -6586,7 +6577,7 @@ R_1 + R_2
+   {R_1 R_2 \over R_1 + R_2}  \]
+ @end tex
+ @noindent
+-and
++и
+ @ifinfo
+ 
+ @example
+@@ -6600,8 +6591,8 @@ and
+ \[ % :34:
+   {{1 \over 1 / R_1 + 1 / R_2}.}  \]
+ @end tex
+-He has written the following two programs, each of which computes the
+-parallel-resistors formula differently:
++Он написал следующие две программы, каждая из которых вычисляет формулу параллельных
++резисторов по-разному:
+ 
+ @lisp
+ (define (par1 r1 r2)
+@@ -6618,37 +6609,36 @@ parallel-resistors formula differently:
+       (div-interval one r2)))))
+ @end lisp
+ 
+-Lem complains that Alyssa's program gives different answers for the two ways of
+-computing. This is a serious complaint.
++Лем жалуется, что программа Алиссы даёт разные ответы для двух способов вычисления.
++Это серьёзная жалоба.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.14}Exercise 2.14:} Demonstrate that Lem is right.
+-Investigate the behavior of the system on a variety of arithmetic
+-expressions. Make some intervals @math{A} and @math{B}, and use them in computing the
+-expressions @math{{A / A}} and @math{{A / B}}.  You will get the most insight by
+-using intervals whose width is a small percentage of the center value. Examine
+-the results of the computation in center-percent form (see @ref{Exercise 2.12}).
++@strong{@anchor{Exercise 2.14}Exercise 2.14:} Продемонстрируйте, что Лем прав.
++Исследуйте поведение системы на разнообразных арифметических выражениях.  Сделайте
++несколько интервалов @math{A} и @math{B} и используйте их при вычислении выражений
++@math{{A / A}} и @math{{A / B}}.  Больше всего понимания вы получите, используя
++интервалы, ширина которых составляет малый процент от центрального значения.
++Рассмотрите результаты вычисления в форме «центр—процент» (см. @ref{Exercise 2.12}).
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.15}Exercise 2.15:} Eva Lu Ator, another user, has
+-also noticed the different intervals computed by different but algebraically
+-equivalent expressions. She says that a formula to compute with intervals using
+-Alyssa's system will produce tighter error bounds if it can be written in such
+-a form that no variable that represents an uncertain number is repeated.  Thus,
+-she says, @code{par2} is a ``better'' program for parallel resistances than
+-@code{par1}.  Is she right?  Why?
++@strong{@anchor{Exercise 2.15}Exercise 2.15:} Эва Лу Атор, другой пользователь, тоже
++заметила различные интервалы, вычисляемые различными, но алгебраически эквивалентными
++выражениями.  Она говорит, что формула для вычислений с интервалами в системе Алиссы
++будет давать более узкие границы ошибки, если её можно записать в такой форме, где ни
++одна переменная, представляющая неопределённое число, не повторяется.  Таким образом,
++говорит она, @code{par2} — «лучшая» программа для параллельных сопротивлений, чем
++@code{par1}.  Права ли она?  Почему?
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.16}Exercise 2.16:} Explain, in general, why
+-equivalent algebraic expressions may lead to different answers.  Can you devise
+-an interval-arithmetic package that does not have this shortcoming, or is this
+-task impossible?  (Warning: This problem is very difficult.)
++@strong{@anchor{Exercise 2.16}Exercise 2.16:} Объясните в общем случае, почему
++эквивалентные алгебраические выражения могут приводить к различным ответам.  Можете ли
++вы придумать пакет интервальной арифметики, не имеющий этого недостатка, или эта задача
++невозможна?  (Предупреждение: эта задача очень трудна.)
+ @end quotation
+ 
+-
+ @node	2.2, 2.3, 2.1, Chapter 2
+ @section Hierarchical Data and the Closure Property
+ 
