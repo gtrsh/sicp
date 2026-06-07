@@ -1,0 +1,257 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index b26f9a1..35eccac 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -12076,20 +12076,19 @@ angle      | angle-polar     | angle-rectangular
+ @end menu
+ 
+ @node	2.5.1, 2.5.2, 2.5, 2.5
+-@subsection Generic Arithmetic Operations
++@subsection Обобщённые арифметические операции
+ 
+-The task of designing generic arithmetic operations is analogous to that of
+-designing the generic complex-number operations.  We would like, for instance,
+-to have a generic addition procedure @code{add} that acts like ordinary
+-primitive addition @code{+} on ordinary numbers, like @code{add-rat} on
+-rational numbers, and like @code{add-complex} on complex numbers.  We can
+-implement @code{add}, and the other generic arithmetic operations, by following
+-the same strategy we used in @ref{2.4.3} to implement the generic
+-selectors for complex numbers.  We will attach a type tag to each kind of
+-number and cause the generic procedure to dispatch to an appropriate package
+-according to the data type of its arguments.
++Задача проектирования обобщённых арифметических операций аналогична задаче проектирования
++обобщённых операций над комплексными числами.  Нам хотелось бы, например, иметь обобщённую
++процедуру сложения @code{add}, которая действует как обычное примитивное сложение @code{+}
++на обычных числах, как @code{add-rat} на рациональных числах и как @code{add-complex} на
++комплексных числах.  Мы можем реализовать @code{add} и другие обобщённые арифметические
++операции, следуя той же стратегии, которую мы использовали в @ref{2.4.3} для реализации
++обобщённых селекторов для комплексных чисел.  Мы будем прикреплять тег типа к каждому виду
++числа и заставлять обобщённую процедуру диспетчеризоваться к подходящему пакету согласно
++типу данных её аргументов.
+ 
+-The generic arithmetic procedures are defined as follows:
++Обобщённые арифметические процедуры определяются так:
+ 
+ @lisp
+ (define (add x y) (apply-generic 'add x y))
+@@ -12099,12 +12098,11 @@ The generic arithmetic procedures are defined as follows:
+ @end lisp
+ 
+ @noindent
+-We begin by installing a package for handling @newterm{ordinary} numbers, that
+-is, the primitive numbers of our language.  We will tag these with the symbol
+-@code{scheme-number}.  The arithmetic operations in this package are the
+-primitive arithmetic procedures (so there is no need to define extra procedures
+-to handle the untagged numbers).  Since these operations each take two
+-arguments, they are installed in the table keyed by the list
++Мы начинаем с установки пакета для обработки @newterm{обычных} чисел, то есть примитивных
++чисел нашего языка.  Мы будем помечать их символом @code{scheme-number}.  Арифметические
++операции в этом пакете — это примитивные арифметические процедуры (так что нет нужды
++определять дополнительные процедуры для обработки нетипизированных чисел).  Поскольку эти
++операции каждая принимают два аргумента, они устанавливаются в таблицу с ключом по списку
+ @code{(scheme-number scheme-number)}:
+ 
+ @lisp
+@@ -12125,8 +12123,8 @@ arguments, they are installed in the table keyed by the list
+ @end lisp
+ 
+ @noindent
+-Users of the Scheme-number package will create (tagged) ordinary numbers by
+-means of the procedure:
++Пользователи пакета Scheme-чисел будут создавать (типизированные) обычные числа посредством
++процедуры:
+ 
+ @lisp
+ (define (make-scheme-number n)
+@@ -12134,11 +12132,10 @@ means of the procedure:
+ @end lisp
+ 
+ @noindent
+-Now that the framework of the generic arithmetic system is in place, we can
+-readily include new kinds of numbers.  Here is a package that performs rational
+-arithmetic.  Notice that, as a benefit of additivity, we can use without
+-modification the rational-number code from @ref{2.1.1} as the internal
+-procedures in the package:
++Теперь, когда каркас обобщённой арифметической системы на месте, мы можем легко включать
++новые виды чисел.  Вот пакет, который выполняет рациональную арифметику.  Заметьте, что, как
++выгода от аддитивности, мы можем использовать без изменения код рациональных чисел из
++@ref{2.1.1} в качестве внутренних процедур пакета:
+ 
+ @lisp
+ (define (install-rational-package)
+@@ -12181,12 +12178,12 @@ procedures in the package:
+ @end lisp
+ 
+ @noindent
+-We can install a similar package to handle complex numbers, using the tag
+-@code{complex}.  In creating the package, we extract from the table the
+-operations @code{make-from-real-imag} and @code{make-from-mag-ang} that were
+-defined by the rectangular and polar packages.  Additivity permits us to use,
+-as the internal operations, the same @code{add-complex}, @code{sub-complex},
+-@code{mul-complex}, and @code{div-complex} procedures from @ref{2.4.1}.
++Мы можем установить похожий пакет для обработки комплексных чисел, используя тег
++@code{complex}.  Создавая пакет, мы извлекаем из таблицы операции @code{make-from-real-imag}
++и @code{make-from-mag-ang}, которые были определены прямоугольным и полярным пакетами.
++Аддитивность позволяет нам использовать в качестве внутренних операций те же процедуры
++@code{add-complex}, @code{sub-complex}, @code{mul-complex} и @code{div-complex} из
++@ref{2.4.1}.
+ 
+ @lisp
+ (define (install-complex-package)
+@@ -12240,11 +12237,10 @@ as the internal operations, the same @code{add-complex}, @code{sub-complex},
+ @end lisp
+ 
+ @noindent
+-Programs outside the complex-number package can construct complex numbers
+-either from real and imaginary parts or from magnitudes and angles.  Notice how
+-the underlying procedures, originally defined in the rectangular and polar
+-packages, are exported to the complex package, and exported from there to the
+-outside world.
++Программы вне пакета комплексных чисел могут строить комплексные числа либо из
++действительных и мнимых частей, либо из модулей и углов.  Заметьте, как лежащие в основе
++процедуры, изначально определённые в прямоугольном и полярном пакетах, экспортируются в
++комплексный пакет, а оттуда экспортируются во внешний мир.
+ 
+ @lisp
+ (define (make-complex-from-real-imag x y)
+@@ -12254,22 +12250,22 @@ outside world.
+ @end lisp
+ 
+ @noindent
+-What we have here is a two-level tag system.  A typical complex number, such as
+-@math{{3 + 4i}} in rectangular form, would be represented as shown in @ref{Figure 2.24}.  
+-The outer tag (@code{complex}) is used to direct the number to the
+-complex package.  Once within the complex package, the next tag
+-(@code{rectangular}) is used to direct the number to the rectangular package.
+-In a large and complicated system there might be many levels, each interfaced
+-with the next by means of generic operations.  As a data object is passed
+-``downward,'' the outer tag that is used to direct it to the appropriate
+-package is stripped off (by applying @code{contents}) and the next level of tag
+-(if any) becomes visible to be used for further dispatching.
++То, что у нас здесь, — это двухуровневая система тегов.  Типичное комплексное число, такое
++как @math{{3 + 4i}} в прямоугольной форме, было бы представлено так, как показано на
++@ref{Figure 2.24}.  Внешний тег (@code{complex}) используется, чтобы направить число к
++комплексному пакету.  Оказавшись внутри комплексного пакета, следующий тег
++(@code{rectangular}) используется, чтобы направить число к прямоугольному пакету.  В
++большой и сложной системе могло бы быть много уровней, каждый сопряжён со следующим
++посредством обобщённых операций.  По мере того как объект данных передаётся «вниз», внешний
++тег, который используется, чтобы направить его к подходящему пакету, снимается (применением
++@code{contents}), и следующий уровень тега (если есть) становится видимым для использования
++в дальнейшей диспетчеризации.
+ 
+ @float
+ @anchor{Figure 2.24}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.24:} Representation of @math{{3 + 4i}} in rectangular form.
++@strong{Figure 2.24:} Представление @math{{3 + 4i}} в прямоугольной форме.
+ 
+ @example
+      +---+---+     +---+---+     +---+---+
+@@ -12285,27 +12281,26 @@ package is stripped off (by applying @code{contents}) and the next level of tag
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.24d,108mm,,,.std.svg}
+-@caption{@strong{Figure 2.24:} Representation of @math{{3 + 4i}} in rectangular form.}
++@caption{@strong{Figure 2.24:} Представление @math{{3 + 4i}} в прямоугольной форме.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-In the above packages, we used @code{add-rat}, @code{add-complex}, and the
+-other arithmetic procedures exactly as originally written.  Once these
+-definitions are internal to different installation procedures, however, they no
+-longer need names that are distinct from each other: we could simply name them
+-@code{add}, @code{sub}, @code{mul}, and @code{div} in both packages.
++В вышеприведённых пакетах мы использовали @code{add-rat}, @code{add-complex} и другие
++арифметические процедуры в точности так, как они были изначально написаны.  Однако, как
++только эти определения становятся внутренними по отношению к разным процедурам установки, им
++больше не нужны имена, отличные друг от друга: мы могли бы просто назвать их @code{add},
++@code{sub}, @code{mul} и @code{div} в обоих пакетах.
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.77}Exercise 2.77:} Louis Reasoner tries to evaluate
+-the expression @code{(magnitude z)} where @code{z} is the object shown in
+-@ref{Figure 2.24}.  To his surprise, instead of the answer 5 he gets an error
+-message from @code{apply-generic}, saying there is no method for the operation
+-@code{magnitude} on the types @code{(complex)}.  He shows this interaction to
+-Alyssa P. Hacker, who says ``The problem is that the complex-number selectors
+-were never defined for @code{complex} numbers, just for @code{polar} and
+-@code{rectangular} numbers.  All you have to do to make this work is add the
+-following to the @code{complex} package:''
++@strong{@anchor{Exercise 2.77}Exercise 2.77:} Луи Резонер пытается вычислить выражение
++@code{(magnitude z)}, где @code{z} — объект, показанный на @ref{Figure 2.24}.  К его
++удивлению, вместо ответа 5 он получает сообщение об ошибке от @code{apply-generic},
++говорящее, что нет метода для операции @code{magnitude} на типах @code{(complex)}.  Он
++показывает это взаимодействие Алиссе П. Хакер, которая говорит: «Проблема в том, что
++селекторы комплексных чисел никогда не были определены для @code{complex}-чисел, только для
++@code{polar}- и @code{rectangular}-чисел.  Всё, что тебе нужно сделать, чтобы это
++заработало, — добавить следующее в @code{complex}-пакет:»
+ 
+ @lisp
+ (put 'real-part '(complex) real-part)
+@@ -12314,41 +12309,38 @@ following to the @code{complex} package:''
+ (put 'angle '(complex) angle)
+ @end lisp
+ 
+-Describe in detail why this works.  As an example, trace through all the
+-procedures called in evaluating the expression @code{(magnitude z)} where
+-@code{z} is the object shown in @ref{Figure 2.24}.  In particular, how many
+-times is @code{apply-generic} invoked?  What procedure is dispatched to in each
+-case?
++Опишите подробно, почему это работает.  В качестве примера проследите все процедуры,
++вызываемые при вычислении выражения @code{(magnitude z)}, где @code{z} — объект, показанный
++на @ref{Figure 2.24}.  В частности, сколько раз вызывается @code{apply-generic}?  К какой
++процедуре происходит диспетчеризация в каждом случае?
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.78}Exercise 2.78:} The internal procedures in the
+-@code{scheme-number} package are essentially nothing more than calls to the
+-primitive procedures @code{+}, @code{-}, etc.  It was not possible to use the
+-primitives of the language directly because our type-tag system requires that
+-each data object have a type attached to it.  In fact, however, all Lisp
+-implementations do have a type system, which they use internally.  Primitive
+-predicates such as @code{symbol?} and @code{number?}  determine whether data
+-objects have particular types.  Modify the definitions of @code{type-tag},
+-@code{contents}, and @code{attach-tag} from @ref{2.4.2} so that our
+-generic system takes advantage of Scheme's internal type system.  That is to
+-say, the system should work as before except that ordinary numbers should be
+-represented simply as Scheme numbers rather than as pairs whose @code{car} is
+-the symbol @code{scheme-number}.
++@strong{@anchor{Exercise 2.78}Exercise 2.78:} Внутренние процедуры в пакете
++@code{scheme-number} — по существу не более чем вызовы примитивных процедур @code{+},
++@code{-} и т. д.  Не было возможности использовать примитивы языка напрямую, потому что
++наша система тегов типа требует, чтобы у каждого объекта данных был прикреплённый к нему
++тип.  Однако на самом деле все реализации Lisp имеют систему типов, которую они используют
++внутренне.  Примитивные предикаты, такие как @code{symbol?} и @code{number?}, определяют,
++имеют ли объекты данных определённые типы.  Измените определения @code{type-tag},
++@code{contents} и @code{attach-tag} из @ref{2.4.2} так, чтобы наша обобщённая система
++пользовалась внутренней системой типов Scheme.  То есть система должна работать как прежде,
++за исключением того, что обычные числа должны представляться просто как Scheme-числа, а не
++как пары, чей @code{car} — символ @code{scheme-number}.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.79}Exercise 2.79:} Define a generic equality
+-predicate @code{equ?} that tests the equality of two numbers, and install it in
+-the generic arithmetic package.  This operation should work for ordinary
+-numbers, rational numbers, and complex numbers.
++@strong{@anchor{Exercise 2.79}Exercise 2.79:} Определите обобщённый предикат равенства
++@code{equ?}, который проверяет равенство двух чисел, и установите его в обобщённый
++арифметический пакет.  Эта операция должна работать для обычных чисел, рациональных чисел и
++комплексных чисел.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.80}Exercise 2.80:} Define a generic predicate
+-@code{=zero?} that tests if its argument is zero, and install it in the generic
+-arithmetic package.  This operation should work for ordinary numbers, rational
+-numbers, and complex numbers.
++@strong{@anchor{Exercise 2.80}Exercise 2.80:} Определите обобщённый предикат @code{=zero?},
++который проверяет, равен ли его аргумент нулю, и установите его в обобщённый арифметический
++пакет.  Эта операция должна работать для обычных чисел, рациональных чисел и комплексных
++чисел.
+ @end quotation
+ 
+ @node	2.5.2, 2.5.3, 2.5.1, 2.5

@@ -1,0 +1,620 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 35eccac..fe5eeb2 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -12344,28 +12344,26 @@ angle      | angle-polar     | angle-rectangular
+ @end quotation
+ 
+ @node	2.5.2, 2.5.3, 2.5.1, 2.5
+-@subsection Combining Data of Different Types
+-
+-We have seen how to define a unified arithmetic system that encompasses
+-ordinary numbers, complex numbers, rational numbers, and any other type of
+-number we might decide to invent, but we have ignored an important issue.  The
+-operations we have defined so far treat the different data types as being
+-completely independent.  Thus, there are separate packages for adding, say, two
+-ordinary numbers, or two complex numbers.  What we have not yet considered is
+-the fact that it is meaningful to define operations that cross the type
+-boundaries, such as the addition of a complex number to an ordinary number.  We
+-have gone to great pains to introduce barriers between parts of our programs so
+-that they can be developed and understood separately.  We would like to
+-introduce the cross-type operations in some carefully controlled way, so that
+-we can support them without seriously violating our module boundaries.
+-
+-One way to handle cross-type operations is to design a different procedure for
+-each possible combination of types for which the operation is valid.  For
+-example, we could extend the complex-number package so that it provides a
+-procedure for adding complex numbers to ordinary numbers and installs this in
+-the table using the tag @code{(complex scheme-number)}:@footnote{We also have
+-to supply an almost identical procedure to handle the types
+-@code{(scheme-number complex)}.}
++@subsection Комбинирование данных разных типов
++
++Мы видели, как определить единую арифметическую систему, охватывающую обычные числа,
++комплексные числа, рациональные числа и любой другой тип числа, который мы могли бы решить
++изобрести, но мы проигнорировали важный вопрос.  Операции, которые мы определили до сих
++пор, обращаются с различными типами данных как с полностью независимыми.  Так, есть
++отдельные пакеты для сложения, скажем, двух обычных чисел или двух комплексных чисел.  Чего
++мы ещё не рассмотрели — это факт, что осмысленно определять операции, пересекающие границы
++типов, такие как сложение комплексного числа с обычным числом.  Мы приложили большие усилия,
++чтобы ввести барьеры между частями наших программ, чтобы их можно было разрабатывать и
++понимать по отдельности.  Нам хотелось бы ввести межтиповые операции некоторым тщательно
++контролируемым образом, чтобы мы могли их поддерживать, серьёзно не нарушая границ наших
++модулей.
++
++Один способ обрабатывать межтиповые операции — спроектировать отдельную процедуру для
++каждой возможной комбинации типов, для которой операция допустима.  Например, мы могли бы
++расширить пакет комплексных чисел так, чтобы он предоставлял процедуру для сложения
++комплексных чисел с обычными числами, и установить это в таблицу, используя тег
++@code{(complex scheme-number)}:@footnote{Нам также придётся снабдить почти идентичной
++процедурой обработку типов @code{(scheme-number complex)}.}
+ 
+ @lisp
+ (define (add-complex-to-schemenum z x)
+@@ -12379,41 +12377,37 @@ to supply an almost identical procedure to handle the types
+ @end lisp
+ 
+ @noindent
+-This technique works, but it is cumbersome.  With such a system, the cost of
+-introducing a new type is not just the construction of the package of
+-procedures for that type but also the construction and installation of the
+-procedures that implement the cross-type operations.  This can easily be much
+-more code than is needed to define the operations on the type itself.  The
+-method also undermines our ability to combine separate packages additively, or
+-at least to limit the extent to which the implementors of the individual packages
+-need to take account of other packages.  For instance, in the example above, it
+-seems reasonable that handling mixed operations on complex numbers and ordinary
+-numbers should be the responsibility of the complex-number package.  Combining
+-rational numbers and complex numbers, however, might be done by the complex
+-package, by the rational package, or by some third package that uses operations
+-extracted from these two packages.  Formulating coherent policies on the
+-division of responsibility among packages can be an overwhelming task in
+-designing systems with many packages and many cross-type operations.
+-
+-@subsubheading Coercion
+-
+-In the general situation of completely unrelated operations acting on
+-completely unrelated types, implementing explicit cross-type operations,
+-cumbersome though it may be, is the best that one can hope for.  Fortunately,
+-we can usually do better by taking advantage of additional structure that may
+-be latent in our type system.  Often the different data types are not
+-completely independent, and there may be ways by which objects of one type may
+-be viewed as being of another type.  This process is called @newterm{coercion}.
+-For example, if we are asked to arithmetically combine an ordinary number with
+-a complex number, we can view the ordinary number as a complex number whose
+-imaginary part is zero.  This transforms the problem to that of combining two
+-complex numbers, which can be handled in the ordinary way by the
+-complex-arithmetic package.
+-
+-In general, we can implement this idea by designing coercion procedures that
+-transform an object of one type into an equivalent object of another type.
+-Here is a typical coercion procedure, which transforms a given ordinary number
+-to a complex number with that real part and zero imaginary part:
++Этот приём работает, но он громоздок.  С такой системой стоимость введения нового типа —
++это не только построение пакета процедур для этого типа, но и построение и установка
++процедур, реализующих межтиповые операции.  Этого легко может быть гораздо больше кода, чем
++нужно, чтобы определить операции над самим типом.  Метод также подрывает нашу способность
++комбинировать отдельные пакеты аддитивно или хотя бы ограничивать степень, в которой
++реализаторам отдельных пакетов нужно учитывать другие пакеты.  Например, в примере выше
++кажется разумным, что обработка смешанных операций над комплексными числами и обычными
++числами должна быть обязанностью пакета комплексных чисел.  Комбинирование рациональных
++чисел и комплексных чисел, однако, могло бы выполняться комплексным пакетом, рациональным
++пакетом или каким-то третьим пакетом, использующим операции, извлечённые из этих двух
++пакетов.  Формулирование связных политик о разделении обязанностей между пакетами может
++быть непосильной задачей при проектировании систем со многими пакетами и многими межтиповыми
++операциями.
++
++@subsubheading Приведение типов
++
++В общей ситуации полностью несвязанных операций, действующих на полностью несвязанных
++типах, реализация явных межтиповых операций, как бы громоздка она ни была, — это лучшее, на
++что можно надеяться.  К счастью, обычно мы можем сделать лучше, воспользовавшись
++дополнительной структурой, которая может быть скрыта в нашей системе типов.  Часто
++различные типы данных не полностью независимы, и могут быть способы, которыми объекты
++одного типа можно рассматривать как принадлежащие другому типу.  Этот процесс называется
++@newterm{приведением}.  Например, если нас просят арифметически скомбинировать обычное
++число с комплексным числом, мы можем рассматривать обычное число как комплексное число,
++мнимая часть которого равна нулю.  Это преобразует задачу в задачу комбинирования двух
++комплексных чисел, которую можно обработать обычным образом пакетом комплексной арифметики.
++
++В общем, мы можем реализовать эту идею, спроектировав процедуры приведения, которые
++преобразуют объект одного типа в эквивалентный объект другого типа.  Вот типичная процедура
++приведения, которая преобразует данное обычное число в комплексное число с этой
++действительной частью и нулевой мнимой частью:
+ 
+ @lisp
+ (define (scheme-number->complex n)
+@@ -12422,8 +12416,8 @@ to a complex number with that real part and zero imaginary part:
+ @end lisp
+ 
+ @noindent
+-We install these coercion procedures in a special coercion table, indexed under
+-the names of the two types:
++Мы устанавливаем эти процедуры приведения в особую таблицу приведения, индексируемую под
++именами двух типов:
+ 
+ @lisp
+ (put-coercion 'scheme-number 'complex 
+@@ -12431,28 +12425,23 @@ the names of the two types:
+ @end lisp
+ 
+ @noindent
+-(We assume that there are @code{put-coercion} and @code{get-coercion}
+-procedures available for manipulating this table.)  Generally some of the slots
+-in the table will be empty, because it is not generally possible to coerce an
+-arbitrary data object of each type into all other types.  For example, there is
+-no way to coerce an arbitrary complex number to an ordinary number, so there
+-will be no general @code{complex->scheme-number} procedure included in the
+-table.
++(Мы предполагаем, что есть процедуры @code{put-coercion} и @code{get-coercion},
++доступные для манипулирования этой таблицей.)  Вообще, некоторые ячейки в таблице будут
++пусты, потому что в общем случае невозможно привести произвольный объект данных каждого
++типа ко всем другим типам.  Например, нет способа привести произвольное комплексное число к
++обычному числу, так что в таблице не будет общей процедуры @code{complex->scheme-number}.
+ 
+-Once the coercion table has been set up, we can handle coercion in a uniform
+-manner by modifying the @code{apply-generic} procedure of @ref{2.4.3}.
+-When asked to apply an operation, we first check whether the operation is
+-defined for the arguments' types, just as before.  If so, we dispatch to the
+-procedure found in the operation-and-type table.  Otherwise, we try coercion.
+-For simplicity, we consider only the case where there are two
+-arguments.@footnote{See @ref{Exercise 2.82} for generalizations.}  We check the
+-coercion table to see if objects of the first type can be coerced to the second
+-type.  If so, we coerce the first argument and try the operation again.  If
+-objects of the first type cannot in general be coerced to the second type, we
+-try the coercion the other way around to see if there is a way to coerce the
+-second argument to the type of the first argument.  Finally, if there is no
+-known way to coerce either type to the other type, we give up.  Here is the
+-procedure:
++Как только таблица приведения настроена, мы можем обрабатывать приведение единообразным
++образом, изменив процедуру @code{apply-generic} из @ref{2.4.3}.  Когда нас просят применить
++операцию, мы сначала проверяем, определена ли операция для типов аргументов, как и прежде.
++Если да, мы диспетчеризуемся к процедуре, найденной в таблице операций и типов.  Иначе мы
++пробуем приведение.  Для простоты мы рассматриваем только случай, когда есть два
++аргумента.@footnote{См. @ref{Exercise 2.82} для обобщений.}  Мы проверяем таблицу приведения,
++можно ли привести объекты первого типа ко второму типу.  Если да, мы приводим первый
++аргумент и пробуем операцию снова.  Если объекты первого типа в общем случае нельзя привести
++ко второму типу, мы пробуем приведение в обратную сторону, чтобы посмотреть, есть ли способ
++привести второй аргумент к типу первого аргумента.  Наконец, если нет известного способа
++привести какой-либо из типов к другому типу, мы сдаёмся.  Вот эта процедура:
+ 
+ @lisp
+ (define (apply-generic op . args)
+@@ -12490,54 +12479,49 @@ procedure:
+ @end lisp
+ 
+ @noindent
+-This coercion scheme has many advantages over the method of defining explicit
+-cross-type operations, as outlined above.  Although we still need to write
+-coercion procedures to relate the types (possibly @math{n^2} procedures for a
+-system with @math{n} types), we need to write only one procedure for each pair of
+-types rather than a different procedure for each collection of types and each
+-generic operation.@footnote{If we are clever, we can usually get by with fewer
+-than @math{n^2} coercion procedures.  For instance, if we know how to convert from
+-type 1 to type 2 and from type 2 to type 3, then we can use this knowledge to
+-convert from type 1 to type 3.  This can greatly decrease the number of
+-coercion procedures we need to supply explicitly when we add a new type to the
+-system.  If we are willing to build the required amount of sophistication into
+-our system, we can have it search the ``graph'' of relations among types and
+-automatically generate those coercion procedures that can be inferred from the
+-ones that are supplied explicitly.}  What we are counting on here is the fact
+-that the appropriate transformation between types depends only on the types
+-themselves, not on the operation to be applied.
+-
+-On the other hand, there may be applications for which our coercion scheme is
+-not general enough.  Even when neither of the objects to be combined can be
+-converted to the type of the other it may still be possible to perform the
+-operation by converting both objects to a third type.  In order to deal with
+-such complexity and still preserve modularity in our programs, it is usually
+-necessary to build systems that take advantage of still further structure in
+-the relations among types, as we discuss next.
+-
+-@subsubheading Hierarchies of types
+-
+-The coercion scheme presented above relied on the existence of natural
+-relations between pairs of types.  Often there is more ``global'' structure in
+-how the different types relate to each other.  For instance, suppose we are
+-building a generic arithmetic system to handle integers, rational numbers, real
+-numbers, and complex numbers.  In such a system, it is quite natural to regard
+-an integer as a special kind of rational number, which is in turn a special
+-kind of real number, which is in turn a special kind of complex number.  What
+-we actually have is a so-called @newterm{hierarchy of types}, in which, for
+-example, integers are a @newterm{subtype} of rational numbers (i.e., any
+-operation that can be applied to a rational number can automatically be applied
+-to an integer).  Conversely, we say that rational numbers form a
+-@newterm{supertype} of integers.  The particular hierarchy we have here is of a
+-very simple kind, in which each type has at most one supertype and at most one
+-subtype.  Such a structure, called a @newterm{tower}, is illustrated in
+-@ref{Figure 2.25}.
++Эта схема приведения имеет много преимуществ перед методом определения явных межтиповых
++операций, очерченным выше.  Хотя нам всё ещё нужно писать процедуры приведения, чтобы
++связать типы (возможно, @math{n^2} процедур для системы с @math{n} типами), нам нужно писать
++только одну процедуру для каждой пары типов, а не отдельную процедуру для каждого набора
++типов и каждой обобщённой операции.@footnote{Если мы умны, мы обычно можем обойтись меньше
++чем @math{n^2} процедурами приведения.  Например, если мы знаем, как преобразовать из типа 1
++в тип 2 и из типа 2 в тип 3, то мы можем использовать это знание, чтобы преобразовать из
++типа 1 в тип 3.  Это может сильно уменьшить число процедур приведения, которые нам нужно
++снабжать явно, когда мы добавляем новый тип в систему.  Если мы готовы встроить нужную меру
++изощрённости в нашу систему, мы можем заставить её искать в «графе» отношений между типами и
++автоматически порождать те процедуры приведения, которые можно вывести из снабжённых явно.}
++На что мы здесь рассчитываем — это факт, что подходящее преобразование между типами зависит
++только от самих типов, а не от применяемой операции.
++
++С другой стороны, могут быть приложения, для которых наша схема приведения недостаточно
++обща.  Даже когда ни один из комбинируемых объектов нельзя преобразовать к типу другого, всё
++ещё может быть возможно выполнить операцию, преобразовав оба объекта к третьему типу.  Чтобы
++иметь дело с такой сложностью и при этом сохранять модульность в наших программах, обычно
++необходимо строить системы, пользующиеся ещё дальнейшей структурой в отношениях между
++типами, как мы обсуждаем далее.
++
++@subsubheading Иерархии типов
++
++Схема приведения, представленная выше, опиралась на существование естественных отношений
++между парами типов.  Часто есть более «глобальная» структура в том, как различные типы
++соотносятся друг с другом.  Например, предположим, мы строим обобщённую арифметическую
++систему для обработки целых чисел, рациональных чисел, действительных чисел и комплексных
++чисел.  В такой системе вполне естественно рассматривать целое число как особый вид
++рационального числа, которое, в свою очередь, является особым видом действительного числа,
++которое, в свою очередь, является особым видом комплексного числа.  То, что у нас на самом
++деле есть, — это так называемая @newterm{иерархия типов}, в которой, например, целые числа —
++это @newterm{подтип} рациональных чисел (то есть любую операцию, которую можно применить к
++рациональному числу, можно автоматически применить к целому числу).  И наоборот, мы говорим,
++что рациональные числа образуют @newterm{надтип} целых чисел.  Та конкретная иерархия,
++которая у нас здесь, — очень простого вида, в которой каждый тип имеет самое большее один
++надтип и самое большее один подтип.  Такая структура, называемая @newterm{башней},
++проиллюстрирована на @ref{Figure 2.25}.
+ 
+ @float
+ @anchor{Figure 2.25}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.25:} A tower of types.
++@strong{Figure 2.25:} Башня типов.
+ 
+ @example
+  complex
+@@ -12555,92 +12539,85 @@ integer
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.25,20mm,,,.std.svg}
+-@caption{@strong{Figure 2.25:} A tower of types.}
++@caption{@strong{Figure 2.25:} Башня типов.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-If we have a tower structure, then we can greatly simplify the problem of
+-adding a new type to the hierarchy, for we need only specify how the new type
+-is embedded in the next supertype above it and how it is the supertype of the
+-type below it.  For example, if we want to add an integer to a complex number,
+-we need not explicitly define a special coercion procedure
+-@code{integer->complex}.  Instead, we define how an integer can be transformed
+-into a rational number, how a rational number is transformed into a real
+-number, and how a real number is transformed into a complex number.  We then
+-allow the system to transform the integer into a complex number through these
+-steps and then add the two complex numbers.
+-
+-We can redesign our @code{apply-generic} procedure in the following way: For
+-each type, we need to supply a @code{raise} procedure, which ``raises'' objects
+-of that type one level in the tower.  Then when the system is required to
+-operate on objects of different types it can successively raise the lower types
+-until all the objects are at the same level in the tower.  (@ref{Exercise 2.83}
+-and @ref{Exercise 2.84} concern the details of implementing such a strategy.)
+-
+-Another advantage of a tower is that we can easily implement the notion that
+-every type ``inherits'' all operations defined on a supertype.  For instance,
+-if we do not supply a special procedure for finding the real part of an
+-integer, we should nevertheless expect that @code{real-part} will be defined
+-for integers by virtue of the fact that integers are a subtype of complex
+-numbers.  In a tower, we can arrange for this to happen in a uniform way by
+-modifying @code{apply-generic}.  If the required operation is not directly
+-defined for the type of the object given, we raise the object to its supertype
+-and try again.  We thus crawl up the tower, transforming our argument as we go,
+-until we either find a level at which the desired operation can be performed or
+-hit the top (in which case we give up).
+-
+-Yet another advantage of a tower over a more general hierarchy is that it gives
+-us a simple way to ``lower'' a data object to the simplest representation.  For
+-example, if we add @math{{2 + 3i}} to @math{{4 - 3i}}, it would be nice to obtain the
+-answer as the integer 6 rather than as the complex number @math{{6 + 0i}}.
+-@ref{Exercise 2.85} discusses a way to implement such a lowering operation.
+-(The trick is that we need a general way to distinguish those objects that can
+-be lowered, such as @math{{6 + 0i}}, from those that cannot, such as @math{{6 + 2i}}.)
+-
+-@subsubheading Inadequacies of hierarchies
+-
+-If the data types in our system can be naturally arranged in a tower, this
+-greatly simplifies the problems of dealing with generic operations on different
+-types, as we have seen.  Unfortunately, this is usually not the case.
+-@ref{Figure 2.26} illustrates a more complex arrangement of mixed types, this
+-one showing relations among different types of geometric figures.  We see that,
+-in general, a type may have more than one subtype.  Triangles and
+-quadrilaterals, for instance, are both subtypes of polygons.  In addition, a
+-type may have more than one supertype.  For example, an isosceles right
+-triangle may be regarded either as an isosceles triangle or as a right
+-triangle.  This multiple-supertypes issue is particularly thorny, since it
+-means that there is no unique way to ``raise'' a type in the hierarchy.
+-Finding the ``correct'' supertype in which to apply an operation to an object
+-may involve considerable searching through the entire type network on the part
+-of a procedure such as @code{apply-generic}.  Since there generally are
+-multiple subtypes for a type, there is a similar problem in coercing a value
+-``down'' the type hierarchy.  Dealing with large numbers of interrelated types
+-while still preserving modularity in the design of large systems is very
+-difficult, and is an area of much current research.@footnote{This statement,
+-which also appears in the first edition of this book, is just as true now as it
+-was when we wrote it twelve years ago.  Developing a useful, general framework
+-for expressing the relations among different types of entities (what
+-philosophers call ``ontology'') seems intractably difficult.  The main
+-difference be@-tween the confusion that existed ten years ago and the confusion
+-that exists now is that now a variety of inadequate ontological theories have
+-been embodied in a ple@-tho@-ra of correspondingly inadequate programming
+-languages.  For example, much of the complexity of object-oriented programming
+-languages---and the subtle and confusing differences among contemporary
+-object-oriented languages---centers on the treatment of generic operations on
+-interrelated types.  Our own discussion of computational objects in
+-@ref{Chapter 3} avoids these issues entirely.  Readers familiar with
+-object-oriented programming will notice that we have much to say in
+-chapter 3 about local state, but we do not even mention ``classes'' or
+-``inheritance.''  In fact, we suspect that these problems cannot be adequately
+-addressed in terms of computer-language design alone, without also drawing on
+-work in knowledge representation and automated reasoning.}
++Если у нас есть структура-башня, то мы можем сильно упростить задачу добавления нового типа
++в иерархию, ибо нам нужно лишь указать, как новый тип вкладывается в следующий надтип над
++ним и как он является надтипом типа под ним.  Например, если мы хотим сложить целое число с
++комплексным числом, нам не нужно явно определять особую процедуру приведения
++@code{integer->complex}.  Вместо этого мы определяем, как целое число можно преобразовать в
++рациональное число, как рациональное число преобразуется в действительное число и как
++действительное число преобразуется в комплексное число.  Затем мы позволяем системе
++преобразовать целое число в комплексное число через эти шаги и затем сложить два комплексных
++числа.
++
++Мы можем перепроектировать нашу процедуру @code{apply-generic} следующим образом: для
++каждого типа нам нужно снабдить процедурой @code{raise}, которая «поднимает» объекты этого
++типа на один уровень в башне.  Тогда, когда системе требуется оперировать объектами разных
++типов, она может последовательно поднимать более низкие типы, пока все объекты не окажутся
++на одном уровне в башне.  (@ref{Exercise 2.83} и @ref{Exercise 2.84} касаются подробностей
++реализации такой стратегии.)
++
++Ещё одно преимущество башни в том, что мы можем легко реализовать представление о том, что
++каждый тип «наследует» все операции, определённые на надтипе.  Например, если мы не снабжаем
++особой процедурой для нахождения действительной части целого числа, нам тем не менее следует
++ожидать, что @code{real-part} будет определена для целых чисел в силу того факта, что целые
++числа — подтип комплексных чисел.  В башне мы можем устроить так, чтобы это происходило
++единообразным образом, изменив @code{apply-generic}.  Если требуемая операция не определена
++напрямую для типа данного объекта, мы поднимаем объект к его надтипу и пробуем снова.  Таким
++образом мы ползём вверх по башне, преобразуя наш аргумент по пути, пока мы либо не найдём
++уровень, на котором желаемую операцию можно выполнить, либо не упрёмся в вершину (в этом
++случае мы сдаёмся).
++
++Ещё одно преимущество башни перед более общей иерархией в том, что она даёт нам простой
++способ «опустить» объект данных к простейшему представлению.  Например, если мы складываем
++@math{{2 + 3i}} с @math{{4 - 3i}}, было бы хорошо получить ответ как целое число 6, а не как
++комплексное число @math{{6 + 0i}}.  @ref{Exercise 2.85} обсуждает способ реализовать такую
++операцию понижения.  (Трюк в том, что нам нужен общий способ отличать те объекты, которые
++можно понизить, такие как @math{{6 + 0i}}, от тех, которые нельзя, таких как @math{{6 + 2i}}.)
++
++@subsubheading Несовершенства иерархий
++
++Если типы данных в нашей системе можно естественно расположить в башню, это сильно упрощает
++проблемы работы с обобщёнными операциями над разными типами, как мы видели.  К сожалению,
++обычно это не так.  @ref{Figure 2.26} иллюстрирует более сложное расположение смешанных
++типов, на этот раз показывающее отношения между различными типами геометрических фигур.  Мы
++видим, что, вообще, тип может иметь более одного подтипа.  Треугольники и четырёхугольники,
++например, оба являются подтипами многоугольников.  Кроме того, тип может иметь более одного
++надтипа.  Например, равнобедренный прямоугольный треугольник можно рассматривать либо как
++равнобедренный треугольник, либо как прямоугольный треугольник.  Этот вопрос множественных
++надтипов особенно колюч, поскольку он означает, что нет уникального способа «поднять» тип в
++иерархии.  Нахождение «правильного» надтипа, в котором применить операцию к объекту, может
++включать значительный поиск по всей сети типов со стороны такой процедуры, как
++@code{apply-generic}.  Поскольку для типа обычно есть несколько подтипов, есть похожая
++проблема при приведении значения «вниз» по иерархии типов.  Иметь дело с большим числом
++взаимосвязанных типов, при этом сохраняя модульность в проектировании больших систем, очень
++трудно и является областью многих текущих исследований.@footnote{Это утверждение, которое
++также появляется в первом издании этой книги, столь же верно сейчас, как и было, когда мы
++писали его двенадцать лет назад.  Разработка полезного, общего каркаса для выражения
++отношений между различными типами сущностей (того, что философы называют «онтологией»),
++кажется неразрешимо трудной.  Главное различие между путаницей, которая существовала десять
++лет назад, и путаницей, которая существует сейчас, в том, что теперь множество
++несовершенных онтологических теорий было воплощено в изобилии соответственно несовершенных
++языков программирования.  Например, бо́льшая часть сложности объектно-ориентированных языков
++программирования — и тонкие и сбивающие с толку различия между современными
++объектно-ориентированными языками — сосредоточена на трактовке обобщённых операций над
++взаимосвязанными типами.  Наше собственное обсуждение вычислительных объектов в
++@ref{Chapter 3} полностью избегает этих вопросов.  Читатели, знакомые с
++объектно-ориентированным программированием, заметят, что нам есть что сказать в главе 3 о
++локальном состоянии, но мы даже не упоминаем «классы» или «наследование».  На самом деле мы
++подозреваем, что эти проблемы нельзя адекватно решить в терминах только проектирования
++компьютерных языков, не привлекая также работу в представлении знаний и автоматическом
++рассуждении.}
+ 
+ @float
+ @anchor{Figure 2.26}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.26:} Relations among types of geometric figures.
++@strong{Figure 2.26:} Отношения между типами геометрических фигур.
+ 
+ @example
+                      polygon
+@@ -12665,17 +12642,17 @@ triangle      right          |       \    |
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.26f,147mm,,,.std.svg}
+-@caption{@strong{Figure 2.26:} Relations among types of geometric figures.}
++@caption{@strong{Figure 2.26:} Отношения между типами геометрических фигур.}
+ @end iftex
+ @end float
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.81}Exercise 2.81:} Louis Reasoner has noticed that
+-@code{apply-generic} may try to coerce the arguments to each other's type even
+-if they already have the same type.  Therefore, he reasons, we need to put
+-procedures in the coercion table to @newterm{coerce} arguments of each type to
+-their own type.  For example, in addition to the
+-@code{scheme-number->complex} coercion shown above, he would do:
++@strong{@anchor{Exercise 2.81}Exercise 2.81:} Луи Резонер заметил, что
++@code{apply-generic} может пытаться приводить аргументы к типу друг друга, даже если они уже
++имеют один и тот же тип.  Поэтому, рассуждает он, нам нужно поместить в таблицу приведения
++процедуры, чтобы @newterm{приводить} аргументы каждого типа к их собственному типу.
++Например, в дополнение к приведению @code{scheme-number->complex}, показанному выше, он бы
++сделал:
+ 
+ @lisp
+ (define (scheme-number->scheme-number n) n)
+@@ -12691,11 +12668,10 @@ their own type.  For example, in addition to the
+ @enumerate a
+ 
+ @item
+-With Louis's coercion procedures installed, what happens if
+-@code{apply-generic} is called with two arguments of type @code{scheme-number}
+-or two arguments of type @code{complex} for an operation that is not found in
+-the table for those types?  For example, assume that we've defined a generic
+-exponentiation operation:
++С установленными процедурами приведения Луи что происходит, если @code{apply-generic}
++вызывается с двумя аргументами типа @code{scheme-number} или двумя аргументами типа
++@code{complex} для операции, которая не найдена в таблице для этих типов?  Например,
++предположим, что мы определили обобщённую операцию возведения в степень:
+ 
+ @lisp
+ (define (exp x y) 
+@@ -12703,8 +12679,8 @@ exponentiation operation:
+ @end lisp
+ 
+ @noindent
+-and have put a procedure for exponentiation in the Scheme-number
+-package but not in any other package:
++и поместили процедуру для возведения в степень в пакет Scheme-чисел, но не в какой-либо
++другой пакет:
+ 
+ @lisp
+ @r{;; following added to Scheme-number package}
+@@ -12716,80 +12692,76 @@ package but not in any other package:
+ @end lisp
+ 
+ @noindent
+-What happens if we call @code{exp} with two complex numbers as arguments?
++Что происходит, если мы вызываем @code{exp} с двумя комплексными числами в качестве
++аргументов?
+ 
+ @item
+-Is Louis correct that something had to be done about coercion with arguments of
+-the same type, or does @code{apply-generic} work correctly as is?
++Прав ли Луи, что нужно было что-то сделать с приведением при аргументах одного типа, или
++@code{apply-generic} работает правильно как есть?
+ 
+ @item
+-Modify @code{apply-generic} so that it doesn't try coercion if the two
+-arguments have the same type.
++Измените @code{apply-generic} так, чтобы она не пыталась приводить, если два аргумента имеют
++один и тот же тип.
+ 
+ @end enumerate
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.82}Exercise 2.82:} Show how to generalize
+-@code{apply-generic} to handle coercion in the general case of multiple
+-arguments.  One strategy is to attempt to coerce all the arguments to the type
+-of the first argument, then to the type of the second argument, and so on.
+-Give an example of a situation where this strategy (and likewise the
+-two-argument version given above) is not sufficiently general.  (Hint: Consider
+-the case where there are some suitable mixed-type operations present in the
+-table that will not be tried.)
++@strong{@anchor{Exercise 2.82}Exercise 2.82:} Покажите, как обобщить @code{apply-generic}
++для обработки приведения в общем случае нескольких аргументов.  Одна стратегия — попытаться
++привести все аргументы к типу первого аргумента, затем к типу второго аргумента и так далее.
++Приведите пример ситуации, где эта стратегия (и точно так же двухаргументная версия,
++данная выше) недостаточно обща.  (Подсказка: рассмотрите случай, где в таблице присутствуют
++некоторые подходящие операции смешанного типа, которые не будут испробованы.)
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.83}Exercise 2.83:} Suppose you are designing a
+-generic arithmetic system for dealing with the tower of types shown in
+-@ref{Figure 2.25}: integer, rational, real, complex.  For each type (except
+-complex), design a procedure that raises objects of that type one level in the
+-tower.  Show how to install a generic @code{raise} operation that will work for
+-each type (except complex).
++@strong{@anchor{Exercise 2.83}Exercise 2.83:} Предположим, вы проектируете обобщённую
++арифметическую систему для работы с башней типов, показанной на @ref{Figure 2.25}: целое,
++рациональное, действительное, комплексное.  Для каждого типа (кроме комплексного)
++спроектируйте процедуру, которая поднимает объекты этого типа на один уровень в башне.
++Покажите, как установить обобщённую операцию @code{raise}, которая будет работать для
++каждого типа (кроме комплексного).
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.84}Exercise 2.84:} Using the @code{raise} operation
+-of @ref{Exercise 2.83}, modify the @code{apply-generic} procedure so that it
+-coerces its arguments to have the same type by the method of successive
+-raising, as discussed in this section.  You will need to devise a way to test
+-which of two types is higher in the tower.  Do this in a manner that is
+-``compatible'' with the rest of the system and will not lead to problems in
+-adding new levels to the tower.
++@strong{@anchor{Exercise 2.84}Exercise 2.84:} Используя операцию @code{raise} из
++@ref{Exercise 2.83}, измените процедуру @code{apply-generic} так, чтобы она приводила свои
++аргументы к одному и тому же типу методом последовательного поднятия, как обсуждалось в этом
++разделе.  Вам понадобится придумать способ проверять, какой из двух типов выше в башне.
++Сделайте это образом, «совместимым» с остальной частью системы, и который не приведёт к
++проблемам при добавлении новых уровней в башню.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.85}Exercise 2.85:} This section mentioned a method
+-for ``simplifying'' a data object by lowering it in the tower of types as far
+-as possible.  Design a procedure @code{drop} that accomplishes this for the
+-tower described in @ref{Exercise 2.83}.  The key is to decide, in some general
+-way, whether an object can be lowered.  For example, the complex number 
+-@math{{1.5 + 0i}} can be lowered as far as @code{real}, the complex number @math{{1 + 0i}} can
+-be lowered as far as @code{integer}, and the complex number @math{{2 + 3i}} cannot
+-be lowered at all.  Here is a plan for determining whether an object can be
+-lowered: Begin by defining a generic operation @code{project} that ``pushes''
+-an object down in the tower.  For example, projecting a complex number would
+-involve throwing away the imaginary part.  Then a number can be dropped if,
+-when we @code{project} it and @code{raise} the result back to the type we
+-started with, we end up with something equal to what we started with.  Show how
+-to implement this idea in detail, by writing a @code{drop} procedure that drops
+-an object as far as possible.  You will need to design the various projection
+-operations@footnote{A real number can be projected to an integer using the
+-@code{round} primitive, which returns the closest integer to its argument.} and
+-install @code{project} as a generic operation in the system.  You will also
+-need to make use of a generic equality predicate, such as described in
+-@ref{Exercise 2.79}.  Finally, use @code{drop} to rewrite @code{apply-generic}
+-from @ref{Exercise 2.84} so that it ``simplifies'' its answers.
++@strong{@anchor{Exercise 2.85}Exercise 2.85:} В этом разделе упоминался метод «упрощения»
++объекта данных понижением его в башне типов настолько, насколько возможно.  Спроектируйте
++процедуру @code{drop}, которая выполняет это для башни, описанной в @ref{Exercise 2.83}.
++Ключ — решить некоторым общим способом, можно ли понизить объект.  Например, комплексное
++число @math{{1.5 + 0i}} можно понизить до @code{real}, комплексное число @math{{1 + 0i}}
++можно понизить до @code{integer}, а комплексное число @math{{2 + 3i}} нельзя понизить
++вообще.  Вот план для определения того, можно ли понизить объект: начните с определения
++обобщённой операции @code{project}, которая «проталкивает» объект вниз в башне.  Например,
++проекция комплексного числа включала бы отбрасывание мнимой части.  Тогда число можно
++понизить (drop), если, когда мы @code{project} его и @code{raise} результат обратно к типу,
++с которого мы начали, мы в итоге получаем нечто, равное тому, с чего мы начали.  Покажите,
++как реализовать эту идею подробно, написав процедуру @code{drop}, которая понижает объект
++настолько, насколько возможно.  Вам понадобится спроектировать различные операции
++проекции@footnote{Действительное число можно спроецировать в целое с помощью примитива
++@code{round}, который возвращает ближайшее целое к своему аргументу.} и установить
++@code{project} как обобщённую операцию в системе.  Вам также понадобится воспользоваться
++обобщённым предикатом равенства, таким как описанный в @ref{Exercise 2.79}.  Наконец,
++используйте @code{drop}, чтобы переписать @code{apply-generic} из @ref{Exercise 2.84} так,
++чтобы она «упрощала» свои ответы.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.86}Exercise 2.86:} Suppose we want to handle complex
+-numbers whose real parts, imaginary parts, magnitudes, and angles can be either
+-ordinary numbers, rational numbers, or other numbers we might wish to add to
+-the system.  Describe and implement the changes to the system needed to
+-accommodate this.  You will have to define operations such as @code{sine} and
+-@code{cosine} that are generic over ordinary numbers and rational numbers.
++@strong{@anchor{Exercise 2.86}Exercise 2.86:} Предположим, мы хотим обрабатывать комплексные
++числа, чьи действительные части, мнимые части, модули и углы могут быть либо обычными
++числами, либо рациональными числами, либо другими числами, которые мы могли бы пожелать
++добавить в систему.  Опишите и реализуйте изменения в системе, нужные, чтобы это вместить.
++Вам придётся определить операции, такие как @code{sine} и @code{cosine}, которые обобщены
++над обычными числами и рациональными числами.
+ @end quotation
+ 
+ @node	2.5.3, Chapter 3, 2.4, 2.5

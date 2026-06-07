@@ -1,0 +1,112 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 02d24a8..b26f9a1 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -12011,70 +12011,68 @@ angle      | angle-polar     | angle-rectangular
+ @end quotation
+ 
+ @node	2.5, Chapter 3, 2.4, Chapter 2
+-@section Systems with Generic Operations
+-
+-In the previous section, we saw how to design systems in which data objects can
+-be represented in more than one way.  The key idea is to link the code that
+-specifies the data operations to the several representations by means of
+-generic interface procedures.  Now we will see how to use this same idea not
+-only to define operations that are generic over different representations but
+-also to define operations that are generic over different kinds of arguments.
+-We have already seen several different packages of arithmetic operations: the
+-primitive arithmetic (@code{+}, @code{-}, @code{*}, @code{/}) built into our
+-language, the rational-number arithmetic (@code{add-rat}, @code{sub-rat},
+-@code{mul-rat}, @code{div-rat}) of @ref{2.1.1}, and the complex-number
+-arithmetic that we implemented in @ref{2.4.3}.  We will now use
+-data-directed techniques to construct a package of arithmetic operations that
+-incorporates all the arithmetic packages we have already constructed.
+-
+-@ref{Figure 2.23} shows the structure of the system we shall build.  Notice the
+-abstraction barriers.  From the perspective of someone using ``numb@-ers,'' there
+-is a single procedure @code{add} that operates on whatever numb@-ers are
+-supplied.  @code{Add} is part of a generic interface that allows the separate
+-or@-di@-na@-ry-arithmetic, rational-arithmetic, and complex-arithmetic pack@-ag@-es to be
+-accessed uniformly by programs that use numbers.  Any individual arithmetic
+-package (such as the complex package) may itself be accessed through generic
+-procedures (such as @code{add-complex}) that combine packages designed for
+-different representations (such as rectangular and polar).  Moreover, the
+-structure of the system is additive, so that one can design the individual
+-arithmetic packages separately and combine them to produce a generic arithmetic
+-system.
++@section Системы с обобщёнными операциями
++
++В предыдущем разделе мы видели, как проектировать системы, в которых объекты данных могут
++быть представлены более чем одним способом.  Ключевая идея — связать код, задающий
++операции над данными, с несколькими представлениями посредством обобщённых интерфейсных
++процедур.  Теперь мы увидим, как использовать ту же самую идею не только для определения
++операций, обобщённых по различным представлениям, но и для определения операций,
++обобщённых по различным видам аргументов.  Мы уже видели несколько различных пакетов
++арифметических операций: примитивную арифметику (@code{+}, @code{-}, @code{*}, @code{/}),
++встроенную в наш язык, арифметику рациональных чисел (@code{add-rat}, @code{sub-rat},
++@code{mul-rat}, @code{div-rat}) из @ref{2.1.1} и арифметику комплексных чисел, которую мы
++реализовали в @ref{2.4.3}.  Теперь мы используем приёмы, управляемые данными, чтобы
++построить пакет арифметических операций, включающий все арифметические пакеты, которые мы
++уже построили.
++
++@ref{Figure 2.23} показывает структуру системы, которую мы будем строить.  Заметьте барьеры
++абстракции.  С точки зрения того, кто использует «числа», есть единственная процедура
++@code{add}, которая оперирует любыми предоставленными числами.  @code{Add} — часть
++обобщённого интерфейса, который позволяет отдельным пакетам обычной арифметики, рациональной
++арифметики и комплексной арифметики обращаться единообразно из программ, использующих
++числа.  К любому отдельному арифметическому пакету (такому как комплексный пакет) можно, в
++свою очередь, обращаться через обобщённые процедуры (такие как @code{add-complex}), которые
++комбинируют пакеты, спроектированные для разных представлений (таких как прямоугольное и
++полярное).  Более того, структура системы аддитивна, так что можно проектировать отдельные
++арифметические пакеты по отдельности и комбинировать их, чтобы произвести обобщённую
++арифметическую систему.
+ 
+ @float
+ @anchor{Figure 2.23}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.23:} Generic arithmetic system.
++@strong{Figure 2.23:} Обобщённая арифметическая система.
+ 
+ @example
+-                        Programs that use numbers
++                        Программы, использующие числа
+                            +-----------------+
+ ---------------------------| add sub mul div |-------------------
+                            +-----------------+
+-                        Generic arithmetic package
++                        Пакет обобщённой арифметики
+  +-----------------+   +-------------------------+
+  | add-rat sub-rat |   | add-complex sub-complex |   +---------+
+ -|                 |-+-|                         |-+-| + - * / |-
+  | mul-rat div-rat | | | mul-complex div-complex | | +---------+
+  +-----------------+ | +-------------------------+ |
+-      Rational       |     Complex artithmetic     |   Ordinary
+-     arithmetic      +--------------+--------------+  arithmetic
+-                     | Rectangular  |     Polar    |
++   Рациональная      |   Комплексная арифметика    |   Обычная
++    арифметика       +--------------+--------------+  арифметика
++                     | Прямоугольное|   Полярное   |
+ ---------------------+--------------+--------------+-------------
+-             List structure and primitive machine arithmetic
++      Списочная структура и примитивная машинная арифметика
+ @end example
+ @end quotation
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.23b,138mm,,,.std.svg}
+-@caption{@strong{Figure 2.23:} Generic arithmetic system.}
++@caption{@strong{Figure 2.23:} Обобщённая арифметическая система.}
+ @end iftex
+ @end float
+ 
+ @menu
+-* 2.5.1::            Generic Arithmetic Operations
+-* 2.5.2::            Combining Data of Different Types
+-* 2.5.3::            Example: Symbolic Algebra
++* 2.5.1::            Обобщённые арифметические операции
++* 2.5.2::            Комбинирование данных разных типов
++* 2.5.3::            Пример: символьная алгебра
+ @end menu
+ 
+ @node	2.5.1, 2.5.2, 2.5, 2.5
