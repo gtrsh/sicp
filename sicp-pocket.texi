@@ -12011,87 +12011,84 @@ angle      | angle-polar     | angle-rectangular
 @end quotation
 
 @node	2.5, Chapter 3, 2.4, Chapter 2
-@section Systems with Generic Operations
+@section Системы с обобщёнными операциями
 
-In the previous section, we saw how to design systems in which data objects can
-be represented in more than one way.  The key idea is to link the code that
-specifies the data operations to the several representations by means of
-generic interface procedures.  Now we will see how to use this same idea not
-only to define operations that are generic over different representations but
-also to define operations that are generic over different kinds of arguments.
-We have already seen several different packages of arithmetic operations: the
-primitive arithmetic (@code{+}, @code{-}, @code{*}, @code{/}) built into our
-language, the rational-number arithmetic (@code{add-rat}, @code{sub-rat},
-@code{mul-rat}, @code{div-rat}) of @ref{2.1.1}, and the complex-number
-arithmetic that we implemented in @ref{2.4.3}.  We will now use
-data-directed techniques to construct a package of arithmetic operations that
-incorporates all the arithmetic packages we have already constructed.
+В предыдущем разделе мы видели, как проектировать системы, в которых объекты данных могут
+быть представлены более чем одним способом.  Ключевая идея — связать код, задающий
+операции над данными, с несколькими представлениями посредством обобщённых интерфейсных
+процедур.  Теперь мы увидим, как использовать ту же самую идею не только для определения
+операций, обобщённых по различным представлениям, но и для определения операций,
+обобщённых по различным видам аргументов.  Мы уже видели несколько различных пакетов
+арифметических операций: примитивную арифметику (@code{+}, @code{-}, @code{*}, @code{/}),
+встроенную в наш язык, арифметику рациональных чисел (@code{add-rat}, @code{sub-rat},
+@code{mul-rat}, @code{div-rat}) из @ref{2.1.1} и арифметику комплексных чисел, которую мы
+реализовали в @ref{2.4.3}.  Теперь мы используем приёмы, управляемые данными, чтобы
+построить пакет арифметических операций, включающий все арифметические пакеты, которые мы
+уже построили.
 
-@ref{Figure 2.23} shows the structure of the system we shall build.  Notice the
-abstraction barriers.  From the perspective of someone using ``numb@-ers,'' there
-is a single procedure @code{add} that operates on whatever numb@-ers are
-supplied.  @code{Add} is part of a generic interface that allows the separate
-or@-di@-na@-ry-arithmetic, rational-arithmetic, and complex-arithmetic pack@-ag@-es to be
-accessed uniformly by programs that use numbers.  Any individual arithmetic
-package (such as the complex package) may itself be accessed through generic
-procedures (such as @code{add-complex}) that combine packages designed for
-different representations (such as rectangular and polar).  Moreover, the
-structure of the system is additive, so that one can design the individual
-arithmetic packages separately and combine them to produce a generic arithmetic
-system.
+@ref{Figure 2.23} показывает структуру системы, которую мы будем строить.  Заметьте барьеры
+абстракции.  С точки зрения того, кто использует «числа», есть единственная процедура
+@code{add}, которая оперирует любыми предоставленными числами.  @code{Add} — часть
+обобщённого интерфейса, который позволяет отдельным пакетам обычной арифметики, рациональной
+арифметики и комплексной арифметики обращаться единообразно из программ, использующих
+числа.  К любому отдельному арифметическому пакету (такому как комплексный пакет) можно, в
+свою очередь, обращаться через обобщённые процедуры (такие как @code{add-complex}), которые
+комбинируют пакеты, спроектированные для разных представлений (таких как прямоугольное и
+полярное).  Более того, структура системы аддитивна, так что можно проектировать отдельные
+арифметические пакеты по отдельности и комбинировать их, чтобы произвести обобщённую
+арифметическую систему.
 
 @float
 @anchor{Figure 2.23}
 @ifinfo
 @quotation
-@strong{Figure 2.23:} Generic arithmetic system.
+@strong{Figure 2.23:} Обобщённая арифметическая система.
 
 @example
-                        Programs that use numbers
+                        Программы, использующие числа
                            +-----------------+
 ---------------------------| add sub mul div |-------------------
                            +-----------------+
-                        Generic arithmetic package
+                        Пакет обобщённой арифметики
  +-----------------+   +-------------------------+
  | add-rat sub-rat |   | add-complex sub-complex |   +---------+
 -|                 |-+-|                         |-+-| + - * / |-
  | mul-rat div-rat | | | mul-complex div-complex | | +---------+
  +-----------------+ | +-------------------------+ |
-      Rational       |     Complex artithmetic     |   Ordinary
-     arithmetic      +--------------+--------------+  arithmetic
-                     | Rectangular  |     Polar    |
+   Рациональная      |   Комплексная арифметика    |   Обычная
+    арифметика       +--------------+--------------+  арифметика
+                     | Прямоугольное|   Полярное   |
 ---------------------+--------------+--------------+-------------
-             List structure and primitive machine arithmetic
+      Списочная структура и примитивная машинная арифметика
 @end example
 @end quotation
 @end ifinfo
 @iftex
 @image{fig/chap2/Fig2.23b,138mm,,,.std.svg}
-@caption{@strong{Figure 2.23:} Generic arithmetic system.}
+@caption{@strong{Figure 2.23:} Обобщённая арифметическая система.}
 @end iftex
 @end float
 
 @menu
-* 2.5.1::            Generic Arithmetic Operations
-* 2.5.2::            Combining Data of Different Types
-* 2.5.3::            Example: Symbolic Algebra
+* 2.5.1::            Обобщённые арифметические операции
+* 2.5.2::            Комбинирование данных разных типов
+* 2.5.3::            Пример: символьная алгебра
 @end menu
 
 @node	2.5.1, 2.5.2, 2.5, 2.5
-@subsection Generic Arithmetic Operations
+@subsection Обобщённые арифметические операции
 
-The task of designing generic arithmetic operations is analogous to that of
-designing the generic complex-number operations.  We would like, for instance,
-to have a generic addition procedure @code{add} that acts like ordinary
-primitive addition @code{+} on ordinary numbers, like @code{add-rat} on
-rational numbers, and like @code{add-complex} on complex numbers.  We can
-implement @code{add}, and the other generic arithmetic operations, by following
-the same strategy we used in @ref{2.4.3} to implement the generic
-selectors for complex numbers.  We will attach a type tag to each kind of
-number and cause the generic procedure to dispatch to an appropriate package
-according to the data type of its arguments.
+Задача проектирования обобщённых арифметических операций аналогична задаче проектирования
+обобщённых операций над комплексными числами.  Нам хотелось бы, например, иметь обобщённую
+процедуру сложения @code{add}, которая действует как обычное примитивное сложение @code{+}
+на обычных числах, как @code{add-rat} на рациональных числах и как @code{add-complex} на
+комплексных числах.  Мы можем реализовать @code{add} и другие обобщённые арифметические
+операции, следуя той же стратегии, которую мы использовали в @ref{2.4.3} для реализации
+обобщённых селекторов для комплексных чисел.  Мы будем прикреплять тег типа к каждому виду
+числа и заставлять обобщённую процедуру диспетчеризоваться к подходящему пакету согласно
+типу данных её аргументов.
 
-The generic arithmetic procedures are defined as follows:
+Обобщённые арифметические процедуры определяются так:
 
 @lisp
 (define (add x y) (apply-generic 'add x y))
@@ -12101,12 +12098,11 @@ The generic arithmetic procedures are defined as follows:
 @end lisp
 
 @noindent
-We begin by installing a package for handling @newterm{ordinary} numbers, that
-is, the primitive numbers of our language.  We will tag these with the symbol
-@code{scheme-number}.  The arithmetic operations in this package are the
-primitive arithmetic procedures (so there is no need to define extra procedures
-to handle the untagged numbers).  Since these operations each take two
-arguments, they are installed in the table keyed by the list
+Мы начинаем с установки пакета для обработки @newterm{обычных} чисел, то есть примитивных
+чисел нашего языка.  Мы будем помечать их символом @code{scheme-number}.  Арифметические
+операции в этом пакете — это примитивные арифметические процедуры (так что нет нужды
+определять дополнительные процедуры для обработки нетипизированных чисел).  Поскольку эти
+операции каждая принимают два аргумента, они устанавливаются в таблицу с ключом по списку
 @code{(scheme-number scheme-number)}:
 
 @lisp
@@ -12127,8 +12123,8 @@ arguments, they are installed in the table keyed by the list
 @end lisp
 
 @noindent
-Users of the Scheme-number package will create (tagged) ordinary numbers by
-means of the procedure:
+Пользователи пакета Scheme-чисел будут создавать (типизированные) обычные числа посредством
+процедуры:
 
 @lisp
 (define (make-scheme-number n)
@@ -12136,11 +12132,10 @@ means of the procedure:
 @end lisp
 
 @noindent
-Now that the framework of the generic arithmetic system is in place, we can
-readily include new kinds of numbers.  Here is a package that performs rational
-arithmetic.  Notice that, as a benefit of additivity, we can use without
-modification the rational-number code from @ref{2.1.1} as the internal
-procedures in the package:
+Теперь, когда каркас обобщённой арифметической системы на месте, мы можем легко включать
+новые виды чисел.  Вот пакет, который выполняет рациональную арифметику.  Заметьте, что, как
+выгода от аддитивности, мы можем использовать без изменения код рациональных чисел из
+@ref{2.1.1} в качестве внутренних процедур пакета:
 
 @lisp
 (define (install-rational-package)
@@ -12183,12 +12178,12 @@ procedures in the package:
 @end lisp
 
 @noindent
-We can install a similar package to handle complex numbers, using the tag
-@code{complex}.  In creating the package, we extract from the table the
-operations @code{make-from-real-imag} and @code{make-from-mag-ang} that were
-defined by the rectangular and polar packages.  Additivity permits us to use,
-as the internal operations, the same @code{add-complex}, @code{sub-complex},
-@code{mul-complex}, and @code{div-complex} procedures from @ref{2.4.1}.
+Мы можем установить похожий пакет для обработки комплексных чисел, используя тег
+@code{complex}.  Создавая пакет, мы извлекаем из таблицы операции @code{make-from-real-imag}
+и @code{make-from-mag-ang}, которые были определены прямоугольным и полярным пакетами.
+Аддитивность позволяет нам использовать в качестве внутренних операций те же процедуры
+@code{add-complex}, @code{sub-complex}, @code{mul-complex} и @code{div-complex} из
+@ref{2.4.1}.
 
 @lisp
 (define (install-complex-package)
@@ -12242,11 +12237,10 @@ as the internal operations, the same @code{add-complex}, @code{sub-complex},
 @end lisp
 
 @noindent
-Programs outside the complex-number package can construct complex numbers
-either from real and imaginary parts or from magnitudes and angles.  Notice how
-the underlying procedures, originally defined in the rectangular and polar
-packages, are exported to the complex package, and exported from there to the
-outside world.
+Программы вне пакета комплексных чисел могут строить комплексные числа либо из
+действительных и мнимых частей, либо из модулей и углов.  Заметьте, как лежащие в основе
+процедуры, изначально определённые в прямоугольном и полярном пакетах, экспортируются в
+комплексный пакет, а оттуда экспортируются во внешний мир.
 
 @lisp
 (define (make-complex-from-real-imag x y)
@@ -12256,22 +12250,22 @@ outside world.
 @end lisp
 
 @noindent
-What we have here is a two-level tag system.  A typical complex number, such as
-@math{{3 + 4i}} in rectangular form, would be represented as shown in @ref{Figure 2.24}.  
-The outer tag (@code{complex}) is used to direct the number to the
-complex package.  Once within the complex package, the next tag
-(@code{rectangular}) is used to direct the number to the rectangular package.
-In a large and complicated system there might be many levels, each interfaced
-with the next by means of generic operations.  As a data object is passed
-``downward,'' the outer tag that is used to direct it to the appropriate
-package is stripped off (by applying @code{contents}) and the next level of tag
-(if any) becomes visible to be used for further dispatching.
+То, что у нас здесь, — это двухуровневая система тегов.  Типичное комплексное число, такое
+как @math{{3 + 4i}} в прямоугольной форме, было бы представлено так, как показано на
+@ref{Figure 2.24}.  Внешний тег (@code{complex}) используется, чтобы направить число к
+комплексному пакету.  Оказавшись внутри комплексного пакета, следующий тег
+(@code{rectangular}) используется, чтобы направить число к прямоугольному пакету.  В
+большой и сложной системе могло бы быть много уровней, каждый сопряжён со следующим
+посредством обобщённых операций.  По мере того как объект данных передаётся «вниз», внешний
+тег, который используется, чтобы направить его к подходящему пакету, снимается (применением
+@code{contents}), и следующий уровень тега (если есть) становится видимым для использования
+в дальнейшей диспетчеризации.
 
 @float
 @anchor{Figure 2.24}
 @ifinfo
 @quotation
-@strong{Figure 2.24:} Representation of @math{{3 + 4i}} in rectangular form.
+@strong{Figure 2.24:} Представление @math{{3 + 4i}} в прямоугольной форме.
 
 @example
      +---+---+     +---+---+     +---+---+
@@ -12287,27 +12281,26 @@ package is stripped off (by applying @code{contents}) and the next level of tag
 @end ifinfo
 @iftex
 @image{fig/chap2/Fig2.24d,108mm,,,.std.svg}
-@caption{@strong{Figure 2.24:} Representation of @math{{3 + 4i}} in rectangular form.}
+@caption{@strong{Figure 2.24:} Представление @math{{3 + 4i}} в прямоугольной форме.}
 @end iftex
 @end float
 
 @noindent
-In the above packages, we used @code{add-rat}, @code{add-complex}, and the
-other arithmetic procedures exactly as originally written.  Once these
-definitions are internal to different installation procedures, however, they no
-longer need names that are distinct from each other: we could simply name them
-@code{add}, @code{sub}, @code{mul}, and @code{div} in both packages.
+В вышеприведённых пакетах мы использовали @code{add-rat}, @code{add-complex} и другие
+арифметические процедуры в точности так, как они были изначально написаны.  Однако, как
+только эти определения становятся внутренними по отношению к разным процедурам установки, им
+больше не нужны имена, отличные друг от друга: мы могли бы просто назвать их @code{add},
+@code{sub}, @code{mul} и @code{div} в обоих пакетах.
 
 @quotation
-@strong{@anchor{Exercise 2.77}Exercise 2.77:} Louis Reasoner tries to evaluate
-the expression @code{(magnitude z)} where @code{z} is the object shown in
-@ref{Figure 2.24}.  To his surprise, instead of the answer 5 he gets an error
-message from @code{apply-generic}, saying there is no method for the operation
-@code{magnitude} on the types @code{(complex)}.  He shows this interaction to
-Alyssa P. Hacker, who says ``The problem is that the complex-number selectors
-were never defined for @code{complex} numbers, just for @code{polar} and
-@code{rectangular} numbers.  All you have to do to make this work is add the
-following to the @code{complex} package:''
+@strong{@anchor{Exercise 2.77}Exercise 2.77:} Луи Резонер пытается вычислить выражение
+@code{(magnitude z)}, где @code{z} — объект, показанный на @ref{Figure 2.24}.  К его
+удивлению, вместо ответа 5 он получает сообщение об ошибке от @code{apply-generic},
+говорящее, что нет метода для операции @code{magnitude} на типах @code{(complex)}.  Он
+показывает это взаимодействие Алиссе П. Хакер, которая говорит: «Проблема в том, что
+селекторы комплексных чисел никогда не были определены для @code{complex}-чисел, только для
+@code{polar}- и @code{rectangular}-чисел.  Всё, что тебе нужно сделать, чтобы это
+заработало, — добавить следующее в @code{complex}-пакет:»
 
 @lisp
 (put 'real-part '(complex) real-part)
@@ -12316,66 +12309,61 @@ following to the @code{complex} package:''
 (put 'angle '(complex) angle)
 @end lisp
 
-Describe in detail why this works.  As an example, trace through all the
-procedures called in evaluating the expression @code{(magnitude z)} where
-@code{z} is the object shown in @ref{Figure 2.24}.  In particular, how many
-times is @code{apply-generic} invoked?  What procedure is dispatched to in each
-case?
+Опишите подробно, почему это работает.  В качестве примера проследите все процедуры,
+вызываемые при вычислении выражения @code{(magnitude z)}, где @code{z} — объект, показанный
+на @ref{Figure 2.24}.  В частности, сколько раз вызывается @code{apply-generic}?  К какой
+процедуре происходит диспетчеризация в каждом случае?
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.78}Exercise 2.78:} The internal procedures in the
-@code{scheme-number} package are essentially nothing more than calls to the
-primitive procedures @code{+}, @code{-}, etc.  It was not possible to use the
-primitives of the language directly because our type-tag system requires that
-each data object have a type attached to it.  In fact, however, all Lisp
-implementations do have a type system, which they use internally.  Primitive
-predicates such as @code{symbol?} and @code{number?}  determine whether data
-objects have particular types.  Modify the definitions of @code{type-tag},
-@code{contents}, and @code{attach-tag} from @ref{2.4.2} so that our
-generic system takes advantage of Scheme's internal type system.  That is to
-say, the system should work as before except that ordinary numbers should be
-represented simply as Scheme numbers rather than as pairs whose @code{car} is
-the symbol @code{scheme-number}.
+@strong{@anchor{Exercise 2.78}Exercise 2.78:} Внутренние процедуры в пакете
+@code{scheme-number} — по существу не более чем вызовы примитивных процедур @code{+},
+@code{-} и т. д.  Не было возможности использовать примитивы языка напрямую, потому что
+наша система тегов типа требует, чтобы у каждого объекта данных был прикреплённый к нему
+тип.  Однако на самом деле все реализации Lisp имеют систему типов, которую они используют
+внутренне.  Примитивные предикаты, такие как @code{symbol?} и @code{number?}, определяют,
+имеют ли объекты данных определённые типы.  Измените определения @code{type-tag},
+@code{contents} и @code{attach-tag} из @ref{2.4.2} так, чтобы наша обобщённая система
+пользовалась внутренней системой типов Scheme.  То есть система должна работать как прежде,
+за исключением того, что обычные числа должны представляться просто как Scheme-числа, а не
+как пары, чей @code{car} — символ @code{scheme-number}.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.79}Exercise 2.79:} Define a generic equality
-predicate @code{equ?} that tests the equality of two numbers, and install it in
-the generic arithmetic package.  This operation should work for ordinary
-numbers, rational numbers, and complex numbers.
+@strong{@anchor{Exercise 2.79}Exercise 2.79:} Определите обобщённый предикат равенства
+@code{equ?}, который проверяет равенство двух чисел, и установите его в обобщённый
+арифметический пакет.  Эта операция должна работать для обычных чисел, рациональных чисел и
+комплексных чисел.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.80}Exercise 2.80:} Define a generic predicate
-@code{=zero?} that tests if its argument is zero, and install it in the generic
-arithmetic package.  This operation should work for ordinary numbers, rational
-numbers, and complex numbers.
+@strong{@anchor{Exercise 2.80}Exercise 2.80:} Определите обобщённый предикат @code{=zero?},
+который проверяет, равен ли его аргумент нулю, и установите его в обобщённый арифметический
+пакет.  Эта операция должна работать для обычных чисел, рациональных чисел и комплексных
+чисел.
 @end quotation
 
 @node	2.5.2, 2.5.3, 2.5.1, 2.5
-@subsection Combining Data of Different Types
+@subsection Комбинирование данных разных типов
 
-We have seen how to define a unified arithmetic system that encompasses
-ordinary numbers, complex numbers, rational numbers, and any other type of
-number we might decide to invent, but we have ignored an important issue.  The
-operations we have defined so far treat the different data types as being
-completely independent.  Thus, there are separate packages for adding, say, two
-ordinary numbers, or two complex numbers.  What we have not yet considered is
-the fact that it is meaningful to define operations that cross the type
-boundaries, such as the addition of a complex number to an ordinary number.  We
-have gone to great pains to introduce barriers between parts of our programs so
-that they can be developed and understood separately.  We would like to
-introduce the cross-type operations in some carefully controlled way, so that
-we can support them without seriously violating our module boundaries.
+Мы видели, как определить единую арифметическую систему, охватывающую обычные числа,
+комплексные числа, рациональные числа и любой другой тип числа, который мы могли бы решить
+изобрести, но мы проигнорировали важный вопрос.  Операции, которые мы определили до сих
+пор, обращаются с различными типами данных как с полностью независимыми.  Так, есть
+отдельные пакеты для сложения, скажем, двух обычных чисел или двух комплексных чисел.  Чего
+мы ещё не рассмотрели — это факт, что осмысленно определять операции, пересекающие границы
+типов, такие как сложение комплексного числа с обычным числом.  Мы приложили большие усилия,
+чтобы ввести барьеры между частями наших программ, чтобы их можно было разрабатывать и
+понимать по отдельности.  Нам хотелось бы ввести межтиповые операции некоторым тщательно
+контролируемым образом, чтобы мы могли их поддерживать, серьёзно не нарушая границ наших
+модулей.
 
-One way to handle cross-type operations is to design a different procedure for
-each possible combination of types for which the operation is valid.  For
-example, we could extend the complex-number package so that it provides a
-procedure for adding complex numbers to ordinary numbers and installs this in
-the table using the tag @code{(complex scheme-number)}:@footnote{We also have
-to supply an almost identical procedure to handle the types
-@code{(scheme-number complex)}.}
+Один способ обрабатывать межтиповые операции — спроектировать отдельную процедуру для
+каждой возможной комбинации типов, для которой операция допустима.  Например, мы могли бы
+расширить пакет комплексных чисел так, чтобы он предоставлял процедуру для сложения
+комплексных чисел с обычными числами, и установить это в таблицу, используя тег
+@code{(complex scheme-number)}:@footnote{Нам также придётся снабдить почти идентичной
+процедурой обработку типов @code{(scheme-number complex)}.}
 
 @lisp
 (define (add-complex-to-schemenum z x)
@@ -12389,41 +12377,37 @@ to supply an almost identical procedure to handle the types
 @end lisp
 
 @noindent
-This technique works, but it is cumbersome.  With such a system, the cost of
-introducing a new type is not just the construction of the package of
-procedures for that type but also the construction and installation of the
-procedures that implement the cross-type operations.  This can easily be much
-more code than is needed to define the operations on the type itself.  The
-method also undermines our ability to combine separate packages additively, or
-at least to limit the extent to which the implementors of the individual packages
-need to take account of other packages.  For instance, in the example above, it
-seems reasonable that handling mixed operations on complex numbers and ordinary
-numbers should be the responsibility of the complex-number package.  Combining
-rational numbers and complex numbers, however, might be done by the complex
-package, by the rational package, or by some third package that uses operations
-extracted from these two packages.  Formulating coherent policies on the
-division of responsibility among packages can be an overwhelming task in
-designing systems with many packages and many cross-type operations.
+Этот приём работает, но он громоздок.  С такой системой стоимость введения нового типа —
+это не только построение пакета процедур для этого типа, но и построение и установка
+процедур, реализующих межтиповые операции.  Этого легко может быть гораздо больше кода, чем
+нужно, чтобы определить операции над самим типом.  Метод также подрывает нашу способность
+комбинировать отдельные пакеты аддитивно или хотя бы ограничивать степень, в которой
+реализаторам отдельных пакетов нужно учитывать другие пакеты.  Например, в примере выше
+кажется разумным, что обработка смешанных операций над комплексными числами и обычными
+числами должна быть обязанностью пакета комплексных чисел.  Комбинирование рациональных
+чисел и комплексных чисел, однако, могло бы выполняться комплексным пакетом, рациональным
+пакетом или каким-то третьим пакетом, использующим операции, извлечённые из этих двух
+пакетов.  Формулирование связных политик о разделении обязанностей между пакетами может
+быть непосильной задачей при проектировании систем со многими пакетами и многими межтиповыми
+операциями.
 
-@subsubheading Coercion
+@subsubheading Приведение типов
 
-In the general situation of completely unrelated operations acting on
-completely unrelated types, implementing explicit cross-type operations,
-cumbersome though it may be, is the best that one can hope for.  Fortunately,
-we can usually do better by taking advantage of additional structure that may
-be latent in our type system.  Often the different data types are not
-completely independent, and there may be ways by which objects of one type may
-be viewed as being of another type.  This process is called @newterm{coercion}.
-For example, if we are asked to arithmetically combine an ordinary number with
-a complex number, we can view the ordinary number as a complex number whose
-imaginary part is zero.  This transforms the problem to that of combining two
-complex numbers, which can be handled in the ordinary way by the
-complex-arithmetic package.
+В общей ситуации полностью несвязанных операций, действующих на полностью несвязанных
+типах, реализация явных межтиповых операций, как бы громоздка она ни была, — это лучшее, на
+что можно надеяться.  К счастью, обычно мы можем сделать лучше, воспользовавшись
+дополнительной структурой, которая может быть скрыта в нашей системе типов.  Часто
+различные типы данных не полностью независимы, и могут быть способы, которыми объекты
+одного типа можно рассматривать как принадлежащие другому типу.  Этот процесс называется
+@newterm{приведением}.  Например, если нас просят арифметически скомбинировать обычное
+число с комплексным числом, мы можем рассматривать обычное число как комплексное число,
+мнимая часть которого равна нулю.  Это преобразует задачу в задачу комбинирования двух
+комплексных чисел, которую можно обработать обычным образом пакетом комплексной арифметики.
 
-In general, we can implement this idea by designing coercion procedures that
-transform an object of one type into an equivalent object of another type.
-Here is a typical coercion procedure, which transforms a given ordinary number
-to a complex number with that real part and zero imaginary part:
+В общем, мы можем реализовать эту идею, спроектировав процедуры приведения, которые
+преобразуют объект одного типа в эквивалентный объект другого типа.  Вот типичная процедура
+приведения, которая преобразует данное обычное число в комплексное число с этой
+действительной частью и нулевой мнимой частью:
 
 @lisp
 (define (scheme-number->complex n)
@@ -12432,8 +12416,8 @@ to a complex number with that real part and zero imaginary part:
 @end lisp
 
 @noindent
-We install these coercion procedures in a special coercion table, indexed under
-the names of the two types:
+Мы устанавливаем эти процедуры приведения в особую таблицу приведения, индексируемую под
+именами двух типов:
 
 @lisp
 (put-coercion 'scheme-number 'complex 
@@ -12441,28 +12425,23 @@ the names of the two types:
 @end lisp
 
 @noindent
-(We assume that there are @code{put-coercion} and @code{get-coercion}
-procedures available for manipulating this table.)  Generally some of the slots
-in the table will be empty, because it is not generally possible to coerce an
-arbitrary data object of each type into all other types.  For example, there is
-no way to coerce an arbitrary complex number to an ordinary number, so there
-will be no general @code{complex->scheme-number} procedure included in the
-table.
+(Мы предполагаем, что есть процедуры @code{put-coercion} и @code{get-coercion},
+доступные для манипулирования этой таблицей.)  Вообще, некоторые ячейки в таблице будут
+пусты, потому что в общем случае невозможно привести произвольный объект данных каждого
+типа ко всем другим типам.  Например, нет способа привести произвольное комплексное число к
+обычному числу, так что в таблице не будет общей процедуры @code{complex->scheme-number}.
 
-Once the coercion table has been set up, we can handle coercion in a uniform
-manner by modifying the @code{apply-generic} procedure of @ref{2.4.3}.
-When asked to apply an operation, we first check whether the operation is
-defined for the arguments' types, just as before.  If so, we dispatch to the
-procedure found in the operation-and-type table.  Otherwise, we try coercion.
-For simplicity, we consider only the case where there are two
-arguments.@footnote{See @ref{Exercise 2.82} for generalizations.}  We check the
-coercion table to see if objects of the first type can be coerced to the second
-type.  If so, we coerce the first argument and try the operation again.  If
-objects of the first type cannot in general be coerced to the second type, we
-try the coercion the other way around to see if there is a way to coerce the
-second argument to the type of the first argument.  Finally, if there is no
-known way to coerce either type to the other type, we give up.  Here is the
-procedure:
+Как только таблица приведения настроена, мы можем обрабатывать приведение единообразным
+образом, изменив процедуру @code{apply-generic} из @ref{2.4.3}.  Когда нас просят применить
+операцию, мы сначала проверяем, определена ли операция для типов аргументов, как и прежде.
+Если да, мы диспетчеризуемся к процедуре, найденной в таблице операций и типов.  Иначе мы
+пробуем приведение.  Для простоты мы рассматриваем только случай, когда есть два
+аргумента.@footnote{См. @ref{Exercise 2.82} для обобщений.}  Мы проверяем таблицу приведения,
+можно ли привести объекты первого типа ко второму типу.  Если да, мы приводим первый
+аргумент и пробуем операцию снова.  Если объекты первого типа в общем случае нельзя привести
+ко второму типу, мы пробуем приведение в обратную сторону, чтобы посмотреть, есть ли способ
+привести второй аргумент к типу первого аргумента.  Наконец, если нет известного способа
+привести какой-либо из типов к другому типу, мы сдаёмся.  Вот эта процедура:
 
 @lisp
 (define (apply-generic op . args)
@@ -12500,54 +12479,49 @@ procedure:
 @end lisp
 
 @noindent
-This coercion scheme has many advantages over the method of defining explicit
-cross-type operations, as outlined above.  Although we still need to write
-coercion procedures to relate the types (possibly @math{n^2} procedures for a
-system with @math{n} types), we need to write only one procedure for each pair of
-types rather than a different procedure for each collection of types and each
-generic operation.@footnote{If we are clever, we can usually get by with fewer
-than @math{n^2} coercion procedures.  For instance, if we know how to convert from
-type 1 to type 2 and from type 2 to type 3, then we can use this knowledge to
-convert from type 1 to type 3.  This can greatly decrease the number of
-coercion procedures we need to supply explicitly when we add a new type to the
-system.  If we are willing to build the required amount of sophistication into
-our system, we can have it search the ``graph'' of relations among types and
-automatically generate those coercion procedures that can be inferred from the
-ones that are supplied explicitly.}  What we are counting on here is the fact
-that the appropriate transformation between types depends only on the types
-themselves, not on the operation to be applied.
+Эта схема приведения имеет много преимуществ перед методом определения явных межтиповых
+операций, очерченным выше.  Хотя нам всё ещё нужно писать процедуры приведения, чтобы
+связать типы (возможно, @math{n^2} процедур для системы с @math{n} типами), нам нужно писать
+только одну процедуру для каждой пары типов, а не отдельную процедуру для каждого набора
+типов и каждой обобщённой операции.@footnote{Если мы умны, мы обычно можем обойтись меньше
+чем @math{n^2} процедурами приведения.  Например, если мы знаем, как преобразовать из типа 1
+в тип 2 и из типа 2 в тип 3, то мы можем использовать это знание, чтобы преобразовать из
+типа 1 в тип 3.  Это может сильно уменьшить число процедур приведения, которые нам нужно
+снабжать явно, когда мы добавляем новый тип в систему.  Если мы готовы встроить нужную меру
+изощрённости в нашу систему, мы можем заставить её искать в «графе» отношений между типами и
+автоматически порождать те процедуры приведения, которые можно вывести из снабжённых явно.}
+На что мы здесь рассчитываем — это факт, что подходящее преобразование между типами зависит
+только от самих типов, а не от применяемой операции.
 
-On the other hand, there may be applications for which our coercion scheme is
-not general enough.  Even when neither of the objects to be combined can be
-converted to the type of the other it may still be possible to perform the
-operation by converting both objects to a third type.  In order to deal with
-such complexity and still preserve modularity in our programs, it is usually
-necessary to build systems that take advantage of still further structure in
-the relations among types, as we discuss next.
+С другой стороны, могут быть приложения, для которых наша схема приведения недостаточно
+обща.  Даже когда ни один из комбинируемых объектов нельзя преобразовать к типу другого, всё
+ещё может быть возможно выполнить операцию, преобразовав оба объекта к третьему типу.  Чтобы
+иметь дело с такой сложностью и при этом сохранять модульность в наших программах, обычно
+необходимо строить системы, пользующиеся ещё дальнейшей структурой в отношениях между
+типами, как мы обсуждаем далее.
 
-@subsubheading Hierarchies of types
+@subsubheading Иерархии типов
 
-The coercion scheme presented above relied on the existence of natural
-relations between pairs of types.  Often there is more ``global'' structure in
-how the different types relate to each other.  For instance, suppose we are
-building a generic arithmetic system to handle integers, rational numbers, real
-numbers, and complex numbers.  In such a system, it is quite natural to regard
-an integer as a special kind of rational number, which is in turn a special
-kind of real number, which is in turn a special kind of complex number.  What
-we actually have is a so-called @newterm{hierarchy of types}, in which, for
-example, integers are a @newterm{subtype} of rational numbers (i.e., any
-operation that can be applied to a rational number can automatically be applied
-to an integer).  Conversely, we say that rational numbers form a
-@newterm{supertype} of integers.  The particular hierarchy we have here is of a
-very simple kind, in which each type has at most one supertype and at most one
-subtype.  Such a structure, called a @newterm{tower}, is illustrated in
-@ref{Figure 2.25}.
+Схема приведения, представленная выше, опиралась на существование естественных отношений
+между парами типов.  Часто есть более «глобальная» структура в том, как различные типы
+соотносятся друг с другом.  Например, предположим, мы строим обобщённую арифметическую
+систему для обработки целых чисел, рациональных чисел, действительных чисел и комплексных
+чисел.  В такой системе вполне естественно рассматривать целое число как особый вид
+рационального числа, которое, в свою очередь, является особым видом действительного числа,
+которое, в свою очередь, является особым видом комплексного числа.  То, что у нас на самом
+деле есть, — это так называемая @newterm{иерархия типов}, в которой, например, целые числа —
+это @newterm{подтип} рациональных чисел (то есть любую операцию, которую можно применить к
+рациональному числу, можно автоматически применить к целому числу).  И наоборот, мы говорим,
+что рациональные числа образуют @newterm{надтип} целых чисел.  Та конкретная иерархия,
+которая у нас здесь, — очень простого вида, в которой каждый тип имеет самое большее один
+надтип и самое большее один подтип.  Такая структура, называемая @newterm{башней},
+проиллюстрирована на @ref{Figure 2.25}.
 
 @float
 @anchor{Figure 2.25}
 @ifinfo
 @quotation
-@strong{Figure 2.25:} A tower of types.
+@strong{Figure 2.25:} Башня типов.
 
 @example
  complex
@@ -12565,92 +12539,85 @@ integer
 @end ifinfo
 @iftex
 @image{fig/chap2/Fig2.25,20mm,,,.std.svg}
-@caption{@strong{Figure 2.25:} A tower of types.}
+@caption{@strong{Figure 2.25:} Башня типов.}
 @end iftex
 @end float
 
 @noindent
-If we have a tower structure, then we can greatly simplify the problem of
-adding a new type to the hierarchy, for we need only specify how the new type
-is embedded in the next supertype above it and how it is the supertype of the
-type below it.  For example, if we want to add an integer to a complex number,
-we need not explicitly define a special coercion procedure
-@code{integer->complex}.  Instead, we define how an integer can be transformed
-into a rational number, how a rational number is transformed into a real
-number, and how a real number is transformed into a complex number.  We then
-allow the system to transform the integer into a complex number through these
-steps and then add the two complex numbers.
+Если у нас есть структура-башня, то мы можем сильно упростить задачу добавления нового типа
+в иерархию, ибо нам нужно лишь указать, как новый тип вкладывается в следующий надтип над
+ним и как он является надтипом типа под ним.  Например, если мы хотим сложить целое число с
+комплексным числом, нам не нужно явно определять особую процедуру приведения
+@code{integer->complex}.  Вместо этого мы определяем, как целое число можно преобразовать в
+рациональное число, как рациональное число преобразуется в действительное число и как
+действительное число преобразуется в комплексное число.  Затем мы позволяем системе
+преобразовать целое число в комплексное число через эти шаги и затем сложить два комплексных
+числа.
 
-We can redesign our @code{apply-generic} procedure in the following way: For
-each type, we need to supply a @code{raise} procedure, which ``raises'' objects
-of that type one level in the tower.  Then when the system is required to
-operate on objects of different types it can successively raise the lower types
-until all the objects are at the same level in the tower.  (@ref{Exercise 2.83}
-and @ref{Exercise 2.84} concern the details of implementing such a strategy.)
+Мы можем перепроектировать нашу процедуру @code{apply-generic} следующим образом: для
+каждого типа нам нужно снабдить процедурой @code{raise}, которая «поднимает» объекты этого
+типа на один уровень в башне.  Тогда, когда системе требуется оперировать объектами разных
+типов, она может последовательно поднимать более низкие типы, пока все объекты не окажутся
+на одном уровне в башне.  (@ref{Exercise 2.83} и @ref{Exercise 2.84} касаются подробностей
+реализации такой стратегии.)
 
-Another advantage of a tower is that we can easily implement the notion that
-every type ``inherits'' all operations defined on a supertype.  For instance,
-if we do not supply a special procedure for finding the real part of an
-integer, we should nevertheless expect that @code{real-part} will be defined
-for integers by virtue of the fact that integers are a subtype of complex
-numbers.  In a tower, we can arrange for this to happen in a uniform way by
-modifying @code{apply-generic}.  If the required operation is not directly
-defined for the type of the object given, we raise the object to its supertype
-and try again.  We thus crawl up the tower, transforming our argument as we go,
-until we either find a level at which the desired operation can be performed or
-hit the top (in which case we give up).
+Ещё одно преимущество башни в том, что мы можем легко реализовать представление о том, что
+каждый тип «наследует» все операции, определённые на надтипе.  Например, если мы не снабжаем
+особой процедурой для нахождения действительной части целого числа, нам тем не менее следует
+ожидать, что @code{real-part} будет определена для целых чисел в силу того факта, что целые
+числа — подтип комплексных чисел.  В башне мы можем устроить так, чтобы это происходило
+единообразным образом, изменив @code{apply-generic}.  Если требуемая операция не определена
+напрямую для типа данного объекта, мы поднимаем объект к его надтипу и пробуем снова.  Таким
+образом мы ползём вверх по башне, преобразуя наш аргумент по пути, пока мы либо не найдём
+уровень, на котором желаемую операцию можно выполнить, либо не упрёмся в вершину (в этом
+случае мы сдаёмся).
 
-Yet another advantage of a tower over a more general hierarchy is that it gives
-us a simple way to ``lower'' a data object to the simplest representation.  For
-example, if we add @math{{2 + 3i}} to @math{{4 - 3i}}, it would be nice to obtain the
-answer as the integer 6 rather than as the complex number @math{{6 + 0i}}.
-@ref{Exercise 2.85} discusses a way to implement such a lowering operation.
-(The trick is that we need a general way to distinguish those objects that can
-be lowered, such as @math{{6 + 0i}}, from those that cannot, such as @math{{6 + 2i}}.)
+Ещё одно преимущество башни перед более общей иерархией в том, что она даёт нам простой
+способ «опустить» объект данных к простейшему представлению.  Например, если мы складываем
+@math{{2 + 3i}} с @math{{4 - 3i}}, было бы хорошо получить ответ как целое число 6, а не как
+комплексное число @math{{6 + 0i}}.  @ref{Exercise 2.85} обсуждает способ реализовать такую
+операцию понижения.  (Трюк в том, что нам нужен общий способ отличать те объекты, которые
+можно понизить, такие как @math{{6 + 0i}}, от тех, которые нельзя, таких как @math{{6 + 2i}}.)
 
-@subsubheading Inadequacies of hierarchies
+@subsubheading Несовершенства иерархий
 
-If the data types in our system can be naturally arranged in a tower, this
-greatly simplifies the problems of dealing with generic operations on different
-types, as we have seen.  Unfortunately, this is usually not the case.
-@ref{Figure 2.26} illustrates a more complex arrangement of mixed types, this
-one showing relations among different types of geometric figures.  We see that,
-in general, a type may have more than one subtype.  Triangles and
-quadrilaterals, for instance, are both subtypes of polygons.  In addition, a
-type may have more than one supertype.  For example, an isosceles right
-triangle may be regarded either as an isosceles triangle or as a right
-triangle.  This multiple-supertypes issue is particularly thorny, since it
-means that there is no unique way to ``raise'' a type in the hierarchy.
-Finding the ``correct'' supertype in which to apply an operation to an object
-may involve considerable searching through the entire type network on the part
-of a procedure such as @code{apply-generic}.  Since there generally are
-multiple subtypes for a type, there is a similar problem in coercing a value
-``down'' the type hierarchy.  Dealing with large numbers of interrelated types
-while still preserving modularity in the design of large systems is very
-difficult, and is an area of much current research.@footnote{This statement,
-which also appears in the first edition of this book, is just as true now as it
-was when we wrote it twelve years ago.  Developing a useful, general framework
-for expressing the relations among different types of entities (what
-philosophers call ``ontology'') seems intractably difficult.  The main
-difference be@-tween the confusion that existed ten years ago and the confusion
-that exists now is that now a variety of inadequate ontological theories have
-been embodied in a ple@-tho@-ra of correspondingly inadequate programming
-languages.  For example, much of the complexity of object-oriented programming
-languages---and the subtle and confusing differences among contemporary
-object-oriented languages---centers on the treatment of generic operations on
-interrelated types.  Our own discussion of computational objects in
-@ref{Chapter 3} avoids these issues entirely.  Readers familiar with
-object-oriented programming will notice that we have much to say in
-chapter 3 about local state, but we do not even mention ``classes'' or
-``inheritance.''  In fact, we suspect that these problems cannot be adequately
-addressed in terms of computer-language design alone, without also drawing on
-work in knowledge representation and automated reasoning.}
+Если типы данных в нашей системе можно естественно расположить в башню, это сильно упрощает
+проблемы работы с обобщёнными операциями над разными типами, как мы видели.  К сожалению,
+обычно это не так.  @ref{Figure 2.26} иллюстрирует более сложное расположение смешанных
+типов, на этот раз показывающее отношения между различными типами геометрических фигур.  Мы
+видим, что, вообще, тип может иметь более одного подтипа.  Треугольники и четырёхугольники,
+например, оба являются подтипами многоугольников.  Кроме того, тип может иметь более одного
+надтипа.  Например, равнобедренный прямоугольный треугольник можно рассматривать либо как
+равнобедренный треугольник, либо как прямоугольный треугольник.  Этот вопрос множественных
+надтипов особенно колюч, поскольку он означает, что нет уникального способа «поднять» тип в
+иерархии.  Нахождение «правильного» надтипа, в котором применить операцию к объекту, может
+включать значительный поиск по всей сети типов со стороны такой процедуры, как
+@code{apply-generic}.  Поскольку для типа обычно есть несколько подтипов, есть похожая
+проблема при приведении значения «вниз» по иерархии типов.  Иметь дело с большим числом
+взаимосвязанных типов, при этом сохраняя модульность в проектировании больших систем, очень
+трудно и является областью многих текущих исследований.@footnote{Это утверждение, которое
+также появляется в первом издании этой книги, столь же верно сейчас, как и было, когда мы
+писали его двенадцать лет назад.  Разработка полезного, общего каркаса для выражения
+отношений между различными типами сущностей (того, что философы называют «онтологией»),
+кажется неразрешимо трудной.  Главное различие между путаницей, которая существовала десять
+лет назад, и путаницей, которая существует сейчас, в том, что теперь множество
+несовершенных онтологических теорий было воплощено в изобилии соответственно несовершенных
+языков программирования.  Например, бо́льшая часть сложности объектно-ориентированных языков
+программирования — и тонкие и сбивающие с толку различия между современными
+объектно-ориентированными языками — сосредоточена на трактовке обобщённых операций над
+взаимосвязанными типами.  Наше собственное обсуждение вычислительных объектов в
+@ref{Chapter 3} полностью избегает этих вопросов.  Читатели, знакомые с
+объектно-ориентированным программированием, заметят, что нам есть что сказать в главе 3 о
+локальном состоянии, но мы даже не упоминаем «классы» или «наследование».  На самом деле мы
+подозреваем, что эти проблемы нельзя адекватно решить в терминах только проектирования
+компьютерных языков, не привлекая также работу в представлении знаний и автоматическом
+рассуждении.}
 
 @float
 @anchor{Figure 2.26}
 @ifinfo
 @quotation
-@strong{Figure 2.26:} Relations among types of geometric figures.
+@strong{Figure 2.26:} Отношения между типами геометрических фигур.
 
 @example
                      polygon
@@ -12675,17 +12642,17 @@ triangle      right          |       \    |
 @end ifinfo
 @iftex
 @image{fig/chap2/Fig2.26f,147mm,,,.std.svg}
-@caption{@strong{Figure 2.26:} Relations among types of geometric figures.}
+@caption{@strong{Figure 2.26:} Отношения между типами геометрических фигур.}
 @end iftex
 @end float
 
 @quotation
-@strong{@anchor{Exercise 2.81}Exercise 2.81:} Louis Reasoner has noticed that
-@code{apply-generic} may try to coerce the arguments to each other's type even
-if they already have the same type.  Therefore, he reasons, we need to put
-procedures in the coercion table to @newterm{coerce} arguments of each type to
-their own type.  For example, in addition to the
-@code{scheme-number->complex} coercion shown above, he would do:
+@strong{@anchor{Exercise 2.81}Exercise 2.81:} Луи Резонер заметил, что
+@code{apply-generic} может пытаться приводить аргументы к типу друг друга, даже если они уже
+имеют один и тот же тип.  Поэтому, рассуждает он, нам нужно поместить в таблицу приведения
+процедуры, чтобы @newterm{приводить} аргументы каждого типа к их собственному типу.
+Например, в дополнение к приведению @code{scheme-number->complex}, показанному выше, он бы
+сделал:
 
 @lisp
 (define (scheme-number->scheme-number n) n)
@@ -12701,11 +12668,10 @@ their own type.  For example, in addition to the
 @enumerate a
 
 @item
-With Louis's coercion procedures installed, what happens if
-@code{apply-generic} is called with two arguments of type @code{scheme-number}
-or two arguments of type @code{complex} for an operation that is not found in
-the table for those types?  For example, assume that we've defined a generic
-exponentiation operation:
+С установленными процедурами приведения Луи что происходит, если @code{apply-generic}
+вызывается с двумя аргументами типа @code{scheme-number} или двумя аргументами типа
+@code{complex} для операции, которая не найдена в таблице для этих типов?  Например,
+предположим, что мы определили обобщённую операцию возведения в степень:
 
 @lisp
 (define (exp x y) 
@@ -12713,8 +12679,8 @@ exponentiation operation:
 @end lisp
 
 @noindent
-and have put a procedure for exponentiation in the Scheme-number
-package but not in any other package:
+и поместили процедуру для возведения в степень в пакет Scheme-чисел, но не в какой-либо
+другой пакет:
 
 @lisp
 @r{;; following added to Scheme-number package}
@@ -12726,97 +12692,92 @@ package but not in any other package:
 @end lisp
 
 @noindent
-What happens if we call @code{exp} with two complex numbers as arguments?
+Что происходит, если мы вызываем @code{exp} с двумя комплексными числами в качестве
+аргументов?
 
 @item
-Is Louis correct that something had to be done about coercion with arguments of
-the same type, or does @code{apply-generic} work correctly as is?
+Прав ли Луи, что нужно было что-то сделать с приведением при аргументах одного типа, или
+@code{apply-generic} работает правильно как есть?
 
 @item
-Modify @code{apply-generic} so that it doesn't try coercion if the two
-arguments have the same type.
+Измените @code{apply-generic} так, чтобы она не пыталась приводить, если два аргумента имеют
+один и тот же тип.
 
 @end enumerate
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.82}Exercise 2.82:} Show how to generalize
-@code{apply-generic} to handle coercion in the general case of multiple
-arguments.  One strategy is to attempt to coerce all the arguments to the type
-of the first argument, then to the type of the second argument, and so on.
-Give an example of a situation where this strategy (and likewise the
-two-argument version given above) is not sufficiently general.  (Hint: Consider
-the case where there are some suitable mixed-type operations present in the
-table that will not be tried.)
+@strong{@anchor{Exercise 2.82}Exercise 2.82:} Покажите, как обобщить @code{apply-generic}
+для обработки приведения в общем случае нескольких аргументов.  Одна стратегия — попытаться
+привести все аргументы к типу первого аргумента, затем к типу второго аргумента и так далее.
+Приведите пример ситуации, где эта стратегия (и точно так же двухаргументная версия,
+данная выше) недостаточно обща.  (Подсказка: рассмотрите случай, где в таблице присутствуют
+некоторые подходящие операции смешанного типа, которые не будут испробованы.)
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.83}Exercise 2.83:} Suppose you are designing a
-generic arithmetic system for dealing with the tower of types shown in
-@ref{Figure 2.25}: integer, rational, real, complex.  For each type (except
-complex), design a procedure that raises objects of that type one level in the
-tower.  Show how to install a generic @code{raise} operation that will work for
-each type (except complex).
+@strong{@anchor{Exercise 2.83}Exercise 2.83:} Предположим, вы проектируете обобщённую
+арифметическую систему для работы с башней типов, показанной на @ref{Figure 2.25}: целое,
+рациональное, действительное, комплексное.  Для каждого типа (кроме комплексного)
+спроектируйте процедуру, которая поднимает объекты этого типа на один уровень в башне.
+Покажите, как установить обобщённую операцию @code{raise}, которая будет работать для
+каждого типа (кроме комплексного).
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.84}Exercise 2.84:} Using the @code{raise} operation
-of @ref{Exercise 2.83}, modify the @code{apply-generic} procedure so that it
-coerces its arguments to have the same type by the method of successive
-raising, as discussed in this section.  You will need to devise a way to test
-which of two types is higher in the tower.  Do this in a manner that is
-``compatible'' with the rest of the system and will not lead to problems in
-adding new levels to the tower.
+@strong{@anchor{Exercise 2.84}Exercise 2.84:} Используя операцию @code{raise} из
+@ref{Exercise 2.83}, измените процедуру @code{apply-generic} так, чтобы она приводила свои
+аргументы к одному и тому же типу методом последовательного поднятия, как обсуждалось в этом
+разделе.  Вам понадобится придумать способ проверять, какой из двух типов выше в башне.
+Сделайте это образом, «совместимым» с остальной частью системы, и который не приведёт к
+проблемам при добавлении новых уровней в башню.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.85}Exercise 2.85:} This section mentioned a method
-for ``simplifying'' a data object by lowering it in the tower of types as far
-as possible.  Design a procedure @code{drop} that accomplishes this for the
-tower described in @ref{Exercise 2.83}.  The key is to decide, in some general
-way, whether an object can be lowered.  For example, the complex number 
-@math{{1.5 + 0i}} can be lowered as far as @code{real}, the complex number @math{{1 + 0i}} can
-be lowered as far as @code{integer}, and the complex number @math{{2 + 3i}} cannot
-be lowered at all.  Here is a plan for determining whether an object can be
-lowered: Begin by defining a generic operation @code{project} that ``pushes''
-an object down in the tower.  For example, projecting a complex number would
-involve throwing away the imaginary part.  Then a number can be dropped if,
-when we @code{project} it and @code{raise} the result back to the type we
-started with, we end up with something equal to what we started with.  Show how
-to implement this idea in detail, by writing a @code{drop} procedure that drops
-an object as far as possible.  You will need to design the various projection
-operations@footnote{A real number can be projected to an integer using the
-@code{round} primitive, which returns the closest integer to its argument.} and
-install @code{project} as a generic operation in the system.  You will also
-need to make use of a generic equality predicate, such as described in
-@ref{Exercise 2.79}.  Finally, use @code{drop} to rewrite @code{apply-generic}
-from @ref{Exercise 2.84} so that it ``simplifies'' its answers.
+@strong{@anchor{Exercise 2.85}Exercise 2.85:} В этом разделе упоминался метод «упрощения»
+объекта данных понижением его в башне типов настолько, насколько возможно.  Спроектируйте
+процедуру @code{drop}, которая выполняет это для башни, описанной в @ref{Exercise 2.83}.
+Ключ — решить некоторым общим способом, можно ли понизить объект.  Например, комплексное
+число @math{{1.5 + 0i}} можно понизить до @code{real}, комплексное число @math{{1 + 0i}}
+можно понизить до @code{integer}, а комплексное число @math{{2 + 3i}} нельзя понизить
+вообще.  Вот план для определения того, можно ли понизить объект: начните с определения
+обобщённой операции @code{project}, которая «проталкивает» объект вниз в башне.  Например,
+проекция комплексного числа включала бы отбрасывание мнимой части.  Тогда число можно
+понизить (drop), если, когда мы @code{project} его и @code{raise} результат обратно к типу,
+с которого мы начали, мы в итоге получаем нечто, равное тому, с чего мы начали.  Покажите,
+как реализовать эту идею подробно, написав процедуру @code{drop}, которая понижает объект
+настолько, насколько возможно.  Вам понадобится спроектировать различные операции
+проекции@footnote{Действительное число можно спроецировать в целое с помощью примитива
+@code{round}, который возвращает ближайшее целое к своему аргументу.} и установить
+@code{project} как обобщённую операцию в системе.  Вам также понадобится воспользоваться
+обобщённым предикатом равенства, таким как описанный в @ref{Exercise 2.79}.  Наконец,
+используйте @code{drop}, чтобы переписать @code{apply-generic} из @ref{Exercise 2.84} так,
+чтобы она «упрощала» свои ответы.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.86}Exercise 2.86:} Suppose we want to handle complex
-numbers whose real parts, imaginary parts, magnitudes, and angles can be either
-ordinary numbers, rational numbers, or other numbers we might wish to add to
-the system.  Describe and implement the changes to the system needed to
-accommodate this.  You will have to define operations such as @code{sine} and
-@code{cosine} that are generic over ordinary numbers and rational numbers.
+@strong{@anchor{Exercise 2.86}Exercise 2.86:} Предположим, мы хотим обрабатывать комплексные
+числа, чьи действительные части, мнимые части, модули и углы могут быть либо обычными
+числами, либо рациональными числами, либо другими числами, которые мы могли бы пожелать
+добавить в систему.  Опишите и реализуйте изменения в системе, нужные, чтобы это вместить.
+Вам придётся определить операции, такие как @code{sine} и @code{cosine}, которые обобщены
+над обычными числами и рациональными числами.
 @end quotation
 
 @node	2.5.3, Chapter 3, 2.4, 2.5
-@subsection Example: Symbolic Algebra
+@subsection Пример: символьная алгебра
 
-The manipulation of symbolic algebraic expressions is a complex process that
-illustrates many of the hardest problems that occur in the design of
-large-scale systems.  An algebraic expression, in general, can be viewed as a
-hierarchical structure, a tree of operators applied to operands.  We can
-construct algebraic expressions by starting with a set of primitive objects,
-such as constants and variables, and combining these by means of algebraic
-operators, such as addition and multiplication.  As in other languages, we form
-abstractions that enable us to refer to compound objects in simple terms.
-Typical abstractions in symbolic algebra are ideas such as linear combination,
-polynomial, rational function, or trigonometric function.  We can regard these
-as compound ``types,'' which are often useful for directing the processing of
-expressions.  For example, we could describe the expression
+Манипулирование символьными алгебраическими выражениями — это сложный процесс, который
+иллюстрирует многие из труднейших проблем, возникающих в проектировании крупномасштабных
+систем.  Алгебраическое выражение, вообще, можно рассматривать как иерархическую структуру,
+дерево операторов, применённых к операндам.  Мы можем строить алгебраические выражения,
+начиная с набора примитивных объектов, таких как константы и переменные, и комбинируя их
+посредством алгебраических операторов, таких как сложение и умножение.  Как и в других
+языках, мы образуем абстракции, которые позволяют нам ссылаться на составные объекты в
+простых терминах.  Типичные абстракции в символьной алгебре — это идеи, такие как линейная
+комбинация, многочлен, рациональная функция или тригонометрическая функция.  Мы можем
+рассматривать их как составные «типы», которые часто полезны для управления обработкой
+выражений.  Например, мы могли бы описать выражение
 @ifinfo
 
 @example
@@ -12829,32 +12790,28 @@ x^2 sin (y^2 + 1) + x cos 2y + cos(y^3 - 2y^2)
   {x^2 \sin (y^2 + 1)} + {x \cos 2y} + {\cos(y^3 - 2y^2)}  \]
 @end tex
 @noindent
-as a polynomial in @math{x} with coefficients that are trigonometric functions of
-polynomials in @math{y} whose coefficients are integers.
+как многочлен от @math{x} с коэффициентами, которые являются тригонометрическими функциями
+многочленов от @math{y}, чьи коэффициенты — целые числа.
 
-We will not attempt to develop a complete algebraic-manipulation system here.
-Such systems are exceedingly complex programs, embodying deep algebraic
-knowledge and elegant algorithms.  What we will do is look at a simple but
-important part of algebraic manipulation: the arithmetic of polynomials.  We
-will illustrate the kinds of decisions the designer of such a system faces, and
-how to apply the ideas of abstract data and generic operations to help organize
-this effort.
+Мы не будем пытаться разработать полную систему алгебраических манипуляций здесь.  Такие
+системы — чрезвычайно сложные программы, воплощающие глубокое алгебраическое знание и
+изящные алгоритмы.  Что мы сделаем — это посмотрим на простую, но важную часть
+алгебраических манипуляций: арифметику многочленов.  Мы проиллюстрируем виды решений, с
+которыми сталкивается проектировщик такой системы, и как применять идеи абстрактных данных
+и обобщённых операций, чтобы помочь организовать это усилие.
 
-@subsubheading Arithmetic on polynomials
+@subsubheading Арифметика многочленов
 
-Our first task in designing a system for performing arithmetic on polynomials
-is to decide just what a polynomial is.  Polynomials are normally defined
-relative to certain variables (the @newterm{indeterminates} of the polynomial).
-For simplicity, we will restrict ourselves to polynomials having just one
-indeterminate (@newterm{univariate polynomials}).@footnote{On the other hand,
-we will allow polynomials whose coefficients are themselves polynomials in
-other variables.  This will give us essentially the same representational power
-as a full multivariate system, although it does lead to coercion problems, as
-discussed below.} We will define a polynomial to be a sum of terms, each of
-which is either a coefficient, a power of the indeterminate, or a product of a
-coefficient and a power of the indeterminate.  A coefficient is defined as an
-algebraic expression that is not dependent upon the indeterminate of the
-polynomial.  For example,
+Наша первая задача в проектировании системы для выполнения арифметики многочленов — решить,
+что же такое многочлен.  Многочлены обычно определяются относительно некоторых переменных
+(@newterm{неизвестных} многочлена).  Для простоты мы ограничимся многочленами, имеющими лишь
+одну неизвестную (@newterm{многочленами от одной переменной}).@footnote{С другой стороны, мы
+будем допускать многочлены, чьи коэффициенты сами являются многочленами от других переменных.
+Это даст нам по существу ту же представительную мощь, что и полная система от многих
+переменных, хотя это и ведёт к проблемам приведения, как обсуждается ниже.} Мы определим
+многочлен как сумму членов, каждый из которых — либо коэффициент, либо степень неизвестной,
+либо произведение коэффициента и степени неизвестной.  Коэффициент определяется как
+алгебраическое выражение, не зависящее от неизвестной многочлена.  Например,
 @ifinfo
 
 @example
@@ -12867,7 +12824,7 @@ polynomial.  For example,
   {5x^2} + {3x} + 7  \]
 @end tex
 @noindent
-is a simple polynomial in @math{x}, and
+— это простой многочлен от @math{x}, а
 @ifinfo
 
 @example
@@ -12880,42 +12837,38 @@ is a simple polynomial in @math{x}, and
   {(y^2 + 1)x^3} + {(2y)x + 1}  \]
 @end tex
 @noindent
-is a polynomial in @math{x} whose coefficients are polynomials in @math{y}.
+— это многочлен от @math{x}, чьи коэффициенты — многочлены от @math{y}.
 
-Already we are skirting some thorny issues.  Is the first of these polynomials
-the same as the polynomial @math{{5y^2 + 3y + 7}}, or not?  A reasonable answer
-might be ``yes, if we are considering a polynomial purely as a mathematical
-function, but no, if we are considering a polynomial to be a syntactic form.''
-The second polynomial is algebraically equivalent to a polynomial in @math{y}
-whose coefficients are polynomials in @math{x}.  Should our system recognize this,
-or not?  Furthermore, there are other ways to represent a polynomial---for
-example, as a product of factors, or (for a univariate polynomial) as the set
-of roots, or as a listing of the values of the polynomial at a specified set of
-points.@footnote{For univariate polynomials, giving the value of a polynomial
-at a given set of points can be a particularly good representation.  This makes
-polynomial arithmetic extremely simple.  To obtain, for example, the sum of two
-polynomials represented in this way, we need only add the values of the
-polynomials at corresponding points.  To transform back to a more familiar
-representation, we can use the Lagrange interpolation formula, which shows how
-to recover the coefficients of a polynomial of degree @math{n} given the values of
-the polynomial at @math{{n + 1}} points.}  We can finesse these questions by
-deciding that in our algebraic-manipulation system a ``polynomial'' will be a
-particular syntactic form, not its underlying mathematical meaning.
+Уже здесь мы обходим некоторые колючие вопросы.  Является ли первый из этих многочленов тем
+же, что и многочлен @math{{5y^2 + 3y + 7}}, или нет?  Разумный ответ мог бы быть: «да, если
+мы рассматриваем многочлен чисто как математическую функцию, но нет, если мы рассматриваем
+многочлен как синтаксическую форму».  Второй многочлен алгебраически эквивалентен многочлену
+от @math{y}, чьи коэффициенты — многочлены от @math{x}.  Должна ли наша система распознавать
+это, или нет?  Более того, есть другие способы представить многочлен — например, как
+произведение множителей, или (для многочлена от одной переменной) как множество корней, или
+как перечисление значений многочлена в заданном наборе точек.@footnote{Для многочленов от
+одной переменной задание значения многочлена в данном наборе точек может быть особенно
+хорошим представлением.  Это делает арифметику многочленов чрезвычайно простой.  Чтобы
+получить, например, сумму двух многочленов, представленных таким образом, нам нужно лишь
+сложить значения многочленов в соответствующих точках.  Чтобы преобразовать обратно к более
+привычному представлению, мы можем использовать интерполяционную формулу Лагранжа, которая
+показывает, как восстановить коэффициенты многочлена степени @math{n} по данным значениям
+многочлена в @math{{n + 1}} точках.}  Мы можем обойти эти вопросы, решив, что в нашей системе
+алгебраических манипуляций «многочлен» будет конкретной синтаксической формой, а не его
+лежащим в основе математическим смыслом.
 
-Now we must consider how to go about doing arithmetic on polynomials.  In this
-simple system, we will consider only addition and multiplication.  Moreover, we
-will insist that two polynomials to be combined must have the same
-indeterminate.
+Теперь мы должны рассмотреть, как взяться за выполнение арифметики над многочленами.  В этой
+простой системе мы рассмотрим только сложение и умножение.  Более того, мы будем настаивать,
+что два комбинируемых многочлена должны иметь одну и ту же неизвестную.
 
-We will approach the design of our system by following the familiar discipline
-of data abstraction.  We will represent polynomials using a data structure
-called a @newterm{poly}, which consists of a variable and a collection of
-terms.  We assume that we have selectors @code{variable} and @code{term-list}
-that extract those parts from a poly and a constructor @code{make-poly} that
-assembles a poly from a given variable and a term list.  A variable will be
-just a symbol, so we can use the @code{same-variable?}  procedure of 
-@ref{2.3.2} to compare variables.  The following procedures define addition and
-multiplication of polys:
+Мы подойдём к проектированию нашей системы, следуя знакомой дисциплине абстракции данных.  Мы
+будем представлять многочлены, используя структуру данных под названием @newterm{поли},
+которая состоит из переменной и набора членов.  Мы предполагаем, что у нас есть селекторы
+@code{variable} и @code{term-list}, которые извлекают эти части из поли, и конструктор
+@code{make-poly}, который собирает поли из данной переменной и списка членов.  Переменная
+будет просто символом, так что мы можем использовать процедуру @code{same-variable?} из
+@ref{2.3.2}, чтобы сравнивать переменные.  Следующие процедуры определяют сложение и умножение
+поли:
 
 @lisp
 (define (add-poly p1 p2)
@@ -12942,11 +12895,10 @@ multiplication of polys:
 @end lisp
 
 @noindent
-To incorporate polynomials into our generic arithmetic system, we need to
-supply them with type tags.  We'll use the tag @code{polynomial}, and install
-appropriate operations on tagged polynomials in the operation table.  We'll
-embed all our code in an installation procedure for the polynomial package,
-similar to the ones in @ref{2.5.1}:
+Чтобы включить многочлены в нашу обобщённую арифметическую систему, нам нужно снабдить их
+тегами типа.  Мы будем использовать тег @code{polynomial} и установим подходящие операции
+над типизированными многочленами в таблицу операций.  Мы встроим весь наш код в процедуру
+установки для пакета многочленов, похожую на те, что в @ref{2.5.1}:
 
 @lisp
 (define (install-polynomial-package)
@@ -12956,17 +12908,17 @@ similar to the ones in @ref{2.5.1}:
     (cons variable term-list))
   (define (variable p) (car p))
   (define (term-list p) (cdr p))
-  ⟨@emph{procedures @code{same-variable?} 
-   and @code{variable?} from section 2.3.2}⟩
+  ⟨@emph{процедуры @code{same-variable?}
+   и @code{variable?} из раздела 2.3.2}⟩
 
   @r{;; representation of terms and term lists}
-  ⟨@emph{procedures @code{adjoin-term} @r{…} @code{coeff} 
-  from text below}⟩
+  ⟨@emph{процедуры @code{adjoin-term} @r{…} @code{coeff}
+  из текста ниже}⟩
 
   (define (add-poly p1 p2) @r{…})
-  ⟨@emph{procedures used by @code{add-poly}}⟩
+  ⟨@emph{процедуры, используемые @code{add-poly}}⟩
   (define (mul-poly p1 p2) @r{…})
-  ⟨@emph{procedures used by @code{mul-poly}}⟩
+  ⟨@emph{процедуры, используемые @code{mul-poly}}⟩
 
   @r{;; interface to rest of the system}
   (define (tag p) (attach-tag 'polynomial p))
@@ -12983,32 +12935,29 @@ similar to the ones in @ref{2.5.1}:
 @end lisp
 
 @noindent
-Polynomial addition is performed termwise.  Terms of the same order (i.e., with
-the same power of the indeterminate) must be combined.  This is done by forming
-a new term of the same order whose coefficient is the sum of the coefficients
-of the addends.  Terms in one addend for which there are no terms of the same
-order in the other addend are simply accumulated into the sum polynomial being
-constructed.
+Сложение многочленов выполняется почленно.  Члены одного и того же порядка (то есть с одной
+и той же степенью неизвестной) должны быть скомбинированы.  Это делается образованием нового
+члена того же порядка, чей коэффициент — сумма коэффициентов слагаемых.  Члены в одном
+слагаемом, для которых нет членов того же порядка в другом слагаемом, просто накапливаются в
+строящийся многочлен-сумму.
 
-In order to manipulate term lists, we will assume that we have a constructor
-@code{the-empty-termlist} that returns an empty term list and a constructor
-@code{adjoin-term} that adjoins a new term to a term list.  We will also assume
-that we have a predicate @code{empty-termlist?} that tells if a given term list
-is empty, a selector @code{first-term} that extracts the highest-order term
-from a term list, and a selector @code{rest-terms} that returns all but the
-highest-order term.  To manipulate terms, we will suppose that we have a
-constructor @code{make-term} that constructs a term with given order and
-coefficient, and selectors @code{order} and @code{coeff} that return,
-respectively, the order and the coefficient of the term.  These operations
-allow us to consider both terms and term lists as data abstractions, whose
-concrete representations we can worry about separately.
+Чтобы манипулировать списками членов, мы предположим, что у нас есть конструктор
+@code{the-empty-termlist}, который возвращает пустой список членов, и конструктор
+@code{adjoin-term}, который присоединяет новый член к списку членов.  Мы также предположим,
+что у нас есть предикат @code{empty-termlist?}, который сообщает, пуст ли данный список
+членов, селектор @code{first-term}, который извлекает член наивысшего порядка из списка
+членов, и селектор @code{rest-terms}, который возвращает все, кроме члена наивысшего порядка.
+Чтобы манипулировать членами, мы предположим, что у нас есть конструктор @code{make-term},
+который строит член с данными порядком и коэффициентом, и селекторы @code{order} и
+@code{coeff}, которые возвращают, соответственно, порядок и коэффициент члена.  Эти операции
+позволяют нам рассматривать и члены, и списки членов как абстракции данных, о чьих конкретных
+представлениях мы можем беспокоиться отдельно.
 
-Here is the procedure that constructs the term list for the sum of two
-polynomials:@footnote{This operation is very much like the ordered
-@code{union-set} operation we developed in @ref{Exercise 2.62}.  In
-fact, if we think of the terms of the polynomial as a set ordered according to
-the power of the indeterminate, then the program that produces the term list
-for a sum is almost identical to @code{union-set}.}
+Вот процедура, которая строит список членов для суммы двух многочленов:@footnote{Эта операция
+очень похожа на упорядоченную операцию @code{union-set}, которую мы разработали в
+@ref{Exercise 2.62}.  На самом деле, если мы мыслим члены многочлена как множество,
+упорядоченное по степени неизвестной, то программа, которая производит список членов для
+суммы, почти идентична @code{union-set}.}
 
 @lisp
 (define (add-terms L1 L2)
@@ -13040,17 +12989,16 @@ for a sum is almost identical to @code{union-set}.}
 @end lisp
 
 @noindent
-The most important point to note here is that we used the generic addition
-procedure @code{add} to add together the coefficients of the terms being
-combined.  This has powerful consequences, as we will see below.
+Самый важный момент, который здесь нужно отметить, в том, что мы использовали обобщённую
+процедуру сложения @code{add}, чтобы складывать вместе коэффициенты комбинируемых членов.
+Это имеет мощные последствия, как мы увидим ниже.
 
-In order to multiply two term lists, we multiply each term of the first list by
-all the terms of the other list, repeatedly using @code{mul-term-by-all-terms},
-which multiplies a given term by all terms in a given term list.  The resulting
-term lists (one for each term of the first list) are accumulated into a sum.
-Multiplying two terms forms a term whose order is the sum of the orders of the
-factors and whose coefficient is the product of the coefficients of the
-factors:
+Чтобы перемножить два списка членов, мы умножаем каждый член первого списка на все члены
+другого списка, многократно используя @code{mul-term-by-all-terms}, которая умножает данный
+член на все члены данного списка членов.  Получающиеся списки членов (по одному для каждого
+члена первого списка) накапливаются в сумму.  Умножение двух членов образует член, чей
+порядок — сумма порядков множителей, а чей коэффициент — произведение коэффициентов
+множителей:
 
 @lisp
 (define (mul-terms L1 L2)
@@ -13075,13 +13023,12 @@ factors:
 @end lisp
 
 @noindent
-This is really all there is to polynomial addition and multiplication.  Notice
-that, since we operate on terms using the generic procedures @code{add} and
-@code{mul}, our polynomial package is automatically able to handle any type of
-coefficient that is known about by the generic arithmetic package.  If we
-include a coercion mechanism such as one of those discussed in 
-@ref{2.5.2}, then we also are automatically able to handle operations on
-polynomials of different coefficient types, such as
+Это, на самом деле, всё, что есть в сложении и умножении многочленов.  Заметьте, что,
+поскольку мы оперируем членами с помощью обобщённых процедур @code{add} и @code{mul}, наш
+пакет многочленов автоматически способен обрабатывать любой тип коэффициента, который
+известен обобщённому арифметическому пакету.  Если мы включаем механизм приведения, такой
+как один из обсуждённых в @ref{2.5.2}, то мы также автоматически способны обрабатывать
+операции над многочленами с разными типами коэффициентов, такие как
 @ifinfo
 
 @example
@@ -13095,10 +13042,10 @@ polynomials of different coefficient types, such as
 \[ % :52:
   {[3x^2 + (2 + 3i)x + 7] \cdot} {\left[ x^4 + {2\over3} x^2 + (5 + 3i) \right].}  \]
 @end tex
-Because we installed the polynomial addition and multiplication procedures
-@code{add-poly} and @code{mul-poly} in the generic arithmetic system as the
-@code{add} and @code{mul} operations for type @code{polynomial}, our system is
-also automatically able to handle polynomial operations such as
+Поскольку мы установили процедуры сложения и умножения многочленов @code{add-poly} и
+@code{mul-poly} в обобщённую арифметическую систему как операции @code{add} и @code{mul} для
+типа @code{polynomial}, наша система также автоматически способна обрабатывать операции над
+многочленами, такие как
 @ifinfo
 
 @example
@@ -13110,20 +13057,18 @@ also automatically able to handle polynomial operations such as
 \[ % :53:
   {\Big[(y + 1)x^2} + {(y^2 + 1)x} + {(y - 1)\Big] \cdot} {\Big[(y - 2)x} + {(y^3 + 7)\Big].}  \]
 @end tex
-The reason is that when the system tries to combine coefficients, it will
-dispatch through @code{add} and @code{mul}.  Since the coefficients are
-themselves polynomials (in @math{y}), these will be combined using @code{add-poly}
-and @code{mul-poly}.  The result is a kind of ``data-directed recursion'' in
-which, for example, a call to @code{mul-poly} will result in recursive calls to
-@code{mul-poly} in order to multiply the coefficients.  If the coefficients of
-the coefficients were themselves polynomials (as might be used to represent
-polynomials in three variables), the data direction would ensure that the
-system would follow through another level of recursive calls, and so on through
-as many levels as the structure of the data dictates.@footnote{To make this
-work completely smoothly, we should also add to our generic arithmetic system
-the ability to coerce a ``number'' to a polynomial by regarding it as a
-polynomial of degree zero whose coefficient is the number.  This is necessary
-if we are going to perform operations such as
+Причина в том, что когда система пытается скомбинировать коэффициенты, она диспетчеризуется
+через @code{add} и @code{mul}.  Поскольку коэффициенты сами являются многочленами (от
+@math{y}), они будут скомбинированы с помощью @code{add-poly} и @code{mul-poly}.  Результат —
+это своего рода «рекурсия, управляемая данными», в которой, например, вызов @code{mul-poly}
+приведёт к рекурсивным вызовам @code{mul-poly}, чтобы перемножить коэффициенты.  Если бы
+коэффициенты коэффициентов сами были многочленами (как могло бы использоваться для
+представления многочленов от трёх переменных), управление данными обеспечило бы, что система
+прошла бы через ещё один уровень рекурсивных вызовов, и так далее через столько уровней,
+сколько диктует структура данных.@footnote{Чтобы заставить это работать совершенно гладко,
+нам следует также добавить в нашу обобщённую арифметическую систему способность приводить
+«число» к многочлену, рассматривая его как многочлен нулевой степени, чей коэффициент — это
+число.  Это необходимо, если мы собираемся выполнять операции, такие как
 @ifinfo
 
 @example
@@ -13136,23 +13081,21 @@ if we are going to perform operations such as
   {[x^2 + (y + 1)x + 5]} + {[x^2 + 2x + 1],}  \]
 @end tex
 @noindent
-which requires adding the coefficient @math{{y + 1}} to the coefficient 2.}
+что требует прибавления коэффициента @math{{y + 1}} к коэффициенту 2.}
 
-@subsubheading Representing term lists
+@subsubheading Представление списков членов
 
-Finally, we must confront the job of implementing a good representation for
-term lists.  A term list is, in effect, a set of coefficients keyed by the
-order of the term.  Hence, any of the methods for representing sets, as
-discussed in @ref{2.3.3}, can be applied to this task.  On the other
-hand, our procedures @code{add-terms} and @code{mul-terms} always access term
-lists sequentially from highest to lowest order.  Thus, we will use some kind
-of ordered list representation.
+Наконец, мы должны столкнуться с задачей реализации хорошего представления для списков членов.
+Список членов — это, по сути, множество коэффициентов с ключом по порядку члена.
+Следовательно, любой из методов представления множеств, обсуждённых в @ref{2.3.3}, можно
+применить к этой задаче.  С другой стороны, наши процедуры @code{add-terms} и @code{mul-terms}
+всегда обращаются к спискам членов последовательно от высшего порядка к низшему.  Таким
+образом, мы будем использовать некоторого рода представление упорядоченным списком.
 
-How should we structure the list that represents a term list?  One
-consideration is the ``density'' of the polynomials we intend to manipulate.  A
-polynomial is said to be @newterm{dense} if it has nonzero coefficients in
-terms of most orders.  If it has many zero terms it is said to be
-@newterm{sparse}.  For example,
+Как нам структурировать список, представляющий список членов?  Одно соображение — «плотность»
+многочленов, которыми мы намерены манипулировать.  Многочлен называется @newterm{плотным},
+если он имеет ненулевые коэффициенты в членах большинства порядков.  Если он имеет много
+нулевых членов, он называется @newterm{разреженным}.  Например,
 @ifinfo
 
 @example
@@ -13165,7 +13108,7 @@ A : x^5 + 2x^4 + 3x^2 - 2x - 5
   A: \quad {x^5} + {2x^4} + {3x^2} - {2x} - 5  \]
 @end tex
 @noindent
-is a dense polynomial, whereas
+— это плотный многочлен, тогда как
 @ifinfo
 
 @example
@@ -13178,35 +13121,31 @@ B : x^100 + 2x^2 + 1
   B: \quad x^{100} + {2x^2} + 1  \]
 @end tex
 @noindent
-is sparse.
+— разреженный.
 
-The term lists of dense polynomials are most efficiently represented as lists
-of the coefficients.  For example, @math{A} above would be nicely represented as
-@code{(1 2 0 3 -2 -5)}.  The order of a term in this representation is the
-length of the sublist beginning with that term's coefficient, decremented by
-1.@footnote{In these polynomial examples, we assume that we have implemented
-the generic arithmetic system using the type mechanism suggested in
-@ref{Exercise 2.78}.  Thus, coefficients that are ordinary numbers will be
-represented as the numbers themselves rather than as pairs whose @code{car} is
-the symbol @code{scheme-number}.}  This would be a terrible representation for
-a sparse polynomial such as @math{B}: There would be a giant list of zeros
-punctuated by a few lonely nonzero terms.  A more reasonable representation of
-the term list of a sparse polynomial is as a list of the nonzero terms, where
-each term is a list containing the order of the term and the coefficient for
-that order.  In such a scheme, polynomial @math{B} is efficiently represented as
-@code{((100 1) (2 2) (0 1))}.  As most polynomial manipulations are performed
-on sparse polynomials, we will use this method.  We will assume that term lists
-are represented as lists of terms, arranged from highest-order to lowest-order
-term.  Once we have made this decision, implementing the selectors and
-constructors for terms and term lists is straightforward:@footnote{Although we
-are assuming that term lists are ordered, we have implemented
-@code{adjoin-term} to simply @code{cons} the new term onto the existing term
-list.  We can get away with this so long as we guarantee that the procedures
-(such as @code{add-terms}) that use @code{adjoin-term} always call it with a
-higher-order term than appears in the list.  If we did not want to make such a
-guarantee, we could have implemented @code{adjoin-term} to be similar to the
-@code{adjoin-set} constructor for the ordered-list representation of sets
-(@ref{Exercise 2.61}).}
+Списки членов плотных многочленов наиболее эффективно представляются как списки
+коэффициентов.  Например, @math{A} выше хорошо представлялся бы как @code{(1 2 0 3 -2 -5)}.
+Порядок члена в этом представлении — это длина подсписка, начинающегося с коэффициента этого
+члена, уменьшенная на 1.@footnote{В этих примерах с многочленами мы предполагаем, что мы
+реализовали обобщённую арифметическую систему, используя механизм типов, предложенный в
+@ref{Exercise 2.78}.  Таким образом, коэффициенты, которые являются обычными числами, будут
+представляться как сами числа, а не как пары, чей @code{car} — символ @code{scheme-number}.}
+Это было бы ужасным представлением для разреженного многочлена, такого как @math{B}: был бы
+гигантский список нулей, перемежаемый несколькими одинокими ненулевыми членами.  Более
+разумное представление списка членов разреженного многочлена — как списка ненулевых членов,
+где каждый член — это список, содержащий порядок члена и коэффициент для этого порядка.  В
+такой схеме многочлен @math{B} эффективно представляется как @code{((100 1) (2 2) (0 1))}.
+Поскольку большинство манипуляций с многочленами выполняются над разреженными многочленами,
+мы будем использовать этот метод.  Мы будем предполагать, что списки членов представлены как
+списки членов, расположенные от члена наивысшего порядка к члену низшего порядка.  Как только
+мы приняли это решение, реализация селекторов и конструкторов для членов и списков членов
+прямолинейна:@footnote{Хотя мы предполагаем, что списки членов упорядочены, мы реализовали
+@code{adjoin-term} так, чтобы просто делать @code{cons} нового члена на существующий список
+членов.  Нам это сходит с рук, пока мы гарантируем, что процедуры (такие как @code{add-terms}),
+которые используют @code{adjoin-term}, всегда вызывают её с членом более высокого порядка, чем
+появляется в списке.  Если бы мы не хотели давать такую гарантию, мы могли бы реализовать
+@code{adjoin-term} похожей на конструктор @code{adjoin-set} для представления множеств
+упорядоченным списком (@ref{Exercise 2.61}).}
 
 @lisp
 (define (adjoin-term term term-list)
@@ -13225,11 +13164,11 @@ guarantee, we could have implemented @code{adjoin-term} to be similar to the
 @end lisp
 
 @noindent
-where @code{=zero?} is as defined in @ref{Exercise 2.80}.  (See also
-@ref{Exercise 2.87} below.)
+где @code{=zero?} — как определено в @ref{Exercise 2.80}.  (См. также @ref{Exercise 2.87}
+ниже.)
 
-Users of the polynomial package will create (tagged) polynomials by means of
-the procedure:
+Пользователи пакета многочленов будут создавать (типизированные) многочлены посредством
+процедуры:
 
 @lisp
 (define (make-polynomial var terms)
@@ -13237,39 +13176,35 @@ the procedure:
 @end lisp
 
 @quotation
-@strong{@anchor{Exercise 2.87}Exercise 2.87:} Install @code{=zero?} for
-polynomials in the generic arithmetic package.  This will allow
-@code{adjoin-term} to work for polynomials with coefficients that are
-themselves polynomials.
+@strong{@anchor{Exercise 2.87}Exercise 2.87:} Установите @code{=zero?} для многочленов в
+обобщённый арифметический пакет.  Это позволит @code{adjoin-term} работать для многочленов с
+коэффициентами, которые сами являются многочленами.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.88}Exercise 2.88:} Extend the polynomial system to
-include subtraction of polynomials.  (Hint: You may find it helpful to define a
-generic negation operation.)
+@strong{@anchor{Exercise 2.88}Exercise 2.88:} Расширьте систему многочленов, чтобы включить
+вычитание многочленов.  (Подсказка: вам может быть полезно определить обобщённую операцию
+отрицания.)
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.89}Exercise 2.89:} Define procedures that implement
-the term-list representation described above as appropriate for dense
-polynomials.
+@strong{@anchor{Exercise 2.89}Exercise 2.89:} Определите процедуры, которые реализуют
+представление списком членов, описанное выше, как подходящее для плотных многочленов.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.90}Exercise 2.90:} Suppose we want to have a
-polynomial system that is efficient for both sparse and dense polynomials.  One
-way to do this is to allow both kinds of term-list representations in our
-system.  The situation is analogous to the complex-number example of 
-@ref{2.4}, where we allowed both rectangular and polar representations.  To do
-this we must distinguish different types of term lists and make the operations
-on term lists generic.  Redesign the polynomial system to implement this
-generalization.  This is a major effort, not a local change.
+@strong{@anchor{Exercise 2.90}Exercise 2.90:} Предположим, мы хотим иметь систему многочленов,
+которая эффективна и для разреженных, и для плотных многочленов.  Один способ сделать это —
+допустить оба вида представлений списка членов в нашей системе.  Ситуация аналогична примеру
+с комплексными числами из @ref{2.4}, где мы допускали и прямоугольное, и полярное
+представления.  Чтобы сделать это, мы должны различать разные типы списков членов и сделать
+операции над списками членов обобщёнными.  Перепроектируйте систему многочленов, чтобы
+реализовать это обобщение.  Это большое усилие, а не локальное изменение.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.91}Exercise 2.91:} A univariate polynomial can be
-divided by another one to produce a polynomial quotient and a polynomial
-remainder.  For example,
+@strong{@anchor{Exercise 2.91}Exercise 2.91:} Многочлен от одной переменной можно разделить
+на другой, чтобы произвести многочлен-частное и многочлен-остаток.  Например,
 @ifinfo
 
 @example
@@ -13283,28 +13218,24 @@ x^2 - 1
 \[ % :57:
   {x^5 - 1 \over x^2 - 1} \,=\, {x^3 + x,} \text{  remainder  } {x - 1.}  \]
 @end tex
-Division can be performed via long division.  That is, divide the highest-order
-term of the dividend by the highest-order term of the divisor.  The result is
-the first term of the quotient.  Next, multiply the result by the divisor,
-subtract that from the dividend, and produce the rest of the answer by
-recursively dividing the difference by the divisor.  Stop when the order of the
-divisor exceeds the order of the dividend and declare the dividend to be the
-remainder.  Also, if the dividend ever becomes zero, return zero as both
-quotient and remainder.
+Деление можно выполнить через деление в столбик.  То есть разделите член наивысшего порядка
+делимого на член наивысшего порядка делителя.  Результат — первый член частного.  Затем
+умножьте результат на делитель, вычтите это из делимого и произведите остаток ответа,
+рекурсивно деля разность на делитель.  Остановитесь, когда порядок делителя превысит порядок
+делимого, и объявите делимое остатком.  Также, если делимое когда-либо становится нулём,
+верните нуль как и частное, и остаток.
 
-We can design a @code{div-poly} procedure on the model of @code{add-poly} and
-@code{mul-poly}. The procedure checks to see if the two polys have the same
-variable.  If so, @code{div-poly} strips off the variable and passes the
-problem to @code{div-terms}, which performs the division operation on term
-lists. @code{Div-poly} finally reattaches the variable to the result supplied
-by @code{div-terms}.  It is convenient to design @code{div-terms} to compute
-both the quotient and the remainder of a division.  @code{Div-terms} can take
-two term lists as arguments and return a list of the quotient term list and the
-remainder term list.
+Мы можем спроектировать процедуру @code{div-poly} по образцу @code{add-poly} и @code{mul-poly}.
+Процедура проверяет, имеют ли два поли одну и ту же переменную.  Если так, @code{div-poly}
+снимает переменную и передаёт задачу @code{div-terms}, которая выполняет операцию деления над
+списками членов.  @code{Div-poly} наконец вновь прикрепляет переменную к результату,
+предоставленному @code{div-terms}.  Удобно спроектировать @code{div-terms} так, чтобы она
+вычисляла и частное, и остаток деления.  @code{Div-terms} может принимать два списка членов как
+аргументы и возвращать список из списка членов частного и списка членов остатка.
 
-Complete the following definition of @code{div-terms} by filling in the missing
-expressions.  Use this to implement @code{div-poly}, which takes two polys as
-arguments and returns a list of the quotient and remainder polys.
+Завершите следующее определение @code{div-terms}, заполнив недостающие выражения.  Используйте
+это, чтобы реализовать @code{div-poly}, которая принимает два поли как аргументы и возвращает
+список из частного и остатка-поли.
 
 @lisp
 (define (div-terms L1 L2)
@@ -13320,61 +13251,57 @@ arguments and returns a list of the quotient and remainder polys.
                   (new-o (- (order t1) 
                             (order t2))))
               (let ((rest-of-result
-                     ⟨@var{compute rest of result 
-                     recursively}⟩ ))
-                ⟨@var{form complete result}⟩ ))))))
+                     ⟨@var{вычислить остаток результата
+                     рекурсивно}⟩ ))
+                ⟨@var{образовать полный результат}⟩ ))))))
 @end lisp
 @end quotation
 
-@subsubheading Hierarchies of types in symbolic algebra
+@subsubheading Иерархии типов в символьной алгебре
 
-Our polynomial system illustrates how objects of one type (polynomials) may in
-fact be complex objects that have objects of many different types as parts.
-This poses no real difficulty in defining generic operations.  We need only
-install appropriate generic operations for performing the necessary
-manipulations of the parts of the compound types.  In fact, we saw that
-polynomials form a kind of ``recursive data abstraction,'' in that parts of a
-polynomial may themselves be polynomials.  Our generic operations and our
-data-directed programming style can handle this complication without much
-trouble.
+Наша система многочленов иллюстрирует, как объекты одного типа (многочлены) могут на самом
+деле быть сложными объектами, имеющими в качестве частей объекты многих разных типов.  Это не
+создаёт реальной трудности в определении обобщённых операций.  Нам нужно лишь установить
+подходящие обобщённые операции для выполнения необходимых манипуляций частями составных типов.
+На самом деле мы видели, что многочлены образуют своего рода «рекурсивную абстракцию данных» в
+том, что части многочлена могут сами быть многочленами.  Наши обобщённые операции и наш стиль
+программирования, управляемого данными, могут справиться с этим усложнением без особых хлопот.
 
-On the other hand, polynomial algebra is a system for which the data types
-cannot be naturally arranged in a tower.  For instance, it is possible to have
-polynomials in @math{x} whose coefficients are polynomials in @math{y}.  It is also
-possible to have polynomials in @math{y} whose coefficients are polynomials in
-@math{x}.  Neither of these types is ``above'' the other in any natural way, yet
-it is often necessary to add together elements from each set.  There are
-several ways to do this.  One possibility is to convert one polynomial to the
-type of the other by expanding and rearranging terms so that both polynomials
-have the same principal variable.  One can impose a towerlike structure on this
-by ordering the variables and thus always converting any polynomial to a
-``canonical form'' with the highest-priority variable dominant and the
-lower-priority variables buried in the coefficients.  This strategy works
-fairly well, except that the conversion may expand a polynomial unnecessarily,
-making it hard to read and perhaps less efficient to work with.  The tower
-strategy is certainly not natural for this domain or for any domain where the
-user can invent new types dynamically using old types in various combining
-forms, such as trigonometric functions, power series, and integrals.
+С другой стороны, алгебра многочленов — это система, для которой типы данных нельзя
+естественно расположить в башню.  Например, возможно иметь многочлены от @math{x}, чьи
+коэффициенты — многочлены от @math{y}.  Также возможно иметь многочлены от @math{y}, чьи
+коэффициенты — многочлены от @math{x}.  Ни один из этих типов не «выше» другого каким-либо
+естественным образом, и всё же часто необходимо складывать вместе элементы из каждого
+множества.  Есть несколько способов сделать это.  Одна возможность — преобразовать один
+многочлен к типу другого, разворачивая и переставляя члены так, чтобы оба многочлена имели одну
+и ту же главную переменную.  Можно навязать этому башнеподобную структуру, упорядочив
+переменные и таким образом всегда преобразуя любой многочлен к «канонической форме» с
+переменной наивысшего приоритета в качестве доминирующей и переменными более низкого приоритета,
+зарытыми в коэффициенты.  Эта стратегия работает довольно хорошо, за исключением того, что
+преобразование может развернуть многочлен без необходимости, делая его трудным для чтения и,
+возможно, менее эффективным для работы.  Стратегия башни, безусловно, не естественна для этой
+области или для любой области, где пользователь может изобретать новые типы динамически,
+используя старые типы в различных комбинирующих формах, таких как тригонометрические функции,
+степенные ряды и интегралы.
 
-It should not be surprising that controlling coercion is a serious problem in
-the design of large-scale algebraic-manipulation systems.  Much of the
-complexity of such systems is concerned with relationships among diverse types.
-Indeed, it is fair to say that we do not yet completely understand coercion.
-In fact, we do not yet completely understand the concept of a data type.
-Nevertheless, what we know provides us with powerful structuring and modularity
-principles to support the design of large systems.
+Не должно удивлять, что управление приведением — серьёзная проблема в проектировании
+крупномасштабных систем алгебраических манипуляций.  Бо́льшая часть сложности таких систем
+связана с отношениями между разнообразными типами.  В самом деле, справедливо сказать, что мы
+ещё не полностью понимаем приведение.  На самом деле мы ещё не полностью понимаем понятие типа
+данных.  Тем не менее то, что мы знаем, предоставляет нам мощные принципы структурирования и
+модульности для поддержки проектирования больших систем.
 
 @quotation
-@strong{@anchor{Exercise 2.92}Exercise 2.92:} By imposing an ordering on
-variables, extend the polynomial package so that addition and multiplication of
-polynomials works for polynomials in different variables.  (This is not easy!)
+@strong{@anchor{Exercise 2.92}Exercise 2.92:} Навязав упорядочивание переменным, расширьте
+пакет многочленов так, чтобы сложение и умножение многочленов работало для многочленов от
+разных переменных.  (Это нелегко!)
 @end quotation
 
-@subsubheading Extended exercise: Rational functions
+@subsubheading Развёрнутое упражнение: рациональные функции
 
-We can extend our generic arithmetic system to include @newterm{rational functions}.  
-These are ``fractions'' whose numerator and denominator are
-polynomials, such as
+Мы можем расширить нашу обобщённую арифметическую систему, чтобы включить
+@newterm{рациональные функции}.  Это «дроби», чьи числитель и знаменатель — многочлены, такие
+как
 @ifinfo
 
 @example
@@ -13388,8 +13315,8 @@ x^3 - 1
 \[ % :58:
   {{x + 1 \over x^3 - 1}.}  \]
 @end tex
-The system should be able to add, subtract, multiply, and divide rational
-functions, and to perform such computations as
+Система должна быть способна складывать, вычитать, умножать и делить рациональные функции и
+выполнять такие вычисления, как
 @ifinfo
 
 @example
@@ -13405,19 +13332,18 @@ x^3 - 1   x^2 - 1    x^4 + x^3 - x - 1
   {{x^3 + 2x^2 + 3x + 1 \over x^4 + x^3 - x - 1}.}  \]
 @end tex
 @noindent
-(Here the sum has been simplified by removing common factors.  Ordinary ``cross
-multiplication'' would have produced a fourth-degree polynomial over a
-fifth-degree polynomial.)
+(Здесь сумма упрощена удалением общих множителей.  Обычное «перекрёстное умножение» произвело
+бы многочлен четвёртой степени над многочленом пятой степени.)
 
-If we modify our rational-arithmetic package so that it uses generic
-operations, then it will do what we want, except for the problem of reducing
-fractions to lowest terms.
+Если мы изменим наш пакет рациональной арифметики так, чтобы он использовал обобщённые
+операции, то он будет делать то, что мы хотим, за исключением проблемы приведения дробей к
+несократимому виду.
 
 @quotation
-@strong{@anchor{Exercise 2.93}Exercise 2.93:} Modify the rational-arithmetic
-package to use generic operations, but change @code{make-rat} so that it does
-not attempt to reduce fractions to lowest terms.  Test your system by calling
-@code{make-rational} on two polynomials to produce a rational function:
+@strong{@anchor{Exercise 2.93}Exercise 2.93:} Измените пакет рациональной арифметики, чтобы
+использовать обобщённые операции, но измените @code{make-rat} так, чтобы она не пыталась
+приводить дроби к несократимому виду.  Протестируйте свою систему, вызвав @code{make-rational}
+на двух многочленах, чтобы произвести рациональную функцию:
 
 @lisp
 (define p1 (make-polynomial 'x '((2 1) (0 1))))
@@ -13425,29 +13351,26 @@ not attempt to reduce fractions to lowest terms.  Test your system by calling
 (define rf (make-rational p2 p1))
 @end lisp
 
-Now add @code{rf} to itself, using @code{add}. You will observe that this
-addition procedure does not reduce fractions to lowest terms.
+Теперь прибавьте @code{rf} к самому себе, используя @code{add}.  Вы заметите, что эта процедура
+сложения не приводит дроби к несократимому виду.
 @end quotation
 
 @noindent
-We can reduce polynomial fractions to lowest terms using the same idea we used
-with integers: modifying @code{make-rat} to divide both the numerator and the
-denominator by their greatest common divisor.  The notion of ``greatest common
-divisor'' makes sense for polynomials.  In fact, we can compute the
-@abbr{GCD} of two polynomials using essentially the same Euclid's Algorithm
-that works for integers.@footnote{The fact that Euclid's Algorithm works for
-polynomials is formalized in algebra by saying that polynomials form a kind of
-algebraic domain called a @newterm{Euclidean ring}.  A Euclidean ring is a
-domain that admits addition, subtraction, and commutative multiplication,
-together with a way of assigning to each element @math{x} of the ring a positive
-integer ``measure'' @math{{m(x)}} with the properties that 
-@math{{m(xy) \ge m(x)}} for any nonzero @math{x} and @math{y} and that, given any @math{x} and
-@math{y}, there exists a @math{q} such that @math{{y = qx + r}} and either
-@math{{r = 0}} or @math{{m(r) < m(x)}}.  From an abstract point of view, this
-is what is needed to prove that Euclid's Algorithm works.  For the domain of
-integers, the measure @math{m} of an integer is the absolute value of the integer
-itself.  For the domain of polynomials, the measure of a polynomial is its
-degree.}  The integer version is
+Мы можем приводить дроби многочленов к несократимому виду, используя ту же идею, что мы
+использовали с целыми числами: изменяя @code{make-rat}, чтобы делить и числитель, и знаменатель
+на их наибольший общий делитель.  Понятие «наибольшего общего делителя» имеет смысл для
+многочленов.  На самом деле мы можем вычислить @abbr{GCD} двух многочленов, используя по
+существу тот же алгоритм Евклида, который работает для целых чисел.@footnote{Тот факт, что
+алгоритм Евклида работает для многочленов, формализуется в алгебре утверждением, что многочлены
+образуют своего рода алгебраическую область, называемую @newterm{евклидовым кольцом}.
+Евклидово кольцо — это область, допускающая сложение, вычитание и коммутативное умножение,
+вместе со способом назначать каждому элементу @math{x} кольца положительную целую «меру»
+@math{{m(x)}} со свойствами, что @math{{m(xy) \ge m(x)}} для любого ненулевого @math{x} и
+@math{y} и что, для любых @math{x} и @math{y}, существует @math{q}, такое что
+@math{{y = qx + r}} и либо @math{{r = 0}}, либо @math{{m(r) < m(x)}}.  С абстрактной точки
+зрения это то, что нужно, чтобы доказать, что алгоритм Евклида работает.  Для области целых
+чисел мера @math{m} целого числа — это абсолютное значение самого целого числа.  Для области
+многочленов мера многочлена — это его степень.}  Целочисленная версия —
 
 @lisp
 (define (gcd a b)
@@ -13457,8 +13380,8 @@ degree.}  The integer version is
 @end lisp
 
 @noindent
-Using this, we could make the obvious modification to define a @abbr{GCD}
-operation that works on term lists:
+Используя это, мы могли бы сделать очевидную модификацию, чтобы определить операцию
+@abbr{GCD}, которая работает на списках членов:
 
 @lisp
 (define (gcd-terms a b)
@@ -13468,18 +13391,17 @@ operation that works on term lists:
 @end lisp
 
 @noindent
-where @code{remainder-terms} picks out the remainder component of the list
-returned by the term-list division operation @code{div-terms} that was
-implemented in @ref{Exercise 2.91}.
+где @code{remainder-terms} выбирает компонент остатка из списка, возвращаемого операцией деления
+списков членов @code{div-terms}, которая была реализована в @ref{Exercise 2.91}.
 
 @quotation
-@strong{@anchor{Exercise 2.94}Exercise 2.94:} Using @code{div-terms}, implement
-the procedure @code{remainder-terms} and use this to define @code{gcd-terms} as
-above.  Now write a procedure @code{gcd-poly} that computes the polynomial
-@abbr{GCD} of two polys.  (The procedure should signal an error if the two
-polys are not in the same variable.)  Install in the system a generic operation
-@code{greatest-common-divisor} that reduces to @code{gcd-poly} for polynomials
-and to ordinary @code{gcd} for ordinary numbers.  As a test, try
+@strong{@anchor{Exercise 2.94}Exercise 2.94:} Используя @code{div-terms}, реализуйте процедуру
+@code{remainder-terms} и используйте это, чтобы определить @code{gcd-terms}, как выше.  Теперь
+напишите процедуру @code{gcd-poly}, которая вычисляет @abbr{GCD} многочленов двух поли.
+(Процедура должна сигнализировать об ошибке, если два поли не в одной и той же переменной.)
+Установите в систему обобщённую операцию @code{greatest-common-divisor}, которая сводится к
+@code{gcd-poly} для многочленов и к обычному @code{gcd} для обычных чисел.  В качестве теста
+попробуйте
 
 @lisp
 (define p1 
@@ -13494,12 +13416,12 @@ and to ordinary @code{gcd} for ordinary numbers.  As a test, try
 @end lisp
 
 @noindent
-and check your result by hand.
+и проверьте свой результат вручную.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.95}Exercise 2.95:} Define @math{P_1}, @math{P_2}, and
-@math{P_3} to be the polynomials
+@strong{@anchor{Exercise 2.95}Exercise 2.95:} Определите @math{P_1}, @math{P_2} и
+@math{P_3} как многочлены
 @ifinfo
 
 @example
@@ -13520,88 +13442,78 @@ P_3 : 13x + 5
 \end{array}
 \]
 @end tex
-Now define @math{Q_1} to be the product of @math{P_1} and @math{P_2}, and @math{Q_2} to be
-the product of @math{P_1} and @math{P_3}, and use @code{greatest-common-divisor}
-(@ref{Exercise 2.94}) to compute the @abbr{GCD} of @math{Q_1} and @math{Q_2}.
-Note that the answer is not the same as @math{P_1}.  This example introduces
-noninteger operations into the computation, causing difficulties with the
-@abbr{GCD} algorithm.@footnote{In an implementation like @abbr{MIT}
-Scheme, this produces a polynomial that is indeed a divisor of @math{Q_1} and
-@math{Q_2}, but with rational coefficients.  In many other Scheme systems, in
-which division of integers can produce limited-precision decimal numbers, we
-may fail to get a valid divisor.}  To understand what is happening, try tracing
-@code{gcd-terms} while computing the @abbr{GCD} or try performing the
-division by hand.
+Теперь определите @math{Q_1} как произведение @math{P_1} и @math{P_2}, а @math{Q_2} как
+произведение @math{P_1} и @math{P_3}, и используйте @code{greatest-common-divisor}
+(@ref{Exercise 2.94}), чтобы вычислить @abbr{GCD} @math{Q_1} и @math{Q_2}.  Заметьте, что
+ответ не тот же, что @math{P_1}.  Этот пример вводит нецелые операции в вычисление, вызывая
+трудности с алгоритмом @abbr{GCD}.@footnote{В реализации вроде @abbr{MIT} Scheme это
+производит многочлен, который действительно является делителем @math{Q_1} и @math{Q_2}, но с
+рациональными коэффициентами.  Во многих других системах Scheme, в которых деление целых
+чисел может производить десятичные числа ограниченной точности, мы можем не получить
+допустимый делитель.}  Чтобы понять, что происходит, попробуйте проследить @code{gcd-terms}
+во время вычисления @abbr{GCD} или попробуйте выполнить деление вручную.
 @end quotation
 
 @noindent
-We can solve the problem exhibited in @ref{Exercise 2.95} if we use the
-following modification of the @abbr{GCD} algorithm (which really works only
-in the case of polynomials with integer coefficients).  Before performing any
-polynomial division in the @abbr{GCD} computation, we multiply the dividend
-by an integer constant factor, chosen to guarantee that no fractions will arise
-during the division process.  Our answer will thus differ from the actual
-@abbr{GCD} by an integer constant factor, but this does not matter in the
-case of reducing rational functions to lowest terms; the @abbr{GCD} will be
-used to divide both the numerator and denominator, so the integer constant
-factor will cancel out.
+Мы можем решить проблему, продемонстрированную в @ref{Exercise 2.95}, если мы используем
+следующую модификацию алгоритма @abbr{GCD} (которая на самом деле работает только в случае
+многочленов с целыми коэффициентами).  Перед выполнением любого деления многочленов в
+вычислении @abbr{GCD} мы умножаем делимое на целый постоянный множитель, выбранный так, чтобы
+гарантировать, что никакие дроби не возникнут во время процесса деления.  Наш ответ таким
+образом будет отличаться от фактического @abbr{GCD} на целый постоянный множитель, но это не
+имеет значения в случае приведения рациональных функций к несократимому виду; @abbr{GCD} будет
+использоваться, чтобы делить и числитель, и знаменатель, так что целый постоянный множитель
+сократится.
 
-More precisely, if @math{P} and @math{Q} are polynomials, let @math{O_1} be the order of
-@math{P} (i.e., the order of the largest term of @math{P}) and let @math{O_2} be the
-order of @math{Q}.  Let @math{c} be the leading coefficient of @math{Q}.  Then it can be
-shown that, if we multiply @math{P} by the @newterm{@w{integerizing} @w{factor}}
-@math{c^{1 + O_1 - O_2}}, the resulting polynomial can be divided by @math{Q} by
-using the @code{div-terms} algorithm without introducing any fractions.  The
-operation of multiplying the dividend by this constant and then dividing is
-sometimes called the @newterm{pseudodivision} of @math{P} by @math{Q}.  The remainder
-of the division is called the @newterm{pseudoremainder}.
+Точнее, если @math{P} и @math{Q} — многочлены, пусть @math{O_1} будет порядком @math{P} (то
+есть порядком наибольшего члена @math{P}), а @math{O_2} — порядком @math{Q}.  Пусть @math{c} —
+старший коэффициент @math{Q}.  Тогда можно показать, что, если мы умножим @math{P} на
+@newterm{@w{целочисляющий} @w{множитель}} @math{c^{1 + O_1 - O_2}}, получающийся многочлен можно
+разделить на @math{Q}, используя алгоритм @code{div-terms}, не вводя никаких дробей.  Операция
+умножения делимого на эту константу и затем деления иногда называется @newterm{псевдоделением}
+@math{P} на @math{Q}.  Остаток деления называется @newterm{псевдоостатком}.
 
 @quotation
 @strong{@anchor{Exercise 2.96}Exercise 2.96:}
 @enumerate a
 
 @item
-Implement the procedure @code{pseudoremainder-terms}, which is just like
-@code{remainder-terms} except that it multiplies the dividend by the
-integerizing factor described above before calling @code{div-terms}.  Modify
-@code{gcd-terms} to use @code{pseudoremainder-terms}, and verify that
-@code{greatest-common-divisor} now produces an answer with integer coefficients
-on the example in @ref{Exercise 2.95}.
+Реализуйте процедуру @code{pseudoremainder-terms}, которая в точности как
+@code{remainder-terms}, за исключением того, что она умножает делимое на целочисляющий
+множитель, описанный выше, перед вызовом @code{div-terms}.  Измените @code{gcd-terms}, чтобы
+использовать @code{pseudoremainder-terms}, и убедитесь, что @code{greatest-common-divisor}
+теперь производит ответ с целыми коэффициентами на примере из @ref{Exercise 2.95}.
 
 @item
-The @abbr{GCD} now has integer coefficients, but they are larger than those
-of @math{P_1}.  Modify @code{gcd-terms} so that it removes common factors from the
-coefficients of the answer by dividing all the coefficients by their (integer)
-greatest common divisor.
+@abbr{GCD} теперь имеет целые коэффициенты, но они больше, чем у @math{P_1}.  Измените
+@code{gcd-terms} так, чтобы она удаляла общие множители из коэффициентов ответа, деля все
+коэффициенты на их (целый) наибольший общий делитель.
 
 @end enumerate
 @end quotation
 
 @noindent
-Thus, here is how to reduce a rational function to lowest terms:
+Таким образом, вот как привести рациональную функцию к несократимому виду:
 
 @itemize @bullet
 
 @item
-Compute the @abbr{GCD} of the numerator and denominator, using the version
-of @code{gcd-terms} from @ref{Exercise 2.96}.
+Вычислите @abbr{GCD} числителя и знаменателя, используя версию @code{gcd-terms} из
+@ref{Exercise 2.96}.
 
 @item
-When you obtain the @abbr{GCD}, multiply both numerator and denominator by
-the same integerizing factor before dividing through by the @abbr{GCD}, so
-that division by the @abbr{GCD} will not introduce any noninteger
-coefficients.  As the factor you can use the leading coefficient of the
-@abbr{GCD} raised to the power @math{{1 + O_1 - O_2}}, where @math{O_2} is the
-order of the @abbr{GCD} and @math{O_1} is the maximum of the orders of the
-numerator and denominator.  This will ensure that dividing the numerator and
-denominator by the @abbr{GCD} will not introduce any fractions.
+Когда вы получите @abbr{GCD}, умножьте и числитель, и знаменатель на один и тот же
+целочисляющий множитель перед делением на @abbr{GCD}, чтобы деление на @abbr{GCD} не вводило
+никаких нецелых коэффициентов.  В качестве множителя вы можете использовать старший коэффициент
+@abbr{GCD}, возведённый в степень @math{{1 + O_1 - O_2}}, где @math{O_2} — порядок @abbr{GCD},
+а @math{O_1} — максимум порядков числителя и знаменателя.  Это обеспечит, что деление числителя
+и знаменателя на @abbr{GCD} не введёт никаких дробей.
 
 @item
-The result of this operation will be a numerator and denominator with integer
-coefficients.  The coefficients will normally be very large because of all of
-the integerizing factors, so the last step is to remove the redundant factors
-by computing the (integer) greatest common divisor of all the coefficients of
-the numerator and the denominator and dividing through by this factor.
+Результатом этой операции будут числитель и знаменатель с целыми коэффициентами.  Коэффициенты
+обычно будут очень большими из-за всех целочисляющих множителей, так что последний шаг — удалить
+избыточные множители, вычислив (целый) наибольший общий делитель всех коэффициентов числителя и
+знаменателя и разделив на этот множитель.
 
 @end itemize
 
@@ -13610,18 +13522,17 @@ the numerator and the denominator and dividing through by this factor.
 @enumerate a
 
 @item
-Implement this algorithm as a procedure @code{reduce-terms} that takes two term
-lists @code{n} and @code{d} as arguments and returns a list @code{nn},
-@code{dd}, which are @code{n} and @code{d} reduced to lowest terms via the
-algorithm given above.  Also write a procedure @code{reduce-poly}, analogous to
-@code{add-poly}, that checks to see if the two polys have the same variable.
-If so, @code{reduce-poly} strips off the variable and passes the problem to
-@code{reduce-terms}, then reattaches the variable to the two term lists
-supplied by @code{reduce-terms}.
+Реализуйте этот алгоритм как процедуру @code{reduce-terms}, которая принимает два списка членов
+@code{n} и @code{d} как аргументы и возвращает список @code{nn}, @code{dd}, которые суть
+@code{n} и @code{d}, приведённые к несократимому виду посредством алгоритма, данного выше.
+Также напишите процедуру @code{reduce-poly}, аналогичную @code{add-poly}, которая проверяет,
+имеют ли два поли одну и ту же переменную.  Если так, @code{reduce-poly} снимает переменную и
+передаёт задачу @code{reduce-terms}, затем вновь прикрепляет переменную к двум спискам членов,
+предоставленным @code{reduce-terms}.
 
 @item
-Define a procedure analogous to @code{reduce-terms} that does what the original
-@code{make-rat} did for integers:
+Определите процедуру, аналогичную @code{reduce-terms}, которая делает то, что исходная
+@code{make-rat} делала для целых чисел:
 
 @lisp
 (define (reduce-integers n d)
@@ -13629,14 +13540,14 @@ Define a procedure analogous to @code{reduce-terms} that does what the original
     (list (/ n g) (/ d g))))
 @end lisp
 
-and define @code{reduce} as a generic operation that calls @code{apply-generic}
-to dispatch to either @code{reduce-poly} (for @code{polynomial} arguments) or
-@code{reduce-integers} (for @code{scheme-number} arguments).  You can now
-easily make the rational-arithmetic package reduce fractions to lowest terms by
-having @code{make-rat} call @code{reduce} before combining the given numerator
-and denominator to form a rational number.  The system now handles rational
-expressions in either integers or polynomials.  To test your program, try the
-example at the beginning of this extended exercise:
+и определите @code{reduce} как обобщённую операцию, которая вызывает @code{apply-generic}, чтобы
+диспетчеризоваться либо к @code{reduce-poly} (для аргументов-@code{polynomial}), либо к
+@code{reduce-integers} (для аргументов-@code{scheme-number}).  Теперь вы можете легко заставить
+пакет рациональной арифметики приводить дроби к несократимому виду, заставив @code{make-rat}
+вызывать @code{reduce} перед комбинированием данных числителя и знаменателя, чтобы образовать
+рациональное число.  Система теперь обрабатывает рациональные выражения либо в целых числах,
+либо в многочленах.  Чтобы протестировать вашу программу, попробуйте пример в начале этого
+развёрнутого упражнения:
 
 @lisp
 (define p1 
@@ -13652,24 +13563,21 @@ example at the beginning of this extended exercise:
 (add rf1 rf2)
 @end lisp
 
-See if you get the correct answer, correctly reduced to lowest terms.
+Посмотрите, получите ли вы правильный ответ, правильно приведённый к несократимому виду.
 @end enumerate
 @end quotation
 
 @noindent
-The @abbr{GCD} computation is at the heart of any system that does
-operations on rational functions.  The algorithm used above, although
-mathematically straightforward, is extremely slow.  The slowness is due partly
-to the large number of division operations and partly to the enormous size of
-the intermediate coefficients generated by the pseudodivisions.  One of the
-active areas in the development of algebraic-manipulation systems is the design
-of better algorithms for computing polynomial @abbr{GCD}s.@footnote{One
-extremely efficient and elegant method for computing polynomial @abbr{GCD}s
-was discovered by Richard @ref{Zippel (1979)}.  The method is a probabilistic
-algorithm, as is the fast test for primality that we discussed in @ref{Chapter
-1}.  Zippel's book (@ref{Zippel 1993}) describes this method, together with other ways to
-compute polynomial @abbr{GCD}s.}
-
+Вычисление @abbr{GCD} — это сердце любой системы, которая выполняет операции над рациональными
+функциями.  Алгоритм, использованный выше, хотя математически прямолинеен, чрезвычайно
+медленный.  Медлительность отчасти из-за большого числа операций деления и отчасти из-за
+огромного размера промежуточных коэффициентов, порождаемых псевдоделениями.  Одна из активных
+областей в разработке систем алгебраических манипуляций — это проектирование лучших алгоритмов
+для вычисления @abbr{GCD} многочленов.@footnote{Один чрезвычайно эффективный и изящный метод
+для вычисления @abbr{GCD} многочленов был открыт Ричардом @ref{Zippel (1979)}.  Метод — это
+вероятностный алгоритм, как и быстрый тест на простоту, который мы обсуждали в @ref{Chapter
+1}.  Книга Зиппеля (@ref{Zippel 1993}) описывает этот метод вместе с другими способами
+вычислять @abbr{GCD} многочленов.}
 
 @node    Chapter 3, 3.1, 2.5, Top
 @chapter Modularity, Objects, and State
