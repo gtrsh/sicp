@@ -1,0 +1,571 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 0d55b67..00d444f 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -11562,62 +11562,58 @@ y = r sin A     A = arctan(y,x)
+ стратегией, как мы увидим в @ref{2.5}.
+ 
+ @node	2.4.3, 2.5, 2.3, 2.4
+-@subsection Data-Directed Programming and Additivity
+-
+-The general strategy of checking the type of a datum and calling an appropriate
+-procedure is called @newterm{dispatching on type}.  This is a powerful strategy
+-for obtaining modularity in system design.  On the other hand, implementing the
+-dispatch as in @ref{2.4.2} has two significant weaknesses.  One
+-weakness is that the generic interface procedures (@code{real-part},
+-@code{imag-part}, @code{magnitude}, and @code{angle}) must know about all the
+-different representations.  For instance, suppose we wanted to incorporate a
+-new representation for complex numbers into our complex-number system.  We
+-would need to identify this new representation with a type, and then add a
+-clause to each of the generic interface procedures to check for the new type
+-and apply the appropriate selector for that representation.
+-
+-Another weakness of the technique is that even though the individual
+-representations can be designed separately, we must guarantee that no two
+-procedures in the entire system have the same name.  This is why Ben and Alyssa
+-had to change the names of their original procedures from @ref{2.4.1}.
+-
+-The issue underlying both of these weaknesses is that the technique for
+-implementing generic interfaces is not @newterm{additive}.  The person
+-implementing the generic selector procedures must modify those procedures each
+-time a new representation is installed, and the people interfacing the
+-individual representations must modify their code to avoid name conflicts.  In
+-each of these cases, the changes that must be made to the code are
+-straightforward, but they must be made nonetheless, and this is a source of
+-inconvenience and error.  This is not much of a problem for the complex-number
+-system as it stands, but suppose there were not two but hundreds of different
+-representations for complex numbers.  And suppose that there were many generic
+-selectors to be maintained in the abstract-data interface.  Suppose, in fact,
+-that no one programmer knew all the interface procedures or all the
+-representations.  The problem is real and must be addressed in such programs as
+-large-scale data-base-management systems.
+-
+-What we need is a means for modularizing the system design even further.  This
+-is provided by the programming technique known as @newterm{data-directed programming}.  
+-To understand how data-directed programming works, begin with
+-the observation that whenever we deal with a set of generic operations that are
+-common to a set of different types we are, in effect, dealing with a
+-two-dimensional table that contains the possible operations on one axis and the
+-possible types on the other axis.  The entries in the table are the procedures
+-that implement each operation for each type of argument presented.  In the
+-complex-number system developed in the previous section, the correspondence
+-between operation name, data type, and actual procedure was spread out among
+-the various conditional clauses in the generic interface procedures.  But the
+-same information could have been organized in a table, as shown in @ref{Figure 2.22}.
++@subsection Программирование, управляемое данными, и аддитивность
++
++Общая стратегия проверки типа данного и вызова подходящей процедуры называется
++@newterm{диспетчеризацией по типу}.  Это мощная стратегия для получения модульности в
++проектировании системы.  С другой стороны, реализация диспетчеризации, как в @ref{2.4.2},
++имеет две значительные слабости.  Одна слабость в том, что обобщённые интерфейсные
++процедуры (@code{real-part}, @code{imag-part}, @code{magnitude} и @code{angle}) должны
++знать обо всех различных представлениях.  Например, предположим, мы хотели бы включить
++новое представление для комплексных чисел в нашу систему комплексных чисел.  Нам пришлось
++бы отождествить это новое представление с типом, а затем добавить предложение к каждой из
++обобщённых интерфейсных процедур, чтобы проверять новый тип и применять подходящий селектор
++для этого представления.
++
++Другая слабость этого приёма в том, что, хотя отдельные представления можно проектировать
++по отдельности, мы должны гарантировать, что никакие две процедуры во всей системе не имеют
++одного и того же имени.  Вот почему Бену и Алиссе пришлось менять имена своих исходных
++процедур из @ref{2.4.1}.
++
++Вопрос, лежащий в основе обеих этих слабостей, в том, что приём реализации обобщённых
++интерфейсов не @newterm{аддитивен}.  Человек, реализующий обобщённые процедуры-селекторы,
++должен изменять эти процедуры всякий раз, когда устанавливается новое представление, а
++люди, сопрягающие отдельные представления, должны изменять свой код, чтобы избежать
++конфликтов имён.  В каждом из этих случаев изменения, которые нужно внести в код,
++прямолинейны, но их тем не менее нужно вносить, и это источник неудобства и ошибок.  Это
++не такая уж проблема для системы комплексных чисел в её нынешнем виде, но предположим, что
++было бы не два, а сотни различных представлений для комплексных чисел.  И предположим, что
++было бы много обобщённых селекторов, которые нужно поддерживать в интерфейсе абстрактных
++данных.  Предположим, по сути, что ни один программист не знал бы всех интерфейсных
++процедур или всех представлений.  Проблема реальна и должна решаться в таких программах,
++как крупномасштабные системы управления базами данных.
++
++Что нам нужно — это средство для ещё большего разбиения проекта системы на модули.  Оно
++предоставляется приёмом программирования, известным как @newterm{программирование,
++управляемое данными}.  Чтобы понять, как работает программирование, управляемое данными,
++начнём с наблюдения, что всякий раз, когда мы имеем дело с набором обобщённых операций,
++общих для набора различных типов, мы, по сути, имеем дело с двумерной таблицей, которая
++содержит возможные операции на одной оси и возможные типы на другой оси.  Записи в таблице
++— это процедуры, реализующие каждую операцию для каждого типа представленного аргумента.  В
++системе комплексных чисел, разработанной в предыдущем разделе, соответствие между именем
++операции, типом данных и фактической процедурой было размазано по различным условным
++предложениям в обобщённых интерфейсных процедурах.  Но ту же информацию можно было бы
++организовать в таблицу, как показано на @ref{Figure 2.22}.
+ 
+ @float
+ @anchor{Figure 2.22}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.22:} Table of operations for the complex-number system.
++@strong{Figure 2.22:} Таблица операций для системы комплексных чисел.
+ 
+ @example
+-           |               Types
+-Operations | Polar           | Rectangular
++           |               Типы
++Операции   | Полярный        | Прямоугольный
+ ===========+=================+======================
+ real-part  | real-part-polar | real-part-rectangular
+ imag-part  | imag-part-polar | imag-part-rectangular
+@@ -11628,50 +11624,48 @@ angle      | angle-polar     | angle-rectangular
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.22,147mm,,,.std.svg}
+-@caption{@strong{Figure 2.22:} Table of operations for the complex-number system.}
++@caption{@strong{Figure 2.22:} Таблица операций для системы комплексных чисел.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-Data-directed programming is the technique of designing programs to work with
+-such a table directly.  Previously, we implemented the mechanism that
+-interfaces the complex-arithmetic code with the two representation packages as
+-a set of procedures that each perform an explicit dispatch on type.  Here we
+-will implement the interface as a single procedure that looks up the
+-combination of the operation name and argument type in the table to find the
+-correct procedure to apply, and then applies it to the contents of the
+-argument.  If we do this, then to add a new representation package to the
+-system we need not change any existing procedures; we need only add new entries
+-to the table.
++Программирование, управляемое данными, — это приём проектирования программ для работы
++непосредственно с такой таблицей.  Ранее мы реализовали механизм, сопрягающий код
++комплексной арифметики с двумя пакетами представлений, как набор процедур, каждая из
++которых выполняет явную диспетчеризацию по типу.  Здесь мы реализуем интерфейс как
++единственную процедуру, которая ищет комбинацию имени операции и типа аргумента в таблице,
++чтобы найти правильную процедуру для применения, и затем применяет её к содержимому
++аргумента.  Если мы делаем это, то, чтобы добавить новый пакет представления в систему,
++нам не нужно менять никакие существующие процедуры; нам нужно лишь добавить новые записи в
++таблицу.
+ 
+-To implement this plan, assume that we have two procedures, @code{put} and
+-@code{get}, for manipulating the operation-and-type table:
++Чтобы реализовать этот план, предположим, что у нас есть две процедуры, @code{put} и
++@code{get}, для манипулирования таблицей операций и типов:
+ 
+ @itemize @bullet
+ 
+ @item
+-@code{(put ⟨@var{op}⟩ ⟨@var{type}⟩ ⟨@var{item}⟩)} installs the 
+-@code{⟨}@var{item}@code{⟩} in the table, indexed by the 
+-@code{⟨}@var{op}@code{⟩} and the @code{⟨}@var{type}@code{⟩}.
++@code{(put ⟨@var{оп}⟩ ⟨@var{тип}⟩ ⟨@var{элемент}⟩)} устанавливает
++@code{⟨}@var{элемент}@code{⟩} в таблицу, индексируемый
++@code{⟨}@var{оп}@code{⟩} и @code{⟨}@var{тип}@code{⟩}.
+ 
+ @item
+-@code{(get ⟨@var{op}⟩ ⟨@var{type}⟩)} looks up the @code{⟨}@var{op}@code{⟩}, 
+-@code{⟨}@var{type}@code{⟩} entry in the table and returns the item found there.  
+-If no item is found, @code{get} returns false.
++@code{(get ⟨@var{оп}⟩ ⟨@var{тип}⟩)} ищет запись @code{⟨}@var{оп}@code{⟩},
++@code{⟨}@var{тип}@code{⟩} в таблице и возвращает найденный там элемент.
++Если элемент не найден, @code{get} возвращает ложь.
+ 
+ @end itemize
+ 
+ @noindent
+-For now, we can assume that @code{put} and @code{get} are included in our
+-language.  In @ref{Chapter 3} (@ref{3.3.3}) we
+-will see how to implement these and other operations for manipulating tables.
++Пока что мы можем предположить, что @code{put} и @code{get} включены в наш язык.  В
++@ref{Chapter 3} (@ref{3.3.3}) мы увидим, как реализовать эти и другие операции для
++манипулирования таблицами.
+ 
+-Here is how data-directed programming can be used in the complex-number system.
+-Ben, who developed the rectangular representation, implements his code just as
+-he did originally.  He defines a collection of procedures, or a
+-@newterm{package}, and interfaces these to the rest of the system by adding
+-entries to the table that tell the system how to operate on rectangular
+-numbers.  This is accomplished by calling the following procedure:
++Вот как программирование, управляемое данными, можно использовать в системе комплексных
++чисел.  Бен, разработавший прямоугольное представление, реализует свой код точно так же,
++как он делал изначально.  Он определяет набор процедур, или @newterm{пакет}, и сопрягает их
++с остальной частью системы, добавляя записи в таблицу, которые говорят системе, как
++оперировать прямоугольными числами.  Это достигается вызовом следующей процедуры:
+ 
+ @lisp
+ (define (install-rectangular-package)
+@@ -11704,23 +11698,21 @@ numbers.  This is accomplished by calling the following procedure:
+ @end lisp
+ 
+ @noindent
+-Notice that the internal procedures here are the same procedures from 
+-@ref{2.4.1} that Ben wrote when he was working in isolation.  No changes are
+-necessary in order to interface them to the rest of the system.  Moreover,
+-since these procedure definitions are internal to the installation procedure,
+-Ben needn't worry about name conflicts with other procedures outside the
+-rectangular package.  To interface these to the rest of the system, Ben
+-installs his @code{real-part} procedure under the operation name
+-@code{real-part} and the type @code{(rectangular)}, and similarly for the other
+-selectors.@footnote{We use the list @code{(rectangular)} rather than the symbol
+-@code{rectangular} to allow for the possibility of operations with multiple
+-arguments, not all of the same type.}  The interface also defines the
+-constructors to be used by the external system.@footnote{The type the
+-constructors are installed under needn't be a list because a constructor is
+-always used to make an object of one particular type.}  These are identical to
+-Ben's internally defined constructors, except that they attach the tag.
++Заметьте, что внутренние процедуры здесь — те же процедуры из @ref{2.4.1}, которые Бен
++написал, когда работал изолированно.  Никакие изменения не нужны, чтобы сопрячь их с
++остальной частью системы.  Более того, поскольку эти определения процедур внутренние по
++отношению к процедуре установки, Бену не нужно беспокоиться о конфликтах имён с другими
++процедурами вне прямоугольного пакета.  Чтобы сопрячь их с остальной частью системы, Бен
++устанавливает свою процедуру @code{real-part} под именем операции @code{real-part} и типом
++@code{(rectangular)}, и аналогично для других селекторов.@footnote{Мы используем список
++@code{(rectangular)}, а не символ @code{rectangular}, чтобы учесть возможность операций с
++несколькими аргументами не все одного типа.}  Интерфейс также определяет конструкторы,
++которые будут использоваться внешней системой.@footnote{Тип, под которым устанавливаются
++конструкторы, не обязан быть списком, потому что конструктор всегда используется, чтобы
++сделать объект одного конкретного типа.}  Они идентичны внутренне определённым
++конструкторам Бена, за исключением того, что они прикрепляют тег.
+ 
+-Alyssa's polar package is analogous:
++Полярный пакет Алиссы аналогичен:
+ 
+ @lisp
+ (define (install-polar-package)
+@@ -11751,31 +11743,29 @@ Alyssa's polar package is analogous:
+ @end lisp
+ 
+ @noindent
+-Even though Ben and Alyssa both still use their original procedures defined
+-with the same names as each other's (e.g., @code{real-part}), these definitions
+-are now internal to different procedures (see @ref{1.1.8}), so there is
+-no name conflict.
++Хотя Бен и Алисса оба по-прежнему используют свои исходные процедуры, определённые с теми
++же именами, что и друг у друга (например, @code{real-part}), эти определения теперь
++внутренние по отношению к разным процедурам (см. @ref{1.1.8}), так что конфликта имён нет.
+ 
+-The complex-arithmetic selectors access the table by means of a general
+-``operation'' procedure called @code{apply-generic}, which applies a generic
+-operation to some arguments.  @code{Apply-generic} looks in the table under the
+-name of the operation and the types of the arguments and applies the resulting
+-procedure if one is present:@footnote{@code{Apply-generic} uses the dotted-tail
+-notation described in @ref{Exercise 2.20}, because different generic operations
+-may take different numbers of arguments.  In @code{apply-generic}, @code{op}
+-has as its value the first argument to @code{apply-generic} and @code{args} has
+-as its value a list of the remaining arguments.
++Селекторы комплексной арифметики обращаются к таблице посредством общей процедуры-«операции»
++под названием @code{apply-generic}, которая применяет обобщённую операцию к некоторым
++аргументам.  @code{Apply-generic} ищет в таблице под именем операции и типами аргументов и
++применяет получающуюся процедуру, если она присутствует:@footnote{@code{Apply-generic}
++использует точечно-хвостовую нотацию, описанную в @ref{Exercise 2.20}, потому что разные
++обобщённые операции могут принимать разное число аргументов.  В @code{apply-generic} у
++@code{op} в качестве значения — первый аргумент @code{apply-generic}, а у @code{args} в
++качестве значения — список оставшихся аргументов.
+ 
+-@code{Apply-generic} also uses the primitive procedure @code{apply}, which
+-takes two arguments, a procedure and a list.  @code{Apply} applies the
+-procedure, using the elements in the list as arguments.  For example,
++@code{Apply-generic} также использует примитивную процедуру @code{apply}, которая принимает
++два аргумента — процедуру и список.  @code{Apply} применяет процедуру, используя элементы
++списка как аргументы.  Например,
+ 
+ @lisp
+ (apply + (list 1 2 3 4))
+ @end lisp
+ 
+ @noindent
+-returns 10.}
++возвращает 10.}
+ 
+ @lisp
+ (define (apply-generic op . args)
+@@ -11790,7 +11780,7 @@ returns 10.}
+ @end lisp
+ 
+ @noindent
+-Using @code{apply-generic}, we can define our generic selectors as follows:
++Используя @code{apply-generic}, мы можем определить наши обобщённые селекторы так:
+ 
+ @lisp
+ (define (real-part z) 
+@@ -11804,14 +11794,13 @@ Using @code{apply-generic}, we can define our generic selectors as follows:
+ @end lisp
+ 
+ @noindent
+-Observe that these do not change at all if a new representation is added to the
+-system.
++Заметьте, что они вообще не меняются, если в систему добавляется новое представление.
+ 
+-We can also extract from the table the constructors to be used by the programs
+-external to the packages in making complex numbers from real and imaginary
+-parts and from magnitudes and angles.  As in @ref{2.4.2}, we construct
+-rectangular numbers whenever we have real and imaginary parts, and polar
+-numbers whenever we have magnitudes and angles:
++Мы можем также извлечь из таблицы конструкторы, которые будут использоваться программами,
++внешними по отношению к пакетам, при создании комплексных чисел из действительных и мнимых
++частей и из модулей и углов.  Как и в @ref{2.4.2}, мы строим прямоугольные числа всякий
++раз, когда у нас есть действительная и мнимая части, и полярные числа всякий раз, когда у
++нас есть модули и углы:
+ 
+ @lisp
+ (define (make-from-real-imag x y)
+@@ -11826,8 +11815,8 @@ numbers whenever we have magnitudes and angles:
+ @end lisp
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.73}Exercise 2.73:} @ref{2.3.2} described a
+-program that performs symbolic differentiation:
++@strong{@anchor{Exercise 2.73}Exercise 2.73:} @ref{2.3.2} описал программу, которая
++выполняет символьное дифференцирование:
+ 
+ @lisp
+ (define (deriv exp var)
+@@ -11845,16 +11834,16 @@ program that performs symbolic differentiation:
+            (make-product 
+             (deriv (multiplier exp) var)
+             (multiplicand exp))))
+-        ⟨@var{more rules can be added here}⟩
++        ⟨@var{сюда можно добавить другие правила}⟩
+         (else (error "unknown expression type:
+                       DERIV" exp))))
+ @end lisp
+ 
+-We can regard this program as performing a dispatch on the type of the
+-expression to be differentiated.  In this situation the ``type tag'' of the
+-datum is the algebraic operator symbol (such as @code{+}) and the operation
+-being performed is @code{deriv}.  We can transform this program into
+-data-directed style by rewriting the basic derivative procedure as
++Мы можем рассматривать эту программу как выполняющую диспетчеризацию по типу выражения,
++подлежащего дифференцированию.  В этой ситуации «тег типа» данного — это символ
++алгебраического оператора (такой как @code{+}), а выполняемая операция — @code{deriv}.  Мы
++можем преобразовать эту программу в стиль, управляемый данными, переписав основную
++процедуру производной как
+ 
+ @lisp
+ (define (deriv exp var)
+@@ -11874,22 +11863,22 @@ data-directed style by rewriting the basic derivative procedure as
+ @enumerate a
+ 
+ @item
+-Explain what was done above.  Why can't we assimilate the predicates
+-@code{number?} and @code{variable?} into the data-directed dispatch?
++Объясните, что было сделано выше.  Почему мы не можем ассимилировать предикаты
++@code{number?} и @code{variable?} в диспетчеризацию, управляемую данными?
+ 
+ @item
+-Write the procedures for derivatives of sums and products, and the auxiliary
+-code required to install them in the table used by the program above.
++Напишите процедуры для производных сумм и произведений и вспомогательный код, требуемый,
++чтобы установить их в таблицу, используемую программой выше.
+ 
+ @item
+-Choose any additional differentiation rule that you like, such as the one for
+-exponents (@ref{Exercise 2.56}), and install it in this data-directed
+-system.
++Выберите любое дополнительное правило дифференцирования, которое вам нравится, такое как
++правило для степеней (@ref{Exercise 2.56}), и установите его в эту систему, управляемую
++данными.
+ 
+ @item
+-In this simple algebraic manipulator the type of an expression is the algebraic
+-operator that binds it together.  Suppose, however, we indexed the procedures
+-in the opposite way, so that the dispatch line in @code{deriv} looked like
++В этом простом алгебраическом манипуляторе тип выражения — это алгебраический оператор,
++связывающий его воедино.  Предположим, однако, что мы индексировали процедуры
++противоположным образом, так что строка диспетчеризации в @code{deriv} выглядела бы как
+ 
+ @lisp
+ ((get (operator exp) 'deriv) 
+@@ -11897,78 +11886,72 @@ in the opposite way, so that the dispatch line in @code{deriv} looked like
+ @end lisp
+ 
+ @noindent
+-What corresponding changes to the derivative system are required?
++Какие соответствующие изменения в системе производных требуются?
+ 
+ @end enumerate
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.74}Exercise 2.74:} Insatiable Enterprises, Inc., is
+-a highly decentralized conglomerate company consisting of a large number of
+-independent divisions located all over the world.  The company's computer
+-facilities have just been interconnected by means of a clever
+-network-interfacing scheme that makes the entire network appear to any user to
+-be a single computer.  Insatiable's president, in her first attempt to exploit
+-the ability of the network to extract administrative information from division
+-files, is dismayed to discover that, although all the division files have been
+-implemented as data structures in Scheme, the particular data structure used
+-varies from division to division.  A meeting of division managers is hastily
+-called to search for a strategy to integrate the files that will satisfy
+-headquarters' needs while preserving the existing autonomy of the divisions.
+-
+-Show how such a strategy can be implemented with data-directed programming.  As
+-an example, suppose that each division's personnel records consist of a single
+-file, which contains a set of records keyed on employees' names.  The structure
+-of the set varies from division to division.  Furthermore, each employee's
+-record is itself a set (structured differently from division to division) that
+-contains information keyed under identifiers such as @code{address} and
+-@code{salary}.  In particular:
++@strong{@anchor{Exercise 2.74}Exercise 2.74:} Insatiable Enterprises, Inc. — это
++сильно децентрализованный конгломерат, состоящий из большого числа независимых
++подразделений, расположенных по всему миру.  Компьютерные средства компании только что
++были соединены между собой посредством хитроумной схемы сетевого сопряжения, которая
++делает так, что вся сеть представляется любому пользователю единственным компьютером.
++Президент Insatiable, в своей первой попытке использовать способность сети извлекать
++административную информацию из файлов подразделений, обескуражена, обнаружив, что, хотя
++все файлы подразделений реализованы как структуры данных в Scheme, конкретная используемая
++структура данных варьируется от подразделения к подразделению.  Поспешно созывается
++собрание менеджеров подразделений, чтобы найти стратегию интеграции файлов, которая
++удовлетворит нужды штаб-квартиры, сохраняя при этом существующую автономию подразделений.
++
++Покажите, как такую стратегию можно реализовать с помощью программирования, управляемого
++данными.  В качестве примера предположим, что кадровые записи каждого подразделения состоят
++из единственного файла, который содержит множество записей с ключом по именам сотрудников.
++Структура множества варьируется от подразделения к подразделению.  Более того, запись
++каждого сотрудника сама является множеством (структурированным по-разному в разных
++подразделениях), которое содержит информацию с ключом по идентификаторам, таким как
++@code{address} и @code{salary}.  В частности:
+ 
+ @enumerate a
+ 
+ @item
+-Implement for headquarters a @code{get-record} procedure that retrieves a
+-specified employee's record from a specified personnel file.  The procedure
+-should be applicable to any division's file.  Explain how the individual
+-divisions' files should be structured.  In particular, what type information
+-must be supplied?
++Реализуйте для штаб-квартиры процедуру @code{get-record}, которая извлекает запись
++указанного сотрудника из указанного кадрового файла.  Процедура должна быть применима к
++файлу любого подразделения.  Объясните, как должны быть структурированы файлы отдельных
++подразделений.  В частности, какая информация о типе должна быть предоставлена?
+ 
+ @item
+-Implement for headquarters a @code{get-salary} procedure that returns the
+-salary information from a given employee's record from any division's personnel
+-file.  How should the record be structured in order to make this operation
+-work?
++Реализуйте для штаб-квартиры процедуру @code{get-salary}, которая возвращает информацию о
++зарплате из записи данного сотрудника из кадрового файла любого подразделения.  Как должна
++быть структурирована запись, чтобы эта операция работала?
+ 
+ @item
+-Implement for headquarters a @code{find-employee-record} procedure.  This
+-should search all the divisions' files for the record of a given employee and
+-return the record.  Assume that this procedure takes as arguments an employee's
+-name and a list of all the divisions' files.
++Реализуйте для штаб-квартиры процедуру @code{find-employee-record}.  Она должна искать в
++файлах всех подразделений запись данного сотрудника и возвращать запись.  Предположите,
++что эта процедура принимает как аргументы имя сотрудника и список файлов всех подразделений.
+ 
+ @item
+-When Insatiable takes over a new company, what changes must be made in order to
+-incorporate the new personnel information into the central system?
++Когда Insatiable поглощает новую компанию, какие изменения нужно внести, чтобы включить
++новую кадровую информацию в центральную систему?
+ 
+ @end enumerate
+ @end quotation
+ 
+-@subsubheading Message passing
++@subsubheading Передача сообщений
+ 
+-The key idea of data-directed programming is to handle generic operations in
+-programs by dealing explicitly with operation-and-type tables, such as the
+-table in @ref{Figure 2.22}.  The style of programming we used in 
+-@ref{2.4.2} organized the required dispatching on type by having each operation
+-take care of its own dispatching.  In effect, this decomposes the
+-operation-and-type table into rows, with each generic operation procedure
+-representing a row of the table.
++Ключевая идея программирования, управляемого данными, — обрабатывать обобщённые операции в
++программах, имея дело явно с таблицами операций и типов, такими как таблица на
++@ref{Figure 2.22}.  Стиль программирования, который мы использовали в @ref{2.4.2},
++организовывал требуемую диспетчеризацию по типу, заставляя каждую операцию заботиться о
++своей собственной диспетчеризации.  По сути, это разлагает таблицу операций и типов на
++строки, причём каждая обобщённая процедура-операция представляет строку таблицы.
+ 
+-An alternative implementation strategy is to decompose the table into columns
+-and, instead of using ``intelligent operations'' that dispatch on data types,
+-to work with ``intelligent data objects'' that dispatch on operation names.  We
+-can do this by arranging things so that a data object, such as a rectangular
+-number, is represented as a procedure that takes as input the required
+-operation name and performs the operation indicated.  In such a discipline,
+-@code{make-from-real-imag} could be written as
++Альтернативная стратегия реализации — разложить таблицу на столбцы и вместо использования
++«умных операций», которые диспетчеризуются по типам данных, работать с «умными объектами
++данных», которые диспетчеризуются по именам операций.  Мы можем сделать это, устроив всё
++так, чтобы объект данных, такой как прямоугольное число, был представлен как процедура,
++которая принимает в качестве входа требуемое имя операции и выполняет указанную операцию.
++В такой дисциплине @code{make-from-real-imag} можно было бы написать как
+ 
+ @lisp
+ (define (make-from-real-imag x y)
+@@ -11985,47 +11968,46 @@ operation name and performs the operation indicated.  In such a discipline,
+ @end lisp
+ 
+ @noindent
+-The corresponding @code{apply-generic} procedure, which applies a generic
+-operation to an argument, now simply feeds the operation's name to the data
+-object and lets the object do the work:@footnote{One limitation of this
+-organization is it permits only generic procedures of one argument.}
++Соответствующая процедура @code{apply-generic}, которая применяет обобщённую операцию к
++аргументу, теперь просто подаёт имя операции объекту данных и позволяет объекту сделать
++работу:@footnote{Одно ограничение этой организации в том, что она допускает только
++обобщённые процедуры одного аргумента.}
+ 
+ @lisp
+ (define (apply-generic op arg) (arg op))
+ @end lisp
+ 
+ @noindent
+-Note that the value returned by @code{make-from-real-imag} is a procedure---the
+-internal @code{dispatch} procedure.  This is the procedure that is invoked when
+-@code{apply-generic} requests an operation to be performed.
++Заметьте, что значение, возвращаемое @code{make-from-real-imag}, — это процедура,
++внутренняя процедура @code{dispatch}.  Это процедура, которая вызывается, когда
++@code{apply-generic} запрашивает выполнение операции.
+ 
+-This style of programming is called @newterm{message passing}.  The name comes
+-from the image that a data object is an entity that receives the requested
+-operation name as a ``message.''  We have already seen an example of message
+-passing in @ref{2.1.3}, where we saw how @code{cons}, @code{car}, and
+-@code{cdr} could be defined with no data objects but only procedures.  Here we
+-see that message passing is not a mathematical trick but a useful technique for
+-organizing systems with generic operations.  In the remainder of this chapter
+-we will continue to use data-directed programming, rather than message passing,
+-to discuss generic arithmetic operations.  In @ref{Chapter 3} we will return to
+-message passing, and we will see that it can be a powerful tool for structuring
+-simulation programs.
++Этот стиль программирования называется @newterm{передачей сообщений}.  Имя происходит из
++образа, что объект данных — это сущность, которая получает запрошенное имя операции как
++«сообщение».  Мы уже видели пример передачи сообщений в @ref{2.1.3}, где мы видели, как
++@code{cons}, @code{car} и @code{cdr} можно было определить без объектов данных, а только с
++процедурами.  Здесь мы видим, что передача сообщений — это не математический трюк, а
++полезный приём для организации систем с обобщёнными операциями.  В оставшейся части этой
++главы мы продолжим использовать программирование, управляемое данными, а не передачу
++сообщений, чтобы обсуждать обобщённые арифметические операции.  В @ref{Chapter 3} мы
++вернёмся к передаче сообщений и увидим, что она может быть мощным инструментом для
++структурирования программ моделирования.
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.75}Exercise 2.75:} Implement the constructor
+-@code{make-from-mag-ang} in mes@-sage-pass@-ing style.  This procedure should be
+-analogous to the @code{make-from-real-imag} procedure given above.
++@strong{@anchor{Exercise 2.75}Exercise 2.75:} Реализуйте конструктор @code{make-from-mag-ang}
++в стиле передачи сообщений.  Эта процедура должна быть аналогична процедуре
++@code{make-from-real-imag}, данной выше.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.76}Exercise 2.76:} As a large system with generic
+-operations evolves, new types of data objects or new operations may be needed.
+-For each of the three strategies---generic operations with explicit dispatch,
+-data-directed style, and message-passing-style---describe the changes that
+-must be made to a system in order to add new types or new operations.  Which
+-organization would be most appropriate for a system in which new types must
+-often be added?  Which would be most appropriate for a system in which new
+-operations must often be added?
++@strong{@anchor{Exercise 2.76}Exercise 2.76:} По мере того как большая система с
++обобщёнными операциями развивается, могут понадобиться новые типы объектов данных или
++новые операции.  Для каждой из трёх стратегий — обобщённые операции с явной
++диспетчеризацией, стиль, управляемый данными, и стиль передачи сообщений — опишите
++изменения, которые нужно внести в систему, чтобы добавить новые типы или новые операции.
++Какая организация была бы наиболее уместной для системы, в которую часто приходится
++добавлять новые типы?  Какая была бы наиболее уместной для системы, в которую часто
++приходится добавлять новые операции?
+ @end quotation
+ 
+ @node	2.5, Chapter 3, 2.4, Chapter 2

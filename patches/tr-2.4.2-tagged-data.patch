@@ -1,0 +1,245 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 9581b62..0d55b67 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -11328,36 +11328,34 @@ y = r sin A     A = arctan(y,x)
+ представлением Бена, так и с представлением Алиссы.
+ 
+ @node	2.4.2, 2.4.3, 2.4.1, 2.4
+-@subsection Tagged data
+-
+-One way to view data abstraction is as an application of the ``principle of
+-least commitment.''  In implementing the complex-number system in 
+-@ref{2.4.1}, we can use either Ben's rectangular representation or Alyssa's
+-polar representation.  The abstraction barrier formed by the selectors and
+-constructors permits us to defer to the last possible moment the choice of a
+-concrete representation for our data objects and thus retain maximum
+-flexibility in our system design.
+-
+-The principle of least commitment can be carried to even further extremes.  If
+-we desire, we can maintain the ambiguity of representation even @emph{after} we
+-have designed the selectors and constructors, and elect to use both Ben's
+-representation @emph{and} Alyssa's representation.  If both representations are
+-included in a single system, however, we will need some way to distinguish data
+-in polar form from data in rectangular form.  Otherwise, if we were asked, for
+-instance, to find the @code{magnitude} of the pair (3, 4), we wouldn't know
+-whether to answer 5 (interpreting the number in rectangular form) or 3
+-(interpreting the number in polar form).  A straightforward way to accomplish
+-this distinction is to include a @newterm{type tag}---the symbol
+-@code{rectangular} or @code{polar}---as part of each complex number.  Then
+-when we need to manipulate a complex number we can use the tag to decide which
+-selector to apply.
+-
+-In order to manipulate tagged data, we will assume that we have procedures
+-@code{type-tag} and @code{contents} that extract from a data object the tag and
+-the actual contents (the polar or rectangular coordinates, in the case of a
+-complex number).  We will also postulate a procedure @code{attach-tag} that
+-takes a tag and contents and produces a tagged data object.  A straightforward
+-way to implement this is to use ordinary list structure:
++@subsection Типизированные данные
++
++Один способ смотреть на абстракцию данных — это как на применение «принципа наименьших
++обязательств».  Реализуя систему комплексных чисел в @ref{2.4.1}, мы можем использовать
++либо прямоугольное представление Бена, либо полярное представление Алиссы.  Барьер
++абстракции, образованный селекторами и конструкторами, позволяет нам отложить до
++последнего возможного момента выбор конкретного представления для наших объектов данных и
++тем самым сохранить максимальную гибкость в проектировании системы.
++
++Принцип наименьших обязательств можно довести до ещё более крайних степеней.  Если мы
++желаем, мы можем сохранять неоднозначность представления даже @emph{после} того, как мы
++спроектировали селекторы и конструкторы, и предпочесть использовать @emph{и}
++представление Бена, @emph{и} представление Алиссы.  Если, однако, оба представления
++включены в одну систему, нам понадобится некоторый способ отличать данные в полярной форме
++от данных в прямоугольной форме.  Иначе, если бы нас попросили, например, найти
++@code{magnitude} пары (3, 4), мы не знали бы, отвечать ли 5 (интерпретируя число в
++прямоугольной форме) или 3 (интерпретируя число в полярной форме).  Прямолинейный способ
++достичь этого различения — включить @newterm{тег типа} (символ @code{rectangular} или
++@code{polar}) как часть каждого комплексного числа.  Тогда, когда нам нужно
++манипулировать комплексным числом, мы можем использовать тег, чтобы решить, какой селектор
++применить.
++
++Чтобы манипулировать типизированными данными, мы предположим, что у нас есть процедуры
++@code{type-tag} и @code{contents}, которые извлекают из объекта данных тег и фактическое
++содержимое (полярные или прямоугольные координаты в случае комплексного числа).  Мы также
++постулируем процедуру @code{attach-tag}, которая принимает тег и содержимое и производит
++типизированный объект данных.  Прямолинейный способ реализовать это — использовать обычную
++списочную структуру:
+ 
+ @lisp
+ (define (attach-tag type-tag contents)
+@@ -11377,8 +11375,8 @@ way to implement this is to use ordinary list structure:
+ @end lisp
+ 
+ @noindent
+-Using these procedures, we can define predicates @code{rectangular?}  and
+-@code{polar?}, which recognize rectangular and polar numbers, respectively:
++Используя эти процедуры, мы можем определить предикаты @code{rectangular?} и
++@code{polar?}, которые распознают прямоугольные и полярные числа соответственно:
+ 
+ @lisp
+ (define (rectangular? z)
+@@ -11389,15 +11387,14 @@ Using these procedures, we can define predicates @code{rectangular?}  and
+ @end lisp
+ 
+ @noindent
+-With type tags, Ben and Alyssa can now modify their code so that their two
+-different representations can coexist in the same system.  Whenever Ben
+-constructs a complex number, he tags it as rectangular.  Whenever Alyssa
+-constructs a complex number, she tags it as polar.  In addition, Ben and Alyssa
+-must make sure that the names of their procedures do not conflict.  One way to
+-do this is for Ben to append the suffix @code{rectangular} to the name of each
+-of his representation procedures and for Alyssa to append @code{polar} to the
+-names of hers.  Here is Ben's revised rectangular representation from 
+-@ref{2.4.1}:
++С тегами типа Бен и Алисса теперь могут изменить свой код так, чтобы их два различных
++представления могли сосуществовать в одной системе.  Всякий раз, когда Бен строит
++комплексное число, он помечает его как прямоугольное.  Всякий раз, когда Алисса строит
++комплексное число, она помечает его как полярное.  Кроме того, Бен и Алисса должны
++убедиться, что имена их процедур не конфликтуют.  Один способ сделать это — чтобы Бен
++добавлял суффикс @code{rectangular} к имени каждой из своих процедур представления, а
++Алисса добавляла @code{polar} к именам своих.  Вот пересмотренное прямоугольное
++представление Бена из @ref{2.4.1}:
+ 
+ @lisp
+ (define (real-part-rectangular z) (car z))
+@@ -11421,7 +11418,7 @@ names of hers.  Here is Ben's revised rectangular representation from
+ @end lisp
+ 
+ @noindent
+-and here is Alyssa's revised polar representation:
++а вот пересмотренное полярное представление Алиссы:
+ 
+ @lisp
+ (define (real-part-polar z)
+@@ -11446,13 +11443,12 @@ and here is Alyssa's revised polar representation:
+ @end lisp
+ 
+ @noindent
+-Each generic selector is implemented as a procedure that checks the tag of its
+-argument and calls the appropriate procedure for handling data of that type.
+-For example, to obtain the real part of a complex number, @code{real-part}
+-examines the tag to determine whether to use Ben's @code{real-part-rectangular}
+-or Alyssa's @code{real-part-polar}.  In either case, we use @code{contents} to
+-extract the bare, untagged datum and send this to the rectangular or polar
+-procedure as required:
++Каждый обобщённый селектор реализуется как процедура, которая проверяет тег своего
++аргумента и вызывает подходящую процедуру для обработки данных этого типа.  Например, чтобы
++получить действительную часть комплексного числа, @code{real-part} исследует тег, чтобы
++определить, использовать ли @code{real-part-rectangular} Бена или @code{real-part-polar}
++Алиссы.  В любом случае мы используем @code{contents}, чтобы извлечь голое, нетипизированное
++данное, и посылаем его прямоугольной или полярной процедуре по необходимости:
+ 
+ @lisp
+ (define (real-part z)
+@@ -11489,11 +11485,10 @@ procedure as required:
+ @end lisp
+ 
+ @noindent
+-To implement the complex-number arithmetic operations, we can use the same
+-procedures @code{add-complex}, @code{sub-complex}, @code{mul-complex}, and
+-@code{div-complex} from @ref{2.4.1}, because the selectors they call
+-are generic, and so will work with either representation.  For example, the
+-procedure @code{add-complex} is still
++Чтобы реализовать арифметические операции над комплексными числами, мы можем использовать
++те же процедуры @code{add-complex}, @code{sub-complex}, @code{mul-complex} и
++@code{div-complex} из @ref{2.4.1}, потому что вызываемые ими селекторы обобщённые и поэтому
++будут работать с любым представлением.  Например, процедура @code{add-complex} по-прежнему
+ 
+ @lisp
+ (define (add-complex z1 z2)
+@@ -11503,10 +11498,10 @@ procedure @code{add-complex} is still
+ @end lisp
+ 
+ @noindent
+-Finally, we must choose whether to construct complex numbers using Ben's
+-representation or Alyssa's representation.  One reasonable choice is to
+-construct rectangular numbers whenever we have real and imaginary parts and to
+-construct polar numbers whenever we have magnitudes and angles:
++Наконец, мы должны выбрать, строить ли комплексные числа с использованием представления
++Бена или представления Алиссы.  Один разумный выбор — строить прямоугольные числа всякий
++раз, когда у нас есть действительная и мнимая части, и строить полярные числа всякий раз,
++когда у нас есть модули и углы:
+ 
+ @lisp
+ (define (make-from-real-imag x y)
+@@ -11517,56 +11512,54 @@ construct polar numbers whenever we have magnitudes and angles:
+ @end lisp
+ 
+ @noindent
+-The resulting complex-number system has the structure shown in @ref{Figure 2.21}.  
+-The system has been decomposed into three relatively independent parts:
+-the complex-number-arithmetic operations, Alyssa's polar implementation, and
+-Ben's rectangular implementation.  The polar and rectangular implementations
+-could have been written by Ben and Alyssa working separately, and both of these
+-can be used as underlying representations by a third programmer implementing
+-the complex-arithmetic procedures in terms of the abstract constructor/selector
+-interface.
++Получающаяся система комплексных чисел имеет структуру, показанную на @ref{Figure 2.21}.
++Система разложена на три относительно независимые части: операции комплексной арифметики,
++полярную реализацию Алиссы и прямоугольную реализацию Бена.  Полярная и прямоугольная
++реализации могли бы быть написаны Беном и Алиссой, работающими по отдельности, и обе они
++могут использоваться как лежащие в основе представления третьим программистом,
++реализующим процедуры комплексной арифметики в терминах абстрактного интерфейса
++конструкторов и селекторов.
+ 
+ @float
+ @anchor{Figure 2.21}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.21:} Structure of the generic complex-arithmetic system.
++@strong{Figure 2.21:} Структура обобщённой системы комплексной арифметики.
+ 
+ @example
+     +-------------------------------------------------+
+ ----| add-complex sub-complex mul-complex div-complex |----
+     +-------------------------------------------------+
+-                Complex arithmetic package
++                Пакет комплексной арифметики
+                  +-----------------------+
+                  | real-part   imag-part |
+ -----------------|                       |------------------
+                  | magnitude   angle     |
+                  +-----------+-----------+
+-           Rectangular       |          Polar
+-          representation     |     representation
++        Прямоугольное        |          Полярное
++        представление        |       представление
+ -----------------------------+------------------------------
+-       List structure and primitive machine arithmetic
++      Списочная структура и примитивная машинная арифметика
+ @end example
+ @end quotation
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.21a,147mm,,,.std.svg}
+-@caption{@strong{Figure 2.21:} Structure of the generic complex-arithmetic system.}
++@caption{@strong{Figure 2.21:} Структура обобщённой системы комплексной арифметики.}
+ @end iftex
+ @end float
+ 
+-Since each data object is tagged with its type, the selectors operate on the
+-data in a generic manner.  That is, each selector is defined to have a behavior
+-that depends upon the particular type of data it is applied to.  Notice the
+-general mechanism for interfacing the separate representations: Within a given
+-representation implementation (say, Alyssa's polar package) a complex number is
+-an untyped pair (magnitude, angle).  When a generic selector operates on a
+-number of @code{polar} type, it strips off the tag and passes the contents on
+-to Alyssa's code.  Conversely, when Alyssa constructs a number for general use,
+-she tags it with a type so that it can be appropriately recognized by the
+-higher-level procedures.  This discipline of stripping off and attaching tags
+-as data objects are passed from level to level can be an important
+-organizational strategy, as we shall see in @ref{2.5}.
++Поскольку каждый объект данных помечен своим типом, селекторы оперируют данными обобщённым
++образом.  То есть каждый селектор определён так, чтобы иметь поведение, зависящее от
++конкретного типа данных, к которому он применяется.  Заметьте общий механизм для
++сопряжения отдельных представлений: внутри реализации данного представления (скажем,
++полярного пакета Алиссы) комплексное число — это нетипизированная пара (модуль, угол).
++Когда обобщённый селектор оперирует числом типа @code{polar}, он снимает тег и передаёт
++содержимое коду Алиссы.  И наоборот, когда Алисса строит число для общего использования,
++она помечает его типом, чтобы оно могло быть надлежащим образом распознано процедурами
++более высокого уровня.  Эта дисциплина снятия и прикрепления тегов по мере того, как
++объекты данных передаются с уровня на уровень, может быть важной организационной
++стратегией, как мы увидим в @ref{2.5}.
+ 
+ @node	2.4.3, 2.5, 2.3, 2.4
+ @subsection Data-Directed Programming and Additivity

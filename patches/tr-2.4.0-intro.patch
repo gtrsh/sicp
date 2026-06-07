@@ -1,0 +1,199 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index c271480..7d3440d 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -10976,115 +10976,108 @@ Sha boom
+ @end quotation
+ 
+ @node	2.4, 2.5, 2.3, Chapter 2
+-@section Multiple Representations for Abstract Data
+-
+-We have introduced data abstraction, a methodology for structuring systems in
+-such a way that much of a program can be specified independent of the choices
+-involved in implementing the data objects that the program manipulates.  For
+-example, we saw in @ref{2.1.1} how to separate the task of designing a
+-program that uses rational numbers from the task of implementing rational
+-numbers in terms of the computer language's primitive mechanisms for
+-constructing compound data.  The key idea was to erect an abstraction barrier
+--- in this case, the selectors and constructors for rational numbers
+-(@code{make-rat}, @code{numer}, @code{denom})---that isolates the way rational
+-numbers are used from their underlying representation in terms of list
+-structure.  A similar abstraction barrier isolates the details of the
+-procedures that perform rational arithmetic (@code{add-rat}, @code{sub-rat},
+-@code{mul-rat}, and @code{div-rat}) from the ``higher-level'' procedures that
+-use rational numbers.  The resulting program has the structure shown in
+-@ref{Figure 2.1}.
+-
+-These data-abstraction barriers are powerful tools for controlling complexity.
+-By isolating the underlying representations of data objects, we can divide the
+-task of designing a large program into smaller tasks that can be performed
+-separately.  But this kind of data abstraction is not yet powerful enough,
+-because it may not always make sense to speak of ``the underlying
+-representation'' for a data object.
+-
+-For one thing, there might be more than one useful representation for a data
+-object, and we might like to design systems that can deal with multiple
+-representations.  To take a simple example, complex numbers may be represented
+-in two almost equivalent ways: in rectangular form (real and imaginary parts)
+-and in polar form (magnitude and angle).  Sometimes rectangular form is more
+-appropriate and sometimes polar form is more appropriate.  Indeed, it is
+-perfectly plausible to imagine a system in which complex numbers are
+-represented in both ways, and in which the procedures for manipulating complex
+-numbers work with either representation.
+-
+-More importantly, programming systems are often designed by many people working
+-over extended periods of time, subject to requirements that change over time.
+-In such an environment, it is simply not possible for everyone to agree in
+-advance on choices of data representation.  So in addition to the
+-data-abstraction barriers that isolate representation from use, we need
+-abstraction barriers that isolate different design choices from each other and
+-permit different choices to coexist in a single program.  Furthermore, since
+-large programs are often created by combining pre-existing modules that were
+-designed in isolation, we need conventions that permit programmers to
+-incorporate modules into larger systems @newterm{additively}, that is, without
+-having to redesign or reimplement these modules.
+-
+-In this section, we will learn how to cope with data that may be represented in
+-different ways by different parts of a program.  This requires constructing
+-@newterm{generic procedures}---procedures that can operate on data that may be
+-represented in more than one way.  Our main technique for building generic
+-procedures will be to work in terms of data objects that have @newterm{type tags}, 
+-that is, data objects that include explicit information about how they
+-are to be processed.  We will also discuss @newterm{data-directed} programming,
+-a powerful and convenient implementation strategy for additively assembling
+-systems with generic operations.
+-
+-We begin with the simple complex-number example. We will see how type tags and
+-data-directed style enable us to design separate rectangular and polar
+-representations for complex numbers while maintaining the notion of an abstract
+-``complex-number'' data object.  We will accomplish this by defining arithmetic
+-procedures for complex numbers (@code{add-complex}, @code{sub-complex},
+-@code{mul-complex}, and @code{div-complex}) in terms of generic selectors that
+-access parts of a complex number independent of how the number is represented.
+-The resulting complex-number system, as shown in @ref{Figure 2.19}, contains
+-two different kinds of abstraction barriers.  The ``horizontal'' abstraction
+-barriers play the same role as the ones in @ref{Figure 2.1}.  They isolate
+-``higher-level'' operations from ``lower-level'' rep@-re@-sen@-ta@-tions.  In addition,
+-there is a ``vertical'' barrier that gives us the ability to separately design
+-and install alternative representations.
++@section Множественные представления для абстрактных данных
++
++Мы ввели абстракцию данных — методологию структурирования систем таким образом, чтобы
++бо́льшую часть программы можно было задать независимо от выборов, связанных с реализацией
++объектов данных, которыми манипулирует программа.  Например, мы видели в @ref{2.1.1}, как
++отделить задачу проектирования программы, использующей рациональные числа, от задачи
++реализации рациональных чисел в терминах примитивных механизмов компьютерного языка для
++построения составных данных.  Ключевая идея состояла в том, чтобы возвести барьер
++абстракции — в данном случае селекторы и конструкторы для рациональных чисел
++(@code{make-rat}, @code{numer}, @code{denom}) — который изолирует то, как используются
++рациональные числа, от их лежащего в основе представления в терминах списочной структуры.
++Похожий барьер абстракции изолирует подробности процедур, выполняющих рациональную
++арифметику (@code{add-rat}, @code{sub-rat}, @code{mul-rat} и @code{div-rat}), от процедур
++«более высокого уровня», использующих рациональные числа.  Получающаяся программа имеет
++структуру, показанную на @ref{Figure 2.1}.
++
++Эти барьеры абстракции данных — мощные инструменты для управления сложностью.  Изолируя
++лежащие в основе представления объектов данных, мы можем разделить задачу проектирования
++большой программы на меньшие задачи, которые можно выполнять отдельно.  Но такого рода
++абстракция данных пока недостаточно мощна, потому что не всегда может иметь смысл говорить
++о «лежащем в основе представлении» объекта данных.
++
++Во-первых, может быть более одного полезного представления объекта данных, и нам, возможно,
++захочется проектировать системы, которые могут иметь дело с множественными
++представлениями.  Возьмём простой пример: комплексные числа могут быть представлены двумя
++почти эквивалентными способами: в прямоугольной форме (действительная и мнимая части) и в
++полярной форме (модуль и угол).  Иногда более уместна прямоугольная форма, а иногда более
++уместна полярная форма.  Действительно, вполне правдоподобно вообразить систему, в которой
++комплексные числа представлены обоими способами и в которой процедуры для манипулирования
++комплексными числами работают с любым представлением.
++
++Что важнее, программные системы часто проектируются многими людьми, работающими в течение
++продолжительных периодов времени, при требованиях, которые меняются со временем.  В такой
++среде просто невозможно, чтобы все заранее договорились о выборах представления данных.
++Поэтому в дополнение к барьерам абстракции данных, которые изолируют представление от
++использования, нам нужны барьеры абстракции, которые изолируют различные проектные выборы
++друг от друга и позволяют различным выборам сосуществовать в одной программе.  Более того,
++поскольку большие программы часто создаются комбинированием заранее существующих модулей,
++спроектированных по отдельности, нам нужны соглашения, которые позволяют программистам
++включать модули в бо́льшие системы @newterm{аддитивно}, то есть без необходимости
++перепроектировать или перереализовывать эти модули.
++
++В этом разделе мы научимся справляться с данными, которые могут быть представлены разными
++способами разными частями программы.  Это требует построения @newterm{обобщённых процедур}
++— процедур, которые могут оперировать данными, которые могут быть представлены более чем
++одним способом.  Наш основной приём построения обобщённых процедур будет состоять в том,
++чтобы работать в терминах объектов данных, у которых есть @newterm{теги типа}, то есть
++объектов данных, которые включают явную информацию о том, как их следует обрабатывать.  Мы
++также обсудим программирование, @newterm{управляемое данными}, — мощную и удобную стратегию
++реализации для аддитивной сборки систем с обобщёнными операциями.
++
++Мы начинаем с простого примера комплексных чисел.  Мы увидим, как теги типа и стиль,
++управляемый данными, позволяют нам проектировать отдельные прямоугольное и полярное
++представления для комплексных чисел, сохраняя при этом понятие абстрактного объекта данных
++«комплексное число».  Мы достигнем этого, определив арифметические процедуры для
++комплексных чисел (@code{add-complex}, @code{sub-complex}, @code{mul-complex} и
++@code{div-complex}) в терминах обобщённых селекторов, которые обращаются к частям
++комплексного числа независимо от того, как число представлено.  Получающаяся система
++комплексных чисел, как показано на @ref{Figure 2.19}, содержит два различных вида барьеров
++абстракции.  «Горизонтальные» барьеры абстракции играют ту же роль, что и на
++@ref{Figure 2.1}.  Они изолируют операции «более высокого уровня» от представлений «более
++низкого уровня».  Кроме того, есть «вертикальный» барьер, который даёт нам возможность
++отдельно проектировать и устанавливать альтернативные представления.
+ 
+ @float
+ @anchor{Figure 2.19}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.19:} Data-abstraction barriers in the complex-number system.
++@strong{Figure 2.19:} Барьеры абстракции данных в системе комплексных чисел.
+ 
+ @example
+-           Programs that use complex numbers
++       Программы, использующие комплексные числа
+   +-------------------------------------------------+
+ --| add-complex sub-complex mul-complex div-complex |--
+   +-------------------------------------------------+
+-              Complex arithmetic package
++              Пакет комплексной арифметики
+ ---------------------------+---------------------------
+-          Rectangular      |         Polar
+-        representation     |     representation
++       Прямоугольное       |         Полярное
++       представление       |       представление
+ ---------------------------+---------------------------
+-    List structure and primitive machine arithmetic
++   Списочная структура и примитивная машинная арифметика
+ @end example
+ @end quotation
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.19a,147mm,,,.std.svg}
+-@caption{@strong{Figure 2.19:} Data-abstraction barriers in the complex-number system.}
++@caption{@strong{Figure 2.19:} Барьеры абстракции данных в системе комплексных чисел.}
+ @end iftex
+ @end float
+ 
+ @noindent
+-In @ref{2.5} we will show how to use type tags and data-directed style
+-to develop a generic arithmetic package.  This provides procedures (@code{add},
+-@code{mul}, and so on) that can be used to manipulate all sorts of ``numbers''
+-and can be easily extended when a new kind of number is needed.  In 
+-@ref{2.5.3}, we'll show how to use generic arithmetic in a system that performs
+-symbolic algebra.
++В @ref{2.5} мы покажем, как использовать теги типа и стиль, управляемый данными, чтобы
++разработать пакет обобщённой арифметики.  Он предоставляет процедуры (@code{add},
++@code{mul} и так далее), которые можно использовать для манипулирования всевозможными
++«числами» и которые можно легко расширить, когда понадобится новый вид числа.  В
++@ref{2.5.3} мы покажем, как использовать обобщённую арифметику в системе, выполняющей
++символьную алгебру.
+ 
+ @menu
+-* 2.4.1::            Representations for Complex Numbers
+-* 2.4.2::            Tagged data
+-* 2.4.3::            Data-Directed Programming and Additivity
++* 2.4.1::            Представления для комплексных чисел
++* 2.4.2::            Типизированные данные
++* 2.4.3::            Программирование, управляемое данными, и аддитивность
+ @end menu
+ 
+ @node	2.4.1, 2.4.2, 2.4, 2.4
