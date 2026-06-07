@@ -13580,125 +13580,115 @@ P_3 : 13x + 5
 вычислять @abbr{GCD} многочленов.}
 
 @node    Chapter 3, 3.1, 2.5, Top
-@chapter Modularity, Objects, and State
+@chapter Модульность, объекты и состояние
 
 @quotation
 Mεταβάλλον ὰναπαύεται@*
-(Even while it changes, it stands still.)@*
----Heraclitus
+(Изменяясь, оно покоится.)@*
+---Гераклит
 
 Plus @,{c}a change, plus c'est la m@^{e}me chose.@*
----Alphonse Karr
+---Альфонс Карр
 @end quotation
 
 @noindent
-The preceding chapters introduced the basic elements from which programs are
-made.  We saw how primitive procedures and primitive data are combined to
-construct compound entities, and we learned that abstraction is vital in
-helping us to cope with the complexity of large systems.  But these tools are
-not sufficient for designing programs.  Effective program synthesis also
-requires organizational principles that can guide us in formulating the overall
-design of a program.  In particular, we need strategies to help us structure
-large systems so that they will be @newterm{modular}, that is, so that they can
-be divided ``naturally'' into coherent parts that can be separately developed
-and maintained.
+Предыдущие главы ввели основные элементы, из которых составляются программы.  Мы видели,
+как примитивные процедуры и примитивные данные комбинируются, чтобы строить составные
+сущности, и мы узнали, что абстракция жизненно важна, помогая нам справляться со
+сложностью больших систем.  Но этих инструментов недостаточно для проектирования программ.
+Эффективный синтез программ также требует организационных принципов, которые могут
+направлять нас в формулировании общего проекта программы.  В частности, нам нужны стратегии,
+которые помогут нам структурировать большие системы так, чтобы они были @newterm{модульными},
+то есть чтобы их можно было «естественно» разделить на связные части, которые можно
+разрабатывать и сопровождать по отдельности.
 
-One powerful design strategy, which is particularly appropriate to the
-construction of programs for modeling physical systems, is to base the
-structure of our programs on the structure of the system being modeled.  For
-each object in the system, we construct a corresponding computational object.
-For each system action, we define a symbolic operation in our computational
-model.  Our hope in using this strategy is that extending the model to
-accommodate new objects or new actions will require no strategic changes to the
-program, only the addition of the new symbolic analogs of those objects or
-actions.  If we have been successful in our system organization, then to add a
-new feature or debug an old one we will have to work on only a localized part
-of the system.
+Одна мощная стратегия проектирования, которая особенно уместна для построения программ,
+моделирующих физические системы, — это основывать структуру наших программ на структуре
+моделируемой системы.  Для каждого объекта в системе мы строим соответствующий
+вычислительный объект.  Для каждого действия системы мы определяем символьную операцию в
+нашей вычислительной модели.  Наша надежда при использовании этой стратегии в том, что
+расширение модели для вмещения новых объектов или новых действий не потребует стратегических
+изменений в программе, только добавления новых символьных аналогов этих объектов или
+действий.  Если мы преуспели в организации нашей системы, то для добавления новой
+возможности или отладки старой нам придётся работать лишь над локализованной частью системы.
 
-To a large extent, then, the way we organize a large program is dictated by our
-perception of the system to be modeled.  In this chapter we will investigate
-two prominent organizational strategies arising from two rather different
-``world views'' of the structure of systems.  The first organizational strategy
-concentrates on @newterm{objects}, viewing a large system as a collection of
-distinct objects whose behaviors may change over time.  An alternative
-organizational strategy concentrates on the @newterm{streams} of information
-that flow in the system, much as an electrical engineer views a
-signal-processing system.
+Таким образом, в значительной мере способ, которым мы организуем большую программу,
+диктуется нашим восприятием моделируемой системы.  В этой главе мы исследуем две видные
+организационные стратегии, возникающие из двух довольно различных «мировоззрений» на
+структуру систем.  Первая организационная стратегия сосредоточивается на
+@newterm{объектах}, рассматривая большую систему как совокупность отдельных объектов, чьи
+поведения могут меняться со временем.  Альтернативная организационная стратегия
+сосредоточивается на @newterm{потоках} информации, которые текут в системе, во многом так
+же, как инженер-электрик рассматривает систему обработки сигналов.
 
-Both the object-based approach and the stream-processing approach raise
-significant linguistic issues in programming.  With objects, we must be
-concerned with how a computational object can change and yet maintain its
-identity.  This will force us to abandon our old substitution model of
-computation (@ref{1.1.5}) in favor of a more mechanistic but less
-theoretically tractable @newterm{environment model} of computation.  The
-difficulties of dealing with objects, change, and identity are a fundamental
-consequence of the need to grapple with time in our computational models.
-These difficulties become even greater when we allow the possibility of
-concurrent execution of programs.  The stream approach can be most fully
-exploited when we decouple simulated time in our model from the order of the
-events that take place in the computer during evaluation.  We will accomplish
-this using a technique known as @newterm{delayed evaluation}.
+И объектно-ориентированный подход, и подход обработки потоков поднимают значительные
+языковые вопросы в программировании.  С объектами мы должны заботиться о том, как
+вычислительный объект может меняться и при этом сохранять свою идентичность.  Это заставит
+нас отказаться от нашей старой подстановочной модели вычислений (@ref{1.1.5}) в пользу более
+механистической, но менее теоретически удобной @newterm{модели вычислений с окружениями}.
+Трудности работы с объектами, изменением и идентичностью — фундаментальное следствие
+необходимости бороться со временем в наших вычислительных моделях.  Эти трудности становятся
+ещё больше, когда мы допускаем возможность параллельного исполнения программ.  Подход с
+потоками можно использовать наиболее полно, когда мы развязываем смоделированное время в
+нашей модели с порядком событий, происходящих в компьютере во время вычисления.  Мы достигнем
+этого, используя приём, известный как @newterm{отложенное вычисление}.
 
 @menu
-* 3.1::              Assignment and Local State
-* 3.2::              The Environment Model of Evaluation
-* 3.3::              Modeling with Mutable Data
-* 3.4::              Concurrency: Time Is of the Essence
-* 3.5::              Streams
+* 3.1::              Присваивание и локальное состояние
+* 3.2::              Модель вычислений с окружениями
+* 3.3::              Моделирование с изменяемыми данными
+* 3.4::              Параллелизм: время — это сущность
+* 3.5::              Потоки
 @end menu
 
 @node	3.1, 3.2, Chapter 3, Chapter 3
-@section Assignment and Local State
+@section Присваивание и локальное состояние
 
-We ordinarily view the world as populated by independent objects, each of which
-has a state that changes over time.  An object is said to ``have state'' if its
-behavior is influenced by its history.  A bank account, for example, has state
-in that the answer to the question ``Can I withdraw $100?''  depends upon the
-history of deposit and withdrawal transactions.  We can characterize an
-object's state by one or more @newterm{state variables}, which among them
-maintain enough information about history to determine the object's current
-behavior.  In a simple banking system, we could characterize the state of an
-account by a current balance rather than by remembering the entire history of
-account transactions.
+Мы обычно рассматриваем мир как населённый независимыми объектами, каждый из которых имеет
+состояние, меняющееся со временем.  Об объекте говорят, что он «обладает состоянием», если
+его поведение зависит от его истории.  Банковский счёт, например, обладает состоянием в том
+смысле, что ответ на вопрос «Могу ли я снять 100 долларов?» зависит от истории транзакций
+вкладов и снятий.  Мы можем охарактеризовать состояние объекта одной или несколькими
+@newterm{переменными состояния}, которые в совокупности хранят достаточно информации об
+истории, чтобы определить текущее поведение объекта.  В простой банковской системе мы могли
+бы охарактеризовать состояние счёта текущим балансом, а не запоминанием всей истории
+транзакций по счёту.
 
-In a system composed of many objects, the objects are rarely completely
-independent.  Each may influence the states of others through interactions,
-which serve to couple the state variables of one object to those of other
-objects.  Indeed, the view that a system is composed of separate objects is
-most useful when the state variables of the system can be grouped into closely
-coupled subsystems that are only loosely coupled to other subsystems.
+В системе, составленной из многих объектов, объекты редко полностью независимы.  Каждый может
+влиять на состояния других через взаимодействия, которые служат для связывания переменных
+состояния одного объекта с переменными других объектов.  В самом деле, взгляд, что система
+составлена из отдельных объектов, наиболее полезен, когда переменные состояния системы можно
+сгруппировать в тесно связанные подсистемы, которые лишь слабо связаны с другими подсистемами.
 
-This view of a system can be a powerful framework for organizing computational
-models of the system.  For such a model to be modular, it should be decomposed
-into computational objects that model the actual objects in the system.  Each
-computational object must have its own @newterm{local state variables}
-describing the actual object's state.  Since the states of objects in the
-system being modeled change over time, the state variables of the corresponding
-computational objects must also change.  If we choose to model the flow of time
-in the system by the elapsed time in the computer, then we must have a way to
-construct computational objects whose behaviors change as our programs run.  In
-particular, if we wish to model state variables by ordinary symbolic names in
-the programming language, then the language must provide an @newterm{assignment operator} 
-to enable us to change the value associated with a name.
+Этот взгляд на систему может быть мощным каркасом для организации вычислительных моделей
+системы.  Чтобы такая модель была модульной, она должна быть разложена на вычислительные
+объекты, которые моделируют действительные объекты в системе.  Каждый вычислительный объект
+должен иметь свои собственные @newterm{локальные переменные состояния}, описывающие состояние
+действительного объекта.  Поскольку состояния объектов в моделируемой системе меняются со
+временем, переменные состояния соответствующих вычислительных объектов также должны меняться.
+Если мы выбираем моделировать течение времени в системе прошедшим временем в компьютере, то у
+нас должен быть способ строить вычислительные объекты, чьи поведения меняются по мере того, как
+исполняются наши программы.  В частности, если мы желаем моделировать переменные состояния
+обычными символьными именами в языке программирования, то язык должен предоставлять
+@newterm{оператор присваивания}, чтобы позволить нам менять значение, связанное с именем.
 
 @menu
-* 3.1.1::            Local State Variables
-* 3.1.2::            The Benefits of Introducing Assignment
-* 3.1.3::            The Costs of Introducing Assignment
+* 3.1.1::            Локальные переменные состояния
+* 3.1.2::            Преимущества введения присваивания
+* 3.1.3::            Издержки введения присваивания
 @end menu
 
 @node	3.1.1, 3.1.2, 3.1, 3.1
-@subsection Local State Variables
+@subsection Локальные переменные состояния
 
-To illustrate what we mean by having a computational object with time-varying
-state, let us model the situation of withdrawing money from a bank account.  We
-will do this using a procedure @code{withdraw}, which takes as argument an
-@code{amount} to be withdrawn.  If there is enough money in the account to
-accommodate the withdrawal, then @code{withdraw} should return the balance
-remaining after the withdrawal.  Otherwise, @code{withdraw} should return the
-message @emph{Insufficient funds}. For example, if we begin with $100 in the
-account, we should obtain the following sequence of responses using
-@code{withdraw}:
+Чтобы проиллюстрировать, что мы имеем в виду под наличием вычислительного объекта с
+изменяющимся во времени состоянием, давайте смоделируем ситуацию снятия денег с банковского
+счёта.  Мы сделаем это, используя процедуру @code{withdraw}, которая принимает в качестве
+аргумента @code{amount} — сумму, подлежащую снятию.  Если на счёте достаточно денег, чтобы
+вместить снятие, то @code{withdraw} должна вернуть баланс, оставшийся после снятия.  Иначе
+@code{withdraw} должна вернуть сообщение @emph{Insufficient funds} («Недостаточно средств»).
+Например, если мы начинаем со 100 долларов на счёте, мы должны получить следующую
+последовательность ответов, используя @code{withdraw}:
 
 @lisp
 (withdraw 25)
@@ -13715,27 +13705,24 @@ account, we should obtain the following sequence of responses using
 @end lisp
 
 @noindent
-Observe that the expression @code{(withdraw 25)}, evaluated twice, yields
-different values.  This is a new kind of behavior for a procedure.  Until now,
-all our procedures could be viewed as specifications for computing mathematical
-functions.  A call to a procedure computed the value of the function applied to
-the given arguments, and two calls to the same procedure with the same
-arguments always produced the same result.@footnote{Actually, this is not quite
-true.  One exception was the random-number generator in @ref{1.2.6}.
-Another exception involved the operation/type tables we introduced in 
-@ref{2.4.3}, where the values of two calls to @code{get} with the same
-arguments depended on intervening calls to @code{put}.  On the other hand,
-until we introduce assignment, we have no way to create such procedures
-ourselves.}
+Заметьте, что выражение @code{(withdraw 25)}, вычисленное дважды, даёт разные значения.  Это
+новый вид поведения для процедуры.  До сих пор все наши процедуры можно было рассматривать как
+спецификации для вычисления математических функций.  Вызов процедуры вычислял значение функции,
+применённой к данным аргументам, и два вызова одной и той же процедуры с одними и теми же
+аргументами всегда производили один и тот же результат.@footnote{На самом деле это не совсем
+так.  Одним исключением был генератор случайных чисел в @ref{1.2.6}.  Другое исключение
+касалось таблиц операций и типов, которые мы ввели в @ref{2.4.3}, где значения двух вызовов
+@code{get} с одними и теми же аргументами зависели от промежуточных вызовов @code{put}.  С
+другой стороны, пока мы не вводим присваивание, у нас нет способа создавать такие процедуры
+самим.}
 
-To implement @code{withdraw}, we can use a variable @code{balance} to indicate
-the balance of money in the account and define @code{withdraw} as a procedure
-that accesses @code{balance}.  The @code{withdraw} procedure checks to see if
-@code{balance} is at least as large as the requested @code{amount}.  If so,
-@code{withdraw} decrements @code{balance} by @code{amount} and returns the new
-value of @code{balance}.  Otherwise, @code{withdraw} returns the
-@emph{Insufficient funds} message.  Here are the definitions of @code{balance}
-and @code{withdraw}:
+Чтобы реализовать @code{withdraw}, мы можем использовать переменную @code{balance}, чтобы
+обозначать баланс денег на счёте, и определить @code{withdraw} как процедуру, которая
+обращается к @code{balance}.  Процедура @code{withdraw} проверяет, по меньшей мере ли
+@code{balance} столь же велик, как запрошенная @code{amount}.  Если так, @code{withdraw}
+уменьшает @code{balance} на @code{amount} и возвращает новое значение @code{balance}.  Иначе
+@code{withdraw} возвращает сообщение @emph{Insufficient funds}.  Вот определения @code{balance}
+и @code{withdraw}:
 
 @lisp
 (define balance 100)
@@ -13748,65 +13735,61 @@ and @code{withdraw}:
 @end lisp
 
 @noindent
-Decrementing @code{balance} is accomplished by the expression
+Уменьшение @code{balance} достигается выражением
 
 @lisp
 (set! balance (- balance amount))
 @end lisp
 
 @noindent
-This uses the @code{set!} special form, whose syntax is
+Оно использует особую форму @code{set!}, синтаксис которой —
 
 @lisp
-(set! ⟨@var{name}⟩ ⟨@var{new-value}⟩)
+(set! ⟨@var{имя}⟩ ⟨@var{новое-значение}⟩)
 @end lisp
 
 @noindent
-Here @code{⟨}@var{name}@code{⟩} is a symbol and @code{⟨}@var{new-value}@code{⟩} is any expression.
-@code{Set!} changes @code{⟨}@var{name}@code{⟩} so that its value is the result obtained by
-evaluating @code{⟨}@var{new-value}@code{⟩}.  In the case at hand, we are changing
-@code{balance} so that its new value will be the result of subtracting
-@code{amount} from the previous value of @code{balance}.@footnote{The value of
-a @code{set!} expression is implementation-dependent.  @code{Set!} should be
-used only for its effect, not for its value.
+Здесь @code{⟨}@var{имя}@code{⟩} — это символ, а @code{⟨}@var{новое-значение}@code{⟩} — любое
+выражение.  @code{Set!} меняет @code{⟨}@var{имя}@code{⟩} так, чтобы его значением стал
+результат, полученный вычислением @code{⟨}@var{нового-значения}@code{⟩}.  В рассматриваемом
+случае мы меняем @code{balance} так, чтобы его новым значением стал результат вычитания
+@code{amount} из предыдущего значения @code{balance}.@footnote{Значение выражения @code{set!}
+зависит от реализации.  @code{Set!} следует использовать только ради его эффекта, а не ради
+его значения.
 
-The name @code{set!} reflects a naming convention used in Scheme: Operations
-that change the values of variables (or that change data structures, as we will
-see in @ref{3.3}) are given names that end with an exclamation point.
-This is similar to the convention of designating predicates by names that end
-with a question mark.}
+Имя @code{set!} отражает соглашение об именовании, используемое в Scheme: операциям, которые
+меняют значения переменных (или которые меняют структуры данных, как мы увидим в @ref{3.3}),
+даются имена, оканчивающиеся восклицательным знаком.  Это похоже на соглашение обозначать
+предикаты именами, оканчивающимися вопросительным знаком.}
 
-@code{Withdraw} also uses the @code{begin} special form to cause two
-expressions to be evaluated in the case where the @code{if} test is true: first
-decrementing @code{balance} and then returning the value of @code{balance}.  In
-general, evaluating the expression
+@code{Withdraw} также использует особую форму @code{begin}, чтобы заставить два выражения быть
+вычисленными в случае, когда проверка @code{if} истинна: сначала уменьшая @code{balance}, а
+затем возвращая значение @code{balance}.  Вообще, вычисление выражения
 
 @lisp
 (begin ⟨@var{exp₁}⟩ ⟨@var{exp₂}⟩ @r{…} ⟨@var{expₖ}⟩)
 @end lisp
 
 @noindent
-causes the expressions @math{{⟨exp_1⟩}} through @math{{⟨exp_k⟩}} to be evaluated
-in sequence and the value of the final expression @math{{⟨exp_k⟩}} to be
-returned as the value of the entire @code{begin} form.@footnote{We have already
-used @code{begin} implicitly in our programs, because in Scheme the body of a
-procedure can be a sequence of expressions.  Also, the @code{⟨}@var{consequent}@code{⟩} part
-of each clause in a @code{cond} expression can be a sequence of expressions
-rather than a single expression.}
+заставляет выражения @math{{⟨exp_1⟩}} по @math{{⟨exp_k⟩}} быть вычисленными по порядку, а
+значение последнего выражения @math{{⟨exp_k⟩}} — быть возвращённым как значение всей формы
+@code{begin}.@footnote{Мы уже неявно использовали @code{begin} в наших программах, потому что в
+Scheme тело процедуры может быть последовательностью выражений.  Также часть
+@code{⟨}@var{следствие}@code{⟩} каждого предложения в выражении @code{cond} может быть
+последовательностью выражений, а не единственным выражением.}
 
-Although @code{withdraw} works as desired, the variable @code{balance} presents
-a problem.  As specified above, @code{balance} is a name defined in the global
-environment and is freely accessible to be examined or modified by any
-procedure.  It would be much better if we could somehow make @code{balance}
-internal to @code{withdraw}, so that @code{withdraw} would be the only
-procedure that could access @code{balance} directly and any other procedure
-could access @code{balance} only indirectly (through calls to @code{withdraw}).
-This would more accurately model the notion that @code{balance} is a local
-state variable used by @code{withdraw} to keep track of the state of the
-account.
+Хотя @code{withdraw} работает как желалось, переменная @code{balance} представляет проблему.
+Как задано выше, @code{balance} — это имя, определённое в глобальном окружении, и свободно
+доступно для исследования или изменения любой процедурой.  Было бы намного лучше, если бы мы
+могли как-то сделать @code{balance} внутренней по отношению к @code{withdraw}, чтобы
+@code{withdraw} была единственной процедурой, которая могла бы обращаться к @code{balance}
+напрямую, а любая другая процедура могла бы обращаться к @code{balance} только косвенно (через
+вызовы @code{withdraw}).  Это точнее моделировало бы представление о том, что @code{balance} —
+локальная переменная состояния, используемая @code{withdraw}, чтобы отслеживать состояние
+счёта.
 
-We can make @code{balance} internal to @code{withdraw} by rewriting the
-definition as follows:
+Мы можем сделать @code{balance} внутренней по отношению к @code{withdraw}, переписав определение
+следующим образом:
 
 @lisp
 (define new-withdraw
@@ -13820,45 +13803,38 @@ definition as follows:
 @end lisp
 
 @noindent
-What we have done here is use @code{let} to establish an environment with a
-local variable @code{balance}, bound to the initial value 100.  Within this
-local environment, we use @code{lambda} to create a procedure that takes
-@code{amount} as an argument and behaves like our previous @code{withdraw}
-procedure.  This procedure---returned as the result of evaluating the
-@code{let} expression---is @code{new-withdraw}, which behaves in precisely the
-same way as @code{withdraw} but whose variable @code{balance} is not accessible
-by any other procedure.@footnote{In programming-language jargon, the variable
-@code{balance} is said to be @newterm{encapsulated} within the
-@code{new-withdraw} procedure.  Encapsulation reflects the general
-system-design principle known as the @newterm{hiding principle}: One can make a
-system more modular and robust by protecting parts of the system from each
-other; that is, by providing information access only to those parts of the
-system that have a ``need to know.''}
+Что мы здесь сделали — это использовали @code{let}, чтобы установить окружение с локальной
+переменной @code{balance}, связанной с начальным значением 100.  Внутри этого локального
+окружения мы используем @code{lambda}, чтобы создать процедуру, которая принимает @code{amount}
+как аргумент и ведёт себя как наша предыдущая процедура @code{withdraw}.  Эта процедура —
+возвращённая как результат вычисления выражения @code{let} — это @code{new-withdraw}, которая
+ведёт себя точно так же, как @code{withdraw}, но чья переменная @code{balance} недоступна
+никакой другой процедуре.@footnote{На жаргоне языков программирования говорят, что переменная
+@code{balance} @newterm{инкапсулирована} внутри процедуры @code{new-withdraw}.  Инкапсуляция
+отражает общий принцип проектирования систем, известный как @newterm{принцип сокрытия}: можно
+сделать систему более модульной и устойчивой, защищая части системы друг от друга; то есть
+предоставляя доступ к информации только тем частям системы, которым «нужно знать».}
 
-Combining @code{set!} with local variables is the general programming technique
-we will use for constructing computational objects with local state.
-Unfortunately, using this technique raises a serious problem: When we first
-introduced procedures, we also introduced the substitution model of evaluation
-(@ref{1.1.5}) to provide an interpretation of what procedure
-application means.  We said that applying a procedure should be interpreted as
-evaluating the body of the procedure with the formal parameters replaced by
-their values.  The trouble is that, as soon as we introduce assignment into our
-language, substitution is no longer an adequate model of procedure application.
-(We will see why this is so in @ref{3.1.3}.)  As a consequence, we
-technically have at this point no way to understand why the @code{new-withdraw}
-procedure behaves as claimed above.  In order to really understand a procedure
-such as @code{new-withdraw}, we will need to develop a new model of procedure
-application.  In @ref{3.2} we will introduce such a model, together
-with an explanation of @code{set!} and local variables.  First, however, we
-examine some variations on the theme established by @code{new-withdraw}.
+Комбинирование @code{set!} с локальными переменными — это общий приём программирования, который
+мы будем использовать для построения вычислительных объектов с локальным состоянием.  К
+сожалению, использование этого приёма поднимает серьёзную проблему: когда мы впервые ввели
+процедуры, мы также ввели подстановочную модель вычислений (@ref{1.1.5}), чтобы дать
+интерпретацию того, что означает применение процедуры.  Мы сказали, что применение процедуры
+следует интерпретировать как вычисление тела процедуры с формальными параметрами, заменёнными
+их значениями.  Беда в том, что, как только мы вводим присваивание в наш язык, подстановка
+больше не является адекватной моделью применения процедуры.  (Мы увидим, почему это так, в
+@ref{3.1.3}.)  Как следствие, технически у нас на данный момент нет способа понять, почему
+процедура @code{new-withdraw} ведёт себя так, как заявлено выше.  Чтобы действительно понять
+процедуру, такую как @code{new-withdraw}, нам понадобится разработать новую модель применения
+процедуры.  В @ref{3.2} мы введём такую модель вместе с объяснением @code{set!} и локальных
+переменных.  Сначала, однако, мы рассмотрим некоторые вариации на тему, установленную
+@code{new-withdraw}.
 
-The following procedure, @code{make-withdraw}, creates ``withdrawal
-processors.''  The formal parameter @code{balance} in @code{make-withdraw}
-specifies the initial amount of money in the account.@footnote{In contrast with
-@code{new-withdraw} above, we do not have to use @code{let} to make
-@code{balance} a local variable, since formal parameters are already local.
-This will be clearer after the discussion of the environment model of
-evaluation in @ref{3.2}.  (See also @ref{Exercise 3.10}.)}
+Следующая процедура, @code{make-withdraw}, создаёт «обработчики снятия».  Формальный параметр
+@code{balance} в @code{make-withdraw} задаёт начальную сумму денег на счёте.@footnote{В отличие
+от @code{new-withdraw} выше, нам не нужно использовать @code{let}, чтобы сделать @code{balance}
+локальной переменной, поскольку формальные параметры уже локальны.  Это станет яснее после
+обсуждения модели вычислений с окружениями в @ref{3.2}.  (См. также @ref{Exercise 3.10}.)}
 
 @lisp
 (define (make-withdraw balance)
@@ -13871,8 +13847,8 @@ evaluation in @ref{3.2}.  (See also @ref{Exercise 3.10}.)}
 @end lisp
 
 @noindent
-@code{Make-withdraw} can be used as follows to create two objects @code{W1} and
-@code{W2}:
+@code{Make-withdraw} можно использовать следующим образом, чтобы создать два объекта @code{W1}
+и @code{W2}:
 
 @lisp
 (define W1 (make-withdraw 100))
@@ -13892,13 +13868,12 @@ evaluation in @ref{3.2}.  (See also @ref{Exercise 3.10}.)}
 @end lisp
 
 @noindent
-Observe that @code{W1} and @code{W2} are completely independent objects, each
-with its own local state variable @code{balance}.  Withdrawals from one do not
-affect the other.
+Заметьте, что @code{W1} и @code{W2} — полностью независимые объекты, каждый со своей собственной
+локальной переменной состояния @code{balance}.  Снятия с одного не влияют на другой.
 
-We can also create objects that handle deposits as well as withdrawals, and
-thus we can represent simple bank accounts.  Here is a procedure that returns a
-``bank-account object'' with a specified initial balance:
+Мы можем также создавать объекты, которые обрабатывают и вклады, и снятия, и таким образом мы
+можем представлять простые банковские счета.  Вот процедура, которая возвращает «объект
+банковского счёта» с заданным начальным балансом:
 
 @lisp
 (define (make-account balance)
@@ -13920,17 +13895,16 @@ thus we can represent simple bank accounts.  Here is a procedure that returns a
 @end lisp
 
 @noindent
-Each call to @code{make-account} sets up an environment with a local state
-variable @code{balance}.  Within this environment, @code{make-account} defines
-procedures @code{deposit} and @code{withdraw} that access @code{balance} and an
-additional procedure @code{dispatch} that takes a ``message'' as input and
-returns one of the two local procedures.  The @code{dispatch} procedure itself
-is returned as the value that represents the bank-account object.  This is
-precisely the @newterm{message-passing} style of programming that we saw in
-@ref{2.4.3}, although here we are using it in conjunction with the
-ability to modify local variables.
+Каждый вызов @code{make-account} устанавливает окружение с локальной переменной состояния
+@code{balance}.  Внутри этого окружения @code{make-account} определяет процедуры @code{deposit}
+и @code{withdraw}, которые обращаются к @code{balance}, и дополнительную процедуру
+@code{dispatch}, которая принимает «сообщение» как вход и возвращает одну из двух локальных
+процедур.  Сама процедура @code{dispatch} возвращается как значение, представляющее объект
+банковского счёта.  Это в точности стиль программирования с @newterm{передачей сообщений},
+который мы видели в @ref{2.4.3}, хотя здесь мы используем его в сочетании со способностью
+изменять локальные переменные.
 
-@code{Make-account} can be used as follows:
+@code{Make-account} можно использовать следующим образом:
 
 @lisp
 (define acc (make-account 100))
@@ -13949,27 +13923,25 @@ ability to modify local variables.
 @end lisp
 
 @noindent
-Each call to @code{acc} returns the locally defined @code{deposit} or
-@code{withdraw} procedure, which is then applied to the specified
-@code{amount}.  As was the case with @code{make-withdraw}, another call to
-@code{make-account}
+Каждый вызов @code{acc} возвращает локально определённую процедуру @code{deposit} или
+@code{withdraw}, которая затем применяется к заданной @code{amount}.  Как было в случае с
+@code{make-withdraw}, другой вызов @code{make-account}
 
 @lisp
 (define acc2 (make-account 100))
 @end lisp
 
 @noindent
-will produce a completely separate account object, which maintains its own
-local @code{balance}.
+произведёт полностью отдельный объект счёта, который поддерживает свой собственный локальный
+@code{balance}.
 
 @quotation
-@strong{@anchor{Exercise 3.1}Exercise 3.1:} An @newterm{accumulator} is a
-procedure that is called repeatedly with a single numeric argument and
-accumulates its arguments into a sum.  Each time it is called, it returns the
-currently accumulated sum.  Write a procedure @code{make-accumulator} that
-generates accumulators, each maintaining an independent sum.  The input to
-@code{make-accumulator} should specify the initial value of the sum; for
-example
+@strong{@anchor{Exercise 3.1}Exercise 3.1:} @newterm{Накопитель} — это процедура, которая
+многократно вызывается с единственным числовым аргументом и накапливает свои аргументы в сумму.
+Каждый раз, когда она вызывается, она возвращает текущую накопленную сумму.  Напишите процедуру
+@code{make-accumulator}, которая порождает накопители, каждый из которых поддерживает
+независимую сумму.  Вход для @code{make-accumulator} должен задавать начальное значение суммы;
+например
 
 @lisp
 (define A (make-accumulator 5))
@@ -13983,18 +13955,16 @@ example
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 3.2}Exercise 3.2:} In software-testing applications,
-it is useful to be able to count the number of times a given procedure is
-called during the course of a computation.  Write a procedure
-@code{make-monitored} that takes as input a procedure, @code{f}, that itself
-takes one input.  The result returned by @code{make-monitored} is a third
-procedure, say @code{mf}, that keeps track of the number of times it has been
-called by maintaining an internal counter.  If the input to @code{mf} is the
-special symbol @code{how-many-calls?}, then @code{mf} returns the value of the
-counter.  If the input is the special symbol @code{reset-count}, then @code{mf}
-resets the counter to zero.  For any other input, @code{mf} returns the result
-of calling @code{f} on that input and increments the counter.  For instance, we
-could make a monitored version of the @code{sqrt} procedure:
+@strong{@anchor{Exercise 3.2}Exercise 3.2:} В приложениях тестирования программ полезно уметь
+подсчитывать число раз, которое данная процедура вызывается в ходе вычисления.  Напишите
+процедуру @code{make-monitored}, которая принимает в качестве входа процедуру @code{f}, которая
+сама принимает один вход.  Результат, возвращаемый @code{make-monitored}, — это третья
+процедура, скажем @code{mf}, которая отслеживает число раз, которое она была вызвана, поддерживая
+внутренний счётчик.  Если вход для @code{mf} — особый символ @code{how-many-calls?}, то
+@code{mf} возвращает значение счётчика.  Если вход — особый символ @code{reset-count}, то
+@code{mf} сбрасывает счётчик в нуль.  Для любого другого входа @code{mf} возвращает результат
+вызова @code{f} на этом входе и увеличивает счётчик.  Например, мы могли бы сделать
+отслеживаемую версию процедуры @code{sqrt}:
 
 @lisp
 (define s (make-monitored sqrt))
@@ -14008,18 +13978,17 @@ could make a monitored version of the @code{sqrt} procedure:
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 3.3}Exercise 3.3:} Modify the @code{make-account}
-procedure so that it creates password-protected accounts.  That is,
-@code{make-account} should take a symbol as an additional argument, as in
+@strong{@anchor{Exercise 3.3}Exercise 3.3:} Измените процедуру @code{make-account} так, чтобы
+она создавала счета, защищённые паролем.  То есть @code{make-account} должна принимать символ
+как дополнительный аргумент, как в
 
 @lisp
 (define acc 
   (make-account 100 'secret-password))
 @end lisp
 
-The resulting account object should process a request only if it is accompanied
-by the password with which the account was created, and should otherwise return
-a complaint:
+Получающийся объект счёта должен обрабатывать запрос только если он сопровождается паролем, с
+которым счёт был создан, и должен иначе возвращать жалобу:
 
 @lisp
 ((acc 'secret-password 'withdraw) 40)
@@ -14031,28 +14000,27 @@ a complaint:
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 3.4}Exercise 3.4:} Modify the @code{make-account}
-procedure of @ref{Exercise 3.3} by adding another local state variable so that,
-if an account is accessed more than seven consecutive times with an incorrect
-password, it invokes the procedure @code{call-the-cops}.
+@strong{@anchor{Exercise 3.4}Exercise 3.4:} Измените процедуру @code{make-account} из
+@ref{Exercise 3.3}, добавив ещё одну локальную переменную состояния так, чтобы, если к счёту
+обращаются более семи раз подряд с неправильным паролем, он вызывал процедуру
+@code{call-the-cops}.
 @end quotation
 
 @node	3.1.2, 3.1.3, 3.1.1, 3.1
-@subsection The Benefits of Introducing Assignment
+@subsection Преимущества введения присваивания
 
-As we shall see, introducing assignment into our programming language leads us
-into a thicket of difficult conceptual issues.  Nevertheless, viewing systems
-as collections of objects with local state is a powerful technique for
-maintaining a modular design.  As a simple example, consider the design of a
-procedure @code{rand} that, whenever it is called, returns an integer chosen at
-random.
+Как мы увидим, введение присваивания в наш язык программирования заводит нас в чащу трудных
+концептуальных вопросов.  Тем не менее рассмотрение систем как совокупностей объектов с
+локальным состоянием — мощный приём для поддержания модульного проекта.  В качестве простого
+примера рассмотрим проектирование процедуры @code{rand}, которая, всякий раз когда она
+вызывается, возвращает случайно выбранное целое число.
 
-It is not at all clear what is meant by ``chosen at random.''  What we
-presumably want is for successive calls to @code{rand} to produce a sequence of
-numbers that has statistical properties of uniform distribution.  We will not
-discuss methods for generating suitable sequences here.  Rather, let us assume
-that we have a procedure @code{rand-update} that has the property that if we
-start with a given number @math{x_1} and form
+Совершенно не ясно, что имеется в виду под «случайно выбранным».  Чего мы, по-видимому, хотим
+— это чтобы последовательные вызовы @code{rand} производили последовательность чисел, имеющую
+статистические свойства равномерного распределения.  Мы не будем обсуждать методы порождения
+подходящих последовательностей здесь.  Скорее, давайте предположим, что у нас есть процедура
+@code{rand-update}, обладающая тем свойством, что если мы начинаем с данного числа @math{x_1}
+и образуем
 
 @lisp
 @var{x₂} = (rand-update @var{x₁})
@@ -14060,28 +14028,26 @@ start with a given number @math{x_1} and form
 @end lisp
 
 @noindent
-then the sequence of values @math{x_1}, @math{x_2}, @math{x_3}, @dots{} will have the
-desired statistical properties.@footnote{One common way to implement
-@code{rand-update} is to use the rule that @math{x} is updated to @math{{ax + b}} 
-modulo @math{m}, where @math{a}, @math{b}, and @math{m} are appropriately chosen
-integers.  Chapter 3 of @ref{Knuth 1981} includes an extensive discussion of
-techniques for generating sequences of random numbers and establishing their
-statistical properties.  Notice that the @code{rand-update} procedure computes
-a mathematical function: Given the same input twice, it produces the same
-output.  Therefore, the number sequence produced by @code{rand-update}
-certainly is not ``random,'' if by ``random'' we insist that each number in the
-sequence is unrelated to the preceding number.  The relation between ``real
-randomness'' and so-called @newterm{pseudo-random} sequences, which are
-produced by well-determined computations and yet have suitable statistical
-properties, is a complex question involving difficult issues in mathematics and
-philosophy.  Kolmogorov, Solomonoff, and Chaitin have made great progress in
-clarifying these issues; a discussion can be found in @ref{Chaitin 1975}.}
+то последовательность значений @math{x_1}, @math{x_2}, @math{x_3}, @dots{} будет иметь
+желаемые статистические свойства.@footnote{Один распространённый способ реализовать
+@code{rand-update} — использовать правило, что @math{x} обновляется до @math{{ax + b}} по
+модулю @math{m}, где @math{a}, @math{b} и @math{m} — подходяще выбранные целые числа.  Глава 3
+в @ref{Knuth 1981} включает обширное обсуждение приёмов порождения последовательностей
+случайных чисел и установления их статистических свойств.  Заметьте, что процедура
+@code{rand-update} вычисляет математическую функцию: при одном и том же входе дважды она
+производит один и тот же выход.  Следовательно, числовая последовательность, производимая
+@code{rand-update}, конечно, не «случайна», если под «случайной» мы настаиваем, что каждое
+число в последовательности не связано с предыдущим числом.  Отношение между «настоящей
+случайностью» и так называемыми @newterm{псевдослучайными} последовательностями, которые
+производятся вполне определёнными вычислениями и при этом имеют подходящие статистические
+свойства, — сложный вопрос, затрагивающий трудные проблемы в математике и философии.
+Колмогоров, Соломонов и Чейтин добились большого прогресса в прояснении этих вопросов;
+обсуждение можно найти в @ref{Chaitin 1975}.}
 
-We can implement @code{rand} as a procedure with a local state variable
-@code{x} that is initialized to some fixed value @code{random-init}.  Each call
-to @code{rand} computes @code{rand-update} of the current value of @code{x},
-returns this as the random number, and also stores this as the new value of
-@code{x}.
+Мы можем реализовать @code{rand} как процедуру с локальной переменной состояния @code{x},
+которая инициализируется некоторым фиксированным значением @code{random-init}.  Каждый вызов
+@code{rand} вычисляет @code{rand-update} от текущего значения @code{x}, возвращает это как
+случайное число, а также сохраняет это как новое значение @code{x}.
 
 @lisp
 (define rand
@@ -14090,32 +14056,29 @@ returns this as the random number, and also stores this as the new value of
 @end lisp
 
 @noindent
-Of course, we could generate the same sequence of random numbers without using
-assignment by simply calling @code{rand-update} directly.  How@-ever, this would
-mean that any part of our program that used random numbers would have to
-explicitly remember the current value of @code{x} to be passed as an argument
-to @code{rand-update}.  To realize what an annoyance this would be, consider
-using random numbers to implement a technique called @newterm{Monte Carlo simulation}.
+Конечно, мы могли бы породить ту же самую последовательность случайных чисел без использования
+присваивания, просто вызывая @code{rand-update} напрямую.  Однако это означало бы, что любая
+часть нашей программы, использующая случайные числа, должна была бы явно помнить текущее
+значение @code{x}, чтобы передавать его как аргумент @code{rand-update}.  Чтобы осознать, какой
+докукой это было бы, рассмотрите использование случайных чисел для реализации приёма, называемого
+@newterm{моделированием методом Монте-Карло}.
 
-The Monte Carlo method consists of choosing sample experiments at random from a
-large set and then making deductions on the basis of the probabilities
-estimated from tabulating the results of those experiments.  For example, we
-can approximate @math{\pi} using the fact that @math{{6/\pi^2}} is the probability
-that two integers chosen at random will have no factors in common; that is,
-that their greatest common divisor will be 1.@footnote{This theorem is due to
-E. Ces@`aro.  See section 4.5.2 of @ref{Knuth 1981} for a discussion and a proof.} To
-obtain the approximation to @math{\pi}, we perform a large number of experiments.
-In each experiment we choose two integers at random and perform a test to see
-if their @abbr{GCD} is 1.  The fraction of times that the test is passed
-gives us our estimate of @math{{6/\pi^2}}, and from this we obtain our
-approximation to @math{\pi}.
+Метод Монте-Карло состоит в случайном выборе пробных экспериментов из большого множества и
+последующем выведении заключений на основе вероятностей, оценённых табулированием результатов
+этих экспериментов.  Например, мы можем приблизить @math{\pi}, используя факт, что
+@math{{6/\pi^2}} — это вероятность того, что два случайно выбранных целых числа не будут иметь
+общих множителей; то есть что их наибольший общий делитель будет равен 1.@footnote{Эта теорема
+принадлежит Э. Чезаро.  См. раздел 4.5.2 в @ref{Knuth 1981} для обсуждения и доказательства.}
+Чтобы получить приближение к @math{\pi}, мы выполняем большое число экспериментов.  В каждом
+эксперименте мы случайно выбираем два целых числа и выполняем проверку, равен ли их
+@abbr{GCD} единице.  Доля раз, когда проверка пройдена, даёт нам нашу оценку @math{{6/\pi^2}},
+и из этого мы получаем наше приближение к @math{\pi}.
 
-The heart of our program is a procedure @code{monte-carlo}, which takes as
-arguments the number of times to try an experiment, together with the
-experiment, represented as a no-argument procedure that will return either true
-or false each time it is run.  @code{Monte-carlo} runs the experiment for the
-designated number of trials and returns a number telling the fraction of the
-trials in which the experiment was found to be true.
+Сердце нашей программы — процедура @code{monte-carlo}, которая принимает в качестве аргументов
+число раз, которое нужно попробовать эксперимент, вместе с самим экспериментом, представленным
+как процедура без аргументов, которая будет возвращать либо истину, либо ложь каждый раз, когда
+она запускается.  @code{Monte-carlo} запускает эксперимент назначенное число испытаний и
+возвращает число, говорящее долю испытаний, в которых эксперимент оказался истинным.
 
 @lisp
 (define (estimate-pi trials)
@@ -14138,9 +14101,9 @@ trials in which the experiment was found to be true.
 @end lisp
 
 @noindent
-Now let us try the same computation using @code{rand-update} directly rather
-than @code{rand}, the way we would be forced to proceed if we did not use
-assignment to model local state:
+Теперь давайте попробуем то же вычисление, используя @code{rand-update} напрямую, а не
+@code{rand}, — способом, которым мы были бы вынуждены действовать, если бы не использовали
+присваивание для моделирования локального состояния:
 
 @lisp
 (define (estimate-pi trials)
@@ -14167,75 +14130,64 @@ assignment to model local state:
 @end lisp
 
 @noindent
-While the program is still simple, it betrays some painful breaches of
-modularity.  In our first version of the program, using @code{rand}, we can
-express the Monte Carlo method directly as a general @code{monte-carlo}
-procedure that takes as an argument an arbitrary @code{experiment} procedure.
-In our second version of the program, with no local state for the random-number
-generator, @code{random-gcd-test} must explicitly manipulate the random numbers
-@code{x1} and @code{x2} and recycle @code{x2} through the iterative loop as the
-new input to @code{rand-update}.  This explicit handling of the random numbers
-intertwines the structure of accumulating test results with the fact that our
-particular experiment uses two random numbers, whereas other Monte Carlo
-experiments might use one random number or three.  Even the top-level procedure
-@code{estimate-pi} has to be concerned with supplying an initial random number.
-The fact that the random-number generator's insides are leaking out into other
-parts of the program makes it difficult for us to isolate the Monte Carlo idea
-so that it can be applied to other tasks.  In the first version of the program,
-assignment encapsulates the state of the random-number generator within the
-@code{rand} procedure, so that the details of random-number generation remain
-independent of the rest of the program.
+Хотя программа всё ещё проста, она выдаёт некоторые болезненные нарушения модульности.  В нашей
+первой версии программы, использующей @code{rand}, мы можем выразить метод Монте-Карло
+напрямую как общую процедуру @code{monte-carlo}, которая принимает в качестве аргумента
+произвольную процедуру-@code{experiment}.  В нашей второй версии программы, без локального
+состояния для генератора случайных чисел, @code{random-gcd-test} должна явно манипулировать
+случайными числами @code{x1} и @code{x2} и прогонять @code{x2} по итеративному циклу как новый
+вход для @code{rand-update}.  Эта явная обработка случайных чисел переплетает структуру
+накопления результатов проверок с тем фактом, что наш конкретный эксперимент использует два
+случайных числа, тогда как другие эксперименты Монте-Карло могли бы использовать одно случайное
+число или три.  Даже процедура верхнего уровня @code{estimate-pi} должна заботиться о
+предоставлении начального случайного числа.  Тот факт, что нутро генератора случайных чисел
+протекает наружу в другие части программы, затрудняет нам изоляцию идеи Монте-Карло так, чтобы
+её можно было применять к другим задачам.  В первой версии программы присваивание инкапсулирует
+состояние генератора случайных чисел внутри процедуры @code{rand}, так что детали порождения
+случайных чисел остаются независимыми от остальной части программы.
 
-The general phenomenon illustrated by the Monte Carlo example is this: From the
-point of view of one part of a complex process, the other parts appear to
-change with time.  They have hidden time-varying local state.  If we wish to
-write computer programs whose structure reflects this decomposition, we make
-computational objects (such as bank accounts and random-number generators)
-whose behavior changes with time.  We model state with local state variables,
-and we model the changes of state with assignments to those variables.
+Общее явление, проиллюстрированное примером Монте-Карло, таково: с точки зрения одной части
+сложного процесса другие части кажутся меняющимися со временем.  У них есть скрытое
+изменяющееся во времени локальное состояние.  Если мы желаем писать компьютерные программы,
+чья структура отражает это разложение, мы делаем вычислительные объекты (такие как банковские
+счета и генераторы случайных чисел), чьё поведение меняется со временем.  Мы моделируем
+состояние локальными переменными состояния и моделируем изменения состояния присваиваниями этим
+переменным.
 
-It is tempting to conclude this discussion by saying that, by introducing
-assignment and the technique of hiding state in local variables, we are able to
-structure systems in a more modular fashion than if all state had to be
-manipulated explicitly, by passing additional parameters.  Unfortunately, as we
-shall see, the story is not so simple.
+Заманчиво заключить это обсуждение, сказав, что, введя присваивание и приём сокрытия состояния
+в локальных переменных, мы способны структурировать системы более модульным образом, чем если
+бы всем состоянием приходилось манипулировать явно, передавая дополнительные параметры.  К
+сожалению, как мы увидим, история не так проста.
 
 @quotation
-@strong{@anchor{Exercise 3.5}Exercise 3.5:} @newterm{Monte Carlo integration}
-is a method of estimating definite integrals by means of Monte Carlo
-simulation.  Consider computing the area of a region of space described by a
-predicate @math{{P(x, y)}} that is true for points @math{{(x, y)}} in the
-region and false for points not in the region.  For example, the region
-contained within a circle of radius 3 centered at (5, 7) is described by the
-predicate that tests whether @math{{(x - 5)^2} + {(y - 7)^2 \le 3^2}}.  To estimate
-the area of the region described by such a predicate, begin by choosing a
-rectangle that contains the region.  For example, a rectangle with diagonally
-opposite corners at (2, 4) and (8, 10) contains the circle above.  The desired
-integral is the area of that portion of the rectangle that lies in the region.
-We can estimate the integral by picking, at random, points @math{{(x, y)}} that
-lie in the rectangle, and testing @math{{P(x, y)}} for each point to
-determine whether the point lies in the region.  If we try this with many
-points, then the fraction of points that fall in the region should give an
-estimate of the proportion of the rectangle that lies in the region.  Hence,
-multiplying this fraction by the area of the entire rectangle should produce an
-estimate of the integral.
+@strong{@anchor{Exercise 3.5}Exercise 3.5:} @newterm{Интегрирование методом Монте-Карло} — это
+метод оценки определённых интегралов посредством моделирования методом Монте-Карло.  Рассмотрите
+вычисление площади области пространства, описываемой предикатом @math{{P(x, y)}}, который истинен
+для точек @math{{(x, y)}} в области и ложен для точек не в области.  Например, область,
+содержащаяся внутри круга радиуса 3 с центром в (5, 7), описывается предикатом, который
+проверяет, выполняется ли @math{{(x - 5)^2} + {(y - 7)^2 \le 3^2}}.  Чтобы оценить площадь
+области, описываемой таким предикатом, начните с выбора прямоугольника, который содержит
+область.  Например, прямоугольник с диагонально противоположными углами в (2, 4) и (8, 10)
+содержит круг выше.  Искомый интеграл — это площадь той части прямоугольника, которая лежит в
+области.  Мы можем оценить интеграл, выбирая случайно точки @math{{(x, y)}}, которые лежат в
+прямоугольнике, и проверяя @math{{P(x, y)}} для каждой точки, чтобы определить, лежит ли точка
+в области.  Если мы пробуем это со многими точками, то доля точек, попадающих в область, должна
+дать оценку доли прямоугольника, которая лежит в области.  Следовательно, умножение этой доли на
+площадь всего прямоугольника должно произвести оценку интеграла.
 
-Implement Monte Carlo integration as a procedure @code{estimate-integral} that
-takes as arguments a predicate @code{P}, upper and lower bounds @code{x1},
-@code{x2}, @code{y1}, and @code{y2} for the rectangle, and the number of trials
-to perform in order to produce the estimate.  Your procedure should use the
-same @code{monte-carlo} procedure that was used above to estimate @math{\pi}.
-Use your @code{estimate-integral} to produce an estimate of @math{\pi} by
-measuring the area of a unit circle.
+Реализуйте интегрирование методом Монте-Карло как процедуру @code{estimate-integral}, которая
+принимает в качестве аргументов предикат @code{P}, верхние и нижние границы @code{x1},
+@code{x2}, @code{y1} и @code{y2} для прямоугольника и число испытаний, которое нужно выполнить,
+чтобы произвести оценку.  Ваша процедура должна использовать ту же процедуру @code{monte-carlo},
+которая использовалась выше, чтобы оценить @math{\pi}.  Используйте свою @code{estimate-integral},
+чтобы произвести оценку @math{\pi}, измерив площадь единичного круга.
 
-You will find it useful to have a procedure that returns a number chosen at
-random from a given range.  The following @code{random-in-range} procedure
-implements this in terms of the @code{random} procedure used in 
-@ref{1.2.6}, which returns a nonnegative number less than its
-input.@footnote{@abbr{MIT} Scheme provides such a procedure.  If
-@code{random} is given an exact integer (as in @ref{1.2.6}) it returns
-an exact integer, but if it is given a decimal value (as in this exercise) it
-returns a decimal value.}
+Вам будет полезно иметь процедуру, которая возвращает число, случайно выбранное из данного
+диапазона.  Следующая процедура @code{random-in-range} реализует это в терминах процедуры
+@code{random}, использованной в @ref{1.2.6}, которая возвращает неотрицательное число, меньшее
+своего входа.@footnote{@abbr{MIT} Scheme предоставляет такую процедуру.  Если @code{random}
+даётся точное целое число (как в @ref{1.2.6}), она возвращает точное целое число, но если ей
+даётся десятичное значение (как в этом упражнении), она возвращает десятичное значение.}
 
 @lisp
 (define (random-in-range low high)
@@ -14245,36 +14197,34 @@ returns a decimal value.}
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 3.6}Exercise 3.6:} It is useful to be able to reset a
-random-number generator to produce a sequence starting from a given value.
-Design a new @code{rand} procedure that is called with an argument that is
-either the symbol @code{generate} or the symbol @code{reset} and behaves as
-follows: @code{(rand 'generate)} produces a new random number; @code{((rand
-'reset) ⟨@var{new-value}⟩)} resets the internal state variable to the
-designated @code{⟨}@var{new-value}@code{⟩}.  Thus, by resetting the state, one can generate
-repeatable sequences.  These are very handy to have when testing and debugging
-programs that use random numbers.
+@strong{@anchor{Exercise 3.6}Exercise 3.6:} Полезно уметь сбрасывать генератор случайных чисел,
+чтобы производить последовательность, начинающуюся с данного значения.  Спроектируйте новую
+процедуру @code{rand}, которая вызывается с аргументом, являющимся либо символом
+@code{generate}, либо символом @code{reset}, и ведёт себя следующим образом:
+@code{(rand 'generate)} производит новое случайное число; @code{((rand 'reset)
+⟨@var{новое-значение}⟩)} сбрасывает внутреннюю переменную состояния в назначенное
+@code{⟨}@var{новое-значение}@code{⟩}.  Таким образом, сбрасывая состояние, можно порождать
+повторяемые последовательности.  Их очень удобно иметь при тестировании и отладке программ,
+использующих случайные числа.
 @end quotation
 
 @node	3.1.3, 3.2, Chapter 3, 3.1
-@subsection The Costs of Introducing Assignment
+@subsection Издержки введения присваивания
 
-As we have seen, the @code{set!} operation enables us to model objects that
-have local state.  However, this advantage comes at a price.  Our programming
-language can no longer be interpreted in terms of the substitution model of
-procedure application that we introduced in @ref{1.1.5}.  Moreover, no
-simple model with ``nice'' mathematical properties can be an adequate framework
-for dealing with objects and assignment in programming languages.
+Как мы видели, операция @code{set!} позволяет нам моделировать объекты, обладающие локальным
+состоянием.  Однако это преимущество достаётся ценой.  Наш язык программирования больше нельзя
+интерпретировать в терминах подстановочной модели применения процедуры, которую мы ввели в
+@ref{1.1.5}.  Более того, никакая простая модель с «приятными» математическими свойствами не
+может быть адекватным каркасом для работы с объектами и присваиванием в языках программирования.
 
-So long as we do not use assignments, two evaluations of the same procedure
-with the same arguments will produce the same result, so that procedures can be
-viewed as computing mathematical functions.  Programming without any use of
-assignments, as we did throughout the first two chapters of this book, is
-accordingly known as @newterm{functional programming}.
+Пока мы не используем присваивания, два вычисления одной и той же процедуры с одними и теми же
+аргументами будут производить один и тот же результат, так что процедуры можно рассматривать
+как вычисляющие математические функции.  Программирование без всякого использования
+присваиваний, как мы делали на протяжении первых двух глав этой книги, соответственно известно
+как @newterm{функциональное программирование}.
 
-To understand how assignment complicates matters, consider a simplified version
-of the @code{make-withdraw} procedure of @ref{3.1.1} that does not
-bother to check for an insufficient amount:
+Чтобы понять, как присваивание усложняет дело, рассмотрим упрощённую версию процедуры
+@code{make-withdraw} из @ref{3.1.1}, которая не утруждает себя проверкой на недостаточную сумму:
 
 @lisp
 (define (make-simplified-withdraw balance)
@@ -14292,8 +14242,8 @@ bother to check for an insufficient amount:
 @end lisp
 
 @noindent
-Compare this procedure with the following @code{make-decrementer} procedure,
-which does not use @code{set!}:
+Сравните эту процедуру со следующей процедурой @code{make-decrementer}, которая не использует
+@code{set!}:
 
 @lisp
 (define (make-decrementer balance)
@@ -14302,9 +14252,9 @@ which does not use @code{set!}:
 @end lisp
 
 @noindent
-@code{Make-decrementer} returns a procedure that subtracts its input from a
-designated amount @code{balance}, but there is no accumulated effect over
-successive calls, as with @code{make-simplified-withdraw}:
+@code{Make-decrementer} возвращает процедуру, которая вычитает свой вход из назначенной суммы
+@code{balance}, но нет накопленного эффекта при последовательных вызовах, как с
+@code{make-simplified-withdraw}:
 
 @lisp
 (define D (make-decrementer 25))
@@ -14317,47 +14267,45 @@ successive calls, as with @code{make-simplified-withdraw}:
 @end lisp
 
 @noindent
-We can use the substitution model to explain how @code{make-decrementer} works.
-For instance, let us analyze the evaluation of the expression
+Мы можем использовать подстановочную модель, чтобы объяснить, как работает
+@code{make-decrementer}.  Например, давайте проанализируем вычисление выражения
 
 @lisp
 ((make-decrementer 25) 20)
 @end lisp
 
 @noindent
-We first simplify the operator of the combination by substituting 25 for
-@code{balance} in the body of @code{make-decrementer}.  This reduces the
-expression to
+Сначала мы упрощаем оператор комбинации, подставляя 25 вместо @code{balance} в тело
+@code{make-decrementer}.  Это сводит выражение к
 
 @lisp
 ((lambda (amount) (- 25 amount)) 20)
 @end lisp
 
 @noindent
-Now we apply the operator by substituting 20 for @code{amount} in the body of
-the @code{lambda} expression:
+Теперь мы применяем оператор, подставляя 20 вместо @code{amount} в тело выражения
+@code{lambda}:
 
 @lisp
 (- 25 20)
 @end lisp
 
 @noindent
-The final answer is 5.
+Окончательный ответ — 5.
 
-Observe, however, what happens if we attempt a similar substitution analysis
-with @code{make-simplified-withdraw}:
+Заметьте, однако, что происходит, если мы пытаемся выполнить аналогичный подстановочный анализ
+с @code{make-simplified-withdraw}:
 
 @lisp
 ((make-simplified-withdraw 25) 20)
 @end lisp
 
 @noindent
-We first simplify the operator by substituting 25 for @code{balance} in the
-body of @code{make-simplified-withdraw}.  This reduces the expression
-to@footnote{We don't substitute for the occurrence of @code{balance} in the
-@code{set!} expression because the @code{⟨}@var{name}@code{⟩} in a @code{set!} is not
-evaluated.  If we did substitute for it, we would get @code{(set! 25 (- 25
-amount))}, which makes no sense.}
+Сначала мы упрощаем оператор, подставляя 25 вместо @code{balance} в тело
+@code{make-simplified-withdraw}.  Это сводит выражение к@footnote{Мы не подставляем вместо
+вхождения @code{balance} в выражении @code{set!}, потому что @code{⟨}@var{имя}@code{⟩} в
+@code{set!} не вычисляется.  Если бы мы подставили вместо него, мы получили бы @code{(set! 25
+(- 25 amount))}, что не имеет смысла.}
 
 @lisp
 ((lambda (amount) 
@@ -14366,39 +14314,36 @@ amount))}, which makes no sense.}
 @end lisp
 
 @noindent
-Now we apply the operator by substituting 20 for @code{amount} in the body of
-the @code{lambda} expression:
+Теперь мы применяем оператор, подставляя 20 вместо @code{amount} в тело выражения
+@code{lambda}:
 
 @lisp
 (set! balance (- 25 20)) 25
 @end lisp
 
 @noindent
-If we adhered to the substitution model, we would have to say that the meaning
-of the procedure application is to first set @code{balance} to 5 and then
-return 25 as the value of the expression.  This gets the wrong answer.  In
-order to get the correct answer, we would have to somehow distinguish the first
-occurrence of @code{balance} (before the effect of the @code{set!})  from the
-second occurrence of @code{balance} (after the effect of the @code{set!}), and
-the substitution model cannot do this.
+Если бы мы придерживались подстановочной модели, нам пришлось бы сказать, что смысл применения
+процедуры в том, чтобы сначала установить @code{balance} в 5, а затем вернуть 25 как значение
+выражения.  Это даёт неправильный ответ.  Чтобы получить правильный ответ, нам пришлось бы
+как-то отличать первое вхождение @code{balance} (до эффекта @code{set!}) от второго вхождения
+@code{balance} (после эффекта @code{set!}), а подстановочная модель не может этого сделать.
 
-The trouble here is that substitution is based ultimately on the notion that
-the symbols in our language are essentially names for values.  But as soon as
-we introduce @code{set!} and the idea that the value of a variable can change,
-a variable can no longer be simply a name.  Now a variable somehow refers to a
-place where a value can be stored, and the value stored at this place can
-change.  In @ref{3.2} we will see how environments play this role of
-``place'' in our computational model.
+Беда здесь в том, что подстановка в конечном счёте основана на представлении, что символы в
+нашем языке — это по существу имена для значений.  Но как только мы вводим @code{set!} и идею,
+что значение переменной может меняться, переменная больше не может быть просто именем.  Теперь
+переменная как-то ссылается на место, где может храниться значение, и значение, хранящееся в
+этом месте, может меняться.  В @ref{3.2} мы увидим, как окружения играют эту роль «места» в
+нашей вычислительной модели.
 
-@subsubheading Sameness and change
+@subsubheading Тождество и изменение
 
-The issue surfacing here is more profound than the mere breakdown of a
-particular model of computation.  As soon as we introduce change into our
-computational models, many notions that were previously straightforward become
-problematical.  Consider the concept of two things being ``the same.''
+Вопрос, всплывающий здесь, глубже, чем простой развал конкретной модели вычислений.  Как только
+мы вводим изменение в наши вычислительные модели, многие понятия, которые прежде были
+прямолинейны, становятся проблематичными.  Рассмотрите понятие двух вещей, являющихся
+«одинаковыми».
 
-Suppose we call @code{make-decrementer} twice with the same argument to create
-two procedures:
+Предположим, мы вызываем @code{make-decrementer} дважды с одним и тем же аргументом, чтобы
+создать две процедуры:
 
 @lisp
 (define D1 (make-decrementer 25))
@@ -14406,12 +14351,12 @@ two procedures:
 @end lisp
 
 @noindent
-Are @code{D1} and @code{D2} the same?  An acceptable answer is yes, because
-@code{D1} and @code{D2} have the same computational behavior---each is a
-procedure that subtracts its input from 25.  In fact, @code{D1} could be
-substituted for @code{D2} in any computation without changing the result.
+Одинаковы ли @code{D1} и @code{D2}?  Приемлемый ответ — да, потому что @code{D1} и @code{D2}
+имеют одно и то же вычислительное поведение — каждая является процедурой, которая вычитает свой
+вход из 25.  В самом деле, @code{D1} можно было бы подставить вместо @code{D2} в любом
+вычислении, не меняя результата.
 
-Contrast this with making two calls to @code{make-simplified-withdraw}:
+Сопоставьте это с выполнением двух вызовов @code{make-simplified-withdraw}:
 
 @lisp
 (define W1 (make-simplified-withdraw 25))
@@ -14419,9 +14364,8 @@ Contrast this with making two calls to @code{make-simplified-withdraw}:
 @end lisp
 
 @noindent
-Are @code{W1} and @code{W2} the same?  Surely not, because calls to @code{W1}
-and @code{W2} have distinct effects, as shown by the following sequence of
-interactions:
+Одинаковы ли @code{W1} и @code{W2}?  Разумеется, нет, потому что вызовы @code{W1} и @code{W2}
+имеют различные эффекты, как показано следующей последовательностью взаимодействий:
 
 @lisp
 (W1 20)
@@ -14435,34 +14379,29 @@ interactions:
 @end lisp
 
 @noindent
-Even though @code{W1} and @code{W2} are ``equal'' in the sense that they are
-both created by evaluating the same expression, @code{(make-simplified-withdraw
-25)}, it is not true that @code{W1} could be substituted for @code{W2} in any
-expression without changing the result of evaluating the expression.
+Хотя @code{W1} и @code{W2} «равны» в том смысле, что они оба созданы вычислением одного и того
+же выражения, @code{(make-simplified-withdraw 25)}, неверно, что @code{W1} можно было бы
+подставить вместо @code{W2} в любом выражении, не меняя результата вычисления выражения.
 
-A language that supports the concept that ``equals can be substituted for
-equals'' in an expression without changing the value of the expression is said
-to be @newterm{referentially transparent}.  Referential transparency is
-violated when we include @code{set!} in our computer language.  This makes it
-tricky to determine when we can simplify expressions by substituting equivalent
-expressions.  Consequently, reasoning about programs that use assignment
-becomes drastically more difficult.
+О языке, который поддерживает представление, что «равные можно подставлять вместо равных» в
+выражении, не меняя значения выражения, говорят, что он @newterm{ссылочно прозрачен}.  Ссылочная
+прозрачность нарушается, когда мы включаем @code{set!} в наш компьютерный язык.  Это делает
+хитрым определение того, когда мы можем упрощать выражения, подставляя эквивалентные выражения.
+Следовательно, рассуждать о программах, использующих присваивание, становится резко труднее.
 
-Once we forgo referential transparency, the notion of what it means for
-computational objects to be ``the same'' becomes difficult to capture in a
-formal way.  Indeed, the meaning of ``same'' in the real world that our
-programs model is hardly clear in itself.  In general, we can determine that
-two apparently identical objects are indeed ``the same one'' only by modifying
-one object and then observing whether the other object has changed in the same
-way.  But how can we tell if an object has ``changed'' other than by observing
-the ``same'' object twice and seeing whether some property of the object
-differs from one observation to the next?  Thus, we cannot determine ``change''
-without some @emph{a priori} notion of ``sameness,'' and we cannot determine
-sameness without observing the effects of change.
+Как только мы отказываемся от ссылочной прозрачности, понятие того, что значит для
+вычислительных объектов быть «одинаковыми», становится трудным схватить формальным образом.  В
+самом деле, смысл «одинаковости» в реальном мире, который моделируют наши программы, едва ли
+ясен сам по себе.  Вообще, мы можем определить, что два внешне идентичных объекта действительно
+«один и тот же», только изменив один объект и затем понаблюдав, изменился ли другой объект таким
+же образом.  Но как мы можем сказать, «изменился» ли объект, иначе как наблюдая «один и тот же»
+объект дважды и видя, отличается ли некоторое свойство объекта от одного наблюдения к другому?
+Таким образом, мы не можем определить «изменение» без некоторого @emph{априорного} понятия
+«одинаковости», и мы не можем определить одинаковость без наблюдения эффектов изменения.
 
-As an example of how this issue arises in programming, consider the situation
-where Peter and Paul have a bank account with $100 in it.  There is a
-substantial difference between modeling this as
+В качестве примера того, как этот вопрос возникает в программировании, рассмотрите ситуацию,
+где у Питера и Пола есть банковский счёт со 100 долларами на нём.  Есть существенная разница
+между моделированием этого как
 
 @lisp
 (define peter-acc (make-account 100))
@@ -14470,7 +14409,7 @@ substantial difference between modeling this as
 @end lisp
 
 @noindent
-and modeling it as
+и моделированием этого как
 
 @lisp
 (define peter-acc (make-account 100))
@@ -14478,55 +14417,48 @@ and modeling it as
 @end lisp
 
 @noindent
-In the first situation, the two bank accounts are distinct.  Transactions made
-by Peter will not affect Paul's account, and vice versa.  In the second
-situation, however, we have defined @code{paul-acc} to be @emph{the same thing}
-as @code{peter-acc}.  In effect, Peter and Paul now have a joint bank account,
-and if Peter makes a withdrawal from @code{peter-acc} Paul will observe less
-money in @code{paul-acc}.  These two similar but distinct situations can cause
-confusion in building computational models.  With the shared account, in
-particular, it can be especially confusing that there is one object (the bank
-account) that has two different names (@code{peter-acc} and @code{paul-acc});
-if we are searching for all the places in our program where @code{paul-acc} can
-be changed, we must remember to look also at things that change
-@code{peter-acc}.@footnote{The phenomenon of a single computational object
-being accessed by more than one name is known as @newterm{aliasing}.  The joint
-bank account situation illustrates a very simple example of an alias.  In
-@ref{3.3} we will see much more complex examples, such as ``distinct''
-compound data structures that share parts.  Bugs can occur in our programs if
-we forget that a change to an object may also, as a ``side effect,'' change a
-``different'' object because the two ``different'' objects are actually a
-single object appearing under different aliases.  These so-called
-@newterm{side-effect bugs} are so difficult to locate and to analyze that some
-people have proposed that programming languages be designed in such a way as to
-not allow side effects or aliasing (@ref{Lampson et al. 1981}; 
+В первой ситуации два банковских счёта различны.  Транзакции, совершённые Питером, не повлияют
+на счёт Пола, и наоборот.  Во второй ситуации, однако, мы определили @code{paul-acc} как
+@emph{ту же самую вещь}, что и @code{peter-acc}.  По сути, у Питера и Пола теперь совместный
+банковский счёт, и если Питер совершает снятие с @code{peter-acc}, Пол будет наблюдать меньше
+денег на @code{paul-acc}.  Эти две похожие, но различные ситуации могут вызвать путаницу при
+построении вычислительных моделей.  С общим счётом, в частности, может особенно сбивать с толку
+то, что есть один объект (банковский счёт), у которого два разных имени (@code{peter-acc} и
+@code{paul-acc}); если мы ищем все места в нашей программе, где @code{paul-acc} может быть
+изменён, мы должны помнить смотреть также на вещи, которые меняют
+@code{peter-acc}.@footnote{Явление, когда к единственному вычислительному объекту обращаются
+более чем по одному имени, известно как @newterm{совмещение имён}.  Ситуация совместного
+банковского счёта иллюстрирует очень простой пример совмещённого имени.  В @ref{3.3} мы увидим
+гораздо более сложные примеры, такие как «различные» составные структуры данных, которые
+разделяют части.  В наших программах могут возникать ошибки, если мы забываем, что изменение
+объекта может также, как «побочный эффект», изменить «другой» объект, потому что два «различных»
+объекта на самом деле являются единственным объектом, появляющимся под разными совмещёнными
+именами.  Эти так называемые @newterm{ошибки из-за побочных эффектов} столь трудно
+локализовать и анализировать, что некоторые люди предлагали проектировать языки программирования
+таким образом, чтобы не допускать побочных эффектов или совмещения имён (@ref{Lampson et al. 1981};
 @ref{Morris et al. 1980}).}
 
-With reference to the above remarks on ``sameness'' and ``change,'' observe
-that if Peter and Paul could only examine their bank balances, and could not
-perform operations that changed the balance, then the issue of whether the two
-accounts are distinct would be moot.  In general, so long as we never modify
-data objects, we can regard a compound data object to be precisely the totality
-of its pieces.  For example, a rational number is determined by giving its
-numerator and its denominator.  But this view is no longer valid in the
-presence of change, where a compound data object has an ``identity'' that is
-something different from the pieces of which it is composed.  A bank account is
-still ``the same'' bank account even if we change the balance by making a
-withdrawal; conversely, we could have two different bank accounts with the same
-state information.  This complication is a consequence, not of our programming
-language, but of our perception of a bank account as an object.  We do not, for
-example, ordinarily regard a rational number as a changeable object with
-identity, such that we could change the numerator and still have ``the same''
-rational number.
+В отношении вышеприведённых замечаний об «одинаковости» и «изменении» заметьте, что если бы
+Питер и Пол могли только исследовать свои банковские балансы и не могли выполнять операции,
+которые меняют баланс, то вопрос о том, различны ли два счёта, был бы спорным.  Вообще, пока мы
+никогда не изменяем объекты данных, мы можем рассматривать составной объект данных как в точности
+совокупность его частей.  Например, рациональное число определяется заданием его числителя и его
+знаменателя.  Но этот взгляд больше не действителен при наличии изменения, где у составного
+объекта данных есть «идентичность», которая есть нечто отличное от частей, из которых он состоит.
+Банковский счёт по-прежнему «тот же самый» банковский счёт, даже если мы меняем баланс, совершая
+снятие; и наоборот, у нас могло бы быть два разных банковских счёта с одной и той же информацией
+о состоянии.  Это усложнение — следствие не нашего языка программирования, а нашего восприятия
+банковского счёта как объекта.  Мы, например, обычно не рассматриваем рациональное число как
+изменяемый объект с идентичностью, такой что мы могли бы изменить числитель и всё ещё иметь «то
+же самое» рациональное число.
 
-@subsubheading Pitfalls of imperative programming
+@subsubheading Ловушки императивного программирования
 
-In contrast to functional programming, programming that makes extensive use of
-assignment is known as @newterm{imperative programming}.  In addition to
-raising complications about computational models, programs written in
-imperative style are susceptible to bugs that cannot occur in functional
-programs.  For example, recall the iterative factorial program from 
-@ref{1.2.1}:
+В противоположность функциональному программированию, программирование, которое широко
+использует присваивание, известно как @newterm{императивное программирование}.  Помимо того что
+оно поднимает усложнения о вычислительных моделях, программы, написанные в императивном стиле,
+подвержены ошибкам, которые не могут возникнуть в функциональных программах.  Например,
+вспомните итеративную программу вычисления факториала из @ref{1.2.1}:
 
 @lisp
 (define (factorial n)
@@ -14539,9 +14471,9 @@ programs.  For example, recall the iterative factorial program from
 @end lisp
 
 @noindent
-Instead of passing arguments in the internal iterative loop, we could adopt a
-more imperative style by using explicit assignment to update the values of the
-variables @code{product} and @code{counter}:
+Вместо передачи аргументов во внутреннем итеративном цикле мы могли бы принять более
+императивный стиль, используя явное присваивание, чтобы обновлять значения переменных
+@code{product} и @code{counter}:
 
 @lisp
 (define (factorial n)
@@ -14558,10 +14490,9 @@ variables @code{product} and @code{counter}:
 @end lisp
 
 @noindent
-This does not change the results produced by the program, but it does introduce
-a subtle trap.  How do we decide the order of the assignments?  As it happens,
-the program is correct as written.  But writing the assignments in the opposite
-order
+Это не меняет результатов, производимых программой, но это вводит тонкую ловушку.  Как мы решаем
+порядок присваиваний?  Как оказывается, программа верна как написана.  Но запись присваиваний в
+противоположном порядке
 
 @lisp
 (set! counter (+ counter 1))
@@ -14569,38 +14500,34 @@ order
 @end lisp
 
 @noindent
-would have produced a different, incorrect result.  In general, programming
-with assignment forces us to carefully consider the relative orders of the
-assignments to make sure that each statement is using the correct version of
-the variables that have been changed.  This issue simply does not arise in
-functional programs.@footnote{In view of this, it is ironic that introductory
-programming is most often taught in a highly imperative style.  This may be a
-vestige of a belief, common throughout the 1960s and 1970s, that programs that
-call procedures must inherently be less efficient than programs that perform
-assignments.  (@ref{Steele 1977} debunks this argument.)  Alternatively it may
-reflect a view that step-by-step assignment is easier for beginners to
-visualize than procedure call.  Whatever the reason, it often saddles beginning
-programmers with ``should I set this variable before or after that one''
-concerns that can complicate programming and obscure the important ideas.}
+произвела бы другой, неправильный результат.  Вообще, программирование с присваиванием вынуждает
+нас тщательно рассматривать относительные порядки присваиваний, чтобы убедиться, что каждое
+утверждение использует правильную версию изменённых переменных.  Этот вопрос просто не возникает
+в функциональных программах.@footnote{Ввиду этого иронично, что вводное программирование чаще
+всего преподаётся в сильно императивном стиле.  Это может быть пережитком убеждения,
+распространённого на протяжении 1960-х и 1970-х годов, что программы, вызывающие процедуры,
+должны быть по своей природе менее эффективны, чем программы, выполняющие присваивания.
+(@ref{Steele 1977} развенчивает этот аргумент.)  Или же это может отражать взгляд, что
+пошаговое присваивание новичкам легче визуализировать, чем вызов процедуры.  Какова бы ни была
+причина, это часто обременяет начинающих программистов заботами «следует ли мне установить эту
+переменную до или после той», которые могут усложнять программирование и затемнять важные идеи.}
 
-The complexity of imperative programs becomes even worse if we consider
-applications in which several processes execute concurrently.  We will return
-to this in @ref{3.4}.  First, however, we will address the issue of
-providing a computational model for expressions that involve assignment, and
-explore the uses of objects with local state in designing simulations.
+Сложность императивных программ становится ещё хуже, если мы рассматриваем приложения, в
+которых несколько процессов исполняются параллельно.  Мы вернёмся к этому в @ref{3.4}.  Сначала,
+однако, мы обратимся к вопросу предоставления вычислительной модели для выражений, включающих
+присваивание, и исследуем использования объектов с локальным состоянием при проектировании
+моделирований.
 
 @quotation
-@strong{@anchor{Exercise 3.7}Exercise 3.7:} Consider the bank account objects
-created by @code{make-account}, with the password modification described in
-@ref{Exercise 3.3}.  Suppose that our banking system requires the ability to
-make joint accounts.  Define a procedure @code{make-joint} that accomplishes
-this.  @code{Make-joint} should take three arguments.  The first is a
-password-protected account.  The second argument must match the password with
-which the account was defined in order for the @code{make-joint} operation to
-proceed.  The third argument is a new password.  @code{Make-joint} is to create
-an additional access to the original account using the new password.  For
-example, if @code{peter-acc} is a bank account with password
-@code{open-sesame}, then
+@strong{@anchor{Exercise 3.7}Exercise 3.7:} Рассмотрите объекты банковского счёта, создаваемые
+@code{make-account}, с модификацией пароля, описанной в @ref{Exercise 3.3}.  Предположим, что
+наша банковская система требует способности делать совместные счета.  Определите процедуру
+@code{make-joint}, которая выполняет это.  @code{Make-joint} должна принимать три аргумента.
+Первый — это защищённый паролем счёт.  Второй аргумент должен совпадать с паролем, с которым счёт
+был определён, чтобы операция @code{make-joint} могла продолжиться.  Третий аргумент — новый
+пароль.  @code{Make-joint} должна создать дополнительный доступ к исходному счёту, используя
+новый пароль.  Например, если @code{peter-acc} — банковский счёт с паролем @code{open-sesame},
+то
 
 @lisp
 (define paul-acc
@@ -14610,28 +14537,26 @@ example, if @code{peter-acc} is a bank account with password
 @end lisp
 
 @noindent
-will allow one to make transactions on @code{peter-acc} using the name
-@code{paul-acc} and the password @code{rosebud}.  You may wish to modify your
-solution to @ref{Exercise 3.3} to accommodate this new feature.
+позволит совершать транзакции на @code{peter-acc}, используя имя @code{paul-acc} и пароль
+@code{rosebud}.  Возможно, вам захочется изменить ваше решение @ref{Exercise 3.3}, чтобы вместить
+эту новую возможность.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 3.8}Exercise 3.8:} When we defined the evaluation
-model in @ref{1.1.3}, we said that the first step in evaluating an
-expression is to evaluate its subexpressions.  But we never specified the order
-in which the subexpressions should be evaluated (e.g., left to right or right
-to left).  When we introduce assignment, the order in which the arguments to a
-procedure are evaluated can make a difference to the result.  Define a simple
-procedure @code{f} such that evaluating 
+@strong{@anchor{Exercise 3.8}Exercise 3.8:} Когда мы определили модель вычисления в @ref{1.1.3},
+мы сказали, что первый шаг при вычислении выражения — вычислить его подвыражения.  Но мы никогда
+не указывали порядок, в котором следует вычислять подвыражения (например, слева направо или
+справа налево).  Когда мы вводим присваивание, порядок, в котором вычисляются аргументы
+процедуры, может влиять на результат.  Определите простую процедуру @code{f} такую, что
+вычисление
 
 @lisp
 (+ (f 0) (f 1))
 @end lisp
 
 @noindent
-will return 0 if
-the arguments to @code{+} are evaluated from left to right but will return 1 if
-the arguments are evaluated from right to left.
+вернёт 0, если аргументы @code{+} вычисляются слева направо, но вернёт 1, если аргументы
+вычисляются справа налево.
 @end quotation
 
 @node	3.2, 3.3, 3.1, Chapter 3

@@ -31,57 +31,53 @@
 <p>
 Next: <a href="3_002e2.xhtml#g_t3_002e2" accesskey="n" rel="next">3.2</a>, Prev: <a href="Chapter-3.xhtml#Chapter-3" accesskey="p" rel="prev">Chapter 3</a>, Up: <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev">Chapter 3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
-<a id="Assignment-and-Local-State"></a>
-<h3 class="section"><span class="secnum">3.1</span><span class="sectitle">Assignment and Local State</span></h3>
+<a id="Prisvaivanie-i-lokalxnoe-sostoyanie"></a>
+<h3 class="section"><span class="secnum">3.1</span><span class="sectitle">Присваивание и локальное состояние</span></h3>
 
-<p>We ordinarily view the world as populated by independent objects, each of which
-has a state that changes over time.  An object is said to “have state” if its
-behavior is influenced by its history.  A bank account, for example, has state
-in that the answer to the question “Can I withdraw $100?”  depends upon the
-history of deposit and withdrawal transactions.  We can characterize an
-object’s state by one or more <a id="index-state-variables"></a>
-<em>state variables</em>, which among them
-maintain enough information about history to determine the object’s current
-behavior.  In a simple banking system, we could characterize the state of an
-account by a current balance rather than by remembering the entire history of
-account transactions.
+<p>Мы обычно рассматриваем мир как населённый независимыми объектами, каждый из которых имеет
+состояние, меняющееся со временем.  Об объекте говорят, что он «обладает состоянием», если
+его поведение зависит от его истории.  Банковский счёт, например, обладает состоянием в том
+смысле, что ответ на вопрос «Могу ли я снять 100 долларов?» зависит от истории транзакций
+вкладов и снятий.  Мы можем охарактеризовать состояние объекта одной или несколькими
+<a id="index-peremennymi-sostoyaniya"></a>
+<em>переменными состояния</em>, которые в совокупности хранят достаточно информации об
+истории, чтобы определить текущее поведение объекта.  В простой банковской системе мы могли
+бы охарактеризовать состояние счёта текущим балансом, а не запоминанием всей истории
+транзакций по счёту.
 </p>
-<p>In a system composed of many objects, the objects are rarely completely
-independent.  Each may influence the states of others through interactions,
-which serve to couple the state variables of one object to those of other
-objects.  Indeed, the view that a system is composed of separate objects is
-most useful when the state variables of the system can be grouped into closely
-coupled subsystems that are only loosely coupled to other subsystems.
+<p>В системе, составленной из многих объектов, объекты редко полностью независимы.  Каждый может
+влиять на состояния других через взаимодействия, которые служат для связывания переменных
+состояния одного объекта с переменными других объектов.  В самом деле, взгляд, что система
+составлена из отдельных объектов, наиболее полезен, когда переменные состояния системы можно
+сгруппировать в тесно связанные подсистемы, которые лишь слабо связаны с другими подсистемами.
 </p>
-<p>This view of a system can be a powerful framework for organizing computational
-models of the system.  For such a model to be modular, it should be decomposed
-into computational objects that model the actual objects in the system.  Each
-computational object must have its own <a id="index-local-state-variables"></a>
-<em>local state variables</em>
-describing the actual object’s state.  Since the states of objects in the
-system being modeled change over time, the state variables of the corresponding
-computational objects must also change.  If we choose to model the flow of time
-in the system by the elapsed time in the computer, then we must have a way to
-construct computational objects whose behaviors change as our programs run.  In
-particular, if we wish to model state variables by ordinary symbolic names in
-the programming language, then the language must provide an <a id="index-assignment-operator"></a>
-<em>assignment operator</em> 
-to enable us to change the value associated with a name.
+<p>Этот взгляд на систему может быть мощным каркасом для организации вычислительных моделей
+системы.  Чтобы такая модель была модульной, она должна быть разложена на вычислительные
+объекты, которые моделируют действительные объекты в системе.  Каждый вычислительный объект
+должен иметь свои собственные <a id="index-lokalxnye-peremennye-sostoyaniya"></a>
+<em>локальные переменные состояния</em>, описывающие состояние
+действительного объекта.  Поскольку состояния объектов в моделируемой системе меняются со
+временем, переменные состояния соответствующих вычислительных объектов также должны меняться.
+Если мы выбираем моделировать течение времени в системе прошедшим временем в компьютере, то у
+нас должен быть способ строить вычислительные объекты, чьи поведения меняются по мере того, как
+исполняются наши программы.  В частности, если мы желаем моделировать переменные состояния
+обычными символьными именами в языке программирования, то язык должен предоставлять
+<a id="index-operator-prisvaivaniya"></a>
+<em>оператор присваивания</em>, чтобы позволить нам менять значение, связанное с именем.
 </p>
 
 <a id="g_t3_002e1_002e1"></a>
-<a id="Local-State-Variables"></a>
-<h4 class="subsection"><span class="secnum">3.1.1</span><span class="sectitle">Local State Variables</span></h4>
+<a id="Lokalxnye-peremennye-sostoyaniya"></a>
+<h4 class="subsection"><span class="secnum">3.1.1</span><span class="sectitle">Локальные переменные состояния</span></h4>
 
-<p>To illustrate what we mean by having a computational object with time-varying
-state, let us model the situation of withdrawing money from a bank account.  We
-will do this using a procedure <code>withdraw</code>, which takes as argument an
-<code>amount</code> to be withdrawn.  If there is enough money in the account to
-accommodate the withdrawal, then <code>withdraw</code> should return the balance
-remaining after the withdrawal.  Otherwise, <code>withdraw</code> should return the
-message <em>Insufficient funds</em>. For example, if we begin with $100 in the
-account, we should obtain the following sequence of responses using
-<code>withdraw</code>:
+<p>Чтобы проиллюстрировать, что мы имеем в виду под наличием вычислительного объекта с
+изменяющимся во времени состоянием, давайте смоделируем ситуацию снятия денег с банковского
+счёта.  Мы сделаем это, используя процедуру <code>withdraw</code>, которая принимает в качестве
+аргумента <code>amount</code> — сумму, подлежащую снятию.  Если на счёте достаточно денег, чтобы
+вместить снятие, то <code>withdraw</code> должна вернуть баланс, оставшийся после снятия.  Иначе
+<code>withdraw</code> должна вернуть сообщение <em>Insufficient funds</em> («Недостаточно средств»).
+Например, если мы начинаем со 100 долларов на счёте, мы должны получить следующую
+последовательность ответов, используя <code>withdraw</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">withdraw </span><span class="lit">25</span><span class="clo">)</span><span class="pln">
@@ -97,21 +93,19 @@ account, we should obtain the following sequence of responses using
 </span><i><span class="lit">35</span></i>
 </pre></div>
 
-<p>Observe that the expression <code>(withdraw 25)</code>, evaluated twice, yields
-different values.  This is a new kind of behavior for a procedure.  Until now,
-all our procedures could be viewed as specifications for computing mathematical
-functions.  A call to a procedure computed the value of the function applied to
-the given arguments, and two calls to the same procedure with the same
-arguments always produced the same result.<a class="footnote_link" id="DOCF129" href="#FOOT129"><sup>129</sup></a>
+<p>Заметьте, что выражение <code>(withdraw 25)</code>, вычисленное дважды, даёт разные значения.  Это
+новый вид поведения для процедуры.  До сих пор все наши процедуры можно было рассматривать как
+спецификации для вычисления математических функций.  Вызов процедуры вычислял значение функции,
+применённой к данным аргументам, и два вызова одной и той же процедуры с одними и теми же
+аргументами всегда производили один и тот же результат.<a class="footnote_link" id="DOCF129" href="#FOOT129"><sup>129</sup></a>
 </p>
-<p>To implement <code>withdraw</code>, we can use a variable <code>balance</code> to indicate
-the balance of money in the account and define <code>withdraw</code> as a procedure
-that accesses <code>balance</code>.  The <code>withdraw</code> procedure checks to see if
-<code>balance</code> is at least as large as the requested <code>amount</code>.  If so,
-<code>withdraw</code> decrements <code>balance</code> by <code>amount</code> and returns the new
-value of <code>balance</code>.  Otherwise, <code>withdraw</code> returns the
-<em>Insufficient funds</em> message.  Here are the definitions of <code>balance</code>
-and <code>withdraw</code>:
+<p>Чтобы реализовать <code>withdraw</code>, мы можем использовать переменную <code>balance</code>, чтобы
+обозначать баланс денег на счёте, и определить <code>withdraw</code> как процедуру, которая
+обращается к <code>balance</code>.  Процедура <code>withdraw</code> проверяет, по меньшей мере ли
+<code>balance</code> столь же велик, как запрошенная <code>amount</code>.  Если так, <code>withdraw</code>
+уменьшает <code>balance</code> на <code>amount</code> и возвращает новое значение <code>balance</code>.  Иначе
+<code>withdraw</code> возвращает сообщение <em>Insufficient funds</em>.  Вот определения <code>balance</code>
+и <code>withdraw</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> balance </span><span class="lit">100</span><span class="clo">)</span><span class="pln">
@@ -122,31 +116,30 @@ and <code>withdraw</code>:
              balance</span><span class="clo">)</span><span class="pln">
       </span><span class="str">"Insufficient funds"</span><span class="clo">))</span></pre></div>
 
-<p>Decrementing <code>balance</code> is accomplished by the expression
+<p>Уменьшение <code>balance</code> достигается выражением
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> balance amount</span><span class="clo">))</span></pre></div>
 
-<p>This uses the <code>set!</code> special form, whose syntax is
+<p>Оно использует особую форму <code>set!</code>, синтаксис которой —
 </p>
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> ⟨</span><var><span class="pln">name</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">new-value</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> ⟨</span><var><span class="pun">имя</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">новое-значение</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
 
-<p>Here <code>⟨</code><var>name</var><code>⟩</code> is a symbol and <code>⟨</code><var>new-value</var><code>⟩</code> is any expression.
-<code>Set!</code> changes <code>⟨</code><var>name</var><code>⟩</code> so that its value is the result obtained by
-evaluating <code>⟨</code><var>new-value</var><code>⟩</code>.  In the case at hand, we are changing
-<code>balance</code> so that its new value will be the result of subtracting
-<code>amount</code> from the previous value of <code>balance</code>.<a class="footnote_link" id="DOCF130" href="#FOOT130"><sup>130</sup></a>
+<p>Здесь <code>⟨</code><var>имя</var><code>⟩</code> — это символ, а <code>⟨</code><var>новое-значение</var><code>⟩</code> — любое
+выражение.  <code>Set!</code> меняет <code>⟨</code><var>имя</var><code>⟩</code> так, чтобы его значением стал
+результат, полученный вычислением <code>⟨</code><var>нового-значения</var><code>⟩</code>.  В рассматриваемом
+случае мы меняем <code>balance</code> так, чтобы его новым значением стал результат вычитания
+<code>amount</code> из предыдущего значения <code>balance</code>.<a class="footnote_link" id="DOCF130" href="#FOOT130"><sup>130</sup></a>
 </p>
-<p><code>Withdraw</code> also uses the <code>begin</code> special form to cause two
-expressions to be evaluated in the case where the <code>if</code> test is true: first
-decrementing <code>balance</code> and then returning the value of <code>balance</code>.  In
-general, evaluating the expression
+<p><code>Withdraw</code> также использует особую форму <code>begin</code>, чтобы заставить два выражения быть
+вычисленными в случае, когда проверка <code>if</code> истинна: сначала уменьшая <code>balance</code>, а
+затем возвращая значение <code>balance</code>.  Вообще, вычисление выражения
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">begin</span><span class="pln"> ⟨</span><var><span class="pln">exp</span><span class="pun">₁</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">exp</span><span class="pun">₂</span></var><span class="pln">⟩ </span><span class="roman"><span class="pun">…</span></span><span class="pln"> ⟨</span><var><span class="pln">exp</span><span class="pun">ₖ</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
 
-<p>causes the expressions <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>заставляет выражения <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mo stretchy="false">⟨</mo>
     <mi>e</mi>
@@ -157,7 +150,7 @@ general, evaluating the expression
     </msub>
     <mo stretchy="false">⟩</mo>
   </mrow>
-</math> through <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> по <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mo stretchy="false">⟨</mo>
     <mi>e</mi>
@@ -168,8 +161,8 @@ general, evaluating the expression
     </msub>
     <mo stretchy="false">⟩</mo>
   </mrow>
-</math> to be evaluated
-in sequence and the value of the final expression <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> быть вычисленными по порядку, а
+значение последнего выражения <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mo stretchy="false">⟨</mo>
     <mi>e</mi>
@@ -180,22 +173,21 @@ in sequence and the value of the final expression <math xmlns="http://www.w3.org
     </msub>
     <mo stretchy="false">⟩</mo>
   </mrow>
-</math> to be
-returned as the value of the entire <code>begin</code> form.<a class="footnote_link" id="DOCF131" href="#FOOT131"><sup>131</sup></a>
+</math> — быть возвращённым как значение всей формы
+<code>begin</code>.<a class="footnote_link" id="DOCF131" href="#FOOT131"><sup>131</sup></a>
 </p>
-<p>Although <code>withdraw</code> works as desired, the variable <code>balance</code> presents
-a problem.  As specified above, <code>balance</code> is a name defined in the global
-environment and is freely accessible to be examined or modified by any
-procedure.  It would be much better if we could somehow make <code>balance</code>
-internal to <code>withdraw</code>, so that <code>withdraw</code> would be the only
-procedure that could access <code>balance</code> directly and any other procedure
-could access <code>balance</code> only indirectly (through calls to <code>withdraw</code>).
-This would more accurately model the notion that <code>balance</code> is a local
-state variable used by <code>withdraw</code> to keep track of the state of the
-account.
+<p>Хотя <code>withdraw</code> работает как желалось, переменная <code>balance</code> представляет проблему.
+Как задано выше, <code>balance</code> — это имя, определённое в глобальном окружении, и свободно
+доступно для исследования или изменения любой процедурой.  Было бы намного лучше, если бы мы
+могли как-то сделать <code>balance</code> внутренней по отношению к <code>withdraw</code>, чтобы
+<code>withdraw</code> была единственной процедурой, которая могла бы обращаться к <code>balance</code>
+напрямую, а любая другая процедура могла бы обращаться к <code>balance</code> только косвенно (через
+вызовы <code>withdraw</code>).  Это точнее моделировало бы представление о том, что <code>balance</code> —
+локальная переменная состояния, используемая <code>withdraw</code>, чтобы отслеживать состояние
+счёта.
 </p>
-<p>We can make <code>balance</code> internal to <code>withdraw</code> by rewriting the
-definition as follows:
+<p>Мы можем сделать <code>balance</code> внутренней по отношению к <code>withdraw</code>, переписав определение
+следующим образом:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> new-withdraw
@@ -207,35 +199,31 @@ definition as follows:
                  balance</span><span class="clo">)</span><span class="pln">
           </span><span class="str">"Insufficient funds"</span><span class="clo">))))</span></pre></div>
 
-<p>What we have done here is use <code>let</code> to establish an environment with a
-local variable <code>balance</code>, bound to the initial value 100.  Within this
-local environment, we use <code>lambda</code> to create a procedure that takes
-<code>amount</code> as an argument and behaves like our previous <code>withdraw</code>
-procedure.  This procedure—returned as the result of evaluating the
-<code>let</code> expression—is <code>new-withdraw</code>, which behaves in precisely the
-same way as <code>withdraw</code> but whose variable <code>balance</code> is not accessible
-by any other procedure.<a class="footnote_link" id="DOCF132" href="#FOOT132"><sup>132</sup></a>
+<p>Что мы здесь сделали — это использовали <code>let</code>, чтобы установить окружение с локальной
+переменной <code>balance</code>, связанной с начальным значением 100.  Внутри этого локального
+окружения мы используем <code>lambda</code>, чтобы создать процедуру, которая принимает <code>amount</code>
+как аргумент и ведёт себя как наша предыдущая процедура <code>withdraw</code>.  Эта процедура —
+возвращённая как результат вычисления выражения <code>let</code> — это <code>new-withdraw</code>, которая
+ведёт себя точно так же, как <code>withdraw</code>, но чья переменная <code>balance</code> недоступна
+никакой другой процедуре.<a class="footnote_link" id="DOCF132" href="#FOOT132"><sup>132</sup></a>
 </p>
-<p>Combining <code>set!</code> with local variables is the general programming technique
-we will use for constructing computational objects with local state.
-Unfortunately, using this technique raises a serious problem: When we first
-introduced procedures, we also introduced the substitution model of evaluation
-(<a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>) to provide an interpretation of what procedure
-application means.  We said that applying a procedure should be interpreted as
-evaluating the body of the procedure with the formal parameters replaced by
-their values.  The trouble is that, as soon as we introduce assignment into our
-language, substitution is no longer an adequate model of procedure application.
-(We will see why this is so in <a href="#g_t3_002e1_002e3">3.1.3</a>.)  As a consequence, we
-technically have at this point no way to understand why the <code>new-withdraw</code>
-procedure behaves as claimed above.  In order to really understand a procedure
-such as <code>new-withdraw</code>, we will need to develop a new model of procedure
-application.  In <a href="3_002e2.xhtml#g_t3_002e2">3.2</a> we will introduce such a model, together
-with an explanation of <code>set!</code> and local variables.  First, however, we
-examine some variations on the theme established by <code>new-withdraw</code>.
+<p>Комбинирование <code>set!</code> с локальными переменными — это общий приём программирования, который
+мы будем использовать для построения вычислительных объектов с локальным состоянием.  К
+сожалению, использование этого приёма поднимает серьёзную проблему: когда мы впервые ввели
+процедуры, мы также ввели подстановочную модель вычислений (<a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>), чтобы дать
+интерпретацию того, что означает применение процедуры.  Мы сказали, что применение процедуры
+следует интерпретировать как вычисление тела процедуры с формальными параметрами, заменёнными
+их значениями.  Беда в том, что, как только мы вводим присваивание в наш язык, подстановка
+больше не является адекватной моделью применения процедуры.  (Мы увидим, почему это так, в
+<a href="#g_t3_002e1_002e3">3.1.3</a>.)  Как следствие, технически у нас на данный момент нет способа понять, почему
+процедура <code>new-withdraw</code> ведёт себя так, как заявлено выше.  Чтобы действительно понять
+процедуру, такую как <code>new-withdraw</code>, нам понадобится разработать новую модель применения
+процедуры.  В <a href="3_002e2.xhtml#g_t3_002e2">3.2</a> мы введём такую модель вместе с объяснением <code>set!</code> и локальных
+переменных.  Сначала, однако, мы рассмотрим некоторые вариации на тему, установленную
+<code>new-withdraw</code>.
 </p>
-<p>The following procedure, <code>make-withdraw</code>, creates “withdrawal
-processors.”  The formal parameter <code>balance</code> in <code>make-withdraw</code>
-specifies the initial amount of money in the account.<a class="footnote_link" id="DOCF133" href="#FOOT133"><sup>133</sup></a>
+<p>Следующая процедура, <code>make-withdraw</code>, создаёт «обработчики снятия».  Формальный параметр
+<code>balance</code> в <code>make-withdraw</code> задаёт начальную сумму денег на счёте.<a class="footnote_link" id="DOCF133" href="#FOOT133"><sup>133</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-withdraw balance</span><span class="clo">)</span><span class="pln">
@@ -246,8 +234,8 @@ specifies the initial amount of money in the account.<a class="footnote_link" id
                balance</span><span class="clo">)</span><span class="pln">
         </span><span class="str">"Insufficient funds"</span><span class="clo">)))</span></pre></div>
 
-<p><code>Make-withdraw</code> can be used as follows to create two objects <code>W1</code> and
-<code>W2</code>:
+<p><code>Make-withdraw</code> можно использовать следующим образом, чтобы создать два объекта <code>W1</code>
+и <code>W2</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> W1 </span><span class="opn">(</span><span class="pln">make-withdraw </span><span class="lit">100</span><span class="clo">))</span><span class="pln">
@@ -266,13 +254,12 @@ specifies the initial amount of money in the account.<a class="footnote_link" id
 </span><i><span class="lit">10</span></i>
 </pre></div>
 
-<p>Observe that <code>W1</code> and <code>W2</code> are completely independent objects, each
-with its own local state variable <code>balance</code>.  Withdrawals from one do not
-affect the other.
+<p>Заметьте, что <code>W1</code> и <code>W2</code> — полностью независимые объекты, каждый со своей собственной
+локальной переменной состояния <code>balance</code>.  Снятия с одного не влияют на другой.
 </p>
-<p>We can also create objects that handle deposits as well as withdrawals, and
-thus we can represent simple bank accounts.  Here is a procedure that returns a
-“bank-account object” with a specified initial balance:
+<p>Мы можем также создавать объекты, которые обрабатывают и вклады, и снятия, и таким образом мы
+можем представлять простые банковские счета.  Вот процедура, которая возвращает «объект
+банковского счёта» с заданным начальным балансом:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-account balance</span><span class="clo">)</span><span class="pln">
@@ -292,18 +279,17 @@ thus we can represent simple bank accounts.  Here is a procedure that returns a
                  MAKE-ACCOUNT"</span><span class="pln"> m</span><span class="clo">))))</span><span class="pln">
   dispatch</span><span class="clo">)</span></pre></div>
 
-<p>Each call to <code>make-account</code> sets up an environment with a local state
-variable <code>balance</code>.  Within this environment, <code>make-account</code> defines
-procedures <code>deposit</code> and <code>withdraw</code> that access <code>balance</code> and an
-additional procedure <code>dispatch</code> that takes a “message” as input and
-returns one of the two local procedures.  The <code>dispatch</code> procedure itself
-is returned as the value that represents the bank-account object.  This is
-precisely the <a id="index-message_002dpassing"></a>
-<em>message-passing</em> style of programming that we saw in
-<a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a>, although here we are using it in conjunction with the
-ability to modify local variables.
+<p>Каждый вызов <code>make-account</code> устанавливает окружение с локальной переменной состояния
+<code>balance</code>.  Внутри этого окружения <code>make-account</code> определяет процедуры <code>deposit</code>
+и <code>withdraw</code>, которые обращаются к <code>balance</code>, и дополнительную процедуру
+<code>dispatch</code>, которая принимает «сообщение» как вход и возвращает одну из двух локальных
+процедур.  Сама процедура <code>dispatch</code> возвращается как значение, представляющее объект
+банковского счёта.  Это в точности стиль программирования с <a id="index-peredachei-soobshchenii-2"></a>
+<em>передачей сообщений</em>,
+который мы видели в <a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a>, хотя здесь мы используем его в сочетании со способностью
+изменять локальные переменные.
 </p>
-<p><code>Make-account</code> can be used as follows:
+<p><code>Make-account</code> можно использовать следующим образом:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> acc </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="clo">))</span><span class="pln">
@@ -321,26 +307,24 @@ ability to modify local variables.
 </span><i><span class="lit">30</span></i>
 </pre></div>
 
-<p>Each call to <code>acc</code> returns the locally defined <code>deposit</code> or
-<code>withdraw</code> procedure, which is then applied to the specified
-<code>amount</code>.  As was the case with <code>make-withdraw</code>, another call to
-<code>make-account</code>
+<p>Каждый вызов <code>acc</code> возвращает локально определённую процедуру <code>deposit</code> или
+<code>withdraw</code>, которая затем применяется к заданной <code>amount</code>.  Как было в случае с
+<code>make-withdraw</code>, другой вызов <code>make-account</code>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> acc2 </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="clo">))</span></pre></div>
 
-<p>will produce a completely separate account object, which maintains its own
-local <code>balance</code>.
+<p>произведёт полностью отдельный объект счёта, который поддерживает свой собственный локальный
+<code>balance</code>.
 </p>
 <blockquote>
-<p><strong><a id="Exercise-3_002e1"></a>Exercise 3.1:</strong> An <a id="index-accumulator"></a>
-<em>accumulator</em> is a
-procedure that is called repeatedly with a single numeric argument and
-accumulates its arguments into a sum.  Each time it is called, it returns the
-currently accumulated sum.  Write a procedure <code>make-accumulator</code> that
-generates accumulators, each maintaining an independent sum.  The input to
-<code>make-accumulator</code> should specify the initial value of the sum; for
-example
+<p><strong><a id="Exercise-3_002e1"></a>Exercise 3.1:</strong> <a id="index-Nakopitelx"></a>
+<em>Накопитель</em> — это процедура, которая
+многократно вызывается с единственным числовым аргументом и накапливает свои аргументы в сумму.
+Каждый раз, когда она вызывается, она возвращает текущую накопленную сумму.  Напишите процедуру
+<code>make-accumulator</code>, которая порождает накопители, каждый из которых поддерживает
+независимую сумму.  Вход для <code>make-accumulator</code> должен задавать начальное значение суммы;
+например
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> A </span><span class="opn">(</span><span class="pln">make-accumulator </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
@@ -354,18 +338,16 @@ example
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-3_002e2"></a>Exercise 3.2:</strong> In software-testing applications,
-it is useful to be able to count the number of times a given procedure is
-called during the course of a computation.  Write a procedure
-<code>make-monitored</code> that takes as input a procedure, <code>f</code>, that itself
-takes one input.  The result returned by <code>make-monitored</code> is a third
-procedure, say <code>mf</code>, that keeps track of the number of times it has been
-called by maintaining an internal counter.  If the input to <code>mf</code> is the
-special symbol <code>how-many-calls?</code>, then <code>mf</code> returns the value of the
-counter.  If the input is the special symbol <code>reset-count</code>, then <code>mf</code>
-resets the counter to zero.  For any other input, <code>mf</code> returns the result
-of calling <code>f</code> on that input and increments the counter.  For instance, we
-could make a monitored version of the <code>sqrt</code> procedure:
+<p><strong><a id="Exercise-3_002e2"></a>Exercise 3.2:</strong> В приложениях тестирования программ полезно уметь
+подсчитывать число раз, которое данная процедура вызывается в ходе вычисления.  Напишите
+процедуру <code>make-monitored</code>, которая принимает в качестве входа процедуру <code>f</code>, которая
+сама принимает один вход.  Результат, возвращаемый <code>make-monitored</code>, — это третья
+процедура, скажем <code>mf</code>, которая отслеживает число раз, которое она была вызвана, поддерживая
+внутренний счётчик.  Если вход для <code>mf</code> — особый символ <code>how-many-calls?</code>, то
+<code>mf</code> возвращает значение счётчика.  Если вход — особый символ <code>reset-count</code>, то
+<code>mf</code> сбрасывает счётчик в нуль.  Для любого другого входа <code>mf</code> возвращает результат
+вызова <code>f</code> на этом входе и увеличивает счётчик.  Например, мы могли бы сделать
+отслеживаемую версию процедуры <code>sqrt</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> s </span><span class="opn">(</span><span class="pln">make-monitored sqrt</span><span class="clo">))</span><span class="pln">
@@ -379,17 +361,16 @@ could make a monitored version of the <code>sqrt</code> procedure:
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-3_002e3"></a>Exercise 3.3:</strong> Modify the <code>make-account</code>
-procedure so that it creates password-protected accounts.  That is,
-<code>make-account</code> should take a symbol as an additional argument, as in
+<p><strong><a id="Exercise-3_002e3"></a>Exercise 3.3:</strong> Измените процедуру <code>make-account</code> так, чтобы
+она создавала счета, защищённые паролем.  То есть <code>make-account</code> должна принимать символ
+как дополнительный аргумент, как в
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> acc 
   </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="pln"> </span><span class="lit">'secret-password</span><span class="clo">))</span></pre></div>
 
-<p>The resulting account object should process a request only if it is accompanied
-by the password with which the account was created, and should otherwise return
-a complaint:
+<p>Получающийся объект счёта должен обрабатывать запрос только если он сопровождается паролем, с
+которым счёт был создан, и должен иначе возвращать жалобу:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">acc </span><span class="lit">'secret-password</span><span class="pln"> </span><span class="lit">'withdraw</span><span class="clo">)</span><span class="pln"> </span><span class="lit">40</span><span class="clo">)</span><span class="pln">
@@ -401,40 +382,39 @@ a complaint:
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-3_002e4"></a>Exercise 3.4:</strong> Modify the <code>make-account</code>
-procedure of <a href="#Exercise-3_002e3">Exercise 3.3</a> by adding another local state variable so that,
-if an account is accessed more than seven consecutive times with an incorrect
-password, it invokes the procedure <code>call-the-cops</code>.
+<p><strong><a id="Exercise-3_002e4"></a>Exercise 3.4:</strong> Измените процедуру <code>make-account</code> из
+<a href="#Exercise-3_002e3">Exercise 3.3</a>, добавив ещё одну локальную переменную состояния так, чтобы, если к счёту
+обращаются более семи раз подряд с неправильным паролем, он вызывал процедуру
+<code>call-the-cops</code>.
 </p></blockquote>
 
 <a id="g_t3_002e1_002e2"></a>
-<a id="The-Benefits-of-Introducing-Assignment"></a>
-<h4 class="subsection"><span class="secnum">3.1.2</span><span class="sectitle">The Benefits of Introducing Assignment</span></h4>
+<a id="Preimushchestva-vvedeniya-prisvaivaniya"></a>
+<h4 class="subsection"><span class="secnum">3.1.2</span><span class="sectitle">Преимущества введения присваивания</span></h4>
 
-<p>As we shall see, introducing assignment into our programming language leads us
-into a thicket of difficult conceptual issues.  Nevertheless, viewing systems
-as collections of objects with local state is a powerful technique for
-maintaining a modular design.  As a simple example, consider the design of a
-procedure <code>rand</code> that, whenever it is called, returns an integer chosen at
-random.
+<p>Как мы увидим, введение присваивания в наш язык программирования заводит нас в чащу трудных
+концептуальных вопросов.  Тем не менее рассмотрение систем как совокупностей объектов с
+локальным состоянием — мощный приём для поддержания модульного проекта.  В качестве простого
+примера рассмотрим проектирование процедуры <code>rand</code>, которая, всякий раз когда она
+вызывается, возвращает случайно выбранное целое число.
 </p>
-<p>It is not at all clear what is meant by “chosen at random.”  What we
-presumably want is for successive calls to <code>rand</code> to produce a sequence of
-numbers that has statistical properties of uniform distribution.  We will not
-discuss methods for generating suitable sequences here.  Rather, let us assume
-that we have a procedure <code>rand-update</code> that has the property that if we
-start with a given number <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Совершенно не ясно, что имеется в виду под «случайно выбранным».  Чего мы, по-видимому, хотим
+— это чтобы последовательные вызовы <code>rand</code> производили последовательность чисел, имеющую
+статистические свойства равномерного распределения.  Мы не будем обсуждать методы порождения
+подходящих последовательностей здесь.  Скорее, давайте предположим, что у нас есть процедура
+<code>rand-update</code>, обладающая тем свойством, что если мы начинаем с данного числа <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>x</mi>
     <mn>1</mn>
   </msub>
-</math> and form
+</math>
+и образуем
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><var><span class="pln">x</span><span class="pun">₂</span></var><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rand-update </span><var><span class="pln">x</span><span class="pun">₁</span></var><span class="clo">)</span><span class="pln">
 </span><var><span class="pln">x</span><span class="pun">₃</span></var><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rand-update </span><var><span class="pln">x</span><span class="pun">₂</span></var><span class="clo">)</span></pre></div>
 
-<p>then the sequence of values <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>то последовательность значений <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>x</mi>
     <mn>1</mn>
@@ -449,34 +429,33 @@ start with a given number <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>x</mi>
     <mn>3</mn>
   </msub>
-</math>, … will have the
-desired statistical properties.<a class="footnote_link" id="DOCF134" href="#FOOT134"><sup>134</sup></a>
+</math>, … будет иметь
+желаемые статистические свойства.<a class="footnote_link" id="DOCF134" href="#FOOT134"><sup>134</sup></a>
 </p>
-<p>We can implement <code>rand</code> as a procedure with a local state variable
-<code>x</code> that is initialized to some fixed value <code>random-init</code>.  Each call
-to <code>rand</code> computes <code>rand-update</code> of the current value of <code>x</code>,
-returns this as the random number, and also stores this as the new value of
-<code>x</code>.
+<p>Мы можем реализовать <code>rand</code> как процедуру с локальной переменной состояния <code>x</code>,
+которая инициализируется некоторым фиксированным значением <code>random-init</code>.  Каждый вызов
+<code>rand</code> вычисляет <code>rand-update</code> от текущего значения <code>x</code>, возвращает это как
+случайное число, а также сохраняет это как новое значение <code>x</code>.
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> rand
   </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">x random-init</span><span class="clo">))</span><span class="pln">
     </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">rand-update x</span><span class="clo">))</span><span class="pln"> x</span><span class="clo">)))</span></pre></div>
 
-<p>Of course, we could generate the same sequence of random numbers without using
-assignment by simply calling <code>rand-update</code> directly.  However, this would
-mean that any part of our program that used random numbers would have to
-explicitly remember the current value of <code>x</code> to be passed as an argument
-to <code>rand-update</code>.  To realize what an annoyance this would be, consider
-using random numbers to implement a technique called <a id="index-Monte-Carlo-simulation"></a>
-<em>Monte Carlo simulation</em>.
+<p>Конечно, мы могли бы породить ту же самую последовательность случайных чисел без использования
+присваивания, просто вызывая <code>rand-update</code> напрямую.  Однако это означало бы, что любая
+часть нашей программы, использующая случайные числа, должна была бы явно помнить текущее
+значение <code>x</code>, чтобы передавать его как аргумент <code>rand-update</code>.  Чтобы осознать, какой
+докукой это было бы, рассмотрите использование случайных чисел для реализации приёма, называемого
+<a id="index-modelirovaniem-metodom-Monte_002dKarlo"></a>
+<em>моделированием методом Монте-Карло</em>.
 </p>
-<p>The Monte Carlo method consists of choosing sample experiments at random from a
-large set and then making deductions on the basis of the probabilities
-estimated from tabulating the results of those experiments.  For example, we
-can approximate <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Метод Монте-Карло состоит в случайном выборе пробных экспериментов из большого множества и
+последующем выведении заключений на основе вероятностей, оценённых табулированием результатов
+этих экспериментов.  Например, мы можем приблизить <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>π<!-- π --></mi>
-</math> using the fact that <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, используя факт, что
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mn>6</mn>
     <mrow class="MJX-TeXAtom-ORD">
@@ -487,15 +466,13 @@ can approximate <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>2</mn>
     </msup>
   </mrow>
-</math> is the probability
-that two integers chosen at random will have no factors in common; that is,
-that their greatest common divisor will be 1.<a class="footnote_link" id="DOCF135" href="#FOOT135"><sup>135</sup></a> To
-obtain the approximation to <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> — это вероятность того, что два случайно выбранных целых числа не будут иметь
+общих множителей; то есть что их наибольший общий делитель будет равен 1.<a class="footnote_link" id="DOCF135" href="#FOOT135"><sup>135</sup></a>
+Чтобы получить приближение к <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>π<!-- π --></mi>
-</math>, we perform a large number of experiments.
-In each experiment we choose two integers at random and perform a test to see
-if their <abbr>GCD</abbr> is 1.  The fraction of times that the test is passed
-gives us our estimate of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, мы выполняем большое число экспериментов.  В каждом
+эксперименте мы случайно выбираем два целых числа и выполняем проверку, равен ли их
+<abbr>GCD</abbr> единице.  Доля раз, когда проверка пройдена, даёт нам нашу оценку <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mn>6</mn>
     <mrow class="MJX-TeXAtom-ORD">
@@ -506,17 +483,16 @@ gives us our estimate of <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>2</mn>
     </msup>
   </mrow>
-</math>, and from this we obtain our
-approximation to <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>,
+и из этого мы получаем наше приближение к <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>π<!-- π --></mi>
 </math>.
 </p>
-<p>The heart of our program is a procedure <code>monte-carlo</code>, which takes as
-arguments the number of times to try an experiment, together with the
-experiment, represented as a no-argument procedure that will return either true
-or false each time it is run.  <code>Monte-carlo</code> runs the experiment for the
-designated number of trials and returns a number telling the fraction of the
-trials in which the experiment was found to be true.
+<p>Сердце нашей программы — процедура <code>monte-carlo</code>, которая принимает в качестве аргументов
+число раз, которое нужно попробовать эксперимент, вместе с самим экспериментом, представленным
+как процедура без аргументов, которая будет возвращать либо истину, либо ложь каждый раз, когда
+она запускается.  <code>Monte-carlo</code> запускает эксперимент назначенное число испытаний и
+возвращает число, говорящее долю испытаний, в которых эксперимент оказался истинным.
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">estimate-pi trials</span><span class="clo">)</span><span class="pln">
@@ -537,9 +513,9 @@ trials in which the experiment was found to be true.
                  trials-passed</span><span class="clo">))))</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">iter trials </span><span class="lit">0</span><span class="clo">))</span></pre></div>
 
-<p>Now let us try the same computation using <code>rand-update</code> directly rather
-than <code>rand</code>, the way we would be forced to proceed if we did not use
-assignment to model local state:
+<p>Теперь давайте попробуем то же вычисление, используя <code>rand-update</code> напрямую, а не
+<code>rand</code>, — способом, которым мы были бы вынуждены действовать, если бы не использовали
+присваивание для моделирования локального состояния:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">estimate-pi trials</span><span class="clo">)</span><span class="pln">
@@ -564,45 +540,40 @@ assignment to model local state:
                      x2</span><span class="clo">))))))</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">iter trials </span><span class="lit">0</span><span class="pln"> initial-x</span><span class="clo">))</span></pre></div>
 
-<p>While the program is still simple, it betrays some painful breaches of
-modularity.  In our first version of the program, using <code>rand</code>, we can
-express the Monte Carlo method directly as a general <code>monte-carlo</code>
-procedure that takes as an argument an arbitrary <code>experiment</code> procedure.
-In our second version of the program, with no local state for the random-number
-generator, <code>random-gcd-test</code> must explicitly manipulate the random numbers
-<code>x1</code> and <code>x2</code> and recycle <code>x2</code> through the iterative loop as the
-new input to <code>rand-update</code>.  This explicit handling of the random numbers
-intertwines the structure of accumulating test results with the fact that our
-particular experiment uses two random numbers, whereas other Monte Carlo
-experiments might use one random number or three.  Even the top-level procedure
-<code>estimate-pi</code> has to be concerned with supplying an initial random number.
-The fact that the random-number generator’s insides are leaking out into other
-parts of the program makes it difficult for us to isolate the Monte Carlo idea
-so that it can be applied to other tasks.  In the first version of the program,
-assignment encapsulates the state of the random-number generator within the
-<code>rand</code> procedure, so that the details of random-number generation remain
-independent of the rest of the program.
+<p>Хотя программа всё ещё проста, она выдаёт некоторые болезненные нарушения модульности.  В нашей
+первой версии программы, использующей <code>rand</code>, мы можем выразить метод Монте-Карло
+напрямую как общую процедуру <code>monte-carlo</code>, которая принимает в качестве аргумента
+произвольную процедуру-<code>experiment</code>.  В нашей второй версии программы, без локального
+состояния для генератора случайных чисел, <code>random-gcd-test</code> должна явно манипулировать
+случайными числами <code>x1</code> и <code>x2</code> и прогонять <code>x2</code> по итеративному циклу как новый
+вход для <code>rand-update</code>.  Эта явная обработка случайных чисел переплетает структуру
+накопления результатов проверок с тем фактом, что наш конкретный эксперимент использует два
+случайных числа, тогда как другие эксперименты Монте-Карло могли бы использовать одно случайное
+число или три.  Даже процедура верхнего уровня <code>estimate-pi</code> должна заботиться о
+предоставлении начального случайного числа.  Тот факт, что нутро генератора случайных чисел
+протекает наружу в другие части программы, затрудняет нам изоляцию идеи Монте-Карло так, чтобы
+её можно было применять к другим задачам.  В первой версии программы присваивание инкапсулирует
+состояние генератора случайных чисел внутри процедуры <code>rand</code>, так что детали порождения
+случайных чисел остаются независимыми от остальной части программы.
 </p>
-<p>The general phenomenon illustrated by the Monte Carlo example is this: From the
-point of view of one part of a complex process, the other parts appear to
-change with time.  They have hidden time-varying local state.  If we wish to
-write computer programs whose structure reflects this decomposition, we make
-computational objects (such as bank accounts and random-number generators)
-whose behavior changes with time.  We model state with local state variables,
-and we model the changes of state with assignments to those variables.
+<p>Общее явление, проиллюстрированное примером Монте-Карло, таково: с точки зрения одной части
+сложного процесса другие части кажутся меняющимися со временем.  У них есть скрытое
+изменяющееся во времени локальное состояние.  Если мы желаем писать компьютерные программы,
+чья структура отражает это разложение, мы делаем вычислительные объекты (такие как банковские
+счета и генераторы случайных чисел), чьё поведение меняется со временем.  Мы моделируем
+состояние локальными переменными состояния и моделируем изменения состояния присваиваниями этим
+переменным.
 </p>
-<p>It is tempting to conclude this discussion by saying that, by introducing
-assignment and the technique of hiding state in local variables, we are able to
-structure systems in a more modular fashion than if all state had to be
-manipulated explicitly, by passing additional parameters.  Unfortunately, as we
-shall see, the story is not so simple.
+<p>Заманчиво заключить это обсуждение, сказав, что, введя присваивание и приём сокрытия состояния
+в локальных переменных, мы способны структурировать системы более модульным образом, чем если
+бы всем состоянием приходилось манипулировать явно, передавая дополнительные параметры.  К
+сожалению, как мы увидим, история не так проста.
 </p>
 <blockquote>
-<p><strong><a id="Exercise-3_002e5"></a>Exercise 3.5:</strong> <a id="index-Monte-Carlo-integration"></a>
-<em>Monte Carlo integration</em>
-is a method of estimating definite integrals by means of Monte Carlo
-simulation.  Consider computing the area of a region of space described by a
-predicate <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-3_002e5"></a>Exercise 3.5:</strong> <a id="index-Integrirovanie-metodom-Monte_002dKarlo"></a>
+<em>Интегрирование методом Монте-Карло</em> — это
+метод оценки определённых интегралов посредством моделирования методом Монте-Карло.  Рассмотрите
+вычисление площади области пространства, описываемой предикатом <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>P</mi>
     <mo stretchy="false">(</mo>
@@ -611,7 +582,8 @@ predicate <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>y</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math> that is true for points <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, который истинен
+для точек <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mo stretchy="false">(</mo>
     <mi>x</mi>
@@ -619,10 +591,9 @@ predicate <math xmlns="http://www.w3.org/1998/Math/MathML">
     <mi>y</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math> in the
-region and false for points not in the region.  For example, the region
-contained within a circle of radius 3 centered at (5, 7) is described by the
-predicate that tests whether <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> в области и ложен для точек не в области.  Например, область,
+содержащаяся внутри круга радиуса 3 с центром в (5, 7), описывается предикатом, который
+проверяет, выполняется ли <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mo stretchy="false">(</mo>
     <mi>x</mi>
@@ -649,12 +620,11 @@ predicate that tests whether <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mn>2</mn>
     </msup>
   </mrow>
-</math>.  To estimate
-the area of the region described by such a predicate, begin by choosing a
-rectangle that contains the region.  For example, a rectangle with diagonally
-opposite corners at (2, 4) and (8, 10) contains the circle above.  The desired
-integral is the area of that portion of the rectangle that lies in the region.
-We can estimate the integral by picking, at random, points <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Чтобы оценить площадь
+области, описываемой таким предикатом, начните с выбора прямоугольника, который содержит
+область.  Например, прямоугольник с диагонально противоположными углами в (2, 4) и (8, 10)
+содержит круг выше.  Искомый интеграл — это площадь той части прямоугольника, которая лежит в
+области.  Мы можем оценить интеграл, выбирая случайно точки <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mo stretchy="false">(</mo>
     <mi>x</mi>
@@ -662,8 +632,8 @@ We can estimate the integral by picking, at random, points <math xmlns="http://w
     <mi>y</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math> that
-lie in the rectangle, and testing <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, которые лежат в
+прямоугольнике, и проверяя <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>P</mi>
     <mo stretchy="false">(</mo>
@@ -672,30 +642,26 @@ lie in the rectangle, and testing <math xmlns="http://www.w3.org/1998/Math/MathM
     <mi>y</mi>
     <mo stretchy="false">)</mo>
   </mrow>
-</math> for each point to
-determine whether the point lies in the region.  If we try this with many
-points, then the fraction of points that fall in the region should give an
-estimate of the proportion of the rectangle that lies in the region.  Hence,
-multiplying this fraction by the area of the entire rectangle should produce an
-estimate of the integral.
+</math> для каждой точки, чтобы определить, лежит ли точка
+в области.  Если мы пробуем это со многими точками, то доля точек, попадающих в область, должна
+дать оценку доли прямоугольника, которая лежит в области.  Следовательно, умножение этой доли на
+площадь всего прямоугольника должно произвести оценку интеграла.
 </p>
-<p>Implement Monte Carlo integration as a procedure <code>estimate-integral</code> that
-takes as arguments a predicate <code>P</code>, upper and lower bounds <code>x1</code>,
-<code>x2</code>, <code>y1</code>, and <code>y2</code> for the rectangle, and the number of trials
-to perform in order to produce the estimate.  Your procedure should use the
-same <code>monte-carlo</code> procedure that was used above to estimate <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Реализуйте интегрирование методом Монте-Карло как процедуру <code>estimate-integral</code>, которая
+принимает в качестве аргументов предикат <code>P</code>, верхние и нижние границы <code>x1</code>,
+<code>x2</code>, <code>y1</code> и <code>y2</code> для прямоугольника и число испытаний, которое нужно выполнить,
+чтобы произвести оценку.  Ваша процедура должна использовать ту же процедуру <code>monte-carlo</code>,
+которая использовалась выше, чтобы оценить <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>π<!-- π --></mi>
-</math>.
-Use your <code>estimate-integral</code> to produce an estimate of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Используйте свою <code>estimate-integral</code>,
+чтобы произвести оценку <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>π<!-- π --></mi>
-</math> by
-measuring the area of a unit circle.
+</math>, измерив площадь единичного круга.
 </p>
-<p>You will find it useful to have a procedure that returns a number chosen at
-random from a given range.  The following <code>random-in-range</code> procedure
-implements this in terms of the <code>random</code> procedure used in 
-<a href="1_002e2.xhtml#g_t1_002e2_002e6">1.2.6</a>, which returns a nonnegative number less than its
-input.<a class="footnote_link" id="DOCF136" href="#FOOT136"><sup>136</sup></a>
+<p>Вам будет полезно иметь процедуру, которая возвращает число, случайно выбранное из данного
+диапазона.  Следующая процедура <code>random-in-range</code> реализует это в терминах процедуры
+<code>random</code>, использованной в <a href="1_002e2.xhtml#g_t1_002e2_002e6">1.2.6</a>, которая возвращает неотрицательное число, меньшее
+своего входа.<a class="footnote_link" id="DOCF136" href="#FOOT136"><sup>136</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">random-in-range low high</span><span class="clo">)</span><span class="pln">
@@ -704,38 +670,36 @@ input.<a class="footnote_link" id="DOCF136" href="#FOOT136"><sup>136</sup></a>
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-3_002e6"></a>Exercise 3.6:</strong> It is useful to be able to reset a
-random-number generator to produce a sequence starting from a given value.
-Design a new <code>rand</code> procedure that is called with an argument that is
-either the symbol <code>generate</code> or the symbol <code>reset</code> and behaves as
-follows: <code>(rand 'generate)</code> produces a new random number; <code>((rand
-'reset) ⟨<var>new-value</var>⟩)</code> resets the internal state variable to the
-designated <code>⟨</code><var>new-value</var><code>⟩</code>.  Thus, by resetting the state, one can generate
-repeatable sequences.  These are very handy to have when testing and debugging
-programs that use random numbers.
+<p><strong><a id="Exercise-3_002e6"></a>Exercise 3.6:</strong> Полезно уметь сбрасывать генератор случайных чисел,
+чтобы производить последовательность, начинающуюся с данного значения.  Спроектируйте новую
+процедуру <code>rand</code>, которая вызывается с аргументом, являющимся либо символом
+<code>generate</code>, либо символом <code>reset</code>, и ведёт себя следующим образом:
+<code>(rand 'generate)</code> производит новое случайное число; <code>((rand 'reset)
+⟨<var>новое-значение</var>⟩)</code> сбрасывает внутреннюю переменную состояния в назначенное
+<code>⟨</code><var>новое-значение</var><code>⟩</code>.  Таким образом, сбрасывая состояние, можно порождать
+повторяемые последовательности.  Их очень удобно иметь при тестировании и отладке программ,
+использующих случайные числа.
 </p></blockquote>
 
 <a id="g_t3_002e1_002e3"></a>
-<a id="The-Costs-of-Introducing-Assignment"></a>
-<h4 class="subsection"><span class="secnum">3.1.3</span><span class="sectitle">The Costs of Introducing Assignment</span></h4>
+<a id="Izderzhki-vvedeniya-prisvaivaniya"></a>
+<h4 class="subsection"><span class="secnum">3.1.3</span><span class="sectitle">Издержки введения присваивания</span></h4>
 
-<p>As we have seen, the <code>set!</code> operation enables us to model objects that
-have local state.  However, this advantage comes at a price.  Our programming
-language can no longer be interpreted in terms of the substitution model of
-procedure application that we introduced in <a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>.  Moreover, no
-simple model with “nice” mathematical properties can be an adequate framework
-for dealing with objects and assignment in programming languages.
+<p>Как мы видели, операция <code>set!</code> позволяет нам моделировать объекты, обладающие локальным
+состоянием.  Однако это преимущество достаётся ценой.  Наш язык программирования больше нельзя
+интерпретировать в терминах подстановочной модели применения процедуры, которую мы ввели в
+<a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>.  Более того, никакая простая модель с «приятными» математическими свойствами не
+может быть адекватным каркасом для работы с объектами и присваиванием в языках программирования.
 </p>
-<p>So long as we do not use assignments, two evaluations of the same procedure
-with the same arguments will produce the same result, so that procedures can be
-viewed as computing mathematical functions.  Programming without any use of
-assignments, as we did throughout the first two chapters of this book, is
-accordingly known as <a id="index-functional-programming"></a>
-<em>functional programming</em>.
+<p>Пока мы не используем присваивания, два вычисления одной и той же процедуры с одними и теми же
+аргументами будут производить один и тот же результат, так что процедуры можно рассматривать
+как вычисляющие математические функции.  Программирование без всякого использования
+присваиваний, как мы делали на протяжении первых двух глав этой книги, соответственно известно
+как <a id="index-funkcionalxnoe-programmirovanie"></a>
+<em>функциональное программирование</em>.
 </p>
-<p>To understand how assignment complicates matters, consider a simplified version
-of the <code>make-withdraw</code> procedure of <a href="#g_t3_002e1_002e1">3.1.1</a> that does not
-bother to check for an insufficient amount:
+<p>Чтобы понять, как присваивание усложняет дело, рассмотрим упрощённую версию процедуры
+<code>make-withdraw</code> из <a href="#g_t3_002e1_002e1">3.1.1</a>, которая не утруждает себя проверкой на недостаточную сумму:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-simplified-withdraw balance</span><span class="clo">)</span><span class="pln">
@@ -752,17 +716,17 @@ bother to check for an insufficient amount:
 </span><i><span class="lit">-5</span></i>
 </pre></div>
 
-<p>Compare this procedure with the following <code>make-decrementer</code> procedure,
-which does not use <code>set!</code>:
+<p>Сравните эту процедуру со следующей процедурой <code>make-decrementer</code>, которая не использует
+<code>set!</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-decrementer balance</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">amount</span><span class="clo">)</span><span class="pln">
     </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> balance amount</span><span class="clo">)))</span></pre></div>
 
-<p><code>Make-decrementer</code> returns a procedure that subtracts its input from a
-designated amount <code>balance</code>, but there is no accumulated effect over
-successive calls, as with <code>make-simplified-withdraw</code>:
+<p><code>Make-decrementer</code> возвращает процедуру, которая вычитает свой вход из назначенной суммы
+<code>balance</code>, но нет накопленного эффекта при последовательных вызовах, как с
+<code>make-simplified-withdraw</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> D </span><span class="opn">(</span><span class="pln">make-decrementer </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
@@ -774,93 +738,87 @@ successive calls, as with <code>make-simplified-withdraw</code>:
 </span><i><span class="lit">15</span></i>
 </pre></div>
 
-<p>We can use the substitution model to explain how <code>make-decrementer</code> works.
-For instance, let us analyze the evaluation of the expression
+<p>Мы можем использовать подстановочную модель, чтобы объяснить, как работает
+<code>make-decrementer</code>.  Например, давайте проанализируем вычисление выражения
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">make-decrementer </span><span class="lit">25</span><span class="clo">)</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></pre></div>
 
-<p>We first simplify the operator of the combination by substituting 25 for
-<code>balance</code> in the body of <code>make-decrementer</code>.  This reduces the
-expression to
+<p>Сначала мы упрощаем оператор комбинации, подставляя 25 вместо <code>balance</code> в тело
+<code>make-decrementer</code>.  Это сводит выражение к
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">amount</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> amount</span><span class="clo">))</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></pre></div>
 
-<p>Now we apply the operator by substituting 20 for <code>amount</code> in the body of
-the <code>lambda</code> expression:
+<p>Теперь мы применяем оператор, подставляя 20 вместо <code>amount</code> в тело выражения
+<code>lambda</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></pre></div>
 
-<p>The final answer is 5.
+<p>Окончательный ответ — 5.
 </p>
-<p>Observe, however, what happens if we attempt a similar substitution analysis
-with <code>make-simplified-withdraw</code>:
+<p>Заметьте, однако, что происходит, если мы пытаемся выполнить аналогичный подстановочный анализ
+с <code>make-simplified-withdraw</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">make-simplified-withdraw </span><span class="lit">25</span><span class="clo">)</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></pre></div>
 
-<p>We first simplify the operator by substituting 25 for <code>balance</code> in the
-body of <code>make-simplified-withdraw</code>.  This reduces the expression
-to<a class="footnote_link" id="DOCF137" href="#FOOT137"><sup>137</sup></a>
+<p>Сначала мы упрощаем оператор, подставляя 25 вместо <code>balance</code> в тело
+<code>make-simplified-withdraw</code>.  Это сводит выражение к<a class="footnote_link" id="DOCF137" href="#FOOT137"><sup>137</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">amount</span><span class="clo">)</span><span class="pln"> 
    </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> amount</span><span class="clo">))</span><span class="pln"> </span><span class="lit">25</span><span class="clo">)</span><span class="pln">
  </span><span class="lit">20</span><span class="clo">)</span></pre></div>
 
-<p>Now we apply the operator by substituting 20 for <code>amount</code> in the body of
-the <code>lambda</code> expression:
+<p>Теперь мы применяем оператор, подставляя 20 вместо <code>amount</code> в тело выражения
+<code>lambda</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> </span><span class="lit">20</span><span class="clo">))</span><span class="pln"> </span><span class="lit">25</span></pre></div>
 
-<p>If we adhered to the substitution model, we would have to say that the meaning
-of the procedure application is to first set <code>balance</code> to 5 and then
-return 25 as the value of the expression.  This gets the wrong answer.  In
-order to get the correct answer, we would have to somehow distinguish the first
-occurrence of <code>balance</code> (before the effect of the <code>set!</code>)  from the
-second occurrence of <code>balance</code> (after the effect of the <code>set!</code>), and
-the substitution model cannot do this.
+<p>Если бы мы придерживались подстановочной модели, нам пришлось бы сказать, что смысл применения
+процедуры в том, чтобы сначала установить <code>balance</code> в 5, а затем вернуть 25 как значение
+выражения.  Это даёт неправильный ответ.  Чтобы получить правильный ответ, нам пришлось бы
+как-то отличать первое вхождение <code>balance</code> (до эффекта <code>set!</code>) от второго вхождения
+<code>balance</code> (после эффекта <code>set!</code>), а подстановочная модель не может этого сделать.
 </p>
-<p>The trouble here is that substitution is based ultimately on the notion that
-the symbols in our language are essentially names for values.  But as soon as
-we introduce <code>set!</code> and the idea that the value of a variable can change,
-a variable can no longer be simply a name.  Now a variable somehow refers to a
-place where a value can be stored, and the value stored at this place can
-change.  In <a href="3_002e2.xhtml#g_t3_002e2">3.2</a> we will see how environments play this role of
-“place” in our computational model.
+<p>Беда здесь в том, что подстановка в конечном счёте основана на представлении, что символы в
+нашем языке — это по существу имена для значений.  Но как только мы вводим <code>set!</code> и идею,
+что значение переменной может меняться, переменная больше не может быть просто именем.  Теперь
+переменная как-то ссылается на место, где может храниться значение, и значение, хранящееся в
+этом месте, может меняться.  В <a href="3_002e2.xhtml#g_t3_002e2">3.2</a> мы увидим, как окружения играют эту роль «места» в
+нашей вычислительной модели.
 </p>
-<a id="Sameness-and-change"></a>
-<h5 class="subsubheading">Sameness and change</h5>
+<a id="Tozhdestvo-i-izmenenie"></a>
+<h5 class="subsubheading">Тождество и изменение</h5>
 
-<p>The issue surfacing here is more profound than the mere breakdown of a
-particular model of computation.  As soon as we introduce change into our
-computational models, many notions that were previously straightforward become
-problematical.  Consider the concept of two things being “the same.”
+<p>Вопрос, всплывающий здесь, глубже, чем простой развал конкретной модели вычислений.  Как только
+мы вводим изменение в наши вычислительные модели, многие понятия, которые прежде были
+прямолинейны, становятся проблематичными.  Рассмотрите понятие двух вещей, являющихся
+«одинаковыми».
 </p>
-<p>Suppose we call <code>make-decrementer</code> twice with the same argument to create
-two procedures:
+<p>Предположим, мы вызываем <code>make-decrementer</code> дважды с одним и тем же аргументом, чтобы
+создать две процедуры:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> D1 </span><span class="opn">(</span><span class="pln">make-decrementer </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> D2 </span><span class="opn">(</span><span class="pln">make-decrementer </span><span class="lit">25</span><span class="clo">))</span></pre></div>
 
-<p>Are <code>D1</code> and <code>D2</code> the same?  An acceptable answer is yes, because
-<code>D1</code> and <code>D2</code> have the same computational behavior—each is a
-procedure that subtracts its input from 25.  In fact, <code>D1</code> could be
-substituted for <code>D2</code> in any computation without changing the result.
+<p>Одинаковы ли <code>D1</code> и <code>D2</code>?  Приемлемый ответ — да, потому что <code>D1</code> и <code>D2</code>
+имеют одно и то же вычислительное поведение — каждая является процедурой, которая вычитает свой
+вход из 25.  В самом деле, <code>D1</code> можно было бы подставить вместо <code>D2</code> в любом
+вычислении, не меняя результата.
 </p>
-<p>Contrast this with making two calls to <code>make-simplified-withdraw</code>:
+<p>Сопоставьте это с выполнением двух вызовов <code>make-simplified-withdraw</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> W1 </span><span class="opn">(</span><span class="pln">make-simplified-withdraw </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> W2 </span><span class="opn">(</span><span class="pln">make-simplified-withdraw </span><span class="lit">25</span><span class="clo">))</span></pre></div>
 
-<p>Are <code>W1</code> and <code>W2</code> the same?  Surely not, because calls to <code>W1</code>
-and <code>W2</code> have distinct effects, as shown by the following sequence of
-interactions:
+<p>Одинаковы ли <code>W1</code> и <code>W2</code>?  Разумеется, нет, потому что вызовы <code>W1</code> и <code>W2</code>
+имеют различные эффекты, как показано следующей последовательностью взаимодействий:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">W1 </span><span class="lit">20</span><span class="clo">)</span><span class="pln">
@@ -873,86 +831,75 @@ interactions:
 </span><i><span class="lit">5</span></i>
 </pre></div>
 
-<p>Even though <code>W1</code> and <code>W2</code> are “equal” in the sense that they are
-both created by evaluating the same expression, <code>(make-simplified-withdraw
-25)</code>, it is not true that <code>W1</code> could be substituted for <code>W2</code> in any
-expression without changing the result of evaluating the expression.
+<p>Хотя <code>W1</code> и <code>W2</code> «равны» в том смысле, что они оба созданы вычислением одного и того
+же выражения, <code>(make-simplified-withdraw 25)</code>, неверно, что <code>W1</code> можно было бы
+подставить вместо <code>W2</code> в любом выражении, не меняя результата вычисления выражения.
 </p>
-<p>A language that supports the concept that “equals can be substituted for
-equals” in an expression without changing the value of the expression is said
-to be <a id="index-referentially-transparent"></a>
-<em>referentially transparent</em>.  Referential transparency is
-violated when we include <code>set!</code> in our computer language.  This makes it
-tricky to determine when we can simplify expressions by substituting equivalent
-expressions.  Consequently, reasoning about programs that use assignment
-becomes drastically more difficult.
+<p>О языке, который поддерживает представление, что «равные можно подставлять вместо равных» в
+выражении, не меняя значения выражения, говорят, что он <a id="index-ssylochno-prozrachen"></a>
+<em>ссылочно прозрачен</em>.  Ссылочная
+прозрачность нарушается, когда мы включаем <code>set!</code> в наш компьютерный язык.  Это делает
+хитрым определение того, когда мы можем упрощать выражения, подставляя эквивалентные выражения.
+Следовательно, рассуждать о программах, использующих присваивание, становится резко труднее.
 </p>
-<p>Once we forgo referential transparency, the notion of what it means for
-computational objects to be “the same” becomes difficult to capture in a
-formal way.  Indeed, the meaning of “same” in the real world that our
-programs model is hardly clear in itself.  In general, we can determine that
-two apparently identical objects are indeed “the same one” only by modifying
-one object and then observing whether the other object has changed in the same
-way.  But how can we tell if an object has “changed” other than by observing
-the “same” object twice and seeing whether some property of the object
-differs from one observation to the next?  Thus, we cannot determine “change”
-without some <em>a priori</em> notion of “sameness,” and we cannot determine
-sameness without observing the effects of change.
+<p>Как только мы отказываемся от ссылочной прозрачности, понятие того, что значит для
+вычислительных объектов быть «одинаковыми», становится трудным схватить формальным образом.  В
+самом деле, смысл «одинаковости» в реальном мире, который моделируют наши программы, едва ли
+ясен сам по себе.  Вообще, мы можем определить, что два внешне идентичных объекта действительно
+«один и тот же», только изменив один объект и затем понаблюдав, изменился ли другой объект таким
+же образом.  Но как мы можем сказать, «изменился» ли объект, иначе как наблюдая «один и тот же»
+объект дважды и видя, отличается ли некоторое свойство объекта от одного наблюдения к другому?
+Таким образом, мы не можем определить «изменение» без некоторого <em>априорного</em> понятия
+«одинаковости», и мы не можем определить одинаковость без наблюдения эффектов изменения.
 </p>
-<p>As an example of how this issue arises in programming, consider the situation
-where Peter and Paul have a bank account with $100 in it.  There is a
-substantial difference between modeling this as
+<p>В качестве примера того, как этот вопрос возникает в программировании, рассмотрите ситуацию,
+где у Питера и Пола есть банковский счёт со 100 долларами на нём.  Есть существенная разница
+между моделированием этого как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> peter-acc </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="clo">))</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> paul-acc </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="clo">))</span></pre></div>
 
-<p>and modeling it as
+<p>и моделированием этого как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> peter-acc </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="clo">))</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> paul-acc peter-acc</span><span class="clo">)</span></pre></div>
 
-<p>In the first situation, the two bank accounts are distinct.  Transactions made
-by Peter will not affect Paul’s account, and vice versa.  In the second
-situation, however, we have defined <code>paul-acc</code> to be <em>the same thing</em>
-as <code>peter-acc</code>.  In effect, Peter and Paul now have a joint bank account,
-and if Peter makes a withdrawal from <code>peter-acc</code> Paul will observe less
-money in <code>paul-acc</code>.  These two similar but distinct situations can cause
-confusion in building computational models.  With the shared account, in
-particular, it can be especially confusing that there is one object (the bank
-account) that has two different names (<code>peter-acc</code> and <code>paul-acc</code>);
-if we are searching for all the places in our program where <code>paul-acc</code> can
-be changed, we must remember to look also at things that change
+<p>В первой ситуации два банковских счёта различны.  Транзакции, совершённые Питером, не повлияют
+на счёт Пола, и наоборот.  Во второй ситуации, однако, мы определили <code>paul-acc</code> как
+<em>ту же самую вещь</em>, что и <code>peter-acc</code>.  По сути, у Питера и Пола теперь совместный
+банковский счёт, и если Питер совершает снятие с <code>peter-acc</code>, Пол будет наблюдать меньше
+денег на <code>paul-acc</code>.  Эти две похожие, но различные ситуации могут вызвать путаницу при
+построении вычислительных моделей.  С общим счётом, в частности, может особенно сбивать с толку
+то, что есть один объект (банковский счёт), у которого два разных имени (<code>peter-acc</code> и
+<code>paul-acc</code>); если мы ищем все места в нашей программе, где <code>paul-acc</code> может быть
+изменён, мы должны помнить смотреть также на вещи, которые меняют
 <code>peter-acc</code>.<a class="footnote_link" id="DOCF138" href="#FOOT138"><sup>138</sup></a>
 </p>
-<p>With reference to the above remarks on “sameness” and “change,” observe
-that if Peter and Paul could only examine their bank balances, and could not
-perform operations that changed the balance, then the issue of whether the two
-accounts are distinct would be moot.  In general, so long as we never modify
-data objects, we can regard a compound data object to be precisely the totality
-of its pieces.  For example, a rational number is determined by giving its
-numerator and its denominator.  But this view is no longer valid in the
-presence of change, where a compound data object has an “identity” that is
-something different from the pieces of which it is composed.  A bank account is
-still “the same” bank account even if we change the balance by making a
-withdrawal; conversely, we could have two different bank accounts with the same
-state information.  This complication is a consequence, not of our programming
-language, but of our perception of a bank account as an object.  We do not, for
-example, ordinarily regard a rational number as a changeable object with
-identity, such that we could change the numerator and still have “the same”
-rational number.
+<p>В отношении вышеприведённых замечаний об «одинаковости» и «изменении» заметьте, что если бы
+Питер и Пол могли только исследовать свои банковские балансы и не могли выполнять операции,
+которые меняют баланс, то вопрос о том, различны ли два счёта, был бы спорным.  Вообще, пока мы
+никогда не изменяем объекты данных, мы можем рассматривать составной объект данных как в точности
+совокупность его частей.  Например, рациональное число определяется заданием его числителя и его
+знаменателя.  Но этот взгляд больше не действителен при наличии изменения, где у составного
+объекта данных есть «идентичность», которая есть нечто отличное от частей, из которых он состоит.
+Банковский счёт по-прежнему «тот же самый» банковский счёт, даже если мы меняем баланс, совершая
+снятие; и наоборот, у нас могло бы быть два разных банковских счёта с одной и той же информацией
+о состоянии.  Это усложнение — следствие не нашего языка программирования, а нашего восприятия
+банковского счёта как объекта.  Мы, например, обычно не рассматриваем рациональное число как
+изменяемый объект с идентичностью, такой что мы могли бы изменить числитель и всё ещё иметь «то
+же самое» рациональное число.
 </p>
-<a id="Pitfalls-of-imperative-programming"></a>
-<h5 class="subsubheading">Pitfalls of imperative programming</h5>
+<a id="Lovushki-imperativnogo-programmirovaniya"></a>
+<h5 class="subsubheading">Ловушки императивного программирования</h5>
 
-<p>In contrast to functional programming, programming that makes extensive use of
-assignment is known as <a id="index-imperative-programming"></a>
-<em>imperative programming</em>.  In addition to
-raising complications about computational models, programs written in
-imperative style are susceptible to bugs that cannot occur in functional
-programs.  For example, recall the iterative factorial program from 
-<a href="1_002e2.xhtml#g_t1_002e2_002e1">1.2.1</a>:
+<p>В противоположность функциональному программированию, программирование, которое широко
+использует присваивание, известно как <a id="index-imperativnoe-programmirovanie"></a>
+<em>императивное программирование</em>.  Помимо того что
+оно поднимает усложнения о вычислительных моделях, программы, написанные в императивном стиле,
+подвержены ошибкам, которые не могут возникнуть в функциональных программах.  Например,
+вспомните итеративную программу вычисления факториала из <a href="1_002e2.xhtml#g_t1_002e2_002e1">1.2.1</a>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
@@ -963,9 +910,9 @@ programs.  For example, recall the iterative factorial program from
               </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> counter </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">iter </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span></pre></div>
 
-<p>Instead of passing arguments in the internal iterative loop, we could adopt a
-more imperative style by using explicit assignment to update the values of the
-variables <code>product</code> and <code>counter</code>:
+<p>Вместо передачи аргументов во внутреннем итеративном цикле мы могли бы принять более
+императивный стиль, используя явное присваивание, чтобы обновлять значения переменных
+<code>product</code> и <code>counter</code>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
@@ -980,39 +927,35 @@ variables <code>product</code> and <code>counter</code>:
                  </span><span class="opn">(</span><span class="pln">iter</span><span class="clo">))))</span><span class="pln">
     </span><span class="opn">(</span><span class="pln">iter</span><span class="clo">)))</span></pre></div>
 
-<p>This does not change the results produced by the program, but it does introduce
-a subtle trap.  How do we decide the order of the assignments?  As it happens,
-the program is correct as written.  But writing the assignments in the opposite
-order
+<p>Это не меняет результатов, производимых программой, но это вводит тонкую ловушку.  Как мы решаем
+порядок присваиваний?  Как оказывается, программа верна как написана.  Но запись присваиваний в
+противоположном порядке
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> counter </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> counter </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> product </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> counter product</span><span class="clo">))</span></pre></div>
 
-<p>would have produced a different, incorrect result.  In general, programming
-with assignment forces us to carefully consider the relative orders of the
-assignments to make sure that each statement is using the correct version of
-the variables that have been changed.  This issue simply does not arise in
-functional programs.<a class="footnote_link" id="DOCF139" href="#FOOT139"><sup>139</sup></a>
+<p>произвела бы другой, неправильный результат.  Вообще, программирование с присваиванием вынуждает
+нас тщательно рассматривать относительные порядки присваиваний, чтобы убедиться, что каждое
+утверждение использует правильную версию изменённых переменных.  Этот вопрос просто не возникает
+в функциональных программах.<a class="footnote_link" id="DOCF139" href="#FOOT139"><sup>139</sup></a>
 </p>
-<p>The complexity of imperative programs becomes even worse if we consider
-applications in which several processes execute concurrently.  We will return
-to this in <a href="3_002e4.xhtml#g_t3_002e4">3.4</a>.  First, however, we will address the issue of
-providing a computational model for expressions that involve assignment, and
-explore the uses of objects with local state in designing simulations.
+<p>Сложность императивных программ становится ещё хуже, если мы рассматриваем приложения, в
+которых несколько процессов исполняются параллельно.  Мы вернёмся к этому в <a href="3_002e4.xhtml#g_t3_002e4">3.4</a>.  Сначала,
+однако, мы обратимся к вопросу предоставления вычислительной модели для выражений, включающих
+присваивание, и исследуем использования объектов с локальным состоянием при проектировании
+моделирований.
 </p>
 <blockquote>
-<p><strong><a id="Exercise-3_002e7"></a>Exercise 3.7:</strong> Consider the bank account objects
-created by <code>make-account</code>, with the password modification described in
-<a href="#Exercise-3_002e3">Exercise 3.3</a>.  Suppose that our banking system requires the ability to
-make joint accounts.  Define a procedure <code>make-joint</code> that accomplishes
-this.  <code>Make-joint</code> should take three arguments.  The first is a
-password-protected account.  The second argument must match the password with
-which the account was defined in order for the <code>make-joint</code> operation to
-proceed.  The third argument is a new password.  <code>Make-joint</code> is to create
-an additional access to the original account using the new password.  For
-example, if <code>peter-acc</code> is a bank account with password
-<code>open-sesame</code>, then
+<p><strong><a id="Exercise-3_002e7"></a>Exercise 3.7:</strong> Рассмотрите объекты банковского счёта, создаваемые
+<code>make-account</code>, с модификацией пароля, описанной в <a href="#Exercise-3_002e3">Exercise 3.3</a>.  Предположим, что
+наша банковская система требует способности делать совместные счета.  Определите процедуру
+<code>make-joint</code>, которая выполняет это.  <code>Make-joint</code> должна принимать три аргумента.
+Первый — это защищённый паролем счёт.  Второй аргумент должен совпадать с паролем, с которым счёт
+был определён, чтобы операция <code>make-joint</code> могла продолжиться.  Третий аргумент — новый
+пароль.  <code>Make-joint</code> должна создать дополнительный доступ к исходному счёту, используя
+новый пароль.  Например, если <code>peter-acc</code> — банковский счёт с паролем <code>open-sesame</code>,
+то
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> paul-acc
@@ -1020,153 +963,141 @@ example, if <code>peter-acc</code> is a bank account with password
               </span><span class="lit">'open-sesame</span><span class="pln"> 
               </span><span class="lit">'rosebud</span><span class="clo">))</span></pre></div>
 
-<p>will allow one to make transactions on <code>peter-acc</code> using the name
-<code>paul-acc</code> and the password <code>rosebud</code>.  You may wish to modify your
-solution to <a href="#Exercise-3_002e3">Exercise 3.3</a> to accommodate this new feature.
+<p>позволит совершать транзакции на <code>peter-acc</code>, используя имя <code>paul-acc</code> и пароль
+<code>rosebud</code>.  Возможно, вам захочется изменить ваше решение <a href="#Exercise-3_002e3">Exercise 3.3</a>, чтобы вместить
+эту новую возможность.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-3_002e8"></a>Exercise 3.8:</strong> When we defined the evaluation
-model in <a href="1_002e1.xhtml#g_t1_002e1_002e3">1.1.3</a>, we said that the first step in evaluating an
-expression is to evaluate its subexpressions.  But we never specified the order
-in which the subexpressions should be evaluated (e.g., left to right or right
-to left).  When we introduce assignment, the order in which the arguments to a
-procedure are evaluated can make a difference to the result.  Define a simple
-procedure <code>f</code> such that evaluating 
+<p><strong><a id="Exercise-3_002e8"></a>Exercise 3.8:</strong> Когда мы определили модель вычисления в <a href="1_002e1.xhtml#g_t1_002e1_002e3">1.1.3</a>,
+мы сказали, что первый шаг при вычислении выражения — вычислить его подвыражения.  Но мы никогда
+не указывали порядок, в котором следует вычислять подвыражения (например, слева направо или
+справа налево).  Когда мы вводим присваивание, порядок, в котором вычисляются аргументы
+процедуры, может влиять на результат.  Определите простую процедуру <code>f</code> такую, что
+вычисление
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f </span><span class="lit">1</span><span class="clo">))</span></pre></div>
 
-<p>will return 0 if
-the arguments to <code>+</code> are evaluated from left to right but will return 1 if
-the arguments are evaluated from right to left.
+<p>вернёт 0, если аргументы <code>+</code> вычисляются слева направо, но вернёт 1, если аргументы
+вычисляются справа налево.
 </p></blockquote>
 
 <div class="footnote">
 <h4 class="footnotes-heading">Footnotes</h4>
 
 <div id="FOOT129"><p><a class="footnote_backlink" href="#DOCF129"><sup>129</sup></a>
-Actually, this is not quite
-true.  One exception was the random-number generator in <a href="1_002e2.xhtml#g_t1_002e2_002e6">1.2.6</a>.
-Another exception involved the operation/type tables we introduced in 
-<a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a>, where the values of two calls to <code>get</code> with the same
-arguments depended on intervening calls to <code>put</code>.  On the other hand,
-until we introduce assignment, we have no way to create such procedures
-ourselves.</p>
+На самом деле это не совсем
+так.  Одним исключением был генератор случайных чисел в <a href="1_002e2.xhtml#g_t1_002e2_002e6">1.2.6</a>.  Другое исключение
+касалось таблиц операций и типов, которые мы ввели в <a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a>, где значения двух вызовов
+<code>get</code> с одними и теми же аргументами зависели от промежуточных вызовов <code>put</code>.  С
+другой стороны, пока мы не вводим присваивание, у нас нет способа создавать такие процедуры
+самим.</p>
 </div>
 <div id="FOOT130"><p><a class="footnote_backlink" href="#DOCF130"><sup>130</sup></a>
-The value of
-a <code>set!</code> expression is implementation-dependent.  <code>Set!</code> should be
-used only for its effect, not for its value.
+Значение выражения <code>set!</code>
+зависит от реализации.  <code>Set!</code> следует использовать только ради его эффекта, а не ради
+его значения.
 </p>
-<p>The name <code>set!</code> reflects a naming convention used in Scheme: Operations
-that change the values of variables (or that change data structures, as we will
-see in <a href="3_002e3.xhtml#g_t3_002e3">3.3</a>) are given names that end with an exclamation point.
-This is similar to the convention of designating predicates by names that end
-with a question mark.</p>
+<p>Имя <code>set!</code> отражает соглашение об именовании, используемое в Scheme: операциям, которые
+меняют значения переменных (или которые меняют структуры данных, как мы увидим в <a href="3_002e3.xhtml#g_t3_002e3">3.3</a>),
+даются имена, оканчивающиеся восклицательным знаком.  Это похоже на соглашение обозначать
+предикаты именами, оканчивающимися вопросительным знаком.</p>
 </div>
 <div id="FOOT131"><p><a class="footnote_backlink" href="#DOCF131"><sup>131</sup></a>
-We have already
-used <code>begin</code> implicitly in our programs, because in Scheme the body of a
-procedure can be a sequence of expressions.  Also, the <code>⟨</code><var>consequent</var><code>⟩</code> part
-of each clause in a <code>cond</code> expression can be a sequence of expressions
-rather than a single expression.</p>
+Мы уже неявно использовали <code>begin</code> в наших программах, потому что в
+Scheme тело процедуры может быть последовательностью выражений.  Также часть
+<code>⟨</code><var>следствие</var><code>⟩</code> каждого предложения в выражении <code>cond</code> может быть
+последовательностью выражений, а не единственным выражением.</p>
 </div>
 <div id="FOOT132"><p><a class="footnote_backlink" href="#DOCF132"><sup>132</sup></a>
-In programming-language jargon, the variable
-<code>balance</code> is said to be <a id="index-encapsulated"></a>
-<em>encapsulated</em> within the
-<code>new-withdraw</code> procedure.  Encapsulation reflects the general
-system-design principle known as the <a id="index-hiding-principle"></a>
-<em>hiding principle</em>: One can make a
-system more modular and robust by protecting parts of the system from each
-other; that is, by providing information access only to those parts of the
-system that have a “need to know.”</p>
+На жаргоне языков программирования говорят, что переменная
+<code>balance</code> <a id="index-inkapsulirovana"></a>
+<em>инкапсулирована</em> внутри процедуры <code>new-withdraw</code>.  Инкапсуляция
+отражает общий принцип проектирования систем, известный как <a id="index-princip-sokrytiya"></a>
+<em>принцип сокрытия</em>: можно
+сделать систему более модульной и устойчивой, защищая части системы друг от друга; то есть
+предоставляя доступ к информации только тем частям системы, которым «нужно знать».</p>
 </div>
 <div id="FOOT133"><p><a class="footnote_backlink" href="#DOCF133"><sup>133</sup></a>
-In contrast with
-<code>new-withdraw</code> above, we do not have to use <code>let</code> to make
-<code>balance</code> a local variable, since formal parameters are already local.
-This will be clearer after the discussion of the environment model of
-evaluation in <a href="3_002e2.xhtml#g_t3_002e2">3.2</a>.  (See also <a href="3_002e2.xhtml#Exercise-3_002e10">Exercise 3.10</a>.)</p>
+В отличие
+от <code>new-withdraw</code> выше, нам не нужно использовать <code>let</code>, чтобы сделать <code>balance</code>
+локальной переменной, поскольку формальные параметры уже локальны.  Это станет яснее после
+обсуждения модели вычислений с окружениями в <a href="3_002e2.xhtml#g_t3_002e2">3.2</a>.  (См. также <a href="3_002e2.xhtml#Exercise-3_002e10">Exercise 3.10</a>.)</p>
 </div>
 <div id="FOOT134"><p><a class="footnote_backlink" href="#DOCF134"><sup>134</sup></a>
-One common way to implement
-<code>rand-update</code> is to use the rule that <math xmlns="http://www.w3.org/1998/Math/MathML">
+Один распространённый способ реализовать
+<code>rand-update</code> — использовать правило, что <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> is updated to <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> обновляется до <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>a</mi>
     <mi>x</mi>
     <mo>+</mo>
     <mi>b</mi>
   </mrow>
-</math> 
-modulo <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> по
+модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>m</mi>
-</math>, where <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
 </math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>m</mi>
-</math> are appropriately chosen
-integers.  Chapter 3 of <a href="References.xhtml#Knuth-1981">Knuth 1981</a> includes an extensive discussion of
-techniques for generating sequences of random numbers and establishing their
-statistical properties.  Notice that the <code>rand-update</code> procedure computes
-a mathematical function: Given the same input twice, it produces the same
-output.  Therefore, the number sequence produced by <code>rand-update</code>
-certainly is not “random,” if by “random” we insist that each number in the
-sequence is unrelated to the preceding number.  The relation between “real
-randomness” and so-called <a id="index-pseudo_002drandom"></a>
-<em>pseudo-random</em> sequences, which are
-produced by well-determined computations and yet have suitable statistical
-properties, is a complex question involving difficult issues in mathematics and
-philosophy.  Kolmogorov, Solomonoff, and Chaitin have made great progress in
-clarifying these issues; a discussion can be found in <a href="References.xhtml#Chaitin-1975">Chaitin 1975</a>.</p>
+</math> — подходяще выбранные целые числа.  Глава 3
+в <a href="References.xhtml#Knuth-1981">Knuth 1981</a> включает обширное обсуждение приёмов порождения последовательностей
+случайных чисел и установления их статистических свойств.  Заметьте, что процедура
+<code>rand-update</code> вычисляет математическую функцию: при одном и том же входе дважды она
+производит один и тот же выход.  Следовательно, числовая последовательность, производимая
+<code>rand-update</code>, конечно, не «случайна», если под «случайной» мы настаиваем, что каждое
+число в последовательности не связано с предыдущим числом.  Отношение между «настоящей
+случайностью» и так называемыми <a id="index-psevdosluchainymi"></a>
+<em>псевдослучайными</em> последовательностями, которые
+производятся вполне определёнными вычислениями и при этом имеют подходящие статистические
+свойства, — сложный вопрос, затрагивающий трудные проблемы в математике и философии.
+Колмогоров, Соломонов и Чейтин добились большого прогресса в прояснении этих вопросов;
+обсуждение можно найти в <a href="References.xhtml#Chaitin-1975">Chaitin 1975</a>.</p>
 </div>
 <div id="FOOT135"><p><a class="footnote_backlink" href="#DOCF135"><sup>135</sup></a>
-This theorem is due to
-E. Cesàro.  See section 4.5.2 of <a href="References.xhtml#Knuth-1981">Knuth 1981</a> for a discussion and a proof.</p>
+Эта теорема
+принадлежит Э. Чезаро.  См. раздел 4.5.2 в <a href="References.xhtml#Knuth-1981">Knuth 1981</a> для обсуждения и доказательства.</p>
 </div>
 <div id="FOOT136"><p><a class="footnote_backlink" href="#DOCF136"><sup>136</sup></a>
-<abbr>MIT</abbr> Scheme provides such a procedure.  If
-<code>random</code> is given an exact integer (as in <a href="1_002e2.xhtml#g_t1_002e2_002e6">1.2.6</a>) it returns
-an exact integer, but if it is given a decimal value (as in this exercise) it
-returns a decimal value.</p>
+<abbr>MIT</abbr> Scheme предоставляет такую процедуру.  Если <code>random</code>
+даётся точное целое число (как в <a href="1_002e2.xhtml#g_t1_002e2_002e6">1.2.6</a>), она возвращает точное целое число, но если ей
+даётся десятичное значение (как в этом упражнении), она возвращает десятичное значение.</p>
 </div>
 <div id="FOOT137"><p><a class="footnote_backlink" href="#DOCF137"><sup>137</sup></a>
-We don’t substitute for the occurrence of <code>balance</code> in the
-<code>set!</code> expression because the <code>⟨</code><var>name</var><code>⟩</code> in a <code>set!</code> is not
-evaluated.  If we did substitute for it, we would get <code>(set! 25 (- 25
-amount))</code>, which makes no sense.</p>
+Мы не подставляем вместо
+вхождения <code>balance</code> в выражении <code>set!</code>, потому что <code>⟨</code><var>имя</var><code>⟩</code> в
+<code>set!</code> не вычисляется.  Если бы мы подставили вместо него, мы получили бы <code>(set! 25
+(- 25 amount))</code>, что не имеет смысла.</p>
 </div>
 <div id="FOOT138"><p><a class="footnote_backlink" href="#DOCF138"><sup>138</sup></a>
-The phenomenon of a single computational object
-being accessed by more than one name is known as <a id="index-aliasing"></a>
-<em>aliasing</em>.  The joint
-bank account situation illustrates a very simple example of an alias.  In
-<a href="3_002e3.xhtml#g_t3_002e3">3.3</a> we will see much more complex examples, such as “distinct”
-compound data structures that share parts.  Bugs can occur in our programs if
-we forget that a change to an object may also, as a “side effect,” change a
-“different” object because the two “different” objects are actually a
-single object appearing under different aliases.  These so-called
-<a id="index-side_002deffect-bugs"></a>
-<em>side-effect bugs</em> are so difficult to locate and to analyze that some
-people have proposed that programming languages be designed in such a way as to
-not allow side effects or aliasing (<a href="References.xhtml#Lampson-et-al_002e-1981">Lampson et al. 1981</a>; 
+Явление, когда к единственному вычислительному объекту обращаются
+более чем по одному имени, известно как <a id="index-sovmeshchenie-imion"></a>
+<em>совмещение имён</em>.  Ситуация совместного
+банковского счёта иллюстрирует очень простой пример совмещённого имени.  В <a href="3_002e3.xhtml#g_t3_002e3">3.3</a> мы увидим
+гораздо более сложные примеры, такие как «различные» составные структуры данных, которые
+разделяют части.  В наших программах могут возникать ошибки, если мы забываем, что изменение
+объекта может также, как «побочный эффект», изменить «другой» объект, потому что два «различных»
+объекта на самом деле являются единственным объектом, появляющимся под разными совмещёнными
+именами.  Эти так называемые <a id="index-oshibki-iz_002dza-pobochnykh-effektov"></a>
+<em>ошибки из-за побочных эффектов</em> столь трудно
+локализовать и анализировать, что некоторые люди предлагали проектировать языки программирования
+таким образом, чтобы не допускать побочных эффектов или совмещения имён (<a href="References.xhtml#Lampson-et-al_002e-1981">Lampson et al. 1981</a>;
 <a href="References.xhtml#Morris-et-al_002e-1980">Morris et al. 1980</a>).</p>
 </div>
 <div id="FOOT139"><p><a class="footnote_backlink" href="#DOCF139"><sup>139</sup></a>
-In view of this, it is ironic that introductory
-programming is most often taught in a highly imperative style.  This may be a
-vestige of a belief, common throughout the 1960s and 1970s, that programs that
-call procedures must inherently be less efficient than programs that perform
-assignments.  (<a href="References.xhtml#Steele-1977">Steele 1977</a> debunks this argument.)  Alternatively it may
-reflect a view that step-by-step assignment is easier for beginners to
-visualize than procedure call.  Whatever the reason, it often saddles beginning
-programmers with “should I set this variable before or after that one”
-concerns that can complicate programming and obscure the important ideas.</p>
+Ввиду этого иронично, что вводное программирование чаще
+всего преподаётся в сильно императивном стиле.  Это может быть пережитком убеждения,
+распространённого на протяжении 1960-х и 1970-х годов, что программы, вызывающие процедуры,
+должны быть по своей природе менее эффективны, чем программы, выполняющие присваивания.
+(<a href="References.xhtml#Steele-1977">Steele 1977</a> развенчивает этот аргумент.)  Или же это может отражать взгляд, что
+пошаговое присваивание новичкам легче визуализировать, чем вызов процедуры.  Какова бы ни была
+причина, это часто обременяет начинающих программистов заботами «следует ли мне установить эту
+переменную до или после той», которые могут усложнять программирование и затемнять важные идеи.</p>
 </div>
 </div>
 <nav class="header">
