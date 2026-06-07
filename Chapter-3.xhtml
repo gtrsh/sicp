@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ru" lang="ru">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
 <!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
 <head>
-<title>Структура и интерпретация компьютерных программ, 2-е изд.: Chapter 3</title>
+<title>Structure and Interpretation of Computer Programs, 2e: Chapter 3</title>
 
 <meta name="description" content="Structure and Interpretation of Computer Programs, 2e: Chapter 3" />
 <meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: Chapter 3" />
@@ -31,69 +31,63 @@
 <p>
 Next: <a href="3_002e1.xhtml#g_t3_002e1" accesskey="n" rel="next">3.1</a>, Prev: <a href="2_002e5.xhtml#g_t2_002e5" accesskey="p" rel="prev">2.5</a>, Up: <a href="index.xhtml#Top" accesskey="u" rel="prev">Top</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
-<a id="Modularity_002c-Objects_002c-and-State"></a>
-<h2 class="chapter"><span class="chapnum">3</span><span class="chaptitle">Modularity, Objects, and State</span></h2>
+<a id="Modulxnostx_002c-obwekty-i-sostoyanie"></a>
+<h2 class="chapter"><span class="chapnum">3</span><span class="chaptitle">Модульность, объекты и состояние</span></h2>
 
 <blockquote>
 <p>Mεταβάλλον ὰναπαύεται<br />
-(Even while it changes, it stands still.)<br />
-—Heraclitus
+(Изменяясь, оно покоится.)<br />
+—Гераклит
 </p>
 <p>Plus ça change, plus c’est la même chose.<br />
-—Alphonse Karr
+—Альфонс Карр
 </p></blockquote>
 
-<p>The preceding chapters introduced the basic elements from which programs are
-made.  We saw how primitive procedures and primitive data are combined to
-construct compound entities, and we learned that abstraction is vital in
-helping us to cope with the complexity of large systems.  But these tools are
-not sufficient for designing programs.  Effective program synthesis also
-requires organizational principles that can guide us in formulating the overall
-design of a program.  In particular, we need strategies to help us structure
-large systems so that they will be <a id="index-modular"></a>
-<em>modular</em>, that is, so that they can
-be divided “naturally” into coherent parts that can be separately developed
-and maintained.
+<p>Предыдущие главы ввели основные элементы, из которых составляются программы.  Мы видели,
+как примитивные процедуры и примитивные данные комбинируются, чтобы строить составные
+сущности, и мы узнали, что абстракция жизненно важна, помогая нам справляться со
+сложностью больших систем.  Но этих инструментов недостаточно для проектирования программ.
+Эффективный синтез программ также требует организационных принципов, которые могут
+направлять нас в формулировании общего проекта программы.  В частности, нам нужны стратегии,
+которые помогут нам структурировать большие системы так, чтобы они были <a id="index-modulxnymi"></a>
+<em>модульными</em>,
+то есть чтобы их можно было «естественно» разделить на связные части, которые можно
+разрабатывать и сопровождать по отдельности.
 </p>
-<p>One powerful design strategy, which is particularly appropriate to the
-construction of programs for modeling physical systems, is to base the
-structure of our programs on the structure of the system being modeled.  For
-each object in the system, we construct a corresponding computational object.
-For each system action, we define a symbolic operation in our computational
-model.  Our hope in using this strategy is that extending the model to
-accommodate new objects or new actions will require no strategic changes to the
-program, only the addition of the new symbolic analogs of those objects or
-actions.  If we have been successful in our system organization, then to add a
-new feature or debug an old one we will have to work on only a localized part
-of the system.
+<p>Одна мощная стратегия проектирования, которая особенно уместна для построения программ,
+моделирующих физические системы, — это основывать структуру наших программ на структуре
+моделируемой системы.  Для каждого объекта в системе мы строим соответствующий
+вычислительный объект.  Для каждого действия системы мы определяем символьную операцию в
+нашей вычислительной модели.  Наша надежда при использовании этой стратегии в том, что
+расширение модели для вмещения новых объектов или новых действий не потребует стратегических
+изменений в программе, только добавления новых символьных аналогов этих объектов или
+действий.  Если мы преуспели в организации нашей системы, то для добавления новой
+возможности или отладки старой нам придётся работать лишь над локализованной частью системы.
 </p>
-<p>To a large extent, then, the way we organize a large program is dictated by our
-perception of the system to be modeled.  In this chapter we will investigate
-two prominent organizational strategies arising from two rather different
-“world views” of the structure of systems.  The first organizational strategy
-concentrates on <a id="index-objects"></a>
-<em>objects</em>, viewing a large system as a collection of
-distinct objects whose behaviors may change over time.  An alternative
-organizational strategy concentrates on the <a id="index-streams"></a>
-<em>streams</em> of information
-that flow in the system, much as an electrical engineer views a
-signal-processing system.
+<p>Таким образом, в значительной мере способ, которым мы организуем большую программу,
+диктуется нашим восприятием моделируемой системы.  В этой главе мы исследуем две видные
+организационные стратегии, возникающие из двух довольно различных «мировоззрений» на
+структуру систем.  Первая организационная стратегия сосредоточивается на
+<a id="index-obwektakh"></a>
+<em>объектах</em>, рассматривая большую систему как совокупность отдельных объектов, чьи
+поведения могут меняться со временем.  Альтернативная организационная стратегия
+сосредоточивается на <a id="index-potokakh"></a>
+<em>потоках</em> информации, которые текут в системе, во многом так
+же, как инженер-электрик рассматривает систему обработки сигналов.
 </p>
-<p>Both the object-based approach and the stream-processing approach raise
-significant linguistic issues in programming.  With objects, we must be
-concerned with how a computational object can change and yet maintain its
-identity.  This will force us to abandon our old substitution model of
-computation (<a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>) in favor of a more mechanistic but less
-theoretically tractable <a id="index-environment-model"></a>
-<em>environment model</em> of computation.  The
-difficulties of dealing with objects, change, and identity are a fundamental
-consequence of the need to grapple with time in our computational models.
-These difficulties become even greater when we allow the possibility of
-concurrent execution of programs.  The stream approach can be most fully
-exploited when we decouple simulated time in our model from the order of the
-events that take place in the computer during evaluation.  We will accomplish
-this using a technique known as <a id="index-delayed-evaluation"></a>
-<em>delayed evaluation</em>.
+<p>И объектно-ориентированный подход, и подход обработки потоков поднимают значительные
+языковые вопросы в программировании.  С объектами мы должны заботиться о том, как
+вычислительный объект может меняться и при этом сохранять свою идентичность.  Это заставит
+нас отказаться от нашей старой подстановочной модели вычислений (<a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>) в пользу более
+механистической, но менее теоретически удобной <a id="index-modeli-vychislenii-s-okruzheniyami"></a>
+<em>модели вычислений с окружениями</em>.
+Трудности работы с объектами, изменением и идентичностью — фундаментальное следствие
+необходимости бороться со временем в наших вычислительных моделях.  Эти трудности становятся
+ещё больше, когда мы допускаем возможность параллельного исполнения программ.  Подход с
+потоками можно использовать наиболее полно, когда мы развязываем смоделированное время в
+нашей модели с порядком событий, происходящих в компьютере во время вычисления.  Мы достигнем
+этого, используя приём, известный как <a id="index-otlozhennoe-vychislenie"></a>
+<em>отложенное вычисление</em>.
 </p>
 
 <nav class="header">
