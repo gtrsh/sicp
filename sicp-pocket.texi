@@ -10976,141 +10976,133 @@ Sha boom
 @end quotation
 
 @node	2.4, 2.5, 2.3, Chapter 2
-@section Multiple Representations for Abstract Data
+@section Множественные представления для абстрактных данных
 
-We have introduced data abstraction, a methodology for structuring systems in
-such a way that much of a program can be specified independent of the choices
-involved in implementing the data objects that the program manipulates.  For
-example, we saw in @ref{2.1.1} how to separate the task of designing a
-program that uses rational numbers from the task of implementing rational
-numbers in terms of the computer language's primitive mechanisms for
-constructing compound data.  The key idea was to erect an abstraction barrier
--- in this case, the selectors and constructors for rational numbers
-(@code{make-rat}, @code{numer}, @code{denom})---that isolates the way rational
-numbers are used from their underlying representation in terms of list
-structure.  A similar abstraction barrier isolates the details of the
-procedures that perform rational arithmetic (@code{add-rat}, @code{sub-rat},
-@code{mul-rat}, and @code{div-rat}) from the ``higher-level'' procedures that
-use rational numbers.  The resulting program has the structure shown in
-@ref{Figure 2.1}.
+Мы ввели абстракцию данных — методологию структурирования систем таким образом, чтобы
+бо́льшую часть программы можно было задать независимо от выборов, связанных с реализацией
+объектов данных, которыми манипулирует программа.  Например, мы видели в @ref{2.1.1}, как
+отделить задачу проектирования программы, использующей рациональные числа, от задачи
+реализации рациональных чисел в терминах примитивных механизмов компьютерного языка для
+построения составных данных.  Ключевая идея состояла в том, чтобы возвести барьер
+абстракции — в данном случае селекторы и конструкторы для рациональных чисел
+(@code{make-rat}, @code{numer}, @code{denom}) — который изолирует то, как используются
+рациональные числа, от их лежащего в основе представления в терминах списочной структуры.
+Похожий барьер абстракции изолирует подробности процедур, выполняющих рациональную
+арифметику (@code{add-rat}, @code{sub-rat}, @code{mul-rat} и @code{div-rat}), от процедур
+«более высокого уровня», использующих рациональные числа.  Получающаяся программа имеет
+структуру, показанную на @ref{Figure 2.1}.
 
-These data-abstraction barriers are powerful tools for controlling complexity.
-By isolating the underlying representations of data objects, we can divide the
-task of designing a large program into smaller tasks that can be performed
-separately.  But this kind of data abstraction is not yet powerful enough,
-because it may not always make sense to speak of ``the underlying
-representation'' for a data object.
+Эти барьеры абстракции данных — мощные инструменты для управления сложностью.  Изолируя
+лежащие в основе представления объектов данных, мы можем разделить задачу проектирования
+большой программы на меньшие задачи, которые можно выполнять отдельно.  Но такого рода
+абстракция данных пока недостаточно мощна, потому что не всегда может иметь смысл говорить
+о «лежащем в основе представлении» объекта данных.
 
-For one thing, there might be more than one useful representation for a data
-object, and we might like to design systems that can deal with multiple
-representations.  To take a simple example, complex numbers may be represented
-in two almost equivalent ways: in rectangular form (real and imaginary parts)
-and in polar form (magnitude and angle).  Sometimes rectangular form is more
-appropriate and sometimes polar form is more appropriate.  Indeed, it is
-perfectly plausible to imagine a system in which complex numbers are
-represented in both ways, and in which the procedures for manipulating complex
-numbers work with either representation.
+Во-первых, может быть более одного полезного представления объекта данных, и нам, возможно,
+захочется проектировать системы, которые могут иметь дело с множественными
+представлениями.  Возьмём простой пример: комплексные числа могут быть представлены двумя
+почти эквивалентными способами: в прямоугольной форме (действительная и мнимая части) и в
+полярной форме (модуль и угол).  Иногда более уместна прямоугольная форма, а иногда более
+уместна полярная форма.  Действительно, вполне правдоподобно вообразить систему, в которой
+комплексные числа представлены обоими способами и в которой процедуры для манипулирования
+комплексными числами работают с любым представлением.
 
-More importantly, programming systems are often designed by many people working
-over extended periods of time, subject to requirements that change over time.
-In such an environment, it is simply not possible for everyone to agree in
-advance on choices of data representation.  So in addition to the
-data-abstraction barriers that isolate representation from use, we need
-abstraction barriers that isolate different design choices from each other and
-permit different choices to coexist in a single program.  Furthermore, since
-large programs are often created by combining pre-existing modules that were
-designed in isolation, we need conventions that permit programmers to
-incorporate modules into larger systems @newterm{additively}, that is, without
-having to redesign or reimplement these modules.
+Что важнее, программные системы часто проектируются многими людьми, работающими в течение
+продолжительных периодов времени, при требованиях, которые меняются со временем.  В такой
+среде просто невозможно, чтобы все заранее договорились о выборах представления данных.
+Поэтому в дополнение к барьерам абстракции данных, которые изолируют представление от
+использования, нам нужны барьеры абстракции, которые изолируют различные проектные выборы
+друг от друга и позволяют различным выборам сосуществовать в одной программе.  Более того,
+поскольку большие программы часто создаются комбинированием заранее существующих модулей,
+спроектированных по отдельности, нам нужны соглашения, которые позволяют программистам
+включать модули в бо́льшие системы @newterm{аддитивно}, то есть без необходимости
+перепроектировать или перереализовывать эти модули.
 
-In this section, we will learn how to cope with data that may be represented in
-different ways by different parts of a program.  This requires constructing
-@newterm{generic procedures}---procedures that can operate on data that may be
-represented in more than one way.  Our main technique for building generic
-procedures will be to work in terms of data objects that have @newterm{type tags}, 
-that is, data objects that include explicit information about how they
-are to be processed.  We will also discuss @newterm{data-directed} programming,
-a powerful and convenient implementation strategy for additively assembling
-systems with generic operations.
+В этом разделе мы научимся справляться с данными, которые могут быть представлены разными
+способами разными частями программы.  Это требует построения @newterm{обобщённых процедур}
+— процедур, которые могут оперировать данными, которые могут быть представлены более чем
+одним способом.  Наш основной приём построения обобщённых процедур будет состоять в том,
+чтобы работать в терминах объектов данных, у которых есть @newterm{теги типа}, то есть
+объектов данных, которые включают явную информацию о том, как их следует обрабатывать.  Мы
+также обсудим программирование, @newterm{управляемое данными}, — мощную и удобную стратегию
+реализации для аддитивной сборки систем с обобщёнными операциями.
 
-We begin with the simple complex-number example. We will see how type tags and
-data-directed style enable us to design separate rectangular and polar
-representations for complex numbers while maintaining the notion of an abstract
-``complex-number'' data object.  We will accomplish this by defining arithmetic
-procedures for complex numbers (@code{add-complex}, @code{sub-complex},
-@code{mul-complex}, and @code{div-complex}) in terms of generic selectors that
-access parts of a complex number independent of how the number is represented.
-The resulting complex-number system, as shown in @ref{Figure 2.19}, contains
-two different kinds of abstraction barriers.  The ``horizontal'' abstraction
-barriers play the same role as the ones in @ref{Figure 2.1}.  They isolate
-``higher-level'' operations from ``lower-level'' rep@-re@-sen@-ta@-tions.  In addition,
-there is a ``vertical'' barrier that gives us the ability to separately design
-and install alternative representations.
+Мы начинаем с простого примера комплексных чисел.  Мы увидим, как теги типа и стиль,
+управляемый данными, позволяют нам проектировать отдельные прямоугольное и полярное
+представления для комплексных чисел, сохраняя при этом понятие абстрактного объекта данных
+«комплексное число».  Мы достигнем этого, определив арифметические процедуры для
+комплексных чисел (@code{add-complex}, @code{sub-complex}, @code{mul-complex} и
+@code{div-complex}) в терминах обобщённых селекторов, которые обращаются к частям
+комплексного числа независимо от того, как число представлено.  Получающаяся система
+комплексных чисел, как показано на @ref{Figure 2.19}, содержит два различных вида барьеров
+абстракции.  «Горизонтальные» барьеры абстракции играют ту же роль, что и на
+@ref{Figure 2.1}.  Они изолируют операции «более высокого уровня» от представлений «более
+низкого уровня».  Кроме того, есть «вертикальный» барьер, который даёт нам возможность
+отдельно проектировать и устанавливать альтернативные представления.
 
 @float
 @anchor{Figure 2.19}
 @ifinfo
 @quotation
-@strong{Figure 2.19:} Data-abstraction barriers in the complex-number system.
+@strong{Figure 2.19:} Барьеры абстракции данных в системе комплексных чисел.
 
 @example
-           Programs that use complex numbers
+       Программы, использующие комплексные числа
   +-------------------------------------------------+
 --| add-complex sub-complex mul-complex div-complex |--
   +-------------------------------------------------+
-              Complex arithmetic package
+              Пакет комплексной арифметики
 ---------------------------+---------------------------
-          Rectangular      |         Polar
-        representation     |     representation
+       Прямоугольное       |         Полярное
+       представление       |       представление
 ---------------------------+---------------------------
-    List structure and primitive machine arithmetic
+   Списочная структура и примитивная машинная арифметика
 @end example
 @end quotation
 @end ifinfo
 @iftex
 @image{fig/chap2/Fig2.19a,147mm,,,.std.svg}
-@caption{@strong{Figure 2.19:} Data-abstraction barriers in the complex-number system.}
+@caption{@strong{Figure 2.19:} Барьеры абстракции данных в системе комплексных чисел.}
 @end iftex
 @end float
 
 @noindent
-In @ref{2.5} we will show how to use type tags and data-directed style
-to develop a generic arithmetic package.  This provides procedures (@code{add},
-@code{mul}, and so on) that can be used to manipulate all sorts of ``numbers''
-and can be easily extended when a new kind of number is needed.  In 
-@ref{2.5.3}, we'll show how to use generic arithmetic in a system that performs
-symbolic algebra.
+В @ref{2.5} мы покажем, как использовать теги типа и стиль, управляемый данными, чтобы
+разработать пакет обобщённой арифметики.  Он предоставляет процедуры (@code{add},
+@code{mul} и так далее), которые можно использовать для манипулирования всевозможными
+«числами» и которые можно легко расширить, когда понадобится новый вид числа.  В
+@ref{2.5.3} мы покажем, как использовать обобщённую арифметику в системе, выполняющей
+символьную алгебру.
 
 @menu
-* 2.4.1::            Representations for Complex Numbers
-* 2.4.2::            Tagged data
-* 2.4.3::            Data-Directed Programming and Additivity
+* 2.4.1::            Представления для комплексных чисел
+* 2.4.2::            Типизированные данные
+* 2.4.3::            Программирование, управляемое данными, и аддитивность
 @end menu
 
 @node	2.4.1, 2.4.2, 2.4, 2.4
-@subsection Representations for Complex Numbers
+@subsection Представления для комплексных чисел
 
-We will develop a system that performs arithmetic operations on complex numbers
-as a simple but unrealistic example of a program that uses generic operations.
-We begin by discussing two plausible representations for complex numbers as
-ordered pairs: rectangular form (real part and imaginary part) and polar form
-(magnitude and angle).@footnote{In actual computational systems, rectangular
-form is preferable to polar form most of the time because of roundoff errors in
-conversion between rectangular and polar form.  This is why the complex-number
-example is unrealistic.  Nevertheless, it provides a clear illustration of the
-design of a system using generic operations and a good introduction to the more
-substantial systems to be developed later in this chapter.}  
-Section @ref{2.4.2} will show how both representations can be made to coexist in a
-single system through the use of type tags and generic operations.
+Мы разработаем систему, которая выполняет арифметические операции над комплексными
+числами, как простой, но нереалистичный пример программы, использующей обобщённые
+операции.  Мы начнём с обсуждения двух правдоподобных представлений комплексных чисел как
+упорядоченных пар: прямоугольной формы (действительная часть и мнимая часть) и полярной
+формы (модуль и угол).@footnote{В реальных вычислительных системах прямоугольная форма
+предпочтительнее полярной большую часть времени из-за ошибок округления при преобразовании
+между прямоугольной и полярной формами.  Вот почему пример с комплексными числами
+нереалистичен.  Тем не менее он даёт ясную иллюстрацию проектирования системы, использующей
+обобщённые операции, и хорошее введение в более существенные системы, которые будут
+разработаны позднее в этой главе.}  Раздел @ref{2.4.2} покажет, как оба представления можно
+заставить сосуществовать в одной системе через использование тегов типа и обобщённых
+операций.
 
-Like rational numbers, complex numbers are naturally represented as ordered
-pairs.  The set of complex numbers can be thought of as a two-dimensional space
-with two orthogonal axes, the ``real'' axis and the ``imaginary'' axis. (See
-@ref{Figure 2.20}.)  From this point of view, the complex number 
-@math{{z = x + iy}} (where @math{{i^{\kern0.1em 2} = \text{−1}}}) can be thought of as the point in the plane
-whose real coordinate is @math{x} and whose imaginary coordinate is @math{y}.
-Addition of complex numbers reduces in this representation to addition of
-coordinates:
+Как и рациональные числа, комплексные числа естественно представляются как упорядоченные
+пары.  Множество комплексных чисел можно мыслить как двумерное пространство с двумя
+ортогональными осями — «действительной» осью и «мнимой» осью.  (См. @ref{Figure 2.20}.)
+С этой точки зрения комплексное число @math{{z = x + iy}} (где @math{{i^{\kern0.1em 2} = \text{−1}}})
+можно мыслить как точку на плоскости, чья действительная координата — @math{x}, а мнимая
+координата — @math{y}.  Сложение комплексных чисел сводится в этом представлении к сложению
+координат:
 @ifinfo
 
 @example
@@ -11134,10 +11126,10 @@ Imaginary-part(z_1 + z_2) = Imaginary-part(z_1) + Imaginary-part(z_2)
 @float
 @anchor{Figure 2.20}
 @ifinfo
-@strong{Figure 2.20:} Complex numbers as points in the plane.
+@strong{Figure 2.20:} Комплексные числа как точки на плоскости.
 
 @example
- Imaginary
+ Мнимая
     ^
     |
   y |.........................* z = x + ?y = r e^(?A)
@@ -11147,22 +11139,22 @@ Imaginary-part(z_1 + z_2) = Imaginary-part(z_1) + Imaginary-part(z_2)
     |        __--             .
     |    __-- \               .
     |__--    A |              .
-----+----------+-------------------> Real
+----+----------+-------------------> Действительная
                               x
 @end example
 @end ifinfo
 @iftex
 @image{fig/chap2/Fig2.20,147mm,,,.std.svg}
-@caption{@strong{Figure 2.20:} Complex numbers as points in the plane.}
+@caption{@strong{Figure 2.20:} Комплексные числа как точки на плоскости.}
 @end iftex
 @end float
 
 @noindent
-When multiplying complex numbers, it is more natural to think in terms of
-representing a complex number in polar form, as a magnitude and an angle (@math{r}
-and @math{A} in @ref{Figure 2.20}).  The product of two complex numbers is the
-vector obtained by stretching one complex number by the length of the other and
-then rotating it through the angle of the other:
+При умножении комплексных чисел более естественно мыслить в терминах представления
+комплексного числа в полярной форме, как модуля и угла (@math{r} и @math{A} на
+@ref{Figure 2.20}).  Произведение двух комплексных чисел — это вектор, полученный
+растяжением одного комплексного числа на длину другого и затем поворотом его на угол
+другого:
 @ifinfo
 
 @example
@@ -11184,25 +11176,23 @@ Angle(z_1 * z_2) = Angle(z_1) + Angle(z_2)
 @end tex
 
 @noindent
-Thus, there are two different representations for complex numbers, which are
-appropriate for different operations.  Yet, from the viewpoint of someone
-writing a program that uses complex numbers, the principle of data abstraction
-suggests that all the operations for manipulating complex numbers should be
-available regardless of which representation is used by the computer.  For
-example, it is often useful to be able to find the magnitude of a complex
-number that is specified by rectangular coordinates.  Similarly, it is often
-useful to be able to determine the real part of a complex number that is
-specified by polar coordinates.
+Таким образом, есть два различных представления для комплексных чисел, подходящие для
+разных операций.  И всё же, с точки зрения того, кто пишет программу, использующую
+комплексные числа, принцип абстракции данных подсказывает, что все операции для
+манипулирования комплексными числами должны быть доступны независимо от того, какое
+представление используется компьютером.  Например, часто полезно уметь найти модуль
+комплексного числа, заданного прямоугольными координатами.  Аналогично, часто полезно уметь
+определить действительную часть комплексного числа, заданного полярными координатами.
 
-To design such a system, we can follow the same data-abstraction strategy we
-followed in designing the rational-number package in @ref{2.1.1}.
-Assume that the operations on complex numbers are implemented in terms of four
-selectors: @code{real-part}, @code{imag-part}, @code{magnitude}, and
-@code{angle}.  Also assume that we have two procedures for constructing complex
-numbers: @code{make-from-real-imag} returns a complex number with specified
-real and imaginary parts, and @code{make-from-mag-ang} returns a complex number
-with specified magnitude and angle.  These procedures have the property that,
-for any complex number @code{z}, both
+Чтобы спроектировать такую систему, мы можем следовать той же стратегии абстракции данных,
+которой мы следовали при проектировании пакета рациональных чисел в @ref{2.1.1}.
+Предположим, что операции над комплексными числами реализованы в терминах четырёх
+селекторов: @code{real-part}, @code{imag-part}, @code{magnitude} и @code{angle}.  Также
+предположим, что у нас есть две процедуры для построения комплексных чисел:
+@code{make-from-real-imag} возвращает комплексное число с заданными действительной и мнимой
+частями, а @code{make-from-mag-ang} возвращает комплексное число с заданными модулем и
+углом.  Эти процедуры обладают тем свойством, что для любого комплексного числа @code{z}
+оба
 
 @lisp
 (make-from-real-imag (real-part z) 
@@ -11210,7 +11200,7 @@ for any complex number @code{z}, both
 @end lisp
 
 @noindent
-and
+и
 
 @lisp
 (make-from-mag-ang (magnitude z) 
@@ -11218,14 +11208,13 @@ and
 @end lisp
 
 @noindent
-produce complex numbers that are equal to @code{z}.
+производят комплексные числа, равные @code{z}.
 
-Using these constructors and selectors, we can implement arithmetic on complex
-numbers using the ``abstract data'' specified by the constructors and
-selectors, just as we did for rational numbers in @ref{2.1.1}.  As
-shown in the formulas above, we can add and subtract complex numbers in terms
-of real and imaginary parts while multiplying and dividing complex numbers in
-terms of magnitudes and angles:
+Используя эти конструкторы и селекторы, мы можем реализовать арифметику над комплексными
+числами, используя «абстрактные данные», заданные конструкторами и селекторами, точно так
+же, как мы делали для рациональных чисел в @ref{2.1.1}.  Как показано в формулах выше, мы
+можем складывать и вычитать комплексные числа в терминах действительных и мнимых частей,
+а умножать и делить комплексные числа в терминах модулей и углов:
 
 @lisp
 (define (add-complex z1 z2)
@@ -11250,21 +11239,19 @@ terms of magnitudes and angles:
 @end lisp
 
 @noindent
-To complete the complex-number package, we must choose a representation and we
-must implement the constructors and selectors in terms of primitive numbers and
-primitive list structure.  There are two obvious ways to do this: We can
-represent a complex number in ``rectangular form'' as a pair (real part,
-imaginary part) or in ``polar form'' as a pair (magnitude, angle).  Which shall
-we choose?
+Чтобы завершить пакет комплексных чисел, мы должны выбрать представление и должны
+реализовать конструкторы и селекторы в терминах примитивных чисел и примитивной списочной
+структуры.  Есть два очевидных способа сделать это: мы можем представить комплексное число
+в «прямоугольной форме» как пару (действительная часть, мнимая часть) или в «полярной
+форме» как пару (модуль, угол).  Что мы выберем?
 
-In order to make the different choices concrete, imagine that there are two
-programmers, Ben Bitdiddle and Alyssa P. Hacker, who are independently
-designing representations for the complex-number system.  Ben chooses to
-represent complex numbers in rectangular form.  With this choice, selecting the
-real and imaginary parts of a complex number is straightforward, as is
-constructing a complex number with given real and imaginary parts.  To find the
-magnitude and the angle, or to construct a complex number with a given
-magnitude and angle, he uses the trigonometric relations
+Чтобы сделать различные выборы конкретными, вообразим, что есть два программиста, Бен
+Битдидл и Алисса П. Хакер, которые независимо проектируют представления для системы
+комплексных чисел.  Бен выбирает представлять комплексные числа в прямоугольной форме.  С
+этим выбором выбор действительной и мнимой частей комплексного числа прямолинеен, как и
+построение комплексного числа с данными действительной и мнимой частями.  Чтобы найти
+модуль и угол или построить комплексное число с данными модулем и углом, он использует
+тригонометрические соотношения
 
 @ifinfo
 
@@ -11288,12 +11275,11 @@ y = r sin A     A = arctan(y,x)
 @end tex
 
 @noindent
-which relate the real and imaginary parts @math{{(x, y)}} to the magnitude and
-the angle @math{{(r, A)}}.@footnote{The arctangent function referred to here,
-computed by Scheme's @code{atan} procedure, is defined so as to take two
-arguments @math{y} and @math{x} and to return the angle whose tangent is @math{{y / x}}.
-The signs of the arguments determine the quadrant of the angle.}  Ben's
-representation is therefore given by the following selectors and constructors:
+которые связывают действительную и мнимую части @math{{(x, y)}} с модулем и углом
+@math{{(r, A)}}.@footnote{Функция арктангенса, упоминаемая здесь, вычисляемая процедурой
+@code{atan} в Scheme, определена так, чтобы принимать два аргумента @math{y} и @math{x} и
+возвращать угол, тангенс которого равен @math{{y / x}}.  Знаки аргументов определяют
+квадрант угла.}  Представление Бена поэтому даётся следующими селекторами и конструкторами:
 
 @lisp
 (define (real-part z) (car z))
@@ -11314,10 +11300,9 @@ representation is therefore given by the following selectors and constructors:
 @end lisp
 
 @noindent
-Alyssa, in contrast, chooses to represent complex numbers in polar form.  For
-her, selecting the magnitude and angle is straightforward, but she has to use
-the trigonometric relations to obtain the real and imaginary parts.  Alyssa's
-representation is:
+Алисса, напротив, выбирает представлять комплексные числа в полярной форме.  Для неё выбор
+модуля и угла прямолинеен, но ей приходится использовать тригонометрические соотношения,
+чтобы получить действительную и мнимую части.  Представление Алиссы:
 
 @lisp
 (define (real-part z)
@@ -11338,42 +11323,39 @@ representation is:
 @end lisp
 
 @noindent
-The discipline of data abstraction ensures that the same implementation of
-@code{add-complex}, @code{sub-complex}, @code{mul-complex}, and
-@code{div-complex} will work with either Ben's representation or Alyssa's
-representation.
+Дисциплина абстракции данных обеспечивает, что одна и та же реализация @code{add-complex},
+@code{sub-complex}, @code{mul-complex} и @code{div-complex} будет работать как с
+представлением Бена, так и с представлением Алиссы.
 
 @node	2.4.2, 2.4.3, 2.4.1, 2.4
-@subsection Tagged data
+@subsection Типизированные данные
 
-One way to view data abstraction is as an application of the ``principle of
-least commitment.''  In implementing the complex-number system in 
-@ref{2.4.1}, we can use either Ben's rectangular representation or Alyssa's
-polar representation.  The abstraction barrier formed by the selectors and
-constructors permits us to defer to the last possible moment the choice of a
-concrete representation for our data objects and thus retain maximum
-flexibility in our system design.
+Один способ смотреть на абстракцию данных — это как на применение «принципа наименьших
+обязательств».  Реализуя систему комплексных чисел в @ref{2.4.1}, мы можем использовать
+либо прямоугольное представление Бена, либо полярное представление Алиссы.  Барьер
+абстракции, образованный селекторами и конструкторами, позволяет нам отложить до
+последнего возможного момента выбор конкретного представления для наших объектов данных и
+тем самым сохранить максимальную гибкость в проектировании системы.
 
-The principle of least commitment can be carried to even further extremes.  If
-we desire, we can maintain the ambiguity of representation even @emph{after} we
-have designed the selectors and constructors, and elect to use both Ben's
-representation @emph{and} Alyssa's representation.  If both representations are
-included in a single system, however, we will need some way to distinguish data
-in polar form from data in rectangular form.  Otherwise, if we were asked, for
-instance, to find the @code{magnitude} of the pair (3, 4), we wouldn't know
-whether to answer 5 (interpreting the number in rectangular form) or 3
-(interpreting the number in polar form).  A straightforward way to accomplish
-this distinction is to include a @newterm{type tag}---the symbol
-@code{rectangular} or @code{polar}---as part of each complex number.  Then
-when we need to manipulate a complex number we can use the tag to decide which
-selector to apply.
+Принцип наименьших обязательств можно довести до ещё более крайних степеней.  Если мы
+желаем, мы можем сохранять неоднозначность представления даже @emph{после} того, как мы
+спроектировали селекторы и конструкторы, и предпочесть использовать @emph{и}
+представление Бена, @emph{и} представление Алиссы.  Если, однако, оба представления
+включены в одну систему, нам понадобится некоторый способ отличать данные в полярной форме
+от данных в прямоугольной форме.  Иначе, если бы нас попросили, например, найти
+@code{magnitude} пары (3, 4), мы не знали бы, отвечать ли 5 (интерпретируя число в
+прямоугольной форме) или 3 (интерпретируя число в полярной форме).  Прямолинейный способ
+достичь этого различения — включить @newterm{тег типа} (символ @code{rectangular} или
+@code{polar}) как часть каждого комплексного числа.  Тогда, когда нам нужно
+манипулировать комплексным числом, мы можем использовать тег, чтобы решить, какой селектор
+применить.
 
-In order to manipulate tagged data, we will assume that we have procedures
-@code{type-tag} and @code{contents} that extract from a data object the tag and
-the actual contents (the polar or rectangular coordinates, in the case of a
-complex number).  We will also postulate a procedure @code{attach-tag} that
-takes a tag and contents and produces a tagged data object.  A straightforward
-way to implement this is to use ordinary list structure:
+Чтобы манипулировать типизированными данными, мы предположим, что у нас есть процедуры
+@code{type-tag} и @code{contents}, которые извлекают из объекта данных тег и фактическое
+содержимое (полярные или прямоугольные координаты в случае комплексного числа).  Мы также
+постулируем процедуру @code{attach-tag}, которая принимает тег и содержимое и производит
+типизированный объект данных.  Прямолинейный способ реализовать это — использовать обычную
+списочную структуру:
 
 @lisp
 (define (attach-tag type-tag contents)
@@ -11393,8 +11375,8 @@ way to implement this is to use ordinary list structure:
 @end lisp
 
 @noindent
-Using these procedures, we can define predicates @code{rectangular?}  and
-@code{polar?}, which recognize rectangular and polar numbers, respectively:
+Используя эти процедуры, мы можем определить предикаты @code{rectangular?} и
+@code{polar?}, которые распознают прямоугольные и полярные числа соответственно:
 
 @lisp
 (define (rectangular? z)
@@ -11405,15 +11387,14 @@ Using these procedures, we can define predicates @code{rectangular?}  and
 @end lisp
 
 @noindent
-With type tags, Ben and Alyssa can now modify their code so that their two
-different representations can coexist in the same system.  Whenever Ben
-constructs a complex number, he tags it as rectangular.  Whenever Alyssa
-constructs a complex number, she tags it as polar.  In addition, Ben and Alyssa
-must make sure that the names of their procedures do not conflict.  One way to
-do this is for Ben to append the suffix @code{rectangular} to the name of each
-of his representation procedures and for Alyssa to append @code{polar} to the
-names of hers.  Here is Ben's revised rectangular representation from 
-@ref{2.4.1}:
+С тегами типа Бен и Алисса теперь могут изменить свой код так, чтобы их два различных
+представления могли сосуществовать в одной системе.  Всякий раз, когда Бен строит
+комплексное число, он помечает его как прямоугольное.  Всякий раз, когда Алисса строит
+комплексное число, она помечает его как полярное.  Кроме того, Бен и Алисса должны
+убедиться, что имена их процедур не конфликтуют.  Один способ сделать это — чтобы Бен
+добавлял суффикс @code{rectangular} к имени каждой из своих процедур представления, а
+Алисса добавляла @code{polar} к именам своих.  Вот пересмотренное прямоугольное
+представление Бена из @ref{2.4.1}:
 
 @lisp
 (define (real-part-rectangular z) (car z))
@@ -11437,7 +11418,7 @@ names of hers.  Here is Ben's revised rectangular representation from
 @end lisp
 
 @noindent
-and here is Alyssa's revised polar representation:
+а вот пересмотренное полярное представление Алиссы:
 
 @lisp
 (define (real-part-polar z)
@@ -11462,13 +11443,12 @@ and here is Alyssa's revised polar representation:
 @end lisp
 
 @noindent
-Each generic selector is implemented as a procedure that checks the tag of its
-argument and calls the appropriate procedure for handling data of that type.
-For example, to obtain the real part of a complex number, @code{real-part}
-examines the tag to determine whether to use Ben's @code{real-part-rectangular}
-or Alyssa's @code{real-part-polar}.  In either case, we use @code{contents} to
-extract the bare, untagged datum and send this to the rectangular or polar
-procedure as required:
+Каждый обобщённый селектор реализуется как процедура, которая проверяет тег своего
+аргумента и вызывает подходящую процедуру для обработки данных этого типа.  Например, чтобы
+получить действительную часть комплексного числа, @code{real-part} исследует тег, чтобы
+определить, использовать ли @code{real-part-rectangular} Бена или @code{real-part-polar}
+Алиссы.  В любом случае мы используем @code{contents}, чтобы извлечь голое, нетипизированное
+данное, и посылаем его прямоугольной или полярной процедуре по необходимости:
 
 @lisp
 (define (real-part z)
@@ -11505,11 +11485,10 @@ procedure as required:
 @end lisp
 
 @noindent
-To implement the complex-number arithmetic operations, we can use the same
-procedures @code{add-complex}, @code{sub-complex}, @code{mul-complex}, and
-@code{div-complex} from @ref{2.4.1}, because the selectors they call
-are generic, and so will work with either representation.  For example, the
-procedure @code{add-complex} is still
+Чтобы реализовать арифметические операции над комплексными числами, мы можем использовать
+те же процедуры @code{add-complex}, @code{sub-complex}, @code{mul-complex} и
+@code{div-complex} из @ref{2.4.1}, потому что вызываемые ими селекторы обобщённые и поэтому
+будут работать с любым представлением.  Например, процедура @code{add-complex} по-прежнему
 
 @lisp
 (define (add-complex z1 z2)
@@ -11519,10 +11498,10 @@ procedure @code{add-complex} is still
 @end lisp
 
 @noindent
-Finally, we must choose whether to construct complex numbers using Ben's
-representation or Alyssa's representation.  One reasonable choice is to
-construct rectangular numbers whenever we have real and imaginary parts and to
-construct polar numbers whenever we have magnitudes and angles:
+Наконец, мы должны выбрать, строить ли комплексные числа с использованием представления
+Бена или представления Алиссы.  Один разумный выбор — строить прямоугольные числа всякий
+раз, когда у нас есть действительная и мнимая части, и строить полярные числа всякий раз,
+когда у нас есть модули и углы:
 
 @lisp
 (define (make-from-real-imag x y)
@@ -11533,114 +11512,108 @@ construct polar numbers whenever we have magnitudes and angles:
 @end lisp
 
 @noindent
-The resulting complex-number system has the structure shown in @ref{Figure 2.21}.  
-The system has been decomposed into three relatively independent parts:
-the complex-number-arithmetic operations, Alyssa's polar implementation, and
-Ben's rectangular implementation.  The polar and rectangular implementations
-could have been written by Ben and Alyssa working separately, and both of these
-can be used as underlying representations by a third programmer implementing
-the complex-arithmetic procedures in terms of the abstract constructor/selector
-interface.
+Получающаяся система комплексных чисел имеет структуру, показанную на @ref{Figure 2.21}.
+Система разложена на три относительно независимые части: операции комплексной арифметики,
+полярную реализацию Алиссы и прямоугольную реализацию Бена.  Полярная и прямоугольная
+реализации могли бы быть написаны Беном и Алиссой, работающими по отдельности, и обе они
+могут использоваться как лежащие в основе представления третьим программистом,
+реализующим процедуры комплексной арифметики в терминах абстрактного интерфейса
+конструкторов и селекторов.
 
 @float
 @anchor{Figure 2.21}
 @ifinfo
 @quotation
-@strong{Figure 2.21:} Structure of the generic complex-arithmetic system.
+@strong{Figure 2.21:} Структура обобщённой системы комплексной арифметики.
 
 @example
     +-------------------------------------------------+
 ----| add-complex sub-complex mul-complex div-complex |----
     +-------------------------------------------------+
-                Complex arithmetic package
+                Пакет комплексной арифметики
                  +-----------------------+
                  | real-part   imag-part |
 -----------------|                       |------------------
                  | magnitude   angle     |
                  +-----------+-----------+
-           Rectangular       |          Polar
-          representation     |     representation
+        Прямоугольное        |          Полярное
+        представление        |       представление
 -----------------------------+------------------------------
-       List structure and primitive machine arithmetic
+      Списочная структура и примитивная машинная арифметика
 @end example
 @end quotation
 @end ifinfo
 @iftex
 @image{fig/chap2/Fig2.21a,147mm,,,.std.svg}
-@caption{@strong{Figure 2.21:} Structure of the generic complex-arithmetic system.}
+@caption{@strong{Figure 2.21:} Структура обобщённой системы комплексной арифметики.}
 @end iftex
 @end float
 
-Since each data object is tagged with its type, the selectors operate on the
-data in a generic manner.  That is, each selector is defined to have a behavior
-that depends upon the particular type of data it is applied to.  Notice the
-general mechanism for interfacing the separate representations: Within a given
-representation implementation (say, Alyssa's polar package) a complex number is
-an untyped pair (magnitude, angle).  When a generic selector operates on a
-number of @code{polar} type, it strips off the tag and passes the contents on
-to Alyssa's code.  Conversely, when Alyssa constructs a number for general use,
-she tags it with a type so that it can be appropriately recognized by the
-higher-level procedures.  This discipline of stripping off and attaching tags
-as data objects are passed from level to level can be an important
-organizational strategy, as we shall see in @ref{2.5}.
+Поскольку каждый объект данных помечен своим типом, селекторы оперируют данными обобщённым
+образом.  То есть каждый селектор определён так, чтобы иметь поведение, зависящее от
+конкретного типа данных, к которому он применяется.  Заметьте общий механизм для
+сопряжения отдельных представлений: внутри реализации данного представления (скажем,
+полярного пакета Алиссы) комплексное число — это нетипизированная пара (модуль, угол).
+Когда обобщённый селектор оперирует числом типа @code{polar}, он снимает тег и передаёт
+содержимое коду Алиссы.  И наоборот, когда Алисса строит число для общего использования,
+она помечает его типом, чтобы оно могло быть надлежащим образом распознано процедурами
+более высокого уровня.  Эта дисциплина снятия и прикрепления тегов по мере того, как
+объекты данных передаются с уровня на уровень, может быть важной организационной
+стратегией, как мы увидим в @ref{2.5}.
 
 @node	2.4.3, 2.5, 2.3, 2.4
-@subsection Data-Directed Programming and Additivity
+@subsection Программирование, управляемое данными, и аддитивность
 
-The general strategy of checking the type of a datum and calling an appropriate
-procedure is called @newterm{dispatching on type}.  This is a powerful strategy
-for obtaining modularity in system design.  On the other hand, implementing the
-dispatch as in @ref{2.4.2} has two significant weaknesses.  One
-weakness is that the generic interface procedures (@code{real-part},
-@code{imag-part}, @code{magnitude}, and @code{angle}) must know about all the
-different representations.  For instance, suppose we wanted to incorporate a
-new representation for complex numbers into our complex-number system.  We
-would need to identify this new representation with a type, and then add a
-clause to each of the generic interface procedures to check for the new type
-and apply the appropriate selector for that representation.
+Общая стратегия проверки типа данного и вызова подходящей процедуры называется
+@newterm{диспетчеризацией по типу}.  Это мощная стратегия для получения модульности в
+проектировании системы.  С другой стороны, реализация диспетчеризации, как в @ref{2.4.2},
+имеет две значительные слабости.  Одна слабость в том, что обобщённые интерфейсные
+процедуры (@code{real-part}, @code{imag-part}, @code{magnitude} и @code{angle}) должны
+знать обо всех различных представлениях.  Например, предположим, мы хотели бы включить
+новое представление для комплексных чисел в нашу систему комплексных чисел.  Нам пришлось
+бы отождествить это новое представление с типом, а затем добавить предложение к каждой из
+обобщённых интерфейсных процедур, чтобы проверять новый тип и применять подходящий селектор
+для этого представления.
 
-Another weakness of the technique is that even though the individual
-representations can be designed separately, we must guarantee that no two
-procedures in the entire system have the same name.  This is why Ben and Alyssa
-had to change the names of their original procedures from @ref{2.4.1}.
+Другая слабость этого приёма в том, что, хотя отдельные представления можно проектировать
+по отдельности, мы должны гарантировать, что никакие две процедуры во всей системе не имеют
+одного и того же имени.  Вот почему Бену и Алиссе пришлось менять имена своих исходных
+процедур из @ref{2.4.1}.
 
-The issue underlying both of these weaknesses is that the technique for
-implementing generic interfaces is not @newterm{additive}.  The person
-implementing the generic selector procedures must modify those procedures each
-time a new representation is installed, and the people interfacing the
-individual representations must modify their code to avoid name conflicts.  In
-each of these cases, the changes that must be made to the code are
-straightforward, but they must be made nonetheless, and this is a source of
-inconvenience and error.  This is not much of a problem for the complex-number
-system as it stands, but suppose there were not two but hundreds of different
-representations for complex numbers.  And suppose that there were many generic
-selectors to be maintained in the abstract-data interface.  Suppose, in fact,
-that no one programmer knew all the interface procedures or all the
-representations.  The problem is real and must be addressed in such programs as
-large-scale data-base-management systems.
+Вопрос, лежащий в основе обеих этих слабостей, в том, что приём реализации обобщённых
+интерфейсов не @newterm{аддитивен}.  Человек, реализующий обобщённые процедуры-селекторы,
+должен изменять эти процедуры всякий раз, когда устанавливается новое представление, а
+люди, сопрягающие отдельные представления, должны изменять свой код, чтобы избежать
+конфликтов имён.  В каждом из этих случаев изменения, которые нужно внести в код,
+прямолинейны, но их тем не менее нужно вносить, и это источник неудобства и ошибок.  Это
+не такая уж проблема для системы комплексных чисел в её нынешнем виде, но предположим, что
+было бы не два, а сотни различных представлений для комплексных чисел.  И предположим, что
+было бы много обобщённых селекторов, которые нужно поддерживать в интерфейсе абстрактных
+данных.  Предположим, по сути, что ни один программист не знал бы всех интерфейсных
+процедур или всех представлений.  Проблема реальна и должна решаться в таких программах,
+как крупномасштабные системы управления базами данных.
 
-What we need is a means for modularizing the system design even further.  This
-is provided by the programming technique known as @newterm{data-directed programming}.  
-To understand how data-directed programming works, begin with
-the observation that whenever we deal with a set of generic operations that are
-common to a set of different types we are, in effect, dealing with a
-two-dimensional table that contains the possible operations on one axis and the
-possible types on the other axis.  The entries in the table are the procedures
-that implement each operation for each type of argument presented.  In the
-complex-number system developed in the previous section, the correspondence
-between operation name, data type, and actual procedure was spread out among
-the various conditional clauses in the generic interface procedures.  But the
-same information could have been organized in a table, as shown in @ref{Figure 2.22}.
+Что нам нужно — это средство для ещё большего разбиения проекта системы на модули.  Оно
+предоставляется приёмом программирования, известным как @newterm{программирование,
+управляемое данными}.  Чтобы понять, как работает программирование, управляемое данными,
+начнём с наблюдения, что всякий раз, когда мы имеем дело с набором обобщённых операций,
+общих для набора различных типов, мы, по сути, имеем дело с двумерной таблицей, которая
+содержит возможные операции на одной оси и возможные типы на другой оси.  Записи в таблице
+— это процедуры, реализующие каждую операцию для каждого типа представленного аргумента.  В
+системе комплексных чисел, разработанной в предыдущем разделе, соответствие между именем
+операции, типом данных и фактической процедурой было размазано по различным условным
+предложениям в обобщённых интерфейсных процедурах.  Но ту же информацию можно было бы
+организовать в таблицу, как показано на @ref{Figure 2.22}.
 
 @float
 @anchor{Figure 2.22}
 @ifinfo
 @quotation
-@strong{Figure 2.22:} Table of operations for the complex-number system.
+@strong{Figure 2.22:} Таблица операций для системы комплексных чисел.
 
 @example
-           |               Types
-Operations | Polar           | Rectangular
+           |               Типы
+Операции   | Полярный        | Прямоугольный
 ===========+=================+======================
 real-part  | real-part-polar | real-part-rectangular
 imag-part  | imag-part-polar | imag-part-rectangular
@@ -11651,50 +11624,48 @@ angle      | angle-polar     | angle-rectangular
 @end ifinfo
 @iftex
 @image{fig/chap2/Fig2.22,147mm,,,.std.svg}
-@caption{@strong{Figure 2.22:} Table of operations for the complex-number system.}
+@caption{@strong{Figure 2.22:} Таблица операций для системы комплексных чисел.}
 @end iftex
 @end float
 
 @noindent
-Data-directed programming is the technique of designing programs to work with
-such a table directly.  Previously, we implemented the mechanism that
-interfaces the complex-arithmetic code with the two representation packages as
-a set of procedures that each perform an explicit dispatch on type.  Here we
-will implement the interface as a single procedure that looks up the
-combination of the operation name and argument type in the table to find the
-correct procedure to apply, and then applies it to the contents of the
-argument.  If we do this, then to add a new representation package to the
-system we need not change any existing procedures; we need only add new entries
-to the table.
+Программирование, управляемое данными, — это приём проектирования программ для работы
+непосредственно с такой таблицей.  Ранее мы реализовали механизм, сопрягающий код
+комплексной арифметики с двумя пакетами представлений, как набор процедур, каждая из
+которых выполняет явную диспетчеризацию по типу.  Здесь мы реализуем интерфейс как
+единственную процедуру, которая ищет комбинацию имени операции и типа аргумента в таблице,
+чтобы найти правильную процедуру для применения, и затем применяет её к содержимому
+аргумента.  Если мы делаем это, то, чтобы добавить новый пакет представления в систему,
+нам не нужно менять никакие существующие процедуры; нам нужно лишь добавить новые записи в
+таблицу.
 
-To implement this plan, assume that we have two procedures, @code{put} and
-@code{get}, for manipulating the operation-and-type table:
+Чтобы реализовать этот план, предположим, что у нас есть две процедуры, @code{put} и
+@code{get}, для манипулирования таблицей операций и типов:
 
 @itemize @bullet
 
 @item
-@code{(put ⟨@var{op}⟩ ⟨@var{type}⟩ ⟨@var{item}⟩)} installs the 
-@code{⟨}@var{item}@code{⟩} in the table, indexed by the 
-@code{⟨}@var{op}@code{⟩} and the @code{⟨}@var{type}@code{⟩}.
+@code{(put ⟨@var{оп}⟩ ⟨@var{тип}⟩ ⟨@var{элемент}⟩)} устанавливает
+@code{⟨}@var{элемент}@code{⟩} в таблицу, индексируемый
+@code{⟨}@var{оп}@code{⟩} и @code{⟨}@var{тип}@code{⟩}.
 
 @item
-@code{(get ⟨@var{op}⟩ ⟨@var{type}⟩)} looks up the @code{⟨}@var{op}@code{⟩}, 
-@code{⟨}@var{type}@code{⟩} entry in the table and returns the item found there.  
-If no item is found, @code{get} returns false.
+@code{(get ⟨@var{оп}⟩ ⟨@var{тип}⟩)} ищет запись @code{⟨}@var{оп}@code{⟩},
+@code{⟨}@var{тип}@code{⟩} в таблице и возвращает найденный там элемент.
+Если элемент не найден, @code{get} возвращает ложь.
 
 @end itemize
 
 @noindent
-For now, we can assume that @code{put} and @code{get} are included in our
-language.  In @ref{Chapter 3} (@ref{3.3.3}) we
-will see how to implement these and other operations for manipulating tables.
+Пока что мы можем предположить, что @code{put} и @code{get} включены в наш язык.  В
+@ref{Chapter 3} (@ref{3.3.3}) мы увидим, как реализовать эти и другие операции для
+манипулирования таблицами.
 
-Here is how data-directed programming can be used in the complex-number system.
-Ben, who developed the rectangular representation, implements his code just as
-he did originally.  He defines a collection of procedures, or a
-@newterm{package}, and interfaces these to the rest of the system by adding
-entries to the table that tell the system how to operate on rectangular
-numbers.  This is accomplished by calling the following procedure:
+Вот как программирование, управляемое данными, можно использовать в системе комплексных
+чисел.  Бен, разработавший прямоугольное представление, реализует свой код точно так же,
+как он делал изначально.  Он определяет набор процедур, или @newterm{пакет}, и сопрягает их
+с остальной частью системы, добавляя записи в таблицу, которые говорят системе, как
+оперировать прямоугольными числами.  Это достигается вызовом следующей процедуры:
 
 @lisp
 (define (install-rectangular-package)
@@ -11727,23 +11698,21 @@ numbers.  This is accomplished by calling the following procedure:
 @end lisp
 
 @noindent
-Notice that the internal procedures here are the same procedures from 
-@ref{2.4.1} that Ben wrote when he was working in isolation.  No changes are
-necessary in order to interface them to the rest of the system.  Moreover,
-since these procedure definitions are internal to the installation procedure,
-Ben needn't worry about name conflicts with other procedures outside the
-rectangular package.  To interface these to the rest of the system, Ben
-installs his @code{real-part} procedure under the operation name
-@code{real-part} and the type @code{(rectangular)}, and similarly for the other
-selectors.@footnote{We use the list @code{(rectangular)} rather than the symbol
-@code{rectangular} to allow for the possibility of operations with multiple
-arguments, not all of the same type.}  The interface also defines the
-constructors to be used by the external system.@footnote{The type the
-constructors are installed under needn't be a list because a constructor is
-always used to make an object of one particular type.}  These are identical to
-Ben's internally defined constructors, except that they attach the tag.
+Заметьте, что внутренние процедуры здесь — те же процедуры из @ref{2.4.1}, которые Бен
+написал, когда работал изолированно.  Никакие изменения не нужны, чтобы сопрячь их с
+остальной частью системы.  Более того, поскольку эти определения процедур внутренние по
+отношению к процедуре установки, Бену не нужно беспокоиться о конфликтах имён с другими
+процедурами вне прямоугольного пакета.  Чтобы сопрячь их с остальной частью системы, Бен
+устанавливает свою процедуру @code{real-part} под именем операции @code{real-part} и типом
+@code{(rectangular)}, и аналогично для других селекторов.@footnote{Мы используем список
+@code{(rectangular)}, а не символ @code{rectangular}, чтобы учесть возможность операций с
+несколькими аргументами не все одного типа.}  Интерфейс также определяет конструкторы,
+которые будут использоваться внешней системой.@footnote{Тип, под которым устанавливаются
+конструкторы, не обязан быть списком, потому что конструктор всегда используется, чтобы
+сделать объект одного конкретного типа.}  Они идентичны внутренне определённым
+конструкторам Бена, за исключением того, что они прикрепляют тег.
 
-Alyssa's polar package is analogous:
+Полярный пакет Алиссы аналогичен:
 
 @lisp
 (define (install-polar-package)
@@ -11774,31 +11743,29 @@ Alyssa's polar package is analogous:
 @end lisp
 
 @noindent
-Even though Ben and Alyssa both still use their original procedures defined
-with the same names as each other's (e.g., @code{real-part}), these definitions
-are now internal to different procedures (see @ref{1.1.8}), so there is
-no name conflict.
+Хотя Бен и Алисса оба по-прежнему используют свои исходные процедуры, определённые с теми
+же именами, что и друг у друга (например, @code{real-part}), эти определения теперь
+внутренние по отношению к разным процедурам (см. @ref{1.1.8}), так что конфликта имён нет.
 
-The complex-arithmetic selectors access the table by means of a general
-``operation'' procedure called @code{apply-generic}, which applies a generic
-operation to some arguments.  @code{Apply-generic} looks in the table under the
-name of the operation and the types of the arguments and applies the resulting
-procedure if one is present:@footnote{@code{Apply-generic} uses the dotted-tail
-notation described in @ref{Exercise 2.20}, because different generic operations
-may take different numbers of arguments.  In @code{apply-generic}, @code{op}
-has as its value the first argument to @code{apply-generic} and @code{args} has
-as its value a list of the remaining arguments.
+Селекторы комплексной арифметики обращаются к таблице посредством общей процедуры-«операции»
+под названием @code{apply-generic}, которая применяет обобщённую операцию к некоторым
+аргументам.  @code{Apply-generic} ищет в таблице под именем операции и типами аргументов и
+применяет получающуюся процедуру, если она присутствует:@footnote{@code{Apply-generic}
+использует точечно-хвостовую нотацию, описанную в @ref{Exercise 2.20}, потому что разные
+обобщённые операции могут принимать разное число аргументов.  В @code{apply-generic} у
+@code{op} в качестве значения — первый аргумент @code{apply-generic}, а у @code{args} в
+качестве значения — список оставшихся аргументов.
 
-@code{Apply-generic} also uses the primitive procedure @code{apply}, which
-takes two arguments, a procedure and a list.  @code{Apply} applies the
-procedure, using the elements in the list as arguments.  For example,
+@code{Apply-generic} также использует примитивную процедуру @code{apply}, которая принимает
+два аргумента — процедуру и список.  @code{Apply} применяет процедуру, используя элементы
+списка как аргументы.  Например,
 
 @lisp
 (apply + (list 1 2 3 4))
 @end lisp
 
 @noindent
-returns 10.}
+возвращает 10.}
 
 @lisp
 (define (apply-generic op . args)
@@ -11813,7 +11780,7 @@ returns 10.}
 @end lisp
 
 @noindent
-Using @code{apply-generic}, we can define our generic selectors as follows:
+Используя @code{apply-generic}, мы можем определить наши обобщённые селекторы так:
 
 @lisp
 (define (real-part z) 
@@ -11827,14 +11794,13 @@ Using @code{apply-generic}, we can define our generic selectors as follows:
 @end lisp
 
 @noindent
-Observe that these do not change at all if a new representation is added to the
-system.
+Заметьте, что они вообще не меняются, если в систему добавляется новое представление.
 
-We can also extract from the table the constructors to be used by the programs
-external to the packages in making complex numbers from real and imaginary
-parts and from magnitudes and angles.  As in @ref{2.4.2}, we construct
-rectangular numbers whenever we have real and imaginary parts, and polar
-numbers whenever we have magnitudes and angles:
+Мы можем также извлечь из таблицы конструкторы, которые будут использоваться программами,
+внешними по отношению к пакетам, при создании комплексных чисел из действительных и мнимых
+частей и из модулей и углов.  Как и в @ref{2.4.2}, мы строим прямоугольные числа всякий
+раз, когда у нас есть действительная и мнимая части, и полярные числа всякий раз, когда у
+нас есть модули и углы:
 
 @lisp
 (define (make-from-real-imag x y)
@@ -11849,8 +11815,8 @@ numbers whenever we have magnitudes and angles:
 @end lisp
 
 @quotation
-@strong{@anchor{Exercise 2.73}Exercise 2.73:} @ref{2.3.2} described a
-program that performs symbolic differentiation:
+@strong{@anchor{Exercise 2.73}Exercise 2.73:} @ref{2.3.2} описал программу, которая
+выполняет символьное дифференцирование:
 
 @lisp
 (define (deriv exp var)
@@ -11868,16 +11834,16 @@ program that performs symbolic differentiation:
            (make-product 
             (deriv (multiplier exp) var)
             (multiplicand exp))))
-        ⟨@var{more rules can be added here}⟩
+        ⟨@var{сюда можно добавить другие правила}⟩
         (else (error "unknown expression type:
                       DERIV" exp))))
 @end lisp
 
-We can regard this program as performing a dispatch on the type of the
-expression to be differentiated.  In this situation the ``type tag'' of the
-datum is the algebraic operator symbol (such as @code{+}) and the operation
-being performed is @code{deriv}.  We can transform this program into
-data-directed style by rewriting the basic derivative procedure as
+Мы можем рассматривать эту программу как выполняющую диспетчеризацию по типу выражения,
+подлежащего дифференцированию.  В этой ситуации «тег типа» данного — это символ
+алгебраического оператора (такой как @code{+}), а выполняемая операция — @code{deriv}.  Мы
+можем преобразовать эту программу в стиль, управляемый данными, переписав основную
+процедуру производной как
 
 @lisp
 (define (deriv exp var)
@@ -11897,22 +11863,22 @@ data-directed style by rewriting the basic derivative procedure as
 @enumerate a
 
 @item
-Explain what was done above.  Why can't we assimilate the predicates
-@code{number?} and @code{variable?} into the data-directed dispatch?
+Объясните, что было сделано выше.  Почему мы не можем ассимилировать предикаты
+@code{number?} и @code{variable?} в диспетчеризацию, управляемую данными?
 
 @item
-Write the procedures for derivatives of sums and products, and the auxiliary
-code required to install them in the table used by the program above.
+Напишите процедуры для производных сумм и произведений и вспомогательный код, требуемый,
+чтобы установить их в таблицу, используемую программой выше.
 
 @item
-Choose any additional differentiation rule that you like, such as the one for
-exponents (@ref{Exercise 2.56}), and install it in this data-directed
-system.
+Выберите любое дополнительное правило дифференцирования, которое вам нравится, такое как
+правило для степеней (@ref{Exercise 2.56}), и установите его в эту систему, управляемую
+данными.
 
 @item
-In this simple algebraic manipulator the type of an expression is the algebraic
-operator that binds it together.  Suppose, however, we indexed the procedures
-in the opposite way, so that the dispatch line in @code{deriv} looked like
+В этом простом алгебраическом манипуляторе тип выражения — это алгебраический оператор,
+связывающий его воедино.  Предположим, однако, что мы индексировали процедуры
+противоположным образом, так что строка диспетчеризации в @code{deriv} выглядела бы как
 
 @lisp
 ((get (operator exp) 'deriv) 
@@ -11920,78 +11886,72 @@ in the opposite way, so that the dispatch line in @code{deriv} looked like
 @end lisp
 
 @noindent
-What corresponding changes to the derivative system are required?
+Какие соответствующие изменения в системе производных требуются?
 
 @end enumerate
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.74}Exercise 2.74:} Insatiable Enterprises, Inc., is
-a highly decentralized conglomerate company consisting of a large number of
-independent divisions located all over the world.  The company's computer
-facilities have just been interconnected by means of a clever
-network-interfacing scheme that makes the entire network appear to any user to
-be a single computer.  Insatiable's president, in her first attempt to exploit
-the ability of the network to extract administrative information from division
-files, is dismayed to discover that, although all the division files have been
-implemented as data structures in Scheme, the particular data structure used
-varies from division to division.  A meeting of division managers is hastily
-called to search for a strategy to integrate the files that will satisfy
-headquarters' needs while preserving the existing autonomy of the divisions.
+@strong{@anchor{Exercise 2.74}Exercise 2.74:} Insatiable Enterprises, Inc. — это
+сильно децентрализованный конгломерат, состоящий из большого числа независимых
+подразделений, расположенных по всему миру.  Компьютерные средства компании только что
+были соединены между собой посредством хитроумной схемы сетевого сопряжения, которая
+делает так, что вся сеть представляется любому пользователю единственным компьютером.
+Президент Insatiable, в своей первой попытке использовать способность сети извлекать
+административную информацию из файлов подразделений, обескуражена, обнаружив, что, хотя
+все файлы подразделений реализованы как структуры данных в Scheme, конкретная используемая
+структура данных варьируется от подразделения к подразделению.  Поспешно созывается
+собрание менеджеров подразделений, чтобы найти стратегию интеграции файлов, которая
+удовлетворит нужды штаб-квартиры, сохраняя при этом существующую автономию подразделений.
 
-Show how such a strategy can be implemented with data-directed programming.  As
-an example, suppose that each division's personnel records consist of a single
-file, which contains a set of records keyed on employees' names.  The structure
-of the set varies from division to division.  Furthermore, each employee's
-record is itself a set (structured differently from division to division) that
-contains information keyed under identifiers such as @code{address} and
-@code{salary}.  In particular:
+Покажите, как такую стратегию можно реализовать с помощью программирования, управляемого
+данными.  В качестве примера предположим, что кадровые записи каждого подразделения состоят
+из единственного файла, который содержит множество записей с ключом по именам сотрудников.
+Структура множества варьируется от подразделения к подразделению.  Более того, запись
+каждого сотрудника сама является множеством (структурированным по-разному в разных
+подразделениях), которое содержит информацию с ключом по идентификаторам, таким как
+@code{address} и @code{salary}.  В частности:
 
 @enumerate a
 
 @item
-Implement for headquarters a @code{get-record} procedure that retrieves a
-specified employee's record from a specified personnel file.  The procedure
-should be applicable to any division's file.  Explain how the individual
-divisions' files should be structured.  In particular, what type information
-must be supplied?
+Реализуйте для штаб-квартиры процедуру @code{get-record}, которая извлекает запись
+указанного сотрудника из указанного кадрового файла.  Процедура должна быть применима к
+файлу любого подразделения.  Объясните, как должны быть структурированы файлы отдельных
+подразделений.  В частности, какая информация о типе должна быть предоставлена?
 
 @item
-Implement for headquarters a @code{get-salary} procedure that returns the
-salary information from a given employee's record from any division's personnel
-file.  How should the record be structured in order to make this operation
-work?
+Реализуйте для штаб-квартиры процедуру @code{get-salary}, которая возвращает информацию о
+зарплате из записи данного сотрудника из кадрового файла любого подразделения.  Как должна
+быть структурирована запись, чтобы эта операция работала?
 
 @item
-Implement for headquarters a @code{find-employee-record} procedure.  This
-should search all the divisions' files for the record of a given employee and
-return the record.  Assume that this procedure takes as arguments an employee's
-name and a list of all the divisions' files.
+Реализуйте для штаб-квартиры процедуру @code{find-employee-record}.  Она должна искать в
+файлах всех подразделений запись данного сотрудника и возвращать запись.  Предположите,
+что эта процедура принимает как аргументы имя сотрудника и список файлов всех подразделений.
 
 @item
-When Insatiable takes over a new company, what changes must be made in order to
-incorporate the new personnel information into the central system?
+Когда Insatiable поглощает новую компанию, какие изменения нужно внести, чтобы включить
+новую кадровую информацию в центральную систему?
 
 @end enumerate
 @end quotation
 
-@subsubheading Message passing
+@subsubheading Передача сообщений
 
-The key idea of data-directed programming is to handle generic operations in
-programs by dealing explicitly with operation-and-type tables, such as the
-table in @ref{Figure 2.22}.  The style of programming we used in 
-@ref{2.4.2} organized the required dispatching on type by having each operation
-take care of its own dispatching.  In effect, this decomposes the
-operation-and-type table into rows, with each generic operation procedure
-representing a row of the table.
+Ключевая идея программирования, управляемого данными, — обрабатывать обобщённые операции в
+программах, имея дело явно с таблицами операций и типов, такими как таблица на
+@ref{Figure 2.22}.  Стиль программирования, который мы использовали в @ref{2.4.2},
+организовывал требуемую диспетчеризацию по типу, заставляя каждую операцию заботиться о
+своей собственной диспетчеризации.  По сути, это разлагает таблицу операций и типов на
+строки, причём каждая обобщённая процедура-операция представляет строку таблицы.
 
-An alternative implementation strategy is to decompose the table into columns
-and, instead of using ``intelligent operations'' that dispatch on data types,
-to work with ``intelligent data objects'' that dispatch on operation names.  We
-can do this by arranging things so that a data object, such as a rectangular
-number, is represented as a procedure that takes as input the required
-operation name and performs the operation indicated.  In such a discipline,
-@code{make-from-real-imag} could be written as
+Альтернативная стратегия реализации — разложить таблицу на столбцы и вместо использования
+«умных операций», которые диспетчеризуются по типам данных, работать с «умными объектами
+данных», которые диспетчеризуются по именам операций.  Мы можем сделать это, устроив всё
+так, чтобы объект данных, такой как прямоугольное число, был представлен как процедура,
+которая принимает в качестве входа требуемое имя операции и выполняет указанную операцию.
+В такой дисциплине @code{make-from-real-imag} можно было бы написать как
 
 @lisp
 (define (make-from-real-imag x y)
@@ -12008,47 +11968,46 @@ operation name and performs the operation indicated.  In such a discipline,
 @end lisp
 
 @noindent
-The corresponding @code{apply-generic} procedure, which applies a generic
-operation to an argument, now simply feeds the operation's name to the data
-object and lets the object do the work:@footnote{One limitation of this
-organization is it permits only generic procedures of one argument.}
+Соответствующая процедура @code{apply-generic}, которая применяет обобщённую операцию к
+аргументу, теперь просто подаёт имя операции объекту данных и позволяет объекту сделать
+работу:@footnote{Одно ограничение этой организации в том, что она допускает только
+обобщённые процедуры одного аргумента.}
 
 @lisp
 (define (apply-generic op arg) (arg op))
 @end lisp
 
 @noindent
-Note that the value returned by @code{make-from-real-imag} is a procedure---the
-internal @code{dispatch} procedure.  This is the procedure that is invoked when
-@code{apply-generic} requests an operation to be performed.
+Заметьте, что значение, возвращаемое @code{make-from-real-imag}, — это процедура,
+внутренняя процедура @code{dispatch}.  Это процедура, которая вызывается, когда
+@code{apply-generic} запрашивает выполнение операции.
 
-This style of programming is called @newterm{message passing}.  The name comes
-from the image that a data object is an entity that receives the requested
-operation name as a ``message.''  We have already seen an example of message
-passing in @ref{2.1.3}, where we saw how @code{cons}, @code{car}, and
-@code{cdr} could be defined with no data objects but only procedures.  Here we
-see that message passing is not a mathematical trick but a useful technique for
-organizing systems with generic operations.  In the remainder of this chapter
-we will continue to use data-directed programming, rather than message passing,
-to discuss generic arithmetic operations.  In @ref{Chapter 3} we will return to
-message passing, and we will see that it can be a powerful tool for structuring
-simulation programs.
+Этот стиль программирования называется @newterm{передачей сообщений}.  Имя происходит из
+образа, что объект данных — это сущность, которая получает запрошенное имя операции как
+«сообщение».  Мы уже видели пример передачи сообщений в @ref{2.1.3}, где мы видели, как
+@code{cons}, @code{car} и @code{cdr} можно было определить без объектов данных, а только с
+процедурами.  Здесь мы видим, что передача сообщений — это не математический трюк, а
+полезный приём для организации систем с обобщёнными операциями.  В оставшейся части этой
+главы мы продолжим использовать программирование, управляемое данными, а не передачу
+сообщений, чтобы обсуждать обобщённые арифметические операции.  В @ref{Chapter 3} мы
+вернёмся к передаче сообщений и увидим, что она может быть мощным инструментом для
+структурирования программ моделирования.
 
 @quotation
-@strong{@anchor{Exercise 2.75}Exercise 2.75:} Implement the constructor
-@code{make-from-mag-ang} in mes@-sage-pass@-ing style.  This procedure should be
-analogous to the @code{make-from-real-imag} procedure given above.
+@strong{@anchor{Exercise 2.75}Exercise 2.75:} Реализуйте конструктор @code{make-from-mag-ang}
+в стиле передачи сообщений.  Эта процедура должна быть аналогична процедуре
+@code{make-from-real-imag}, данной выше.
 @end quotation
 
 @quotation
-@strong{@anchor{Exercise 2.76}Exercise 2.76:} As a large system with generic
-operations evolves, new types of data objects or new operations may be needed.
-For each of the three strategies---generic operations with explicit dispatch,
-data-directed style, and message-passing-style---describe the changes that
-must be made to a system in order to add new types or new operations.  Which
-organization would be most appropriate for a system in which new types must
-often be added?  Which would be most appropriate for a system in which new
-operations must often be added?
+@strong{@anchor{Exercise 2.76}Exercise 2.76:} По мере того как большая система с
+обобщёнными операциями развивается, могут понадобиться новые типы объектов данных или
+новые операции.  Для каждой из трёх стратегий — обобщённые операции с явной
+диспетчеризацией, стиль, управляемый данными, и стиль передачи сообщений — опишите
+изменения, которые нужно внести в систему, чтобы добавить новые типы или новые операции.
+Какая организация была бы наиболее уместной для системы, в которую часто приходится
+добавлять новые типы?  Какая была бы наиболее уместной для системы, в которую часто
+приходится добавлять новые операции?
 @end quotation
 
 @node	2.5, Chapter 3, 2.4, Chapter 2
