@@ -1,0 +1,1220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ru" lang="ru">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Структура и интерпретация компьютерных программ, 2-е изд.: 2.4</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.4" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Chapter 2" />
+<link href="2_002e5.xhtml#g_t2_002e5" rel="next" title="2.5" />
+<link href="2_002e3.xhtml#g_t2_002e3_002e4" rel="prev" title="2.3.4" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t2_002e4"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e5.xhtml#g_t2_002e5" accesskey="n" rel="next">2.5</a>, Prev: <a href="2_002e3.xhtml#g_t2_002e3" accesskey="p" rel="prev">2.3</a>, Up: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+<a id="Mnozhestvennye-predstavleniya-dlya-abstraktnykh-dannykh"></a>
+<h3 class="section"><span class="secnum">2.4</span><span class="sectitle">Множественные представления для абстрактных данных</span></h3>
+
+<p>Мы ввели абстракцию данных — методологию структурирования систем таким образом, чтобы
+бо́льшую часть программы можно было задать независимо от выборов, связанных с реализацией
+объектов данных, которыми манипулирует программа.  Например, мы видели в <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>, как
+отделить задачу проектирования программы, использующей рациональные числа, от задачи
+реализации рациональных чисел в терминах примитивных механизмов компьютерного языка для
+построения составных данных.  Ключевая идея состояла в том, чтобы возвести барьер
+абстракции — в данном случае селекторы и конструкторы для рациональных чисел
+(<code>make-rat</code>, <code>numer</code>, <code>denom</code>) — который изолирует то, как используются
+рациональные числа, от их лежащего в основе представления в терминах списочной структуры.
+Похожий барьер абстракции изолирует подробности процедур, выполняющих рациональную
+арифметику (<code>add-rat</code>, <code>sub-rat</code>, <code>mul-rat</code> и <code>div-rat</code>), от процедур
+«более высокого уровня», использующих рациональные числа.  Получающаяся программа имеет
+структуру, показанную на <a href="2_002e1.xhtml#Figure-2_002e1">Figure 2.1</a>.
+</p>
+<p>Эти барьеры абстракции данных — мощные инструменты для управления сложностью.  Изолируя
+лежащие в основе представления объектов данных, мы можем разделить задачу проектирования
+большой программы на меньшие задачи, которые можно выполнять отдельно.  Но такого рода
+абстракция данных пока недостаточно мощна, потому что не всегда может иметь смысл говорить
+о «лежащем в основе представлении» объекта данных.
+</p>
+<p>Во-первых, может быть более одного полезного представления объекта данных, и нам, возможно,
+захочется проектировать системы, которые могут иметь дело с множественными
+представлениями.  Возьмём простой пример: комплексные числа могут быть представлены двумя
+почти эквивалентными способами: в прямоугольной форме (действительная и мнимая части) и в
+полярной форме (модуль и угол).  Иногда более уместна прямоугольная форма, а иногда более
+уместна полярная форма.  Действительно, вполне правдоподобно вообразить систему, в которой
+комплексные числа представлены обоими способами и в которой процедуры для манипулирования
+комплексными числами работают с любым представлением.
+</p>
+<p>Что важнее, программные системы часто проектируются многими людьми, работающими в течение
+продолжительных периодов времени, при требованиях, которые меняются со временем.  В такой
+среде просто невозможно, чтобы все заранее договорились о выборах представления данных.
+Поэтому в дополнение к барьерам абстракции данных, которые изолируют представление от
+использования, нам нужны барьеры абстракции, которые изолируют различные проектные выборы
+друг от друга и позволяют различным выборам сосуществовать в одной программе.  Более того,
+поскольку большие программы часто создаются комбинированием заранее существующих модулей,
+спроектированных по отдельности, нам нужны соглашения, которые позволяют программистам
+включать модули в бо́льшие системы <a id="index-additivno-1"></a>
+<em>аддитивно</em>, то есть без необходимости
+перепроектировать или перереализовывать эти модули.
+</p>
+<p>В этом разделе мы научимся справляться с данными, которые могут быть представлены разными
+способами разными частями программы.  Это требует построения <a id="index-obobshchionnykh-procedur-1"></a>
+<em>обобщённых процедур</em>
+— процедур, которые могут оперировать данными, которые могут быть представлены более чем
+одним способом.  Наш основной приём построения обобщённых процедур будет состоять в том,
+чтобы работать в терминах объектов данных, у которых есть <a id="index-tegi-tipa"></a>
+<em>теги типа</em>, то есть
+объектов данных, которые включают явную информацию о том, как их следует обрабатывать.  Мы
+также обсудим программирование, <a id="index-upravlyaemoe-dannymi"></a>
+<em>управляемое данными</em>, — мощную и удобную стратегию
+реализации для аддитивной сборки систем с обобщёнными операциями.
+</p>
+<p>Мы начинаем с простого примера комплексных чисел.  Мы увидим, как теги типа и стиль,
+управляемый данными, позволяют нам проектировать отдельные прямоугольное и полярное
+представления для комплексных чисел, сохраняя при этом понятие абстрактного объекта данных
+«комплексное число».  Мы достигнем этого, определив арифметические процедуры для
+комплексных чисел (<code>add-complex</code>, <code>sub-complex</code>, <code>mul-complex</code> и
+<code>div-complex</code>) в терминах обобщённых селекторов, которые обращаются к частям
+комплексного числа независимо от того, как число представлено.  Получающаяся система
+комплексных чисел, как показано на <a href="#Figure-2_002e19">Figure 2.19</a>, содержит два различных вида барьеров
+абстракции.  «Горизонтальные» барьеры абстракции играют ту же роль, что и на
+<a href="2_002e1.xhtml#Figure-2_002e1">Figure 2.1</a>.  Они изолируют операции «более высокого уровня» от представлений «более
+низкого уровня».  Кроме того, есть «вертикальный» барьер, который даёт нам возможность
+отдельно проектировать и устанавливать альтернативные представления.
+</p>
+<figure class="float">
+<a id="Figure-2_002e19"></a>
+<object style="width: 40.41ex; height: 33.41ex;" data="fig/chap2/Fig2.19a.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.19:</strong> Барьеры абстракции данных в системе комплексных чисел.</p>
+</figcaption>
+</figure>
+
+<p>В <a href="2_002e5.xhtml#g_t2_002e5">2.5</a> мы покажем, как использовать теги типа и стиль, управляемый данными, чтобы
+разработать пакет обобщённой арифметики.  Он предоставляет процедуры (<code>add</code>,
+<code>mul</code> и так далее), которые можно использовать для манипулирования всевозможными
+«числами» и которые можно легко расширить, когда понадобится новый вид числа.  В
+<a href="2_002e5.xhtml#g_t2_002e5_002e3">2.5.3</a> мы покажем, как использовать обобщённую арифметику в системе, выполняющей
+символьную алгебру.
+</p>
+
+<a id="g_t2_002e4_002e1"></a>
+<a id="Predstavleniya-dlya-kompleksnykh-chisel"></a>
+<h4 class="subsection"><span class="secnum">2.4.1</span><span class="sectitle">Представления для комплексных чисел</span></h4>
+
+<p>Мы разработаем систему, которая выполняет арифметические операции над комплексными
+числами, как простой, но нереалистичный пример программы, использующей обобщённые
+операции.  Мы начнём с обсуждения двух правдоподобных представлений комплексных чисел как
+упорядоченных пар: прямоугольной формы (действительная часть и мнимая часть) и полярной
+формы (модуль и угол).<a class="footnote_link" id="DOCF109" href="#FOOT109"><sup>109</sup></a>  Раздел <a href="#g_t2_002e4_002e2">2.4.2</a> покажет, как оба представления можно
+заставить сосуществовать в одной системе через использование тегов типа и обобщённых
+операций.
+</p>
+<p>Как и рациональные числа, комплексные числа естественно представляются как упорядоченные
+пары.  Множество комплексных чисел можно мыслить как двумерное пространство с двумя
+ортогональными осями — «действительной» осью и «мнимой» осью.  (См. <a href="#Figure-2_002e20">Figure 2.20</a>.)
+С этой точки зрения комплексное число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>z</mi>
+    <mo>=</mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>i</mi>
+    <mi>y</mi>
+  </mrow>
+</math> (где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>i</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mspace width="0.1em"/>
+        <mn>2</mn>
+      </mrow>
+    </msup>
+    <mo>=</mo>
+    <mtext>−1</mtext>
+  </mrow>
+</math>)
+можно мыслить как точку на плоскости, чья действительная координата — <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, а мнимая
+координата — <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>.  Сложение комплексных чисел сводится в этом представлении к сложению
+координат:
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mtext>Real-part</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>+</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>2</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mtext>Real-part</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>1</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+        <mo>+</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd/>
+      <mtd/>
+      <mtd>
+        <mtext>Real-part</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>2</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mtext>Imaginary-part</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>+</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>2</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mtext>Imaginary-part</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>1</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+        <mo>+</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd/>
+      <mtd/>
+      <mtd>
+        <mtext>Imaginary-part</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>2</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+</p>
+<figure class="float">
+<a id="Figure-2_002e20"></a>
+<object style="width: 51.98ex; height: 30.74ex;" data="fig/chap2/Fig2.20.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.20:</strong> Комплексные числа как точки на плоскости.</p>
+</figcaption>
+</figure>
+
+<p>При умножении комплексных чисел более естественно мыслить в терминах представления
+комплексного числа в полярной форме, как модуля и угла (<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>r</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>A</mi>
+</math> на
+<a href="#Figure-2_002e20">Figure 2.20</a>).  Произведение двух комплексных чисел — это вектор, полученный
+растяжением одного комплексного числа на длину другого и затем поворотом его на угол
+другого:
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mtext>Magnitude</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>⋅<!-- ⋅ --></mo>
+        <msub>
+          <mi>z</mi>
+          <mn>2</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mtext>Magnitude</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>1</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mtext>Magnitude</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>2</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mtext>Angle</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>⋅<!-- ⋅ --></mo>
+        <msub>
+          <mi>z</mi>
+          <mn>2</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mtext>Angle</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>1</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+        <mo>+</mo>
+        <mtext>Angle</mtext>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>z</mi>
+          <mn>2</mn>
+        </msub>
+        <mo stretchy="false">)</mo>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+</p>
+<p>Таким образом, есть два различных представления для комплексных чисел, подходящие для
+разных операций.  И всё же, с точки зрения того, кто пишет программу, использующую
+комплексные числа, принцип абстракции данных подсказывает, что все операции для
+манипулирования комплексными числами должны быть доступны независимо от того, какое
+представление используется компьютером.  Например, часто полезно уметь найти модуль
+комплексного числа, заданного прямоугольными координатами.  Аналогично, часто полезно уметь
+определить действительную часть комплексного числа, заданного полярными координатами.
+</p>
+<p>Чтобы спроектировать такую систему, мы можем следовать той же стратегии абстракции данных,
+которой мы следовали при проектировании пакета рациональных чисел в <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>.
+Предположим, что операции над комплексными числами реализованы в терминах четырёх
+селекторов: <code>real-part</code>, <code>imag-part</code>, <code>magnitude</code> и <code>angle</code>.  Также
+предположим, что у нас есть две процедуры для построения комплексных чисел:
+<code>make-from-real-imag</code> возвращает комплексное число с заданными действительной и мнимой
+частями, а <code>make-from-mag-ang</code> возвращает комплексное число с заданными модулем и
+углом.  Эти процедуры обладают тем свойством, что для любого комплексного числа <code>z</code>
+оба
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">make-from-real-imag </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln"> 
+                     </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">))</span></pre></div>
+
+<p>и
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">make-from-mag-ang </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> 
+                   </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">))</span></pre></div>
+
+<p>производят комплексные числа, равные <code>z</code>.
+</p>
+<p>Используя эти конструкторы и селекторы, мы можем реализовать арифметику над комплексными
+числами, используя «абстрактные данные», заданные конструкторами и селекторами, точно так
+же, как мы делали для рациональных чисел в <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>.  Как показано в формулах выше, мы
+можем складывать и вычитать комплексные числа в терминах действительных и мнимых частей,
+а умножать и делить комплексные числа в терминах модулей и углов:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-complex z1 z2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-from-real-imag 
+   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z2</span><span class="clo">))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z2</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sub-complex z1 z2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-from-real-imag 
+   </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z2</span><span class="clo">))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z2</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-complex z1 z2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-from-mag-ang 
+   </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z2</span><span class="clo">))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z2</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">div-complex z1 z2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-from-mag-ang 
+   </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z2</span><span class="clo">))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z2</span><span class="clo">))))</span></pre></div>
+
+<p>Чтобы завершить пакет комплексных чисел, мы должны выбрать представление и должны
+реализовать конструкторы и селекторы в терминах примитивных чисел и примитивной списочной
+структуры.  Есть два очевидных способа сделать это: мы можем представить комплексное число
+в «прямоугольной форме» как пару (действительная часть, мнимая часть) или в «полярной
+форме» как пару (модуль, угол).  Что мы выберем?
+</p>
+<p>Чтобы сделать различные выборы конкретными, вообразим, что есть два программиста, Бен
+Битдидл и Алисса П. Хакер, которые независимо проектируют представления для системы
+комплексных чисел.  Бен выбирает представлять комплексные числа в прямоугольной форме.  С
+этим выбором выбор действительной и мнимой частей комплексного числа прямолинеен, как и
+построение комплексного числа с данными действительной и мнимой частями.  Чтобы найти
+модуль и угол или построить комплексное число с данными модулем и углом, он использует
+тригонометрические соотношения
+</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mi>x</mi>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mi>r</mi>
+        <mi>cos</mi>
+        <mo>⁡<!-- ⁡ --></mo>
+        <mi>A</mi>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi>y</mi>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mi>r</mi>
+        <mi>sin</mi>
+        <mo>⁡<!-- ⁡ --></mo>
+        <mi>A</mi>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi>r</mi>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <msqrt>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <msup>
+            <mi>y</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>,</mo>
+        </msqrt>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi>A</mi>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mi>arctan</mi>
+        <mo>⁡<!-- ⁡ --></mo>
+        <mo stretchy="false">(</mo>
+        <mi>y</mi>
+        <mo>,</mo>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
+<p>которые связывают действительную и мнимую части <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo>,</mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> с модулем и углом
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>r</mi>
+    <mo>,</mo>
+    <mi>A</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.<a class="footnote_link" id="DOCF110" href="#FOOT110"><sup>110</sup></a>  Представление Бена поэтому даётся следующими селекторами и конструкторами:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">))</span><span class="pln"> 
+           </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">atan </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> r </span><span class="opn">(</span><span class="pln">cos a</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> r </span><span class="opn">(</span><span class="pln">sin a</span><span class="clo">))))</span></pre></div>
+
+<p>Алисса, напротив, выбирает представлять комплексные числа в полярной форме.  Для неё выбор
+модуля и угла прямолинеен, но ей приходится использовать тригонометрические соотношения,
+чтобы получить действительную и мнимую части.  Представление Алиссы:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cos </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sin </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">atan y x</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> r a</span><span class="clo">))</span></pre></div>
+
+<p>Дисциплина абстракции данных обеспечивает, что одна и та же реализация <code>add-complex</code>,
+<code>sub-complex</code>, <code>mul-complex</code> и <code>div-complex</code> будет работать как с
+представлением Бена, так и с представлением Алиссы.
+</p>
+<a id="g_t2_002e4_002e2"></a>
+<a id="Tipizirovannye-dannye"></a>
+<h4 class="subsection"><span class="secnum">2.4.2</span><span class="sectitle">Типизированные данные</span></h4>
+
+<p>Один способ смотреть на абстракцию данных — это как на применение «принципа наименьших
+обязательств».  Реализуя систему комплексных чисел в <a href="#g_t2_002e4_002e1">2.4.1</a>, мы можем использовать
+либо прямоугольное представление Бена, либо полярное представление Алиссы.  Барьер
+абстракции, образованный селекторами и конструкторами, позволяет нам отложить до
+последнего возможного момента выбор конкретного представления для наших объектов данных и
+тем самым сохранить максимальную гибкость в проектировании системы.
+</p>
+<p>Принцип наименьших обязательств можно довести до ещё более крайних степеней.  Если мы
+желаем, мы можем сохранять неоднозначность представления даже <em>после</em> того, как мы
+спроектировали селекторы и конструкторы, и предпочесть использовать <em>и</em>
+представление Бена, <em>и</em> представление Алиссы.  Если, однако, оба представления
+включены в одну систему, нам понадобится некоторый способ отличать данные в полярной форме
+от данных в прямоугольной форме.  Иначе, если бы нас попросили, например, найти
+<code>magnitude</code> пары (3, 4), мы не знали бы, отвечать ли 5 (интерпретируя число в
+прямоугольной форме) или 3 (интерпретируя число в полярной форме).  Прямолинейный способ
+достичь этого различения — включить <a id="index-teg-tipa"></a>
+<em>тег типа</em> (символ <code>rectangular</code> или
+<code>polar</code>) как часть каждого комплексного числа.  Тогда, когда нам нужно
+манипулировать комплексным числом, мы можем использовать тег, чтобы решить, какой селектор
+применить.
+</p>
+<p>Чтобы манипулировать типизированными данными, мы предположим, что у нас есть процедуры
+<code>type-tag</code> и <code>contents</code>, которые извлекают из объекта данных тег и фактическое
+содержимое (полярные или прямоугольные координаты в случае комплексного числа).  Мы также
+постулируем процедуру <code>attach-tag</code>, которая принимает тег и содержимое и производит
+типизированный объект данных.  Прямолинейный способ реализовать это — использовать обычную
+списочную структуру:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">attach-tag type-tag contents</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> type-tag contents</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">type-tag datum</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? datum</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> datum</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Bad tagged datum: 
+              TYPE-TAG"</span><span class="pln"> datum</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">contents datum</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? datum</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> datum</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Bad tagged datum: 
+              CONTENTS"</span><span class="pln"> datum</span><span class="clo">)))</span></pre></div>
+
+<p>Используя эти процедуры, мы можем определить предикаты <code>rectangular?</code> и
+<code>polar?</code>, которые распознают прямоугольные и полярные числа соответственно:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rectangular? z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="pln">type-tag z</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'rectangular</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">polar? z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="pln">type-tag z</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'polar</span><span class="clo">))</span></pre></div>
+
+<p>С тегами типа Бен и Алисса теперь могут изменить свой код так, чтобы их два различных
+представления могли сосуществовать в одной системе.  Всякий раз, когда Бен строит
+комплексное число, он помечает его как прямоугольное.  Всякий раз, когда Алисса строит
+комплексное число, она помечает его как полярное.  Кроме того, Бен и Алисса должны
+убедиться, что имена их процедур не конфликтуют.  Один способ сделать это — чтобы Бен
+добавлял суффикс <code>rectangular</code> к имени каждой из своих процедур представления, а
+Алисса добавляла <code>polar</code> к именам своих.  Вот пересмотренное прямоугольное
+представление Бена из <a href="#g_t2_002e4_002e1">2.4.1</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part-rectangular z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part-rectangular z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude-rectangular z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">real-part-rectangular z</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">imag-part-rectangular z</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle-rectangular z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">atan </span><span class="opn">(</span><span class="pln">imag-part-rectangular z</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">real-part-rectangular z</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag-rectangular x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'rectangular</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang-rectangular r a</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">attach-tag 
+   </span><span class="lit">'rectangular</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> r </span><span class="opn">(</span><span class="pln">cos a</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> r </span><span class="opn">(</span><span class="pln">sin a</span><span class="clo">)))))</span></pre></div>
+
+<p>а вот пересмотренное полярное представление Алиссы:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part-polar z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude-polar z</span><span class="clo">)</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pln">cos </span><span class="opn">(</span><span class="pln">angle-polar z</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part-polar z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude-polar z</span><span class="clo">)</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pln">sin </span><span class="opn">(</span><span class="pln">angle-polar z</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude-polar z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle-polar z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag-polar x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">attach-tag 
+   </span><span class="lit">'polar</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">atan y x</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang-polar r a</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'polar</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> r a</span><span class="clo">)))</span></pre></div>
+
+<p>Каждый обобщённый селектор реализуется как процедура, которая проверяет тег своего
+аргумента и вызывает подходящую процедуру для обработки данных этого типа.  Например, чтобы
+получить действительную часть комплексного числа, <code>real-part</code> исследует тег, чтобы
+определить, использовать ли <code>real-part-rectangular</code> Бена или <code>real-part-polar</code>
+Алиссы.  В любом случае мы используем <code>contents</code>, чтобы извлечь голое, нетипизированное
+данное, и посылаем его прямоугольной или полярной процедуре по необходимости:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">rectangular? z</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">real-part-rectangular </span><span class="opn">(</span><span class="pln">contents z</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">polar? z</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">real-part-polar </span><span class="opn">(</span><span class="pln">contents z</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown type: 
+               REAL-PART"</span><span class="pln"> z</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">rectangular? z</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">imag-part-rectangular </span><span class="opn">(</span><span class="pln">contents z</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">polar? z</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">imag-part-polar </span><span class="opn">(</span><span class="pln">contents z</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown type: 
+               IMAG-PART"</span><span class="pln"> z</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">rectangular? z</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">magnitude-rectangular </span><span class="opn">(</span><span class="pln">contents z</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">polar? z</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">magnitude-polar </span><span class="opn">(</span><span class="pln">contents z</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown type: 
+               MAGNITUDE"</span><span class="pln"> z</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">rectangular? z</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">angle-rectangular </span><span class="opn">(</span><span class="pln">contents z</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">polar? z</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">angle-polar </span><span class="opn">(</span><span class="pln">contents z</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown type: 
+               ANGLE"</span><span class="pln"> z</span><span class="clo">))))</span></pre></div>
+
+<p>Чтобы реализовать арифметические операции над комплексными числами, мы можем использовать
+те же процедуры <code>add-complex</code>, <code>sub-complex</code>, <code>mul-complex</code> и
+<code>div-complex</code> из <a href="#g_t2_002e4_002e1">2.4.1</a>, потому что вызываемые ими селекторы обобщённые и поэтому
+будут работать с любым представлением.  Например, процедура <code>add-complex</code> по-прежнему
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-complex z1 z2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-from-real-imag 
+   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z2</span><span class="clo">))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z2</span><span class="clo">))))</span></pre></div>
+
+<p>Наконец, мы должны выбрать, строить ли комплексные числа с использованием представления
+Бена или представления Алиссы.  Один разумный выбор — строить прямоугольные числа всякий
+раз, когда у нас есть действительная и мнимая части, и строить полярные числа всякий раз,
+когда у нас есть модули и углы:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-from-real-imag-rectangular x y</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-from-mag-ang-polar r a</span><span class="clo">))</span></pre></div>
+
+<p>Получающаяся система комплексных чисел имеет структуру, показанную на <a href="#Figure-2_002e21">Figure 2.21</a>.
+Система разложена на три относительно независимые части: операции комплексной арифметики,
+полярную реализацию Алиссы и прямоугольную реализацию Бена.  Полярная и прямоугольная
+реализации могли бы быть написаны Беном и Алиссой, работающими по отдельности, и обе они
+могут использоваться как лежащие в основе представления третьим программистом,
+реализующим процедуры комплексной арифметики в терминах абстрактного интерфейса
+конструкторов и селекторов.
+</p>
+<figure class="float">
+<a id="Figure-2_002e21"></a>
+<object style="width: 65.01ex; height: 33.59ex;" data="fig/chap2/Fig2.21a.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.21:</strong> Структура обобщённой системы комплексной арифметики.</p>
+</figcaption>
+</figure>
+
+<p>Поскольку каждый объект данных помечен своим типом, селекторы оперируют данными обобщённым
+образом.  То есть каждый селектор определён так, чтобы иметь поведение, зависящее от
+конкретного типа данных, к которому он применяется.  Заметьте общий механизм для
+сопряжения отдельных представлений: внутри реализации данного представления (скажем,
+полярного пакета Алиссы) комплексное число — это нетипизированная пара (модуль, угол).
+Когда обобщённый селектор оперирует числом типа <code>polar</code>, он снимает тег и передаёт
+содержимое коду Алиссы.  И наоборот, когда Алисса строит число для общего использования,
+она помечает его типом, чтобы оно могло быть надлежащим образом распознано процедурами
+более высокого уровня.  Эта дисциплина снятия и прикрепления тегов по мере того, как
+объекты данных передаются с уровня на уровень, может быть важной организационной
+стратегией, как мы увидим в <a href="2_002e5.xhtml#g_t2_002e5">2.5</a>.
+</p>
+<a id="g_t2_002e4_002e3"></a>
+<a id="Programmirovanie_002c-upravlyaemoe-dannymi_002c-i-additivnostx"></a>
+<h4 class="subsection"><span class="secnum">2.4.3</span><span class="sectitle">Программирование, управляемое данными, и аддитивность</span></h4>
+
+<p>Общая стратегия проверки типа данного и вызова подходящей процедуры называется
+<a id="index-dispetcherizaciei-po-tipu"></a>
+<em>диспетчеризацией по типу</em>.  Это мощная стратегия для получения модульности в
+проектировании системы.  С другой стороны, реализация диспетчеризации, как в <a href="#g_t2_002e4_002e2">2.4.2</a>,
+имеет две значительные слабости.  Одна слабость в том, что обобщённые интерфейсные
+процедуры (<code>real-part</code>, <code>imag-part</code>, <code>magnitude</code> и <code>angle</code>) должны
+знать обо всех различных представлениях.  Например, предположим, мы хотели бы включить
+новое представление для комплексных чисел в нашу систему комплексных чисел.  Нам пришлось
+бы отождествить это новое представление с типом, а затем добавить предложение к каждой из
+обобщённых интерфейсных процедур, чтобы проверять новый тип и применять подходящий селектор
+для этого представления.
+</p>
+<p>Другая слабость этого приёма в том, что, хотя отдельные представления можно проектировать
+по отдельности, мы должны гарантировать, что никакие две процедуры во всей системе не имеют
+одного и того же имени.  Вот почему Бену и Алиссе пришлось менять имена своих исходных
+процедур из <a href="#g_t2_002e4_002e1">2.4.1</a>.
+</p>
+<p>Вопрос, лежащий в основе обеих этих слабостей, в том, что приём реализации обобщённых
+интерфейсов не <a id="index-additiven"></a>
+<em>аддитивен</em>.  Человек, реализующий обобщённые процедуры-селекторы,
+должен изменять эти процедуры всякий раз, когда устанавливается новое представление, а
+люди, сопрягающие отдельные представления, должны изменять свой код, чтобы избежать
+конфликтов имён.  В каждом из этих случаев изменения, которые нужно внести в код,
+прямолинейны, но их тем не менее нужно вносить, и это источник неудобства и ошибок.  Это
+не такая уж проблема для системы комплексных чисел в её нынешнем виде, но предположим, что
+было бы не два, а сотни различных представлений для комплексных чисел.  И предположим, что
+было бы много обобщённых селекторов, которые нужно поддерживать в интерфейсе абстрактных
+данных.  Предположим, по сути, что ни один программист не знал бы всех интерфейсных
+процедур или всех представлений.  Проблема реальна и должна решаться в таких программах,
+как крупномасштабные системы управления базами данных.
+</p>
+<p>Что нам нужно — это средство для ещё большего разбиения проекта системы на модули.  Оно
+предоставляется приёмом программирования, известным как <a id="index-programmirovanie_002c"></a>
+управляемое данными
+<em>программирование,
+управляемое данными</em>.  Чтобы понять, как работает программирование, управляемое данными,
+начнём с наблюдения, что всякий раз, когда мы имеем дело с набором обобщённых операций,
+общих для набора различных типов, мы, по сути, имеем дело с двумерной таблицей, которая
+содержит возможные операции на одной оси и возможные типы на другой оси.  Записи в таблице
+— это процедуры, реализующие каждую операцию для каждого типа представленного аргумента.  В
+системе комплексных чисел, разработанной в предыдущем разделе, соответствие между именем
+операции, типом данных и фактической процедурой было размазано по различным условным
+предложениям в обобщённых интерфейсных процедурах.  Но ту же информацию можно было бы
+организовать в таблицу, как показано на <a href="#Figure-2_002e22">Figure 2.22</a>.
+</p>
+<figure class="float">
+<a id="Figure-2_002e22"></a>
+<object style="width: 63.29ex; height: 20.98ex;" data="fig/chap2/Fig2.22.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.22:</strong> Таблица операций для системы комплексных чисел.</p>
+</figcaption>
+</figure>
+
+<p>Программирование, управляемое данными, — это приём проектирования программ для работы
+непосредственно с такой таблицей.  Ранее мы реализовали механизм, сопрягающий код
+комплексной арифметики с двумя пакетами представлений, как набор процедур, каждая из
+которых выполняет явную диспетчеризацию по типу.  Здесь мы реализуем интерфейс как
+единственную процедуру, которая ищет комбинацию имени операции и типа аргумента в таблице,
+чтобы найти правильную процедуру для применения, и затем применяет её к содержимому
+аргумента.  Если мы делаем это, то, чтобы добавить новый пакет представления в систему,
+нам не нужно менять никакие существующие процедуры; нам нужно лишь добавить новые записи в
+таблицу.
+</p>
+<p>Чтобы реализовать этот план, предположим, что у нас есть две процедуры, <code>put</code> и
+<code>get</code>, для манипулирования таблицей операций и типов:
+</p>
+<ul>
+<li> <code>(put ⟨<var>оп</var>⟩ ⟨<var>тип</var>⟩ ⟨<var>элемент</var>⟩)</code> устанавливает
+<code>⟨</code><var>элемент</var><code>⟩</code> в таблицу, индексируемый
+<code>⟨</code><var>оп</var><code>⟩</code> и <code>⟨</code><var>тип</var><code>⟩</code>.
+
+</li><li> <code>(get ⟨<var>оп</var>⟩ ⟨<var>тип</var>⟩)</code> ищет запись <code>⟨</code><var>оп</var><code>⟩</code>,
+<code>⟨</code><var>тип</var><code>⟩</code> в таблице и возвращает найденный там элемент.
+Если элемент не найден, <code>get</code> возвращает ложь.
+
+</li></ul>
+
+<p>Пока что мы можем предположить, что <code>put</code> и <code>get</code> включены в наш язык.  В
+<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> (<a href="3_002e3.xhtml#g_t3_002e3_002e3">3.3.3</a>) мы увидим, как реализовать эти и другие операции для
+манипулирования таблицами.
+</p>
+<p>Вот как программирование, управляемое данными, можно использовать в системе комплексных
+чисел.  Бен, разработавший прямоугольное представление, реализует свой код точно так же,
+как он делал изначально.  Он определяет набор процедур, или <a id="index-paket"></a>
+<em>пакет</em>, и сопрягает их
+с остальной частью системы, добавляя записи в таблицу, которые говорят системе, как
+оперировать прямоугольными числами.  Это достигается вызовом следующей процедуры:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">install-rectangular-package</span><span class="clo">)</span><span class="pln">
+  </span><span class="roman"><span class="com">;; internal procedures</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln"> 
+    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">))</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">atan </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> r </span><span class="opn">(</span><span class="pln">cos a</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> r </span><span class="opn">(</span><span class="pln">sin a</span><span class="clo">))))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; interface to the rest of the system</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag x</span><span class="clo">)</span><span class="pln"> 
+    </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'rectangular</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'real-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rectangular</span><span class="clo">)</span><span class="pln"> real-part</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'imag-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rectangular</span><span class="clo">)</span><span class="pln"> imag-part</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'magnitude</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rectangular</span><span class="clo">)</span><span class="pln"> magnitude</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'angle</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rectangular</span><span class="clo">)</span><span class="pln"> angle</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-real-imag</span><span class="pln"> </span><span class="lit">'rectangular</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-mag-ang</span><span class="pln"> </span><span class="lit">'rectangular</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">r a</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">))))</span><span class="pln">
+  </span><span class="lit">'done</span><span class="clo">)</span></pre></div>
+
+<p>Заметьте, что внутренние процедуры здесь — те же процедуры из <a href="#g_t2_002e4_002e1">2.4.1</a>, которые Бен
+написал, когда работал изолированно.  Никакие изменения не нужны, чтобы сопрячь их с
+остальной частью системы.  Более того, поскольку эти определения процедур внутренние по
+отношению к процедуре установки, Бену не нужно беспокоиться о конфликтах имён с другими
+процедурами вне прямоугольного пакета.  Чтобы сопрячь их с остальной частью системы, Бен
+устанавливает свою процедуру <code>real-part</code> под именем операции <code>real-part</code> и типом
+<code>(rectangular)</code>, и аналогично для других селекторов.<a class="footnote_link" id="DOCF111" href="#FOOT111"><sup>111</sup></a>  Интерфейс также определяет конструкторы,
+которые будут использоваться внешней системой.<a class="footnote_link" id="DOCF112" href="#FOOT112"><sup>112</sup></a>  Они идентичны внутренне определённым
+конструкторам Бена, за исключением того, что они прикрепляют тег.
+</p>
+<p>Полярный пакет Алиссы аналогичен:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">install-polar-package</span><span class="clo">)</span><span class="pln">
+  </span><span class="roman"><span class="com">;; internal procedures</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> r a</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cos </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sin </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)))</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">atan y x</span><span class="clo">)))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; interface to the rest of the system</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'polar</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'real-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polar</span><span class="clo">)</span><span class="pln"> real-part</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'imag-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polar</span><span class="clo">)</span><span class="pln"> imag-part</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'magnitude</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polar</span><span class="clo">)</span><span class="pln"> magnitude</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'angle</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polar</span><span class="clo">)</span><span class="pln"> angle</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-real-imag</span><span class="pln"> </span><span class="lit">'polar</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-mag-ang</span><span class="pln"> </span><span class="lit">'polar</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">r a</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">))))</span><span class="pln">
+  </span><span class="lit">'done</span><span class="clo">)</span></pre></div>
+
+<p>Хотя Бен и Алисса оба по-прежнему используют свои исходные процедуры, определённые с теми
+же именами, что и друг у друга (например, <code>real-part</code>), эти определения теперь
+внутренние по отношению к разным процедурам (см. <a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a>), так что конфликта имён нет.
+</p>
+<p>Селекторы комплексной арифметики обращаются к таблице посредством общей процедуры-«операции»
+под названием <code>apply-generic</code>, которая применяет обобщённую операцию к некоторым
+аргументам.  <code>Apply-generic</code> ищет в таблице под именем операции и типами аргументов и
+применяет получающуюся процедуру, если она присутствует:<a class="footnote_link" id="DOCF113" href="#FOOT113"><sup>113</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-generic op </span><span class="pun">.</span><span class="pln"> args</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">type-tags </span><span class="opn">(</span><span class="pln">map type-tag args</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">proc </span><span class="opn">(</span><span class="pln">get op type-tags</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> proc
+          </span><span class="opn">(</span><span class="pln">apply proc </span><span class="opn">(</span><span class="pln">map contents args</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="err">error</span><span class="pln">
+            </span><span class="str">"No method for these types: 
+             APPLY-GENERIC"</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">list op type-tags</span><span class="clo">))))))</span></pre></div>
+
+<p>Используя <code>apply-generic</code>, мы можем определить наши обобщённые селекторы так:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'real-part</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'imag-part</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'magnitude</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'angle</span><span class="pln"> z</span><span class="clo">))</span></pre></div>
+
+<p>Заметьте, что они вообще не меняются, если в систему добавляется новое представление.
+</p>
+<p>Мы можем также извлечь из таблицы конструкторы, которые будут использоваться программами,
+внешними по отношению к пакетам, при создании комплексных чисел из действительных и мнимых
+частей и из модулей и углов.  Как и в <a href="#g_t2_002e4_002e2">2.4.2</a>, мы строим прямоугольные числа всякий
+раз, когда у нас есть действительная и мнимая части, и полярные числа всякий раз, когда у
+нас есть модули и углы:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make-from-real-imag</span><span class="pln"> 
+        </span><span class="lit">'rectangular</span><span class="clo">)</span><span class="pln"> 
+   x y</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make-from-mag-ang</span><span class="pln"> 
+        </span><span class="lit">'polar</span><span class="clo">)</span><span class="pln"> 
+   r a</span><span class="clo">))</span></pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e73"></a>Exercise 2.73:</strong> <a href="2_002e3.xhtml#g_t2_002e3_002e2">2.3.2</a> описал программу, которая
+выполняет символьное дифференцирование:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">deriv exp var</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">number? exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">variable? exp</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? exp var</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">sum? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-sum </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">addend exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span><span class="pln">
+                   </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">augend exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">product? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-sum
+           </span><span class="opn">(</span><span class="pln">make-product 
+            </span><span class="opn">(</span><span class="pln">multiplier exp</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">multiplicand exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">make-product 
+            </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">multiplier exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">multiplicand exp</span><span class="clo">))))</span><span class="pln">
+        ⟨</span><var><span class="pun">сюда</span><span class="pln"> </span><span class="pun">можно</span><span class="pln"> </span><span class="pun">добавить</span><span class="pln"> </span><span class="pun">другие</span><span class="pln"> </span><span class="pun">правила</span></var><span class="pln">⟩
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"unknown expression type:
+                      DERIV"</span><span class="pln"> exp</span><span class="clo">))))</span></pre></div>
+
+<p>Мы можем рассматривать эту программу как выполняющую диспетчеризацию по типу выражения,
+подлежащего дифференцированию.  В этой ситуации «тег типа» данного — это символ
+алгебраического оператора (такой как <code>+</code>), а выполняемая операция — <code>deriv</code>.  Мы
+можем преобразовать эту программу в стиль, управляемый данными, переписав основную
+процедуру производной как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">deriv exp var</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">number? exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">((</span><span class="pln">variable? exp</span><span class="clo">)</span><span class="pln"> 
+           </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? exp var</span><span class="clo">)</span><span class="pln"> 
+               </span><span class="lit">1</span><span class="pln"> 
+               </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'deriv</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operator exp</span><span class="clo">))</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">operands exp</span><span class="clo">)</span><span class="pln"> 
+                var</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operator exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exp</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operands exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> exp</span><span class="clo">))</span></pre></div>
+
+<ol>
+<li> Объясните, что было сделано выше.  Почему мы не можем ассимилировать предикаты
+<code>number?</code> и <code>variable?</code> в диспетчеризацию, управляемую данными?
+
+</li><li> Напишите процедуры для производных сумм и произведений и вспомогательный код, требуемый,
+чтобы установить их в таблицу, используемую программой выше.
+
+</li><li> Выберите любое дополнительное правило дифференцирования, которое вам нравится, такое как
+правило для степеней (<a href="2_002e3.xhtml#Exercise-2_002e56">Exercise 2.56</a>), и установите его в эту систему, управляемую
+данными.
+
+</li><li> В этом простом алгебраическом манипуляторе тип выражения — это алгебраический оператор,
+связывающий его воедино.  Предположим, однако, что мы индексировали процедуры
+противоположным образом, так что строка диспетчеризации в <code>deriv</code> выглядела бы как
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">get </span><span class="opn">(</span><span class="pln">operator exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'deriv</span><span class="clo">)</span><span class="pln"> 
+ </span><span class="opn">(</span><span class="pln">operands exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span></pre></div>
+
+<p>Какие соответствующие изменения в системе производных требуются?
+</p>
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e74"></a>Exercise 2.74:</strong> Insatiable Enterprises, Inc. — это
+сильно децентрализованный конгломерат, состоящий из большого числа независимых
+подразделений, расположенных по всему миру.  Компьютерные средства компании только что
+были соединены между собой посредством хитроумной схемы сетевого сопряжения, которая
+делает так, что вся сеть представляется любому пользователю единственным компьютером.
+Президент Insatiable, в своей первой попытке использовать способность сети извлекать
+административную информацию из файлов подразделений, обескуражена, обнаружив, что, хотя
+все файлы подразделений реализованы как структуры данных в Scheme, конкретная используемая
+структура данных варьируется от подразделения к подразделению.  Поспешно созывается
+собрание менеджеров подразделений, чтобы найти стратегию интеграции файлов, которая
+удовлетворит нужды штаб-квартиры, сохраняя при этом существующую автономию подразделений.
+</p>
+<p>Покажите, как такую стратегию можно реализовать с помощью программирования, управляемого
+данными.  В качестве примера предположим, что кадровые записи каждого подразделения состоят
+из единственного файла, который содержит множество записей с ключом по именам сотрудников.
+Структура множества варьируется от подразделения к подразделению.  Более того, запись
+каждого сотрудника сама является множеством (структурированным по-разному в разных
+подразделениях), которое содержит информацию с ключом по идентификаторам, таким как
+<code>address</code> и <code>salary</code>.  В частности:
+</p>
+<ol>
+<li> Реализуйте для штаб-квартиры процедуру <code>get-record</code>, которая извлекает запись
+указанного сотрудника из указанного кадрового файла.  Процедура должна быть применима к
+файлу любого подразделения.  Объясните, как должны быть структурированы файлы отдельных
+подразделений.  В частности, какая информация о типе должна быть предоставлена?
+
+</li><li> Реализуйте для штаб-квартиры процедуру <code>get-salary</code>, которая возвращает информацию о
+зарплате из записи данного сотрудника из кадрового файла любого подразделения.  Как должна
+быть структурирована запись, чтобы эта операция работала?
+
+</li><li> Реализуйте для штаб-квартиры процедуру <code>find-employee-record</code>.  Она должна искать в
+файлах всех подразделений запись данного сотрудника и возвращать запись.  Предположите,
+что эта процедура принимает как аргументы имя сотрудника и список файлов всех подразделений.
+
+</li><li> Когда Insatiable поглощает новую компанию, какие изменения нужно внести, чтобы включить
+новую кадровую информацию в центральную систему?
+
+</li></ol>
+</blockquote>
+
+<a id="Peredacha-soobshchenii"></a>
+<h5 class="subsubheading">Передача сообщений</h5>
+
+<p>Ключевая идея программирования, управляемого данными, — обрабатывать обобщённые операции в
+программах, имея дело явно с таблицами операций и типов, такими как таблица на
+<a href="#Figure-2_002e22">Figure 2.22</a>.  Стиль программирования, который мы использовали в <a href="#g_t2_002e4_002e2">2.4.2</a>,
+организовывал требуемую диспетчеризацию по типу, заставляя каждую операцию заботиться о
+своей собственной диспетчеризации.  По сути, это разлагает таблицу операций и типов на
+строки, причём каждая обобщённая процедура-операция представляет строку таблицы.
+</p>
+<p>Альтернативная стратегия реализации — разложить таблицу на столбцы и вместо использования
+«умных операций», которые диспетчеризуются по типам данных, работать с «умными объектами
+данных», которые диспетчеризуются по именам операций.  Мы можем сделать это, устроив всё
+так, чтобы объект данных, такой как прямоугольное число, был представлен как процедура,
+которая принимает в качестве входа требуемое имя операции и выполняет указанную операцию.
+В такой дисциплине <code>make-from-real-imag</code> можно было бы написать как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">dispatch op</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> op </span><span class="lit">'real-part</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> op </span><span class="lit">'imag-part</span><span class="clo">)</span><span class="pln"> y</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> op </span><span class="lit">'magnitude</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">))))</span><span class="pln">
+          </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> op </span><span class="lit">'angle</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">atan y x</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+           </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown op: 
+            MAKE-FROM-REAL-IMAG"</span><span class="pln"> op</span><span class="clo">))))</span><span class="pln">
+  dispatch</span><span class="clo">)</span></pre></div>
+
+<p>Соответствующая процедура <code>apply-generic</code>, которая применяет обобщённую операцию к
+аргументу, теперь просто подаёт имя операции объекту данных и позволяет объекту сделать
+работу:<a class="footnote_link" id="DOCF114" href="#FOOT114"><sup>114</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-generic op arg</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">arg op</span><span class="clo">))</span></pre></div>
+
+<p>Заметьте, что значение, возвращаемое <code>make-from-real-imag</code>, — это процедура,
+внутренняя процедура <code>dispatch</code>.  Это процедура, которая вызывается, когда
+<code>apply-generic</code> запрашивает выполнение операции.
+</p>
+<p>Этот стиль программирования называется <a id="index-peredachei-soobshchenii-1"></a>
+<em>передачей сообщений</em>.  Имя происходит из
+образа, что объект данных — это сущность, которая получает запрошенное имя операции как
+«сообщение».  Мы уже видели пример передачи сообщений в <a href="2_002e1.xhtml#g_t2_002e1_002e3">2.1.3</a>, где мы видели, как
+<code>cons</code>, <code>car</code> и <code>cdr</code> можно было определить без объектов данных, а только с
+процедурами.  Здесь мы видим, что передача сообщений — это не математический трюк, а
+полезный приём для организации систем с обобщёнными операциями.  В оставшейся части этой
+главы мы продолжим использовать программирование, управляемое данными, а не передачу
+сообщений, чтобы обсуждать обобщённые арифметические операции.  В <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> мы
+вернёмся к передаче сообщений и увидим, что она может быть мощным инструментом для
+структурирования программ моделирования.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e75"></a>Exercise 2.75:</strong> Реализуйте конструктор <code>make-from-mag-ang</code>
+в стиле передачи сообщений.  Эта процедура должна быть аналогична процедуре
+<code>make-from-real-imag</code>, данной выше.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e76"></a>Exercise 2.76:</strong> По мере того как большая система с
+обобщёнными операциями развивается, могут понадобиться новые типы объектов данных или
+новые операции.  Для каждой из трёх стратегий — обобщённые операции с явной
+диспетчеризацией, стиль, управляемый данными, и стиль передачи сообщений — опишите
+изменения, которые нужно внести в систему, чтобы добавить новые типы или новые операции.
+Какая организация была бы наиболее уместной для системы, в которую часто приходится
+добавлять новые типы?  Какая была бы наиболее уместной для системы, в которую часто
+приходится добавлять новые операции?
+</p></blockquote>
+
+<div class="footnote">
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT109"><p><a class="footnote_backlink" href="#DOCF109"><sup>109</sup></a>
+В реальных вычислительных системах прямоугольная форма
+предпочтительнее полярной большую часть времени из-за ошибок округления при преобразовании
+между прямоугольной и полярной формами.  Вот почему пример с комплексными числами
+нереалистичен.  Тем не менее он даёт ясную иллюстрацию проектирования системы, использующей
+обобщённые операции, и хорошее введение в более существенные системы, которые будут
+разработаны позднее в этой главе.</p>
+</div>
+<div id="FOOT110"><p><a class="footnote_backlink" href="#DOCF110"><sup>110</sup></a>
+Функция арктангенса, упоминаемая здесь, вычисляемая процедурой
+<code>atan</code> в Scheme, определена так, чтобы принимать два аргумента <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> и
+возвращать угол, тангенс которого равен <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>x</mi>
+  </mrow>
+</math>.  Знаки аргументов определяют
+квадрант угла.</p>
+</div>
+<div id="FOOT111"><p><a class="footnote_backlink" href="#DOCF111"><sup>111</sup></a>
+Мы используем список
+<code>(rectangular)</code>, а не символ <code>rectangular</code>, чтобы учесть возможность операций с
+несколькими аргументами не все одного типа.</p>
+</div>
+<div id="FOOT112"><p><a class="footnote_backlink" href="#DOCF112"><sup>112</sup></a>
+Тип, под которым устанавливаются
+конструкторы, не обязан быть списком, потому что конструктор всегда используется, чтобы
+сделать объект одного конкретного типа.</p>
+</div>
+<div id="FOOT113"><p><a class="footnote_backlink" href="#DOCF113"><sup>113</sup></a>
+<code>Apply-generic</code>
+использует точечно-хвостовую нотацию, описанную в <a href="2_002e2.xhtml#Exercise-2_002e20">Exercise 2.20</a>, потому что разные
+обобщённые операции могут принимать разное число аргументов.  В <code>apply-generic</code> у
+<code>op</code> в качестве значения — первый аргумент <code>apply-generic</code>, а у <code>args</code> в
+качестве значения — список оставшихся аргументов.
+</p>
+<p><code>Apply-generic</code> также использует примитивную процедуру <code>apply</code>, которая принимает
+два аргумента — процедуру и список.  <code>Apply</code> применяет процедуру, используя элементы
+списка как аргументы.  Например,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">apply </span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">))</span></pre></div>
+
+<p>возвращает 10.</p>
+</div>
+<div id="FOOT114"><p><a class="footnote_backlink" href="#DOCF114"><sup>114</sup></a>
+Одно ограничение этой организации в том, что она допускает только
+обобщённые процедуры одного аргумента.</p>
+</div>
+</div>
+<nav class="header">
+<p>
+Next: <a href="2_002e5.xhtml#g_t2_002e5" accesskey="n" rel="next">2.5</a>, Prev: <a href="2_002e3.xhtml#g_t2_002e3" accesskey="p" rel="prev">2.3</a>, Up: <a href="#g_t2_002e4" accesskey="u" rel="prev">2.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+
+
+</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">⇣</a></span><a id="pagebottom"></a>
+</body>
+</html>

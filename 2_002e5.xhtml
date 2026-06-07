@@ -1,0 +1,2212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ru" lang="ru">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Структура и интерпретация компьютерных программ, 2-е изд.: 2.5</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.5" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Chapter 2" />
+<link href="Chapter-3.xhtml#Chapter-3" rel="next" title="Chapter 3" />
+<link href="2_002e4.xhtml#g_t2_002e4_002e3" rel="prev" title="2.4.3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t2_002e5"></a>
+<nav class="header">
+<p>
+Next: <a href="Chapter-3.xhtml#Chapter-3" accesskey="n" rel="next">Chapter 3</a>, Prev: <a href="2_002e4.xhtml#g_t2_002e4" accesskey="p" rel="prev">2.4</a>, Up: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+<a id="Sistemy-s-obobshchionnymi-operaciyami"></a>
+<h3 class="section"><span class="secnum">2.5</span><span class="sectitle">Системы с обобщёнными операциями</span></h3>
+
+<p>В предыдущем разделе мы видели, как проектировать системы, в которых объекты данных могут
+быть представлены более чем одним способом.  Ключевая идея — связать код, задающий
+операции над данными, с несколькими представлениями посредством обобщённых интерфейсных
+процедур.  Теперь мы увидим, как использовать ту же самую идею не только для определения
+операций, обобщённых по различным представлениям, но и для определения операций,
+обобщённых по различным видам аргументов.  Мы уже видели несколько различных пакетов
+арифметических операций: примитивную арифметику (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>),
+встроенную в наш язык, арифметику рациональных чисел (<code>add-rat</code>, <code>sub-rat</code>,
+<code>mul-rat</code>, <code>div-rat</code>) из <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a> и арифметику комплексных чисел, которую мы
+реализовали в <a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a>.  Теперь мы используем приёмы, управляемые данными, чтобы
+построить пакет арифметических операций, включающий все арифметические пакеты, которые мы
+уже построили.
+</p>
+<p><a href="#Figure-2_002e23">Figure 2.23</a> показывает структуру системы, которую мы будем строить.  Заметьте барьеры
+абстракции.  С точки зрения того, кто использует «числа», есть единственная процедура
+<code>add</code>, которая оперирует любыми предоставленными числами.  <code>Add</code> — часть
+обобщённого интерфейса, который позволяет отдельным пакетам обычной арифметики, рациональной
+арифметики и комплексной арифметики обращаться единообразно из программ, использующих
+числа.  К любому отдельному арифметическому пакету (такому как комплексный пакет) можно, в
+свою очередь, обращаться через обобщённые процедуры (такие как <code>add-complex</code>), которые
+комбинируют пакеты, спроектированные для разных представлений (таких как прямоугольное и
+полярное).  Более того, структура системы аддитивна, так что можно проектировать отдельные
+арифметические пакеты по отдельности и комбинировать их, чтобы произвести обобщённую
+арифметическую систему.
+</p>
+<figure class="float">
+<a id="Figure-2_002e23"></a>
+<object style="width: 59.40ex; height: 54.22ex;" data="fig/chap2/Fig2.23b.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.23:</strong> Обобщённая арифметическая система.</p>
+</figcaption>
+</figure>
+
+
+<a id="g_t2_002e5_002e1"></a>
+<a id="Obobshchionnye-arifmeticheskie-operacii"></a>
+<h4 class="subsection"><span class="secnum">2.5.1</span><span class="sectitle">Обобщённые арифметические операции</span></h4>
+
+<p>Задача проектирования обобщённых арифметических операций аналогична задаче проектирования
+обобщённых операций над комплексными числами.  Нам хотелось бы, например, иметь обобщённую
+процедуру сложения <code>add</code>, которая действует как обычное примитивное сложение <code>+</code>
+на обычных числах, как <code>add-rat</code> на рациональных числах и как <code>add-complex</code> на
+комплексных числах.  Мы можем реализовать <code>add</code> и другие обобщённые арифметические
+операции, следуя той же стратегии, которую мы использовали в <a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a> для реализации
+обобщённых селекторов для комплексных чисел.  Мы будем прикреплять тег типа к каждому виду
+числа и заставлять обобщённую процедуру диспетчеризоваться к подходящему пакету согласно
+типу данных её аргументов.
+</p>
+<p>Обобщённые арифметические процедуры определяются так:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'add</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sub x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'sub</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'mul</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">div x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'div</span><span class="pln"> x y</span><span class="clo">))</span></pre></div>
+
+<p>Мы начинаем с установки пакета для обработки <a id="index-obychnykh"></a>
+<em>обычных</em> чисел, то есть примитивных
+чисел нашего языка.  Мы будем помечать их символом <code>scheme-number</code>.  Арифметические
+операции в этом пакете — это примитивные арифметические процедуры (так что нет нужды
+определять дополнительные процедуры для обработки нетипизированных чисел).  Поскольку эти
+операции каждая принимают два аргумента, они устанавливаются в таблицу с ключом по списку
+<code>(scheme-number scheme-number)</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">install-scheme-number-package</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag x</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'scheme-number</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'add</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">scheme-number scheme-number</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'sub</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">scheme-number scheme-number</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'mul</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">scheme-number scheme-number</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'div</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">scheme-number scheme-number</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make</span><span class="pln"> </span><span class="lit">'scheme-number</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag x</span><span class="clo">)))</span><span class="pln">
+  </span><span class="lit">'done</span><span class="clo">)</span></pre></div>
+
+<p>Пользователи пакета Scheme-чисел будут создавать (типизированные) обычные числа посредством
+процедуры:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-scheme-number n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make</span><span class="pln"> </span><span class="lit">'scheme-number</span><span class="clo">)</span><span class="pln"> n</span><span class="clo">))</span></pre></div>
+
+<p>Теперь, когда каркас обобщённой арифметической системы на месте, мы можем легко включать
+новые виды чисел.  Вот пакет, который выполняет рациональную арифметику.  Заметьте, что, как
+выгода от аддитивности, мы можем использовать без изменения код рациональных чисел из
+<a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a> в качестве внутренних процедур пакета:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">install-rational-package</span><span class="clo">)</span><span class="pln">
+  </span><span class="roman"><span class="com">;; internal procedures</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">g </span><span class="opn">(</span><span class="pln">gcd n d</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> n g</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> d g</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-rat x y</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)))</span><span class="pln">
+              </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sub-rat x y</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)))</span><span class="pln">
+              </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-rat x y</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">))</span><span class="pln">
+              </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">div-rat x y</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
+              </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; interface to rest of the system</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'rational</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'add</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rational rational</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">add-rat x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'sub</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rational rational</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">sub-rat x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'mul</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rational rational</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">mul-rat x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'div</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rational rational</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">div-rat x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make</span><span class="pln"> </span><span class="lit">'rational</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">))))</span><span class="pln">
+  </span><span class="lit">'done</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rational n d</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make</span><span class="pln"> </span><span class="lit">'rational</span><span class="clo">)</span><span class="pln"> n d</span><span class="clo">))</span></pre></div>
+
+<p>Мы можем установить похожий пакет для обработки комплексных чисел, используя тег
+<code>complex</code>.  Создавая пакет, мы извлекаем из таблицы операции <code>make-from-real-imag</code>
+и <code>make-from-mag-ang</code>, которые были определены прямоугольным и полярным пакетами.
+Аддитивность позволяет нам использовать в качестве внутренних операций те же процедуры
+<code>add-complex</code>, <code>sub-complex</code>, <code>mul-complex</code> и <code>div-complex</code> из
+<a href="2_002e4.xhtml#g_t2_002e4_002e1">2.4.1</a>.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">install-complex-package</span><span class="clo">)</span><span class="pln">
+  </span><span class="roman"><span class="com">;; imported procedures from rectangular</span></span><span class="com"> </span><span class="pln">
+  </span><span class="roman"><span class="com">;; and polar packages</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make-from-real-imag</span><span class="pln"> 
+          </span><span class="lit">'rectangular</span><span class="clo">)</span><span class="pln"> 
+     x y</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make-from-mag-ang</span><span class="pln"> </span><span class="lit">'polar</span><span class="clo">)</span><span class="pln"> 
+     r a</span><span class="clo">))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; internal procedures</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-complex z1 z2</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">make-from-real-imag 
+     </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z2</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sub-complex z1 z2</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">make-from-real-imag 
+     </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z2</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-complex z1 z2</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">make-from-mag-ang 
+     </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z2</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">div-complex z1 z2</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">make-from-mag-ang 
+     </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z2</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; interface to rest of the system</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'complex</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'add</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">complex complex</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z1 z2</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">add-complex z1 z2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'sub</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">complex complex</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z1 z2</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">sub-complex z1 z2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'mul</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">complex complex</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z1 z2</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">mul-complex z1 z2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'div</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">complex complex</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z1 z2</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">div-complex z1 z2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-real-imag</span><span class="pln"> </span><span class="lit">'complex</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-mag-ang</span><span class="pln"> </span><span class="lit">'complex</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">r a</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">))))</span><span class="pln">
+  </span><span class="lit">'done</span><span class="clo">)</span></pre></div>
+
+<p>Программы вне пакета комплексных чисел могут строить комплексные числа либо из
+действительных и мнимых частей, либо из модулей и углов.  Заметьте, как лежащие в основе
+процедуры, изначально определённые в прямоугольном и полярном пакетах, экспортируются в
+комплексный пакет, а оттуда экспортируются во внешний мир.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-complex-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make-from-real-imag</span><span class="pln"> </span><span class="lit">'complex</span><span class="clo">)</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-complex-from-mag-ang r a</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make-from-mag-ang</span><span class="pln"> </span><span class="lit">'complex</span><span class="clo">)</span><span class="pln"> r a</span><span class="clo">))</span></pre></div>
+
+<p>То, что у нас здесь, — это двухуровневая система тегов.  Типичное комплексное число, такое
+как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <mo>+</mo>
+    <mn>4</mn>
+    <mi>i</mi>
+  </mrow>
+</math> в прямоугольной форме, было бы представлено так, как показано на
+<a href="#Figure-2_002e24">Figure 2.24</a>.  Внешний тег (<code>complex</code>) используется, чтобы направить число к
+комплексному пакету.  Оказавшись внутри комплексного пакета, следующий тег
+(<code>rectangular</code>) используется, чтобы направить число к прямоугольному пакету.  В
+большой и сложной системе могло бы быть много уровней, каждый сопряжён со следующим
+посредством обобщённых операций.  По мере того как объект данных передаётся «вниз», внешний
+тег, который используется, чтобы направить его к подходящему пакету, снимается (применением
+<code>contents</code>), и следующий уровень тега (если есть) становится видимым для использования
+в дальнейшей диспетчеризации.
+</p>
+<figure class="float">
+<a id="Figure-2_002e24"></a>
+<object style="width: 41.53ex; height: 12.00ex;" data="fig/chap2/Fig2.24d.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.24:</strong> Представление <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <mo>+</mo>
+    <mn>4</mn>
+    <mi>i</mi>
+  </mrow>
+</math> в прямоугольной форме.</p>
+</figcaption>
+</figure>
+
+<p>В вышеприведённых пакетах мы использовали <code>add-rat</code>, <code>add-complex</code> и другие
+арифметические процедуры в точности так, как они были изначально написаны.  Однако, как
+только эти определения становятся внутренними по отношению к разным процедурам установки, им
+больше не нужны имена, отличные друг от друга: мы могли бы просто назвать их <code>add</code>,
+<code>sub</code>, <code>mul</code> и <code>div</code> в обоих пакетах.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e77"></a>Exercise 2.77:</strong> Луи Резонер пытается вычислить выражение
+<code>(magnitude z)</code>, где <code>z</code> — объект, показанный на <a href="#Figure-2_002e24">Figure 2.24</a>.  К его
+удивлению, вместо ответа 5 он получает сообщение об ошибке от <code>apply-generic</code>,
+говорящее, что нет метода для операции <code>magnitude</code> на типах <code>(complex)</code>.  Он
+показывает это взаимодействие Алиссе П. Хакер, которая говорит: «Проблема в том, что
+селекторы комплексных чисел никогда не были определены для <code>complex</code>-чисел, только для
+<code>polar</code>- и <code>rectangular</code>-чисел.  Всё, что тебе нужно сделать, чтобы это
+заработало, — добавить следующее в <code>complex</code>-пакет:»
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">put </span><span class="lit">'real-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">complex</span><span class="clo">)</span><span class="pln"> real-part</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">put </span><span class="lit">'imag-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">complex</span><span class="clo">)</span><span class="pln"> imag-part</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">put </span><span class="lit">'magnitude</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">complex</span><span class="clo">)</span><span class="pln"> magnitude</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">put </span><span class="lit">'angle</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">complex</span><span class="clo">)</span><span class="pln"> angle</span><span class="clo">)</span></pre></div>
+
+<p>Опишите подробно, почему это работает.  В качестве примера проследите все процедуры,
+вызываемые при вычислении выражения <code>(magnitude z)</code>, где <code>z</code> — объект, показанный
+на <a href="#Figure-2_002e24">Figure 2.24</a>.  В частности, сколько раз вызывается <code>apply-generic</code>?  К какой
+процедуре происходит диспетчеризация в каждом случае?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e78"></a>Exercise 2.78:</strong> Внутренние процедуры в пакете
+<code>scheme-number</code> — по существу не более чем вызовы примитивных процедур <code>+</code>,
+<code>-</code> и т. д.  Не было возможности использовать примитивы языка напрямую, потому что
+наша система тегов типа требует, чтобы у каждого объекта данных был прикреплённый к нему
+тип.  Однако на самом деле все реализации Lisp имеют систему типов, которую они используют
+внутренне.  Примитивные предикаты, такие как <code>symbol?</code> и <code>number?</code>, определяют,
+имеют ли объекты данных определённые типы.  Измените определения <code>type-tag</code>,
+<code>contents</code> и <code>attach-tag</code> из <a href="2_002e4.xhtml#g_t2_002e4_002e2">2.4.2</a> так, чтобы наша обобщённая система
+пользовалась внутренней системой типов Scheme.  То есть система должна работать как прежде,
+за исключением того, что обычные числа должны представляться просто как Scheme-числа, а не
+как пары, чей <code>car</code> — символ <code>scheme-number</code>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e79"></a>Exercise 2.79:</strong> Определите обобщённый предикат равенства
+<code>equ?</code>, который проверяет равенство двух чисел, и установите его в обобщённый
+арифметический пакет.  Эта операция должна работать для обычных чисел, рациональных чисел и
+комплексных чисел.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e80"></a>Exercise 2.80:</strong> Определите обобщённый предикат <code>=zero?</code>,
+который проверяет, равен ли его аргумент нулю, и установите его в обобщённый арифметический
+пакет.  Эта операция должна работать для обычных чисел, рациональных чисел и комплексных
+чисел.
+</p></blockquote>
+
+<a id="g_t2_002e5_002e2"></a>
+<a id="Kombinirovanie-dannykh-raznykh-tipov"></a>
+<h4 class="subsection"><span class="secnum">2.5.2</span><span class="sectitle">Комбинирование данных разных типов</span></h4>
+
+<p>Мы видели, как определить единую арифметическую систему, охватывающую обычные числа,
+комплексные числа, рациональные числа и любой другой тип числа, который мы могли бы решить
+изобрести, но мы проигнорировали важный вопрос.  Операции, которые мы определили до сих
+пор, обращаются с различными типами данных как с полностью независимыми.  Так, есть
+отдельные пакеты для сложения, скажем, двух обычных чисел или двух комплексных чисел.  Чего
+мы ещё не рассмотрели — это факт, что осмысленно определять операции, пересекающие границы
+типов, такие как сложение комплексного числа с обычным числом.  Мы приложили большие усилия,
+чтобы ввести барьеры между частями наших программ, чтобы их можно было разрабатывать и
+понимать по отдельности.  Нам хотелось бы ввести межтиповые операции некоторым тщательно
+контролируемым образом, чтобы мы могли их поддерживать, серьёзно не нарушая границ наших
+модулей.
+</p>
+<p>Один способ обрабатывать межтиповые операции — спроектировать отдельную процедуру для
+каждой возможной комбинации типов, для которой операция допустима.  Например, мы могли бы
+расширить пакет комплексных чисел так, чтобы он предоставлял процедуру для сложения
+комплексных чисел с обычными числами, и установить это в таблицу, используя тег
+<code>(complex scheme-number)</code>:<a class="footnote_link" id="DOCF115" href="#FOOT115"><sup>115</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-complex-to-schemenum z x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-from-real-imag </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+                       </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">put </span><span class="lit">'add</span><span class="pln"> 
+     </span><span class="lit">'</span><span class="opn">(</span><span class="pln">complex scheme-number</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z x</span><span class="clo">)</span><span class="pln"> 
+       </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">add-complex-to-schemenum z x</span><span class="clo">))))</span></pre></div>
+
+<p>Этот приём работает, но он громоздок.  С такой системой стоимость введения нового типа —
+это не только построение пакета процедур для этого типа, но и построение и установка
+процедур, реализующих межтиповые операции.  Этого легко может быть гораздо больше кода, чем
+нужно, чтобы определить операции над самим типом.  Метод также подрывает нашу способность
+комбинировать отдельные пакеты аддитивно или хотя бы ограничивать степень, в которой
+реализаторам отдельных пакетов нужно учитывать другие пакеты.  Например, в примере выше
+кажется разумным, что обработка смешанных операций над комплексными числами и обычными
+числами должна быть обязанностью пакета комплексных чисел.  Комбинирование рациональных
+чисел и комплексных чисел, однако, могло бы выполняться комплексным пакетом, рациональным
+пакетом или каким-то третьим пакетом, использующим операции, извлечённые из этих двух
+пакетов.  Формулирование связных политик о разделении обязанностей между пакетами может
+быть непосильной задачей при проектировании систем со многими пакетами и многими межтиповыми
+операциями.
+</p>
+<a id="Privedenie-tipov"></a>
+<h5 class="subsubheading">Приведение типов</h5>
+
+<p>В общей ситуации полностью несвязанных операций, действующих на полностью несвязанных
+типах, реализация явных межтиповых операций, как бы громоздка она ни была, — это лучшее, на
+что можно надеяться.  К счастью, обычно мы можем сделать лучше, воспользовавшись
+дополнительной структурой, которая может быть скрыта в нашей системе типов.  Часто
+различные типы данных не полностью независимы, и могут быть способы, которыми объекты
+одного типа можно рассматривать как принадлежащие другому типу.  Этот процесс называется
+<a id="index-privedeniem"></a>
+<em>приведением</em>.  Например, если нас просят арифметически скомбинировать обычное
+число с комплексным числом, мы можем рассматривать обычное число как комплексное число,
+мнимая часть которого равна нулю.  Это преобразует задачу в задачу комбинирования двух
+комплексных чисел, которую можно обработать обычным образом пакетом комплексной арифметики.
+</p>
+<p>В общем, мы можем реализовать эту идею, спроектировав процедуры приведения, которые
+преобразуют объект одного типа в эквивалентный объект другого типа.  Вот типичная процедура
+приведения, которая преобразует данное обычное число в комплексное число с этой
+действительной частью и нулевой мнимой частью:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">scheme-number-</span><span class="pun">&gt;</span><span class="pln">complex n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-complex-from-real-imag 
+   </span><span class="opn">(</span><span class="pln">contents n</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span></pre></div>
+
+<p>Мы устанавливаем эти процедуры приведения в особую таблицу приведения, индексируемую под
+именами двух типов:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">put-coercion </span><span class="lit">'scheme-number</span><span class="pln"> </span><span class="lit">'complex</span><span class="pln"> 
+              scheme-number-</span><span class="pun">&gt;</span><span class="pln">complex</span><span class="clo">)</span></pre></div>
+
+<p>(Мы предполагаем, что есть процедуры <code>put-coercion</code> и <code>get-coercion</code>,
+доступные для манипулирования этой таблицей.)  Вообще, некоторые ячейки в таблице будут
+пусты, потому что в общем случае невозможно привести произвольный объект данных каждого
+типа ко всем другим типам.  Например, нет способа привести произвольное комплексное число к
+обычному числу, так что в таблице не будет общей процедуры <code>complex-&gt;scheme-number</code>.
+</p>
+<p>Как только таблица приведения настроена, мы можем обрабатывать приведение единообразным
+образом, изменив процедуру <code>apply-generic</code> из <a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a>.  Когда нас просят применить
+операцию, мы сначала проверяем, определена ли операция для типов аргументов, как и прежде.
+Если да, мы диспетчеризуемся к процедуре, найденной в таблице операций и типов.  Иначе мы
+пробуем приведение.  Для простоты мы рассматриваем только случай, когда есть два
+аргумента.<a class="footnote_link" id="DOCF116" href="#FOOT116"><sup>116</sup></a>  Мы проверяем таблицу приведения,
+можно ли привести объекты первого типа ко второму типу.  Если да, мы приводим первый
+аргумент и пробуем операцию снова.  Если объекты первого типа в общем случае нельзя привести
+ко второму типу, мы пробуем приведение в обратную сторону, чтобы посмотреть, есть ли способ
+привести второй аргумент к типу первого аргумента.  Наконец, если нет известного способа
+привести какой-либо из типов к другому типу, мы сдаёмся.  Вот эта процедура:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-generic op </span><span class="pun">.</span><span class="pln"> args</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">type-tags </span><span class="opn">(</span><span class="pln">map type-tag args</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">proc </span><span class="opn">(</span><span class="pln">get op type-tags</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> proc
+          </span><span class="opn">(</span><span class="pln">apply proc </span><span class="opn">(</span><span class="pln">map contents args</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">length args</span><span class="clo">)</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)</span><span class="pln">
+              </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">type1 </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> type-tags</span><span class="clo">))</span><span class="pln">
+                    </span><span class="opn">(</span><span class="pln">type2 </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> type-tags</span><span class="clo">))</span><span class="pln">
+                    </span><span class="opn">(</span><span class="pln">a1 </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> args</span><span class="clo">))</span><span class="pln">
+                    </span><span class="opn">(</span><span class="pln">a2 </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> args</span><span class="clo">)))</span><span class="pln">
+                </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">t1-</span><span class="pun">&gt;</span><span class="pln">t2 
+                       </span><span class="opn">(</span><span class="pln">get-coercion type1
+                                     type2</span><span class="clo">))</span><span class="pln">
+                      </span><span class="opn">(</span><span class="pln">t2-</span><span class="pun">&gt;</span><span class="pln">t1 
+                       </span><span class="opn">(</span><span class="pln">get-coercion type2 
+                                     type1</span><span class="clo">)))</span><span class="pln">
+                  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">(</span><span class="pln">t1-</span><span class="pun">&gt;</span><span class="pln">t2
+                         </span><span class="opn">(</span><span class="pln">apply-generic 
+                          op </span><span class="opn">(</span><span class="pln">t1-</span><span class="pun">&gt;</span><span class="pln">t2 a1</span><span class="clo">)</span><span class="pln"> a2</span><span class="clo">))</span><span class="pln">
+                        </span><span class="opn">(</span><span class="pln">t2-</span><span class="pun">&gt;</span><span class="pln">t1
+                         </span><span class="opn">(</span><span class="pln">apply-generic 
+                          op a1 </span><span class="opn">(</span><span class="pln">t2-</span><span class="pun">&gt;</span><span class="pln">t1 a2</span><span class="clo">)))</span><span class="pln">
+                        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+                         </span><span class="opn">(</span><span class="err">error</span><span class="pln"> 
+                          </span><span class="str">"No method for 
+                           these types"</span><span class="pln">
+                          </span><span class="opn">(</span><span class="pln">list 
+                           op 
+                           type-tags</span><span class="clo">))))))</span><span class="pln">
+              </span><span class="opn">(</span><span class="err">error</span><span class="pln"> 
+               </span><span class="str">"No method for these types"</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">list op type-tags</span><span class="clo">)))))))</span></pre></div>
+
+<p>Эта схема приведения имеет много преимуществ перед методом определения явных межтиповых
+операций, очерченным выше.  Хотя нам всё ещё нужно писать процедуры приведения, чтобы
+связать типы (возможно, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mn>2</mn>
+  </msup>
+</math> процедур для системы с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> типами), нам нужно писать
+только одну процедуру для каждой пары типов, а не отдельную процедуру для каждого набора
+типов и каждой обобщённой операции.<a class="footnote_link" id="DOCF117" href="#FOOT117"><sup>117</sup></a>
+На что мы здесь рассчитываем — это факт, что подходящее преобразование между типами зависит
+только от самих типов, а не от применяемой операции.
+</p>
+<p>С другой стороны, могут быть приложения, для которых наша схема приведения недостаточно
+обща.  Даже когда ни один из комбинируемых объектов нельзя преобразовать к типу другого, всё
+ещё может быть возможно выполнить операцию, преобразовав оба объекта к третьему типу.  Чтобы
+иметь дело с такой сложностью и при этом сохранять модульность в наших программах, обычно
+необходимо строить системы, пользующиеся ещё дальнейшей структурой в отношениях между
+типами, как мы обсуждаем далее.
+</p>
+<a id="Ierarkhii-tipov"></a>
+<h5 class="subsubheading">Иерархии типов</h5>
+
+<p>Схема приведения, представленная выше, опиралась на существование естественных отношений
+между парами типов.  Часто есть более «глобальная» структура в том, как различные типы
+соотносятся друг с другом.  Например, предположим, мы строим обобщённую арифметическую
+систему для обработки целых чисел, рациональных чисел, действительных чисел и комплексных
+чисел.  В такой системе вполне естественно рассматривать целое число как особый вид
+рационального числа, которое, в свою очередь, является особым видом действительного числа,
+которое, в свою очередь, является особым видом комплексного числа.  То, что у нас на самом
+деле есть, — это так называемая <a id="index-ierarkhiya-tipov"></a>
+<em>иерархия типов</em>, в которой, например, целые числа —
+это <a id="index-podtip"></a>
+<em>подтип</em> рациональных чисел (то есть любую операцию, которую можно применить к
+рациональному числу, можно автоматически применить к целому числу).  И наоборот, мы говорим,
+что рациональные числа образуют <a id="index-nadtip"></a>
+<em>надтип</em> целых чисел.  Та конкретная иерархия,
+которая у нас здесь, — очень простого вида, в которой каждый тип имеет самое большее один
+надтип и самое большее один подтип.  Такая структура, называемая <a id="index-bashnei"></a>
+<em>башней</em>,
+проиллюстрирована на <a href="#Figure-2_002e25">Figure 2.25</a>.
+</p>
+<figure class="float">
+<a id="Figure-2_002e25"></a>
+<object style="width: 8.46ex; height: 22.71ex;" data="fig/chap2/Fig2.25.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.25:</strong> Башня типов.</p>
+</figcaption>
+</figure>
+
+<p>Если у нас есть структура-башня, то мы можем сильно упростить задачу добавления нового типа
+в иерархию, ибо нам нужно лишь указать, как новый тип вкладывается в следующий надтип над
+ним и как он является надтипом типа под ним.  Например, если мы хотим сложить целое число с
+комплексным числом, нам не нужно явно определять особую процедуру приведения
+<code>integer-&gt;complex</code>.  Вместо этого мы определяем, как целое число можно преобразовать в
+рациональное число, как рациональное число преобразуется в действительное число и как
+действительное число преобразуется в комплексное число.  Затем мы позволяем системе
+преобразовать целое число в комплексное число через эти шаги и затем сложить два комплексных
+числа.
+</p>
+<p>Мы можем перепроектировать нашу процедуру <code>apply-generic</code> следующим образом: для
+каждого типа нам нужно снабдить процедурой <code>raise</code>, которая «поднимает» объекты этого
+типа на один уровень в башне.  Тогда, когда системе требуется оперировать объектами разных
+типов, она может последовательно поднимать более низкие типы, пока все объекты не окажутся
+на одном уровне в башне.  (<a href="#Exercise-2_002e83">Exercise 2.83</a> и <a href="#Exercise-2_002e84">Exercise 2.84</a> касаются подробностей
+реализации такой стратегии.)
+</p>
+<p>Ещё одно преимущество башни в том, что мы можем легко реализовать представление о том, что
+каждый тип «наследует» все операции, определённые на надтипе.  Например, если мы не снабжаем
+особой процедурой для нахождения действительной части целого числа, нам тем не менее следует
+ожидать, что <code>real-part</code> будет определена для целых чисел в силу того факта, что целые
+числа — подтип комплексных чисел.  В башне мы можем устроить так, чтобы это происходило
+единообразным образом, изменив <code>apply-generic</code>.  Если требуемая операция не определена
+напрямую для типа данного объекта, мы поднимаем объект к его надтипу и пробуем снова.  Таким
+образом мы ползём вверх по башне, преобразуя наш аргумент по пути, пока мы либо не найдём
+уровень, на котором желаемую операцию можно выполнить, либо не упрёмся в вершину (в этом
+случае мы сдаёмся).
+</p>
+<p>Ещё одно преимущество башни перед более общей иерархией в том, что она даёт нам простой
+способ «опустить» объект данных к простейшему представлению.  Например, если мы складываем
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <mo>+</mo>
+    <mn>3</mn>
+    <mi>i</mi>
+  </mrow>
+</math> с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <mo>−<!-- − --></mo>
+    <mn>3</mn>
+    <mi>i</mi>
+  </mrow>
+</math>, было бы хорошо получить ответ как целое число 6, а не как
+комплексное число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>6</mn>
+    <mo>+</mo>
+    <mn>0</mn>
+    <mi>i</mi>
+  </mrow>
+</math>.  <a href="#Exercise-2_002e85">Exercise 2.85</a> обсуждает способ реализовать такую
+операцию понижения.  (Трюк в том, что нам нужен общий способ отличать те объекты, которые
+можно понизить, такие как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>6</mn>
+    <mo>+</mo>
+    <mn>0</mn>
+    <mi>i</mi>
+  </mrow>
+</math>, от тех, которые нельзя, таких как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>6</mn>
+    <mo>+</mo>
+    <mn>2</mn>
+    <mi>i</mi>
+  </mrow>
+</math>.)
+</p>
+<a id="Nesovershenstva-ierarkhii"></a>
+<h5 class="subsubheading">Несовершенства иерархий</h5>
+
+<p>Если типы данных в нашей системе можно естественно расположить в башню, это сильно упрощает
+проблемы работы с обобщёнными операциями над разными типами, как мы видели.  К сожалению,
+обычно это не так.  <a href="#Figure-2_002e26">Figure 2.26</a> иллюстрирует более сложное расположение смешанных
+типов, на этот раз показывающее отношения между различными типами геометрических фигур.  Мы
+видим, что, вообще, тип может иметь более одного подтипа.  Треугольники и четырёхугольники,
+например, оба являются подтипами многоугольников.  Кроме того, тип может иметь более одного
+надтипа.  Например, равнобедренный прямоугольный треугольник можно рассматривать либо как
+равнобедренный треугольник, либо как прямоугольный треугольник.  Этот вопрос множественных
+надтипов особенно колюч, поскольку он означает, что нет уникального способа «поднять» тип в
+иерархии.  Нахождение «правильного» надтипа, в котором применить операцию к объекту, может
+включать значительный поиск по всей сети типов со стороны такой процедуры, как
+<code>apply-generic</code>.  Поскольку для типа обычно есть несколько подтипов, есть похожая
+проблема при приведении значения «вниз» по иерархии типов.  Иметь дело с большим числом
+взаимосвязанных типов, при этом сохраняя модульность в проектировании больших систем, очень
+трудно и является областью многих текущих исследований.<a class="footnote_link" id="DOCF118" href="#FOOT118"><sup>118</sup></a>
+</p>
+<figure class="float">
+<a id="Figure-2_002e26"></a>
+<object style="width: 68.12ex; height: 44.21ex;" data="fig/chap2/Fig2.26f.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.26:</strong> Отношения между типами геометрических фигур.</p>
+</figcaption>
+</figure>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e81"></a>Exercise 2.81:</strong> Луи Резонер заметил, что
+<code>apply-generic</code> может пытаться приводить аргументы к типу друг друга, даже если они уже
+имеют один и тот же тип.  Поэтому, рассуждает он, нам нужно поместить в таблицу приведения
+процедуры, чтобы <a id="index-privoditx"></a>
+<em>приводить</em> аргументы каждого типа к их собственному типу.
+Например, в дополнение к приведению <code>scheme-number-&gt;complex</code>, показанному выше, он бы
+сделал:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">scheme-number-</span><span class="pun">&gt;</span><span class="pln">scheme-number n</span><span class="clo">)</span><span class="pln"> n</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">complex-</span><span class="pun">&gt;</span><span class="pln">complex z</span><span class="clo">)</span><span class="pln"> z</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">put-coercion </span><span class="lit">'scheme-number</span><span class="pln"> </span><span class="lit">'scheme-number</span><span class="pln">
+              scheme-number-</span><span class="pun">&gt;</span><span class="pln">scheme-number</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">put-coercion </span><span class="lit">'complex</span><span class="pln"> </span><span class="lit">'complex</span><span class="pln"> 
+              complex-</span><span class="pun">&gt;</span><span class="pln">complex</span><span class="clo">)</span></pre></div>
+
+<ol>
+<li> С установленными процедурами приведения Луи что происходит, если <code>apply-generic</code>
+вызывается с двумя аргументами типа <code>scheme-number</code> или двумя аргументами типа
+<code>complex</code> для операции, которая не найдена в таблице для этих типов?  Например,
+предположим, что мы определили обобщённую операцию возведения в степень:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">exp x y</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'exp</span><span class="pln"> x y</span><span class="clo">))</span></pre></div>
+
+<p>и поместили процедуру для возведения в степень в пакет Scheme-чисел, но не в какой-либо
+другой пакет:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="roman"><span class="com">;; following added to Scheme-number package</span></span><span class="pln">
+</span><span class="opn">(</span><span class="pln">put </span><span class="lit">'exp</span><span class="pln"> 
+     </span><span class="lit">'</span><span class="opn">(</span><span class="pln">scheme-number scheme-number</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> 
+       </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">expt x y</span><span class="clo">))))</span><span class="pln"> 
+       </span><span class="roman"><span class="com">; using primitive </span><code><span class="com">expt</span></code></span>
+</pre></div>
+
+<p>Что происходит, если мы вызываем <code>exp</code> с двумя комплексными числами в качестве
+аргументов?
+</p>
+</li><li> Прав ли Луи, что нужно было что-то сделать с приведением при аргументах одного типа, или
+<code>apply-generic</code> работает правильно как есть?
+
+</li><li> Измените <code>apply-generic</code> так, чтобы она не пыталась приводить, если два аргумента имеют
+один и тот же тип.
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e82"></a>Exercise 2.82:</strong> Покажите, как обобщить <code>apply-generic</code>
+для обработки приведения в общем случае нескольких аргументов.  Одна стратегия — попытаться
+привести все аргументы к типу первого аргумента, затем к типу второго аргумента и так далее.
+Приведите пример ситуации, где эта стратегия (и точно так же двухаргументная версия,
+данная выше) недостаточно обща.  (Подсказка: рассмотрите случай, где в таблице присутствуют
+некоторые подходящие операции смешанного типа, которые не будут испробованы.)
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e83"></a>Exercise 2.83:</strong> Предположим, вы проектируете обобщённую
+арифметическую систему для работы с башней типов, показанной на <a href="#Figure-2_002e25">Figure 2.25</a>: целое,
+рациональное, действительное, комплексное.  Для каждого типа (кроме комплексного)
+спроектируйте процедуру, которая поднимает объекты этого типа на один уровень в башне.
+Покажите, как установить обобщённую операцию <code>raise</code>, которая будет работать для
+каждого типа (кроме комплексного).
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e84"></a>Exercise 2.84:</strong> Используя операцию <code>raise</code> из
+<a href="#Exercise-2_002e83">Exercise 2.83</a>, измените процедуру <code>apply-generic</code> так, чтобы она приводила свои
+аргументы к одному и тому же типу методом последовательного поднятия, как обсуждалось в этом
+разделе.  Вам понадобится придумать способ проверять, какой из двух типов выше в башне.
+Сделайте это образом, «совместимым» с остальной частью системы, и который не приведёт к
+проблемам при добавлении новых уровней в башню.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e85"></a>Exercise 2.85:</strong> В этом разделе упоминался метод «упрощения»
+объекта данных понижением его в башне типов настолько, насколько возможно.  Спроектируйте
+процедуру <code>drop</code>, которая выполняет это для башни, описанной в <a href="#Exercise-2_002e83">Exercise 2.83</a>.
+Ключ — решить некоторым общим способом, можно ли понизить объект.  Например, комплексное
+число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1.5</mn>
+    <mo>+</mo>
+    <mn>0</mn>
+    <mi>i</mi>
+  </mrow>
+</math> можно понизить до <code>real</code>, комплексное число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>+</mo>
+    <mn>0</mn>
+    <mi>i</mi>
+  </mrow>
+</math>
+можно понизить до <code>integer</code>, а комплексное число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <mo>+</mo>
+    <mn>3</mn>
+    <mi>i</mi>
+  </mrow>
+</math> нельзя понизить
+вообще.  Вот план для определения того, можно ли понизить объект: начните с определения
+обобщённой операции <code>project</code>, которая «проталкивает» объект вниз в башне.  Например,
+проекция комплексного числа включала бы отбрасывание мнимой части.  Тогда число можно
+понизить (drop), если, когда мы <code>project</code> его и <code>raise</code> результат обратно к типу,
+с которого мы начали, мы в итоге получаем нечто, равное тому, с чего мы начали.  Покажите,
+как реализовать эту идею подробно, написав процедуру <code>drop</code>, которая понижает объект
+настолько, насколько возможно.  Вам понадобится спроектировать различные операции
+проекции<a class="footnote_link" id="DOCF119" href="#FOOT119"><sup>119</sup></a> и установить
+<code>project</code> как обобщённую операцию в системе.  Вам также понадобится воспользоваться
+обобщённым предикатом равенства, таким как описанный в <a href="#Exercise-2_002e79">Exercise 2.79</a>.  Наконец,
+используйте <code>drop</code>, чтобы переписать <code>apply-generic</code> из <a href="#Exercise-2_002e84">Exercise 2.84</a> так,
+чтобы она «упрощала» свои ответы.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e86"></a>Exercise 2.86:</strong> Предположим, мы хотим обрабатывать комплексные
+числа, чьи действительные части, мнимые части, модули и углы могут быть либо обычными
+числами, либо рациональными числами, либо другими числами, которые мы могли бы пожелать
+добавить в систему.  Опишите и реализуйте изменения в системе, нужные, чтобы это вместить.
+Вам придётся определить операции, такие как <code>sine</code> и <code>cosine</code>, которые обобщены
+над обычными числами и рациональными числами.
+</p></blockquote>
+
+<a id="g_t2_002e5_002e3"></a>
+<a id="Primer_003a-simvolxnaya-algebra"></a>
+<h4 class="subsection"><span class="secnum">2.5.3</span><span class="sectitle">Пример: символьная алгебра</span></h4>
+
+<p>Манипулирование символьными алгебраическими выражениями — это сложный процесс, который
+иллюстрирует многие из труднейших проблем, возникающих в проектировании крупномасштабных
+систем.  Алгебраическое выражение, вообще, можно рассматривать как иерархическую структуру,
+дерево операторов, применённых к операндам.  Мы можем строить алгебраические выражения,
+начиная с набора примитивных объектов, таких как константы и переменные, и комбинируя их
+посредством алгебраических операторов, таких как сложение и умножение.  Как и в других
+языках, мы образуем абстракции, которые позволяют нам ссылаться на составные объекты в
+простых терминах.  Типичные абстракции в символьной алгебре — это идеи, такие как линейная
+комбинация, многочлен, рациональная функция или тригонометрическая функция.  Мы можем
+рассматривать их как составные «типы», которые часто полезны для управления обработкой
+выражений.  Например, мы могли бы описать выражение
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mi>cos</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mn>2</mn>
+    <mi>y</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>cos</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>y</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>−<!-- − --></mo>
+    <mn>2</mn>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+как многочлен от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> с коэффициентами, которые являются тригонометрическими функциями
+многочленов от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>, чьи коэффициенты — целые числа.
+</p>
+<p>Мы не будем пытаться разработать полную систему алгебраических манипуляций здесь.  Такие
+системы — чрезвычайно сложные программы, воплощающие глубокое алгебраическое знание и
+изящные алгоритмы.  Что мы сделаем — это посмотрим на простую, но важную часть
+алгебраических манипуляций: арифметику многочленов.  Мы проиллюстрируем виды решений, с
+которыми сталкивается проектировщик такой системы, и как применять идеи абстрактных данных
+и обобщённых операций, чтобы помочь организовать это усилие.
+</p>
+<a id="Arifmetika-mnogochlenov"></a>
+<h5 class="subsubheading">Арифметика многочленов</h5>
+
+<p>Наша первая задача в проектировании системы для выполнения арифметики многочленов — решить,
+что же такое многочлен.  Многочлены обычно определяются относительно некоторых переменных
+(<a id="index-neizvestnykh"></a>
+<em>неизвестных</em> многочлена).  Для простоты мы ограничимся многочленами, имеющими лишь
+одну неизвестную (<a id="index-mnogochlenami-ot-odnoi-peremennoi"></a>
+<em>многочленами от одной переменной</em>).<a class="footnote_link" id="DOCF120" href="#FOOT120"><sup>120</sup></a> Мы определим
+многочлен как сумму членов, каждый из которых — либо коэффициент, либо степень неизвестной,
+либо произведение коэффициента и степени неизвестной.  Коэффициент определяется как
+алгебраическое выражение, не зависящее от неизвестной многочлена.  Например,
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>5</mn>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <mi>x</mi>
+  </mrow>
+  <mo>+</mo>
+  <mn>7</mn>
+</math>
+— это простой многочлен от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, а
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mn>2</mn>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+  </mrow>
+</math>
+— это многочлен от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, чьи коэффициенты — многочлены от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>.
+</p>
+<p>Уже здесь мы обходим некоторые колючие вопросы.  Является ли первый из этих многочленов тем
+же, что и многочлен <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>5</mn>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mn>3</mn>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mn>7</mn>
+  </mrow>
+</math>, или нет?  Разумный ответ мог бы быть: «да, если
+мы рассматриваем многочлен чисто как математическую функцию, но нет, если мы рассматриваем
+многочлен как синтаксическую форму».  Второй многочлен алгебраически эквивалентен многочлену
+от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>, чьи коэффициенты — многочлены от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>.  Должна ли наша система распознавать
+это, или нет?  Более того, есть другие способы представить многочлен — например, как
+произведение множителей, или (для многочлена от одной переменной) как множество корней, или
+как перечисление значений многочлена в заданном наборе точек.<a class="footnote_link" id="DOCF121" href="#FOOT121"><sup>121</sup></a>  Мы можем обойти эти вопросы, решив, что в нашей системе
+алгебраических манипуляций «многочлен» будет конкретной синтаксической формой, а не его
+лежащим в основе математическим смыслом.
+</p>
+<p>Теперь мы должны рассмотреть, как взяться за выполнение арифметики над многочленами.  В этой
+простой системе мы рассмотрим только сложение и умножение.  Более того, мы будем настаивать,
+что два комбинируемых многочлена должны иметь одну и ту же неизвестную.
+</p>
+<p>Мы подойдём к проектированию нашей системы, следуя знакомой дисциплине абстракции данных.  Мы
+будем представлять многочлены, используя структуру данных под названием <a id="index-poli"></a>
+<em>поли</em>,
+которая состоит из переменной и набора членов.  Мы предполагаем, что у нас есть селекторы
+<code>variable</code> и <code>term-list</code>, которые извлекают эти части из поли, и конструктор
+<code>make-poly</code>, который собирает поли из данной переменной и списка членов.  Переменная
+будет просто символом, так что мы можем использовать процедуру <code>same-variable?</code> из
+<a href="2_002e3.xhtml#g_t2_002e3_002e2">2.3.2</a>, чтобы сравнивать переменные.  Следующие процедуры определяют сложение и умножение
+поли:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-poly p1 p2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? </span><span class="opn">(</span><span class="pln">variable p1</span><span class="clo">)</span><span class="pln"> 
+                      </span><span class="opn">(</span><span class="pln">variable p2</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">make-poly 
+       </span><span class="opn">(</span><span class="pln">variable p1</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">add-terms </span><span class="opn">(</span><span class="pln">term-list p1</span><span class="clo">)</span><span class="pln">
+                  </span><span class="opn">(</span><span class="pln">term-list p2</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Polys not in same var: 
+              ADD-POLY"</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">list p1 p2</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-poly p1 p2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? </span><span class="opn">(</span><span class="pln">variable p1</span><span class="clo">)</span><span class="pln"> 
+                      </span><span class="opn">(</span><span class="pln">variable p2</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">make-poly 
+       </span><span class="opn">(</span><span class="pln">variable p1</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">mul-terms </span><span class="opn">(</span><span class="pln">term-list p1</span><span class="clo">)</span><span class="pln">
+                  </span><span class="opn">(</span><span class="pln">term-list p2</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Polys not in same var: 
+              MUL-POLY"</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">list p1 p2</span><span class="clo">))))</span></pre></div>
+
+<p>Чтобы включить многочлены в нашу обобщённую арифметическую систему, нам нужно снабдить их
+тегами типа.  Мы будем использовать тег <code>polynomial</code> и установим подходящие операции
+над типизированными многочленами в таблицу операций.  Мы встроим весь наш код в процедуру
+установки для пакета многочленов, похожую на те, что в <a href="#g_t2_002e5_002e1">2.5.1</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">install-polynomial-package</span><span class="clo">)</span><span class="pln">
+  </span><span class="roman"><span class="com">;; internal procedures</span></span><span class="pln">
+  </span><span class="roman"><span class="com">;; representation of poly</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-poly variable term-list</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> variable term-list</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">variable p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> p</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">term-list p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> p</span><span class="clo">))</span><span class="pln">
+  ⟨</span><em><span class="pun">процедуры</span><span class="pln"> </span><code><span class="pln">same-variable?</span></code><span class="pln">
+   </span><span class="pun">и</span><span class="pln"> </span><code><span class="pln">variable?</span></code><span class="pln"> </span><span class="pun">из</span><span class="pln"> </span><span class="pun">раздела</span><span class="pln"> </span><span class="lit">2.3.2</span></em><span class="pln">⟩
+
+  </span><span class="roman"><span class="com">;; representation of terms and term lists</span></span><span class="pln">
+  ⟨</span><em><span class="pun">процедуры</span><span class="pln"> </span><code><span class="pln">adjoin-term</span></code><span class="pln"> </span><span class="roman"><span class="pun">…</span></span><span class="pln"> </span><code><span class="pln">coeff</span></code><span class="pln">
+  </span><span class="pun">из</span><span class="pln"> </span><span class="pun">текста</span><span class="pln"> </span><span class="pun">ниже</span></em><span class="pln">⟩
+
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-poly p1 p2</span><span class="clo">)</span><span class="pln"> </span><span class="roman"><span class="pun">…</span></span><span class="clo">)</span><span class="pln">
+  ⟨</span><em><span class="pun">процедуры,</span><span class="pln"> </span><span class="pun">используемые</span><span class="pln"> </span><code><span class="pln">add-poly</span></code></em><span class="pln">⟩
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-poly p1 p2</span><span class="clo">)</span><span class="pln"> </span><span class="roman"><span class="pun">…</span></span><span class="clo">)</span><span class="pln">
+  ⟨</span><em><span class="pun">процедуры,</span><span class="pln"> </span><span class="pun">используемые</span><span class="pln"> </span><code><span class="pln">mul-poly</span></code></em><span class="pln">⟩
+
+  </span><span class="roman"><span class="com">;; interface to rest of the system</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'polynomial</span><span class="pln"> p</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'add</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polynomial polynomial</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p1 p2</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">add-poly p1 p2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'mul</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polynomial polynomial</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p1 p2</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">mul-poly p1 p2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make</span><span class="pln"> </span><span class="lit">'polynomial</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">var terms</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-poly var terms</span><span class="clo">))))</span><span class="pln">
+  </span><span class="lit">'done</span><span class="clo">)</span></pre></div>
+
+<p>Сложение многочленов выполняется почленно.  Члены одного и того же порядка (то есть с одной
+и той же степенью неизвестной) должны быть скомбинированы.  Это делается образованием нового
+члена того же порядка, чей коэффициент — сумма коэффициентов слагаемых.  Члены в одном
+слагаемом, для которых нет членов того же порядка в другом слагаемом, просто накапливаются в
+строящийся многочлен-сумму.
+</p>
+<p>Чтобы манипулировать списками членов, мы предположим, что у нас есть конструктор
+<code>the-empty-termlist</code>, который возвращает пустой список членов, и конструктор
+<code>adjoin-term</code>, который присоединяет новый член к списку членов.  Мы также предположим,
+что у нас есть предикат <code>empty-termlist?</code>, который сообщает, пуст ли данный список
+членов, селектор <code>first-term</code>, который извлекает член наивысшего порядка из списка
+членов, и селектор <code>rest-terms</code>, который возвращает все, кроме члена наивысшего порядка.
+Чтобы манипулировать членами, мы предположим, что у нас есть конструктор <code>make-term</code>,
+который строит член с данными порядком и коэффициентом, и селекторы <code>order</code> и
+<code>coeff</code>, которые возвращают, соответственно, порядок и коэффициент члена.  Эти операции
+позволяют нам рассматривать и члены, и списки членов как абстракции данных, о чьих конкретных
+представлениях мы можем беспокоиться отдельно.
+</p>
+<p>Вот процедура, которая строит список членов для суммы двух многочленов:<a class="footnote_link" id="DOCF122" href="#FOOT122"><sup>122</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-terms L1 L2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">empty-termlist? L1</span><span class="clo">)</span><span class="pln"> L2</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">empty-termlist? L2</span><span class="clo">)</span><span class="pln"> L1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">t1 </span><span class="opn">(</span><span class="pln">first-term L1</span><span class="clo">))</span><span class="pln"> 
+               </span><span class="opn">(</span><span class="pln">t2 </span><span class="opn">(</span><span class="pln">first-term L2</span><span class="clo">)))</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">&gt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order t1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order t2</span><span class="clo">))</span><span class="pln">
+                  </span><span class="opn">(</span><span class="pln">adjoin-term
+                   t1 
+                   </span><span class="opn">(</span><span class="pln">add-terms </span><span class="opn">(</span><span class="pln">rest-terms L1</span><span class="clo">)</span><span class="pln"> 
+                              L2</span><span class="clo">)))</span><span class="pln">
+                 </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order t1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order t2</span><span class="clo">))</span><span class="pln">
+                  </span><span class="opn">(</span><span class="pln">adjoin-term
+                   t2 
+                   </span><span class="opn">(</span><span class="pln">add-terms 
+                    L1 
+                    </span><span class="opn">(</span><span class="pln">rest-terms L2</span><span class="clo">))))</span><span class="pln">
+                 </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+                  </span><span class="opn">(</span><span class="pln">adjoin-term
+                   </span><span class="opn">(</span><span class="pln">make-term 
+                    </span><span class="opn">(</span><span class="pln">order t1</span><span class="clo">)</span><span class="pln">
+                    </span><span class="opn">(</span><span class="pln">add </span><span class="opn">(</span><span class="pln">coeff t1</span><span class="clo">)</span><span class="pln"> 
+                         </span><span class="opn">(</span><span class="pln">coeff t2</span><span class="clo">)))</span><span class="pln">
+                   </span><span class="opn">(</span><span class="pln">add-terms 
+                    </span><span class="opn">(</span><span class="pln">rest-terms L1</span><span class="clo">)</span><span class="pln">
+                    </span><span class="opn">(</span><span class="pln">rest-terms L2</span><span class="clo">)))))))))</span></pre></div>
+
+<p>Самый важный момент, который здесь нужно отметить, в том, что мы использовали обобщённую
+процедуру сложения <code>add</code>, чтобы складывать вместе коэффициенты комбинируемых членов.
+Это имеет мощные последствия, как мы увидим ниже.
+</p>
+<p>Чтобы перемножить два списка членов, мы умножаем каждый член первого списка на все члены
+другого списка, многократно используя <code>mul-term-by-all-terms</code>, которая умножает данный
+член на все члены данного списка членов.  Получающиеся списки членов (по одному для каждого
+члена первого списка) накапливаются в сумму.  Умножение двух членов образует член, чей
+порядок — сумма порядков множителей, а чей коэффициент — произведение коэффициентов
+множителей:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-terms L1 L2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">empty-termlist? L1</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">the-empty-termlist</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">add-terms 
+       </span><span class="opn">(</span><span class="pln">mul-term-by-all-terms 
+        </span><span class="opn">(</span><span class="pln">first-term L1</span><span class="clo">)</span><span class="pln"> L2</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">mul-terms </span><span class="opn">(</span><span class="pln">rest-terms L1</span><span class="clo">)</span><span class="pln"> L2</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-term-by-all-terms t1 L</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">empty-termlist? L</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">the-empty-termlist</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">t2 </span><span class="opn">(</span><span class="pln">first-term L</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">adjoin-term
+         </span><span class="opn">(</span><span class="pln">make-term 
+          </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order t1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order t2</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">mul </span><span class="opn">(</span><span class="pln">coeff t1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">coeff t2</span><span class="clo">)))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">mul-term-by-all-terms 
+          t1 
+          </span><span class="opn">(</span><span class="pln">rest-terms L</span><span class="clo">))))))</span></pre></div>
+
+<p>Это, на самом деле, всё, что есть в сложении и умножении многочленов.  Заметьте, что,
+поскольку мы оперируем членами с помощью обобщённых процедур <code>add</code> и <code>mul</code>, наш
+пакет многочленов автоматически способен обрабатывать любой тип коэффициента, который
+известен обобщённому арифметическому пакету.  Если мы включаем механизм приведения, такой
+как один из обсуждённых в <a href="#g_t2_002e5_002e2">2.5.2</a>, то мы также автоматически способны обрабатывать
+операции над многочленами с разными типами коэффициентов, такие как
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">[</mo>
+    <mn>3</mn>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mo stretchy="false">(</mo>
+    <mn>2</mn>
+    <mo>+</mo>
+    <mn>3</mn>
+    <mi>i</mi>
+    <mo stretchy="false">)</mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mn>7</mn>
+    <mo stretchy="false">]</mo>
+    <mo>⋅<!-- ⋅ --></mo>
+  </mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow>
+      <mo>[</mo>
+      <msup>
+        <mi>x</mi>
+        <mn>4</mn>
+      </msup>
+      <mo>+</mo>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mfrac>
+          <mn>2</mn>
+          <mn>3</mn>
+        </mfrac>
+      </mrow>
+      <msup>
+        <mi>x</mi>
+        <mn>2</mn>
+      </msup>
+      <mo>+</mo>
+      <mo stretchy="false">(</mo>
+      <mn>5</mn>
+      <mo>+</mo>
+      <mn>3</mn>
+      <mi>i</mi>
+      <mo stretchy="false">)</mo>
+      <mo>]</mo>
+    </mrow>
+    <mo>.</mo>
+  </mrow>
+</math>
+Поскольку мы установили процедуры сложения и умножения многочленов <code>add-poly</code> и
+<code>mul-poly</code> в обобщённую арифметическую систему как операции <code>add</code> и <code>mul</code> для
+типа <code>polynomial</code>, наша система также автоматически способна обрабатывать операции над
+многочленами, такие как
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo maxsize="1.623em" minsize="1.623em">[</mo>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mi>x</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo maxsize="1.623em" minsize="1.623em">]</mo>
+    </mrow>
+    <mo>⋅<!-- ⋅ --></mo>
+  </mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo maxsize="1.623em" minsize="1.623em">[</mo>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>−<!-- − --></mo>
+    <mn>2</mn>
+    <mo stretchy="false">)</mo>
+    <mi>x</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>y</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>+</mo>
+    <mn>7</mn>
+    <mo stretchy="false">)</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo maxsize="1.623em" minsize="1.623em">]</mo>
+    </mrow>
+    <mo>.</mo>
+  </mrow>
+</math>
+Причина в том, что когда система пытается скомбинировать коэффициенты, она диспетчеризуется
+через <code>add</code> и <code>mul</code>.  Поскольку коэффициенты сами являются многочленами (от
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>), они будут скомбинированы с помощью <code>add-poly</code> и <code>mul-poly</code>.  Результат —
+это своего рода «рекурсия, управляемая данными», в которой, например, вызов <code>mul-poly</code>
+приведёт к рекурсивным вызовам <code>mul-poly</code>, чтобы перемножить коэффициенты.  Если бы
+коэффициенты коэффициентов сами были многочленами (как могло бы использоваться для
+представления многочленов от трёх переменных), управление данными обеспечило бы, что система
+прошла бы через ещё один уровень рекурсивных вызовов, и так далее через столько уровней,
+сколько диктует структура данных.<a class="footnote_link" id="DOCF123" href="#FOOT123"><sup>123</sup></a>
+</p>
+<a id="Predstavlenie-spiskov-chlenov"></a>
+<h5 class="subsubheading">Представление списков членов</h5>
+
+<p>Наконец, мы должны столкнуться с задачей реализации хорошего представления для списков членов.
+Список членов — это, по сути, множество коэффициентов с ключом по порядку члена.
+Следовательно, любой из методов представления множеств, обсуждённых в <a href="2_002e3.xhtml#g_t2_002e3_002e3">2.3.3</a>, можно
+применить к этой задаче.  С другой стороны, наши процедуры <code>add-terms</code> и <code>mul-terms</code>
+всегда обращаются к спискам членов последовательно от высшего порядка к низшему.  Таким
+образом, мы будем использовать некоторого рода представление упорядоченным списком.
+</p>
+<p>Как нам структурировать список, представляющий список членов?  Одно соображение — «плотность»
+многочленов, которыми мы намерены манипулировать.  Многочлен называется <a id="index-plotnym"></a>
+<em>плотным</em>,
+если он имеет ненулевые коэффициенты в членах большинства порядков.  Если он имеет много
+нулевых членов, он называется <a id="index-razrezhennym"></a>
+<em>разреженным</em>.  Например,
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>A</mi>
+  <mo>:</mo>
+  <mspace width="1em"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>x</mi>
+      <mn>5</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <msup>
+      <mi>x</mi>
+      <mn>4</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>−<!-- − --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <mi>x</mi>
+  </mrow>
+  <mo>−<!-- − --></mo>
+  <mn>5</mn>
+</math>
+— это плотный многочлен, тогда как
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>B</mi>
+  <mo>:</mo>
+  <mspace width="1em"/>
+  <msup>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mn>100</mn>
+    </mrow>
+  </msup>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mn>1</mn>
+</math>
+— разреженный.
+</p>
+<p>Списки членов плотных многочленов наиболее эффективно представляются как списки
+коэффициентов.  Например, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>A</mi>
+</math> выше хорошо представлялся бы как <code>(1 2 0 3 -2 -5)</code>.
+Порядок члена в этом представлении — это длина подсписка, начинающегося с коэффициента этого
+члена, уменьшенная на 1.<a class="footnote_link" id="DOCF124" href="#FOOT124"><sup>124</sup></a>
+Это было бы ужасным представлением для разреженного многочлена, такого как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>B</mi>
+</math>: был бы
+гигантский список нулей, перемежаемый несколькими одинокими ненулевыми членами.  Более
+разумное представление списка членов разреженного многочлена — как списка ненулевых членов,
+где каждый член — это список, содержащий порядок члена и коэффициент для этого порядка.  В
+такой схеме многочлен <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>B</mi>
+</math> эффективно представляется как <code>((100 1) (2 2) (0 1))</code>.
+Поскольку большинство манипуляций с многочленами выполняются над разреженными многочленами,
+мы будем использовать этот метод.  Мы будем предполагать, что списки членов представлены как
+списки членов, расположенные от члена наивысшего порядка к члену низшего порядка.  Как только
+мы приняли это решение, реализация селекторов и конструкторов для членов и списков членов
+прямолинейна:<a class="footnote_link" id="DOCF125" href="#FOOT125"><sup>125</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">adjoin-term term term-list</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln">zero? </span><span class="opn">(</span><span class="pln">coeff term</span><span class="clo">))</span><span class="pln">
+      term-list
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> term term-list</span><span class="clo">)))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">the-empty-termlist</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">first-term term-list</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> term-list</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rest-terms term-list</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> term-list</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">empty-termlist? term-list</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">null? term-list</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-term order coeff</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">list order coeff</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order term</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> term</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">coeff term</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> term</span><span class="clo">))</span></pre></div>
+
+<p>где <code>=zero?</code> — как определено в <a href="#Exercise-2_002e80">Exercise 2.80</a>.  (См. также <a href="#Exercise-2_002e87">Exercise 2.87</a>
+ниже.)
+</p>
+<p>Пользователи пакета многочленов будут создавать (типизированные) многочлены посредством
+процедуры:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-polynomial var terms</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make</span><span class="pln"> </span><span class="lit">'polynomial</span><span class="clo">)</span><span class="pln"> var terms</span><span class="clo">))</span></pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e87"></a>Exercise 2.87:</strong> Установите <code>=zero?</code> для многочленов в
+обобщённый арифметический пакет.  Это позволит <code>adjoin-term</code> работать для многочленов с
+коэффициентами, которые сами являются многочленами.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e88"></a>Exercise 2.88:</strong> Расширьте систему многочленов, чтобы включить
+вычитание многочленов.  (Подсказка: вам может быть полезно определить обобщённую операцию
+отрицания.)
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e89"></a>Exercise 2.89:</strong> Определите процедуры, которые реализуют
+представление списком членов, описанное выше, как подходящее для плотных многочленов.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e90"></a>Exercise 2.90:</strong> Предположим, мы хотим иметь систему многочленов,
+которая эффективна и для разреженных, и для плотных многочленов.  Один способ сделать это —
+допустить оба вида представлений списка членов в нашей системе.  Ситуация аналогична примеру
+с комплексными числами из <a href="2_002e4.xhtml#g_t2_002e4">2.4</a>, где мы допускали и прямоугольное, и полярное
+представления.  Чтобы сделать это, мы должны различать разные типы списков членов и сделать
+операции над списками членов обобщёнными.  Перепроектируйте систему многочленов, чтобы
+реализовать это обобщение.  Это большое усилие, а не локальное изменение.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e91"></a>Exercise 2.91:</strong> Многочлен от одной переменной можно разделить
+на другой, чтобы произвести многочлен-частное и многочлен-остаток.  Например,
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <msup>
+          <mi>x</mi>
+          <mn>5</mn>
+        </msup>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+      <mrow>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mo>,</mo>
+  </mrow>
+  <mtext> remainder </mtext>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1.</mn>
+  </mrow>
+</math>
+Деление можно выполнить через деление в столбик.  То есть разделите член наивысшего порядка
+делимого на член наивысшего порядка делителя.  Результат — первый член частного.  Затем
+умножьте результат на делитель, вычтите это из делимого и произведите остаток ответа,
+рекурсивно деля разность на делитель.  Остановитесь, когда порядок делителя превысит порядок
+делимого, и объявите делимое остатком.  Также, если делимое когда-либо становится нулём,
+верните нуль как и частное, и остаток.
+</p>
+<p>Мы можем спроектировать процедуру <code>div-poly</code> по образцу <code>add-poly</code> и <code>mul-poly</code>.
+Процедура проверяет, имеют ли два поли одну и ту же переменную.  Если так, <code>div-poly</code>
+снимает переменную и передаёт задачу <code>div-terms</code>, которая выполняет операцию деления над
+списками членов.  <code>Div-poly</code> наконец вновь прикрепляет переменную к результату,
+предоставленному <code>div-terms</code>.  Удобно спроектировать <code>div-terms</code> так, чтобы она
+вычисляла и частное, и остаток деления.  <code>Div-terms</code> может принимать два списка членов как
+аргументы и возвращать список из списка членов частного и списка членов остатка.
+</p>
+<p>Завершите следующее определение <code>div-terms</code>, заполнив недостающие выражения.  Используйте
+это, чтобы реализовать <code>div-poly</code>, которая принимает два поли как аргументы и возвращает
+список из частного и остатка-поли.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">div-terms L1 L2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">empty-termlist? L1</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">list </span><span class="opn">(</span><span class="pln">the-empty-termlist</span><span class="clo">)</span><span class="pln"> 
+            </span><span class="opn">(</span><span class="pln">the-empty-termlist</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">t1 </span><span class="opn">(</span><span class="pln">first-term L1</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">t2 </span><span class="opn">(</span><span class="pln">first-term L2</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order t2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order t1</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">list </span><span class="opn">(</span><span class="pln">the-empty-termlist</span><span class="clo">)</span><span class="pln"> L1</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">new-c </span><span class="opn">(</span><span class="pln">div </span><span class="opn">(</span><span class="pln">coeff t1</span><span class="clo">)</span><span class="pln"> 
+                              </span><span class="opn">(</span><span class="pln">coeff t2</span><span class="clo">)))</span><span class="pln">
+                  </span><span class="opn">(</span><span class="pln">new-o </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">order t1</span><span class="clo">)</span><span class="pln"> 
+                            </span><span class="opn">(</span><span class="pln">order t2</span><span class="clo">))))</span><span class="pln">
+              </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">rest-of-result
+                     ⟨</span><var><span class="pun">вычислить</span><span class="pln"> </span><span class="pun">остаток</span><span class="pln"> </span><span class="pun">результата</span><span class="pln">
+                     </span><span class="pun">рекурсивно</span></var><span class="pln">⟩ </span><span class="clo">))</span><span class="pln">
+                ⟨</span><var><span class="pun">образовать</span><span class="pln"> </span><span class="pun">полный</span><span class="pln"> </span><span class="pun">результат</span></var><span class="pln">⟩ </span><span class="clo">))))))</span></pre></div>
+</blockquote>
+
+<a id="Ierarkhii-tipov-v-simvolxnoi-algebre"></a>
+<h5 class="subsubheading">Иерархии типов в символьной алгебре</h5>
+
+<p>Наша система многочленов иллюстрирует, как объекты одного типа (многочлены) могут на самом
+деле быть сложными объектами, имеющими в качестве частей объекты многих разных типов.  Это не
+создаёт реальной трудности в определении обобщённых операций.  Нам нужно лишь установить
+подходящие обобщённые операции для выполнения необходимых манипуляций частями составных типов.
+На самом деле мы видели, что многочлены образуют своего рода «рекурсивную абстракцию данных» в
+том, что части многочлена могут сами быть многочленами.  Наши обобщённые операции и наш стиль
+программирования, управляемого данными, могут справиться с этим усложнением без особых хлопот.
+</p>
+<p>С другой стороны, алгебра многочленов — это система, для которой типы данных нельзя
+естественно расположить в башню.  Например, возможно иметь многочлены от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, чьи
+коэффициенты — многочлены от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>.  Также возможно иметь многочлены от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>, чьи
+коэффициенты — многочлены от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>.  Ни один из этих типов не «выше» другого каким-либо
+естественным образом, и всё же часто необходимо складывать вместе элементы из каждого
+множества.  Есть несколько способов сделать это.  Одна возможность — преобразовать один
+многочлен к типу другого, разворачивая и переставляя члены так, чтобы оба многочлена имели одну
+и ту же главную переменную.  Можно навязать этому башнеподобную структуру, упорядочив
+переменные и таким образом всегда преобразуя любой многочлен к «канонической форме» с
+переменной наивысшего приоритета в качестве доминирующей и переменными более низкого приоритета,
+зарытыми в коэффициенты.  Эта стратегия работает довольно хорошо, за исключением того, что
+преобразование может развернуть многочлен без необходимости, делая его трудным для чтения и,
+возможно, менее эффективным для работы.  Стратегия башни, безусловно, не естественна для этой
+области или для любой области, где пользователь может изобретать новые типы динамически,
+используя старые типы в различных комбинирующих формах, таких как тригонометрические функции,
+степенные ряды и интегралы.
+</p>
+<p>Не должно удивлять, что управление приведением — серьёзная проблема в проектировании
+крупномасштабных систем алгебраических манипуляций.  Бо́льшая часть сложности таких систем
+связана с отношениями между разнообразными типами.  В самом деле, справедливо сказать, что мы
+ещё не полностью понимаем приведение.  На самом деле мы ещё не полностью понимаем понятие типа
+данных.  Тем не менее то, что мы знаем, предоставляет нам мощные принципы структурирования и
+модульности для поддержки проектирования больших систем.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e92"></a>Exercise 2.92:</strong> Навязав упорядочивание переменным, расширьте
+пакет многочленов так, чтобы сложение и умножение многочленов работало для многочленов от
+разных переменных.  (Это нелегко!)
+</p></blockquote>
+
+<a id="Razviornutoe-uprazhnenie_003a-racionalxnye-funkcii"></a>
+<h5 class="subsubheading">Развёрнутое упражнение: рациональные функции</h5>
+
+<p>Мы можем расширить нашу обобщённую арифметическую систему, чтобы включить
+<a id="index-racionalxnye-funkcii"></a>
+<em>рациональные функции</em>.  Это «дроби», чьи числитель и знаменатель — многочлены, такие
+как
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mrow>
+          <mi>x</mi>
+          <mo>+</mo>
+          <mn>1</mn>
+        </mrow>
+        <mrow>
+          <msup>
+            <mi>x</mi>
+            <mn>3</mn>
+          </msup>
+          <mo>−<!-- − --></mo>
+          <mn>1</mn>
+        </mrow>
+      </mfrac>
+    </mrow>
+    <mo>.</mo>
+  </mrow>
+</math>
+Система должна быть способна складывать, вычитать, умножать и делить рациональные функции и
+выполнять такие вычисления, как
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mrow>
+      <mrow>
+        <msup>
+          <mi>x</mi>
+          <mn>3</mn>
+        </msup>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mi>x</mi>
+      <mrow>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mrow>
+          <msup>
+            <mi>x</mi>
+            <mn>3</mn>
+          </msup>
+          <mo>+</mo>
+          <mn>2</mn>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <mn>3</mn>
+          <mi>x</mi>
+          <mo>+</mo>
+          <mn>1</mn>
+        </mrow>
+        <mrow>
+          <msup>
+            <mi>x</mi>
+            <mn>4</mn>
+          </msup>
+          <mo>+</mo>
+          <msup>
+            <mi>x</mi>
+            <mn>3</mn>
+          </msup>
+          <mo>−<!-- − --></mo>
+          <mi>x</mi>
+          <mo>−<!-- − --></mo>
+          <mn>1</mn>
+        </mrow>
+      </mfrac>
+    </mrow>
+    <mo>.</mo>
+  </mrow>
+</math>
+(Здесь сумма упрощена удалением общих множителей.  Обычное «перекрёстное умножение» произвело
+бы многочлен четвёртой степени над многочленом пятой степени.)
+</p>
+<p>Если мы изменим наш пакет рациональной арифметики так, чтобы он использовал обобщённые
+операции, то он будет делать то, что мы хотим, за исключением проблемы приведения дробей к
+несократимому виду.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e93"></a>Exercise 2.93:</strong> Измените пакет рациональной арифметики, чтобы
+использовать обобщённые операции, но измените <code>make-rat</code> так, чтобы она не пыталась
+приводить дроби к несократимому виду.  Протестируйте свою систему, вызвав <code>make-rational</code>
+на двух многочленах, чтобы произвести рациональную функцию:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> p1 </span><span class="opn">(</span><span class="pln">make-polynomial </span><span class="lit">'x</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="lit">2</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> p2 </span><span class="opn">(</span><span class="pln">make-polynomial </span><span class="lit">'x</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="lit">3</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> rf </span><span class="opn">(</span><span class="pln">make-rational p2 p1</span><span class="clo">))</span></pre></div>
+
+<p>Теперь прибавьте <code>rf</code> к самому себе, используя <code>add</code>.  Вы заметите, что эта процедура
+сложения не приводит дроби к несократимому виду.
+</p></blockquote>
+
+<p>Мы можем приводить дроби многочленов к несократимому виду, используя ту же идею, что мы
+использовали с целыми числами: изменяя <code>make-rat</code>, чтобы делить и числитель, и знаменатель
+на их наибольший общий делитель.  Понятие «наибольшего общего делителя» имеет смысл для
+многочленов.  На самом деле мы можем вычислить <abbr>GCD</abbr> двух многочленов, используя по
+существу тот же алгоритм Евклида, который работает для целых чисел.<a class="footnote_link" id="DOCF126" href="#FOOT126"><sup>126</sup></a>  Целочисленная версия —
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">gcd a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> b </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      a
+      </span><span class="opn">(</span><span class="pln">gcd b </span><span class="opn">(</span><span class="pln">remainder a b</span><span class="clo">))))</span></pre></div>
+
+<p>Используя это, мы могли бы сделать очевидную модификацию, чтобы определить операцию
+<abbr>GCD</abbr>, которая работает на списках членов:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">gcd-terms a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">empty-termlist? b</span><span class="clo">)</span><span class="pln">
+      a
+      </span><span class="opn">(</span><span class="pln">gcd-terms b </span><span class="opn">(</span><span class="pln">remainder-terms a b</span><span class="clo">))))</span></pre></div>
+
+<p>где <code>remainder-terms</code> выбирает компонент остатка из списка, возвращаемого операцией деления
+списков членов <code>div-terms</code>, которая была реализована в <a href="#Exercise-2_002e91">Exercise 2.91</a>.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e94"></a>Exercise 2.94:</strong> Используя <code>div-terms</code>, реализуйте процедуру
+<code>remainder-terms</code> и используйте это, чтобы определить <code>gcd-terms</code>, как выше.  Теперь
+напишите процедуру <code>gcd-poly</code>, которая вычисляет <abbr>GCD</abbr> многочленов двух поли.
+(Процедура должна сигнализировать об ошибке, если два поли не в одной и той же переменной.)
+Установите в систему обобщённую операцию <code>greatest-common-divisor</code>, которая сводится к
+<code>gcd-poly</code> для многочленов и к обычному <code>gcd</code> для обычных чисел.  В качестве теста
+попробуйте
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> p1 
+  </span><span class="opn">(</span><span class="pln">make-polynomial 
+   </span><span class="lit">'x</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="lit">4</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="lit">3</span><span class="pln"> </span><span class="lit">-1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="lit">2</span><span class="pln"> </span><span class="lit">-2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> p2 
+  </span><span class="opn">(</span><span class="pln">make-polynomial 
+   </span><span class="lit">'x</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="lit">3</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">-1</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">greatest-common-divisor p1 p2</span><span class="clo">)</span></pre></div>
+
+<p>и проверьте свой результат вручную.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e95"></a>Exercise 2.95:</strong> Определите <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>P</mi>
+    <mn>1</mn>
+  </msub>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>P</mi>
+    <mn>2</mn>
+  </msub>
+</math> и
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>P</mi>
+    <mn>3</mn>
+  </msub>
+</math> как многочлены
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right left" rowspacing="4pt" columnspacing="1em">
+    <mtr>
+      <mtd>
+        <msub>
+          <mi>P</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>:</mo>
+      </mtd>
+      <mtd>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>−<!-- − --></mo>
+        <mn>2</mn>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <msub>
+          <mi>P</mi>
+          <mn>2</mn>
+        </msub>
+        <mo>:</mo>
+      </mtd>
+      <mtd>
+        <mn>11</mn>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>+</mo>
+        <mn>7</mn>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <msub>
+          <mi>P</mi>
+          <mn>3</mn>
+        </msub>
+        <mo>:</mo>
+      </mtd>
+      <mtd>
+        <mn>13</mn>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mn>5.</mn>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+Теперь определите <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>Q</mi>
+    <mn>1</mn>
+  </msub>
+</math> как произведение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>P</mi>
+    <mn>1</mn>
+  </msub>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>P</mi>
+    <mn>2</mn>
+  </msub>
+</math>, а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>Q</mi>
+    <mn>2</mn>
+  </msub>
+</math> как
+произведение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>P</mi>
+    <mn>1</mn>
+  </msub>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>P</mi>
+    <mn>3</mn>
+  </msub>
+</math>, и используйте <code>greatest-common-divisor</code>
+(<a href="#Exercise-2_002e94">Exercise 2.94</a>), чтобы вычислить <abbr>GCD</abbr> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>Q</mi>
+    <mn>1</mn>
+  </msub>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>Q</mi>
+    <mn>2</mn>
+  </msub>
+</math>.  Заметьте, что
+ответ не тот же, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>P</mi>
+    <mn>1</mn>
+  </msub>
+</math>.  Этот пример вводит нецелые операции в вычисление, вызывая
+трудности с алгоритмом <abbr>GCD</abbr>.<a class="footnote_link" id="DOCF127" href="#FOOT127"><sup>127</sup></a>  Чтобы понять, что происходит, попробуйте проследить <code>gcd-terms</code>
+во время вычисления <abbr>GCD</abbr> или попробуйте выполнить деление вручную.
+</p></blockquote>
+
+<p>Мы можем решить проблему, продемонстрированную в <a href="#Exercise-2_002e95">Exercise 2.95</a>, если мы используем
+следующую модификацию алгоритма <abbr>GCD</abbr> (которая на самом деле работает только в случае
+многочленов с целыми коэффициентами).  Перед выполнением любого деления многочленов в
+вычислении <abbr>GCD</abbr> мы умножаем делимое на целый постоянный множитель, выбранный так, чтобы
+гарантировать, что никакие дроби не возникнут во время процесса деления.  Наш ответ таким
+образом будет отличаться от фактического <abbr>GCD</abbr> на целый постоянный множитель, но это не
+имеет значения в случае приведения рациональных функций к несократимому виду; <abbr>GCD</abbr> будет
+использоваться, чтобы делить и числитель, и знаменатель, так что целый постоянный множитель
+сократится.
+</p>
+<p>Точнее, если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>P</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>Q</mi>
+</math> — многочлены, пусть <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>O</mi>
+    <mn>1</mn>
+  </msub>
+</math> будет порядком <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>P</mi>
+</math> (то
+есть порядком наибольшего члена <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>P</mi>
+</math>), а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>O</mi>
+    <mn>2</mn>
+  </msub>
+</math> — порядком <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>Q</mi>
+</math>.  Пусть <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>c</mi>
+</math> —
+старший коэффициент <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>Q</mi>
+</math>.  Тогда можно показать, что, если мы умножим <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>P</mi>
+</math> на
+<a id="index-celochislyaiushchii-mnozhitelx"></a>
+<em>целочисляющий<!-- /@w --> множитель<!-- /@w --></em> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>c</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mn>1</mn>
+      <mo>+</mo>
+      <msub>
+        <mi>O</mi>
+        <mn>1</mn>
+      </msub>
+      <mo>−<!-- − --></mo>
+      <msub>
+        <mi>O</mi>
+        <mn>2</mn>
+      </msub>
+    </mrow>
+  </msup>
+</math>, получающийся многочлен можно
+разделить на <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>Q</mi>
+</math>, используя алгоритм <code>div-terms</code>, не вводя никаких дробей.  Операция
+умножения делимого на эту константу и затем деления иногда называется <a id="index-psevdodeleniem"></a>
+<em>псевдоделением</em>
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>P</mi>
+</math> на <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>Q</mi>
+</math>.  Остаток деления называется <a id="index-psevdoostatkom"></a>
+<em>псевдоостатком</em>.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e96"></a>Exercise 2.96:</strong>
+</p><ol>
+<li> Реализуйте процедуру <code>pseudoremainder-terms</code>, которая в точности как
+<code>remainder-terms</code>, за исключением того, что она умножает делимое на целочисляющий
+множитель, описанный выше, перед вызовом <code>div-terms</code>.  Измените <code>gcd-terms</code>, чтобы
+использовать <code>pseudoremainder-terms</code>, и убедитесь, что <code>greatest-common-divisor</code>
+теперь производит ответ с целыми коэффициентами на примере из <a href="#Exercise-2_002e95">Exercise 2.95</a>.
+
+</li><li> <abbr>GCD</abbr> теперь имеет целые коэффициенты, но они больше, чем у <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>P</mi>
+    <mn>1</mn>
+  </msub>
+</math>.  Измените
+<code>gcd-terms</code> так, чтобы она удаляла общие множители из коэффициентов ответа, деля все
+коэффициенты на их (целый) наибольший общий делитель.
+
+</li></ol>
+</blockquote>
+
+<p>Таким образом, вот как привести рациональную функцию к несократимому виду:
+</p>
+<ul>
+<li> Вычислите <abbr>GCD</abbr> числителя и знаменателя, используя версию <code>gcd-terms</code> из
+<a href="#Exercise-2_002e96">Exercise 2.96</a>.
+
+</li><li> Когда вы получите <abbr>GCD</abbr>, умножьте и числитель, и знаменатель на один и тот же
+целочисляющий множитель перед делением на <abbr>GCD</abbr>, чтобы деление на <abbr>GCD</abbr> не вводило
+никаких нецелых коэффициентов.  В качестве множителя вы можете использовать старший коэффициент
+<abbr>GCD</abbr>, возведённый в степень <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>+</mo>
+    <msub>
+      <mi>O</mi>
+      <mn>1</mn>
+    </msub>
+    <mo>−<!-- − --></mo>
+    <msub>
+      <mi>O</mi>
+      <mn>2</mn>
+    </msub>
+  </mrow>
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>O</mi>
+    <mn>2</mn>
+  </msub>
+</math> — порядок <abbr>GCD</abbr>,
+а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>O</mi>
+    <mn>1</mn>
+  </msub>
+</math> — максимум порядков числителя и знаменателя.  Это обеспечит, что деление числителя
+и знаменателя на <abbr>GCD</abbr> не введёт никаких дробей.
+
+</li><li> Результатом этой операции будут числитель и знаменатель с целыми коэффициентами.  Коэффициенты
+обычно будут очень большими из-за всех целочисляющих множителей, так что последний шаг — удалить
+избыточные множители, вычислив (целый) наибольший общий делитель всех коэффициентов числителя и
+знаменателя и разделив на этот множитель.
+
+</li></ul>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e97"></a>Exercise 2.97:</strong>
+</p><ol>
+<li> Реализуйте этот алгоритм как процедуру <code>reduce-terms</code>, которая принимает два списка членов
+<code>n</code> и <code>d</code> как аргументы и возвращает список <code>nn</code>, <code>dd</code>, которые суть
+<code>n</code> и <code>d</code>, приведённые к несократимому виду посредством алгоритма, данного выше.
+Также напишите процедуру <code>reduce-poly</code>, аналогичную <code>add-poly</code>, которая проверяет,
+имеют ли два поли одну и ту же переменную.  Если так, <code>reduce-poly</code> снимает переменную и
+передаёт задачу <code>reduce-terms</code>, затем вновь прикрепляет переменную к двум спискам членов,
+предоставленным <code>reduce-terms</code>.
+
+</li><li> Определите процедуру, аналогичную <code>reduce-terms</code>, которая делает то, что исходная
+<code>make-rat</code> делала для целых чисел:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reduce-integers n d</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">g </span><span class="opn">(</span><span class="pln">gcd n d</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">list </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> n g</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> d g</span><span class="clo">))))</span></pre></div>
+
+<p>и определите <code>reduce</code> как обобщённую операцию, которая вызывает <code>apply-generic</code>, чтобы
+диспетчеризоваться либо к <code>reduce-poly</code> (для аргументов-<code>polynomial</code>), либо к
+<code>reduce-integers</code> (для аргументов-<code>scheme-number</code>).  Теперь вы можете легко заставить
+пакет рациональной арифметики приводить дроби к несократимому виду, заставив <code>make-rat</code>
+вызывать <code>reduce</code> перед комбинированием данных числителя и знаменателя, чтобы образовать
+рациональное число.  Система теперь обрабатывает рациональные выражения либо в целых числах,
+либо в многочленах.  Чтобы протестировать вашу программу, попробуйте пример в начале этого
+развёрнутого упражнения:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> p1 
+  </span><span class="opn">(</span><span class="pln">make-polynomial </span><span class="lit">'x</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> p2 
+  </span><span class="opn">(</span><span class="pln">make-polynomial </span><span class="lit">'x</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="lit">3</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="lit">0</span><span class="pln"> </span><span class="lit">-1</span><span class="clo">))))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> p3 
+  </span><span class="opn">(</span><span class="pln">make-polynomial </span><span class="lit">'x</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> p4 
+  </span><span class="opn">(</span><span class="pln">make-polynomial </span><span class="lit">'x</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="lit">2</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="lit">0</span><span class="pln"> </span><span class="lit">-1</span><span class="clo">))))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> rf1 </span><span class="opn">(</span><span class="pln">make-rational p1 p2</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> rf2 </span><span class="opn">(</span><span class="pln">make-rational p3 p4</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">add rf1 rf2</span><span class="clo">)</span></pre></div>
+
+<p>Посмотрите, получите ли вы правильный ответ, правильно приведённый к несократимому виду.
+</p></li></ol>
+</blockquote>
+
+<p>Вычисление <abbr>GCD</abbr> — это сердце любой системы, которая выполняет операции над рациональными
+функциями.  Алгоритм, использованный выше, хотя математически прямолинеен, чрезвычайно
+медленный.  Медлительность отчасти из-за большого числа операций деления и отчасти из-за
+огромного размера промежуточных коэффициентов, порождаемых псевдоделениями.  Одна из активных
+областей в разработке систем алгебраических манипуляций — это проектирование лучших алгоритмов
+для вычисления <abbr>GCD</abbr> многочленов.<a class="footnote_link" id="DOCF128" href="#FOOT128"><sup>128</sup></a>
+</p>
+<div class="footnote">
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT115"><p><a class="footnote_backlink" href="#DOCF115"><sup>115</sup></a>
+Нам также придётся снабдить почти идентичной
+процедурой обработку типов <code>(scheme-number complex)</code>.</p>
+</div>
+<div id="FOOT116"><p><a class="footnote_backlink" href="#DOCF116"><sup>116</sup></a>
+См. <a href="#Exercise-2_002e82">Exercise 2.82</a> для обобщений.</p>
+</div>
+<div id="FOOT117"><p><a class="footnote_backlink" href="#DOCF117"><sup>117</sup></a>
+Если мы умны, мы обычно можем обойтись меньше
+чем <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mn>2</mn>
+  </msup>
+</math> процедурами приведения.  Например, если мы знаем, как преобразовать из типа 1
+в тип 2 и из типа 2 в тип 3, то мы можем использовать это знание, чтобы преобразовать из
+типа 1 в тип 3.  Это может сильно уменьшить число процедур приведения, которые нам нужно
+снабжать явно, когда мы добавляем новый тип в систему.  Если мы готовы встроить нужную меру
+изощрённости в нашу систему, мы можем заставить её искать в «графе» отношений между типами и
+автоматически порождать те процедуры приведения, которые можно вывести из снабжённых явно.</p>
+</div>
+<div id="FOOT118"><p><a class="footnote_backlink" href="#DOCF118"><sup>118</sup></a>
+Это утверждение, которое
+также появляется в первом издании этой книги, столь же верно сейчас, как и было, когда мы
+писали его двенадцать лет назад.  Разработка полезного, общего каркаса для выражения
+отношений между различными типами сущностей (того, что философы называют «онтологией»),
+кажется неразрешимо трудной.  Главное различие между путаницей, которая существовала десять
+лет назад, и путаницей, которая существует сейчас, в том, что теперь множество
+несовершенных онтологических теорий было воплощено в изобилии соответственно несовершенных
+языков программирования.  Например, бо́льшая часть сложности объектно-ориентированных языков
+программирования — и тонкие и сбивающие с толку различия между современными
+объектно-ориентированными языками — сосредоточена на трактовке обобщённых операций над
+взаимосвязанными типами.  Наше собственное обсуждение вычислительных объектов в
+<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> полностью избегает этих вопросов.  Читатели, знакомые с
+объектно-ориентированным программированием, заметят, что нам есть что сказать в главе 3 о
+локальном состоянии, но мы даже не упоминаем «классы» или «наследование».  На самом деле мы
+подозреваем, что эти проблемы нельзя адекватно решить в терминах только проектирования
+компьютерных языков, не привлекая также работу в представлении знаний и автоматическом
+рассуждении.</p>
+</div>
+<div id="FOOT119"><p><a class="footnote_backlink" href="#DOCF119"><sup>119</sup></a>
+Действительное число можно спроецировать в целое с помощью примитива
+<code>round</code>, который возвращает ближайшее целое к своему аргументу.</p>
+</div>
+<div id="FOOT120"><p><a class="footnote_backlink" href="#DOCF120"><sup>120</sup></a>
+С другой стороны, мы
+будем допускать многочлены, чьи коэффициенты сами являются многочленами от других переменных.
+Это даст нам по существу ту же представительную мощь, что и полная система от многих
+переменных, хотя это и ведёт к проблемам приведения, как обсуждается ниже.</p>
+</div>
+<div id="FOOT121"><p><a class="footnote_backlink" href="#DOCF121"><sup>121</sup></a>
+Для многочленов от
+одной переменной задание значения многочлена в данном наборе точек может быть особенно
+хорошим представлением.  Это делает арифметику многочленов чрезвычайно простой.  Чтобы
+получить, например, сумму двух многочленов, представленных таким образом, нам нужно лишь
+сложить значения многочленов в соответствующих точках.  Чтобы преобразовать обратно к более
+привычному представлению, мы можем использовать интерполяционную формулу Лагранжа, которая
+показывает, как восстановить коэффициенты многочлена степени <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> по данным значениям
+многочлена в <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+  </mrow>
+</math> точках.</p>
+</div>
+<div id="FOOT122"><p><a class="footnote_backlink" href="#DOCF122"><sup>122</sup></a>
+Эта операция
+очень похожа на упорядоченную операцию <code>union-set</code>, которую мы разработали в
+<a href="2_002e3.xhtml#Exercise-2_002e62">Exercise 2.62</a>.  На самом деле, если мы мыслим члены многочлена как множество,
+упорядоченное по степени неизвестной, то программа, которая производит список членов для
+суммы, почти идентична <code>union-set</code>.</p>
+</div>
+<div id="FOOT123"><p><a class="footnote_backlink" href="#DOCF123"><sup>123</sup></a>
+Чтобы заставить это работать совершенно гладко,
+нам следует также добавить в нашу обобщённую арифметическую систему способность приводить
+«число» к многочлену, рассматривая его как многочлен нулевой степени, чей коэффициент — это
+число.  Это необходимо, если мы собираемся выполнять операции, такие как
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">[</mo>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mn>5</mn>
+    <mo stretchy="false">]</mo>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">[</mo>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mn>2</mn>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">]</mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+что требует прибавления коэффициента <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+  </mrow>
+</math> к коэффициенту 2.</p>
+</div>
+<div id="FOOT124"><p><a class="footnote_backlink" href="#DOCF124"><sup>124</sup></a>
+В этих примерах с многочленами мы предполагаем, что мы
+реализовали обобщённую арифметическую систему, используя механизм типов, предложенный в
+<a href="#Exercise-2_002e78">Exercise 2.78</a>.  Таким образом, коэффициенты, которые являются обычными числами, будут
+представляться как сами числа, а не как пары, чей <code>car</code> — символ <code>scheme-number</code>.</p>
+</div>
+<div id="FOOT125"><p><a class="footnote_backlink" href="#DOCF125"><sup>125</sup></a>
+Хотя мы предполагаем, что списки членов упорядочены, мы реализовали
+<code>adjoin-term</code> так, чтобы просто делать <code>cons</code> нового члена на существующий список
+членов.  Нам это сходит с рук, пока мы гарантируем, что процедуры (такие как <code>add-terms</code>),
+которые используют <code>adjoin-term</code>, всегда вызывают её с членом более высокого порядка, чем
+появляется в списке.  Если бы мы не хотели давать такую гарантию, мы могли бы реализовать
+<code>adjoin-term</code> похожей на конструктор <code>adjoin-set</code> для представления множеств
+упорядоченным списком (<a href="2_002e3.xhtml#Exercise-2_002e61">Exercise 2.61</a>).</p>
+</div>
+<div id="FOOT126"><p><a class="footnote_backlink" href="#DOCF126"><sup>126</sup></a>
+Тот факт, что
+алгоритм Евклида работает для многочленов, формализуется в алгебре утверждением, что многочлены
+образуют своего рода алгебраическую область, называемую <a id="index-evklidovym-kolxcom"></a>
+<em>евклидовым кольцом</em>.
+Евклидово кольцо — это область, допускающая сложение, вычитание и коммутативное умножение,
+вместе со способом назначать каждому элементу <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> кольца положительную целую «меру»
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>m</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> со свойствами, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>m</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+    <mo>≥<!-- ≥ --></mo>
+    <mi>m</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> для любого ненулевого <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> и
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> и что, для любых <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>, существует <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>q</mi>
+</math>, такое что
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>q</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>r</mi>
+  </mrow>
+</math> и либо <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>r</mi>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, либо <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>m</mi>
+    <mo stretchy="false">(</mo>
+    <mi>r</mi>
+    <mo stretchy="false">)</mo>
+    <mo>&lt;</mo>
+    <mi>m</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  С абстрактной точки
+зрения это то, что нужно, чтобы доказать, что алгоритм Евклида работает.  Для области целых
+чисел мера <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>m</mi>
+</math> целого числа — это абсолютное значение самого целого числа.  Для области
+многочленов мера многочлена — это его степень.</p>
+</div>
+<div id="FOOT127"><p><a class="footnote_backlink" href="#DOCF127"><sup>127</sup></a>
+В реализации вроде <abbr>MIT</abbr> Scheme это
+производит многочлен, который действительно является делителем <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>Q</mi>
+    <mn>1</mn>
+  </msub>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>Q</mi>
+    <mn>2</mn>
+  </msub>
+</math>, но с
+рациональными коэффициентами.  Во многих других системах Scheme, в которых деление целых
+чисел может производить десятичные числа ограниченной точности, мы можем не получить
+допустимый делитель.</p>
+</div>
+<div id="FOOT128"><p><a class="footnote_backlink" href="#DOCF128"><sup>128</sup></a>
+Один чрезвычайно эффективный и изящный метод
+для вычисления <abbr>GCD</abbr> многочленов был открыт Ричардом <a href="References.xhtml#Zippel-_00281979_0029">Zippel (1979)</a>.  Метод — это
+вероятностный алгоритм, как и быстрый тест на простоту, который мы обсуждали в <a href="Chapter-1.xhtml#Chapter-1">Chapter 1</a>.  Книга Зиппеля (<a href="References.xhtml#Zippel-1993">Zippel 1993</a>) описывает этот метод вместе с другими способами
+вычислять <abbr>GCD</abbr> многочленов.</p>
+</div>
+</div>
+<nav class="header">
+<p>
+Next: <a href="Chapter-3.xhtml#Chapter-3" accesskey="n" rel="next">Chapter 3</a>, Prev: <a href="2_002e4.xhtml#g_t2_002e4" accesskey="p" rel="prev">2.4</a>, Up: <a href="#g_t2_002e5" accesskey="u" rel="prev">2.5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+
+
+</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">⇣</a></span><a id="pagebottom"></a>
+</body>
+</html>

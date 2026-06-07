@@ -1,0 +1,2009 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ru" lang="ru">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Структура и интерпретация компьютерных программ, 2-е изд.: 2.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Chapter 2" />
+<link href="2_002e4.xhtml#g_t2_002e4" rel="next" title="2.4" />
+<link href="2_002e2.xhtml#g_t2_002e2_002e4" rel="prev" title="2.2.4" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t2_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e4.xhtml#g_t2_002e4" accesskey="n" rel="next">2.4</a>, Prev: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="p" rel="prev">2.2</a>, Up: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+<a id="Simvolxnye-dannye"></a>
+<h3 class="section"><span class="secnum">2.3</span><span class="sectitle">Символьные данные</span></h3>
+
+<p>Все составные объекты данных, которые мы использовали до сих пор, в конечном счёте
+строились из чисел.  В этом разделе мы расширяем представительную способность нашего
+языка, вводя возможность работать с произвольными символами как с данными.
+</p>
+
+<a id="g_t2_002e3_002e1"></a>
+<a id="Citirovanie"></a>
+<h4 class="subsection"><span class="secnum">2.3.1</span><span class="sectitle">Цитирование</span></h4>
+
+<p>Если мы можем образовывать составные данные с помощью символов, мы можем иметь списки,
+такие как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="lit">23</span><span class="pln"> </span><span class="lit">45</span><span class="pln"> </span><span class="lit">17</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">((</span><span class="pln">Norah </span><span class="lit">12</span><span class="clo">)</span><span class="pln"> 
+ </span><span class="opn">(</span><span class="pln">Molly </span><span class="lit">9</span><span class="clo">)</span><span class="pln"> 
+ </span><span class="opn">(</span><span class="pln">Anna </span><span class="lit">7</span><span class="clo">)</span><span class="pln"> 
+ </span><span class="opn">(</span><span class="pln">Lauren </span><span class="lit">6</span><span class="clo">)</span><span class="pln"> 
+ </span><span class="opn">(</span><span class="pln">Charlotte </span><span class="lit">4</span><span class="clo">))</span></pre></div>
+
+<p>Списки, содержащие символы, могут выглядеть в точности как выражения нашего языка:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">23</span><span class="pln"> </span><span class="lit">45</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">9</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fact n</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> 
+      </span><span class="lit">1</span><span class="pln"> 
+      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> n </span><span class="opn">(</span><span class="pln">fact </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))</span></pre></div>
+
+<p>Чтобы манипулировать символами, нам нужен новый элемент в нашем языке — способность
+<a id="index-citirovatx"></a>
+<em>цитировать</em> объект данных.  Предположим, мы хотим построить список
+<code>(a b)</code>.  Мы не можем достичь этого с помощью <code>(list a b)</code>, потому что это
+выражение строит список <a id="index-znachenii"></a>
+<em>значений</em> <code>a</code> и <code>b</code>, а не самих символов.
+Этот вопрос хорошо известен в контексте естественных языков, где слова и предложения
+можно рассматривать либо как семантические сущности, либо как строки символов
+(синтаксические сущности).  Распространённая практика в естественных языках —
+использовать кавычки, чтобы указать, что слово или предложение следует трактовать
+буквально как строку символов.  Например, первая буква слова «John» — это, очевидно,
+«J».  Если мы говорим кому-то «скажи своё имя вслух», мы ожидаем услышать имя этого
+человека.  Однако если мы говорим кому-то «скажи „своё имя“ вслух», мы ожидаем услышать
+слова «своё имя».  Заметьте, что мы вынуждены вкладывать кавычки, чтобы описать, что мог
+бы сказать кто-то другой.<a class="footnote_link" id="DOCF98" href="#FOOT98"><sup>98</sup></a>
+</p>
+<p>Мы можем следовать той же практике, чтобы выделять списки и символы, которые следует
+трактовать как объекты данных, а не как выражения, подлежащие вычислению.  Однако наш
+формат цитирования отличается от формата естественных языков тем, что мы помещаем знак
+кавычки (традиционно одинарную кавычку — символ <code>'</code>)<!-- /@w --> только в начале
+цитируемого объекта.  Нам это сходит с рук в синтаксисе Scheme, потому что мы полагаемся
+на пробелы и скобки для разграничения объектов.  Таким образом, смысл символа одинарной
+кавычки в том, чтобы процитировать следующий объект.<a class="footnote_link" id="DOCF99" href="#FOOT99"><sup>99</sup></a>
+</p>
+<p>Теперь мы можем различать символы и их значения:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> b </span><span class="lit">2</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">list a b</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">list </span><span class="lit">'a</span><span class="pln"> </span><span class="lit">'b</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pln">a b</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">list </span><span class="lit">'a</span><span class="pln"> b</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pln">a </span><span class="lit">2</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>Цитирование также позволяет нам вводить составные объекты, используя общепринятое
+печатное представление для списков:<a class="footnote_link" id="DOCF100" href="#FOOT100"><sup>100</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">a b c</span><span class="clo">))</span><span class="pln">
+</span><i><span class="pln">a</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">a b c</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pln">b c</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>В соответствии с этим мы можем получить пустой список, вычислив <code>'()</code>, и тем самым
+отказаться от переменной <code>nil</code>.
+</p>
+<p>Ещё один примитив, используемый при манипулировании символами, — <code>eq?</code>, который
+принимает два символа как аргументы и проверяет, одинаковы ли они.<a class="footnote_link" id="DOCF101" href="#FOOT101"><sup>101</sup></a>  Используя <code>eq?</code>, мы можем реализовать полезную
+процедуру под названием <code>memq</code>.  Она принимает два аргумента — символ и список.
+Если символ не содержится в списке (то есть не <code>eq?</code> никакому элементу списка), то
+<code>memq</code> возвращает ложь.  Иначе она возвращает подсписок списка, начинающийся с
+первого вхождения символа:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">memq item x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? x</span><span class="clo">)</span><span class="pln"> false</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> item </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">memq item </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">)))))</span></pre></div>
+
+<p>Например, значение
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">memq </span><span class="lit">'apple</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">pear banana prune</span><span class="clo">))</span></pre></div>
+
+<p>есть ложь, тогда как значение
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">memq </span><span class="lit">'apple</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">x </span><span class="opn">(</span><span class="pln">apple sauce</span><span class="clo">)</span><span class="pln"> y apple pear</span><span class="clo">))</span></pre></div>
+
+<p>есть <code>(apple pear)</code>.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e53"></a>Exercise 2.53:</strong> Что напечатал бы интерпретатор в ответ на
+вычисление каждого из следующих выражений?
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">list </span><span class="lit">'a</span><span class="pln"> </span><span class="lit">'b</span><span class="pln"> </span><span class="lit">'c</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">list </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'george</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="pln">x1 x2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y1 y2</span><span class="clo">)))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="pln">x1 x2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y1 y2</span><span class="clo">)))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">pair? </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">a short list</span><span class="clo">)))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">memq </span><span class="lit">'red</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="pln">red shoes</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">blue socks</span><span class="clo">)))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">memq </span><span class="lit">'red</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">red shoes blue socks</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e54"></a>Exercise 2.54:</strong> Два списка называются <code>equal?</code>, если
+они содержат равные элементы, расположенные в одном и том же порядке.  Например,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">equal</span><span class="pun">?</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">this is a list</span><span class="clo">)</span><span class="pln"> 
+        </span><span class="lit">'</span><span class="opn">(</span><span class="pln">this is a list</span><span class="clo">))</span></pre></div>
+
+<p>истинно, но
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">equal</span><span class="pun">?</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">this is a list</span><span class="clo">)</span><span class="pln"> 
+        </span><span class="lit">'</span><span class="opn">(</span><span class="pln">this </span><span class="opn">(</span><span class="pln">is a</span><span class="clo">)</span><span class="pln"> list</span><span class="clo">))</span></pre></div>
+
+<p>ложно.  Точнее, мы можем определить <code>equal?</code> рекурсивно в терминах базового
+равенства символов <code>eq?</code>, сказав, что <code>a</code> и <code>b</code> <code>equal?</code>, если они
+оба символы и эти символы <code>eq?</code>, или если они оба списки, такие что <code>(car a)</code>
+<code>equal?</code> <code>(car b)</code>, а <code>(cdr a)</code> <code>equal?</code> <code>(cdr b)</code>.  Пользуясь
+этой идеей, реализуйте <code>equal?</code> как процедуру.<a class="footnote_link" id="DOCF102" href="#FOOT102"><sup>102</sup></a>
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e55"></a>Exercise 2.55:</strong> Эва Лу Атор вводит в интерпретатор
+выражение
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="lit">''abracadabra</span><span class="clo">)</span></pre></div>
+
+<p>К её удивлению, интерпретатор печатает в ответ <code>quote</code>.  Объясните.
+</p></blockquote>
+
+<a id="g_t2_002e3_002e2"></a>
+<a id="Primer_003a-simvolxnoe-differencirovanie"></a>
+<h4 class="subsection"><span class="secnum">2.3.2</span><span class="sectitle">Пример: символьное дифференцирование</span></h4>
+
+<p>В качестве иллюстрации манипулирования символами и дальнейшей иллюстрации абстракции
+данных рассмотрим проектирование процедуры, которая выполняет символьное
+дифференцирование алгебраических выражений.  Мы хотели бы, чтобы процедура принимала как
+аргументы алгебраическое выражение и переменную и возвращала производную выражения по
+этой переменной.  Например, если аргументы процедуры — <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mi>b</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>c</mi>
+  </mrow>
+</math> и
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, процедура должна вернуть <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <mi>a</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>b</mi>
+  </mrow>
+</math>.  Символьное дифференцирование имеет
+особое историческое значение в Lisp.  Оно было одним из мотивирующих примеров,
+стоявших за разработкой компьютерного языка для манипулирования символами.  Более того,
+оно ознаменовало начало линии исследований, которая привела к разработке мощных систем
+для символьной математической работы, используемых ныне растущим числом прикладных
+математиков и физиков.
+</p>
+<p>В разработке программы символьного дифференцирования мы будем следовать той же стратегии
+абстракции данных, которой мы следовали в разработке системы рациональных чисел из
+<a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>.  То есть мы сначала определим алгоритм дифференцирования, который оперирует
+абстрактными объектами, такими как «суммы», «произведения» и «переменные», не
+беспокоясь о том, как они должны быть представлены.  Только потом мы обратимся к
+проблеме представления.
+</p>
+<a id="Programma-differencirovaniya-s-abstraktnymi-dannymi"></a>
+<h5 class="subsubheading">Программа дифференцирования с абстрактными данными</h5>
+
+<p>Чтобы сохранять простоту, мы рассмотрим очень простую программу символьного
+дифференцирования, которая обрабатывает выражения, построенные с использованием только
+операций сложения и умножения с двумя аргументами.  Дифференцирование любого такого
+выражения можно выполнить, применяя следующие правила сведения:
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mrow>
+          <mi>d</mi>
+          <mi>c</mi>
+        </mrow>
+        <mrow>
+          <mi>d</mi>
+          <mi>x</mi>
+        </mrow>
+      </mfrac>
+    </mrow>
+    <mspace width="thinmathspace"/>
+    <mo>=</mo>
+    <mspace width="thinmathspace"/>
+    <mn>0</mn>
+    <mo>,</mo>
+  </mrow>
+  <mspace width="1em"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>for </mtext>
+    <mi>c</mi>
+    <mtext> a constant </mtext>
+  </mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>or a variable </mtext>
+  </mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>different from </mtext>
+    <mi>x</mi>
+    <mo>,</mo>
+  </mrow>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mn>1</mn>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mo stretchy="false">(</mo>
+              <mi>u</mi>
+              <mo>+</mo>
+              <mi>v</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>u</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>v</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mo stretchy="false">(</mo>
+              <mi>u</mi>
+              <mi>v</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mi>u</mi>
+        <mspace width="0.1em"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>v</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>+</mo>
+        <mi>v</mi>
+        <mspace width="0.1em"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>u</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+Заметьте, что последние два правила рекурсивны по природе.  То есть, чтобы получить
+производную суммы, мы сначала находим производные слагаемых и складываем их.  Каждое из
+слагаемых, в свою очередь, может быть выражением, которое нужно разложить.  Разложение
+на всё меньшие и меньшие части в конце концов даст части, которые являются либо
+константами, либо переменными, чьи производные будут либо 0, либо 1.
+</p>
+<p>Чтобы воплотить эти правила в процедуре, мы позволяем себе немного мышления о желаемом,
+как мы делали при проектировании реализации рациональных чисел.  Если бы у нас было
+средство для представления алгебраических выражений, мы должны были бы суметь
+определить, является ли выражение суммой, произведением, константой или переменной.  Мы
+должны были бы суметь извлечь части выражения.  Для суммы, например, мы хотим уметь
+извлечь первое слагаемое (первый член) и второе слагаемое (второй член).  Мы также
+должны уметь строить выражения из частей.  Предположим, что у нас уже есть процедуры для
+реализации следующих селекторов, конструкторов и предикатов:
+</p>
+<div class="example">
+<pre class="example">(variable? e)          <span class="roman"><code>e</code> — переменная?</span>
+(same-variable? v1 v2) <span class="roman"><code>v1</code> и <code>v2</code> — одна и та же переменная?</span>
+(sum? e)               <span class="roman"><code>e</code> — сумма?</span>
+(addend e)             <span class="roman">Первое слагаемое суммы <code>e</code>.</span>
+(augend e)             <span class="roman">Второе слагаемое суммы <code>e</code>.</span>
+(make-sum a1 a2)       <span class="roman">Построить сумму <code>a1</code> и <code>a2</code>.</span>
+(product? e)           <span class="roman"><code>e</code> — произведение?</span>
+(multiplier e)         <span class="roman">Множитель произведения <code>e</code>.</span>
+(multiplicand e)       <span class="roman">Множимое произведения <code>e</code>.</span>
+(make-product m1 m2)   <span class="roman">Построить произведение <code>m1</code> и <code>m2</code>.</span>
+</pre></div>
+
+<p>Используя их и примитивный предикат <code>number?</code>, который опознаёт числа, мы можем
+выразить правила дифференцирования следующей процедурой:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">deriv exp var</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">number? exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">variable? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? exp var</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">sum? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-sum </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">addend exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span><span class="pln">
+                   </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">augend exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">product? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-sum
+          </span><span class="opn">(</span><span class="pln">make-product 
+           </span><span class="opn">(</span><span class="pln">multiplier exp</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">multiplicand exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">make-product 
+           </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">multiplier exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">multiplicand exp</span><span class="clo">))))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"unknown expression 
+                      type: DERIV"</span><span class="pln"> exp</span><span class="clo">))))</span></pre></div>
+
+<p>Эта процедура <code>deriv</code> воплощает полный алгоритм дифференцирования.  Поскольку она
+выражена в терминах абстрактных данных, она будет работать независимо от того, как мы
+решим представлять алгебраические выражения, лишь бы мы спроектировали подходящий набор
+селекторов и конструкторов.  Это и есть вопрос, к которому мы должны обратиться далее.
+</p>
+<a id="Predstavlenie-algebraicheskikh-vyrazhenii"></a>
+<h5 class="subsubheading">Представление алгебраических выражений</h5>
+
+<p>Мы можем вообразить много способов использовать списочную структуру для представления
+алгебраических выражений.  Например, мы могли бы использовать списки символов, которые
+отражают обычную алгебраическую нотацию, представляя <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>b</mi>
+  </mrow>
+</math> как список
+<code>(a * x + b)</code>.  Однако один особенно прямолинейный выбор — использовать ту же
+скобочную префиксную нотацию, которую Lisp использует для комбинаций; то есть
+представлять <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>b</mi>
+  </mrow>
+</math> как <code>(+ (* a x) b)</code>.  Тогда наше представление данных
+для задачи дифференцирования таково:
+</p>
+<ul>
+<li> Переменные — это символы.  Они опознаются примитивным предикатом <code>symbol?</code>:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">variable? x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">symbol? x</span><span class="clo">))</span></pre></div>
+
+</li><li> Две переменные одинаковы, если представляющие их символы <code>eq?</code>:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? v1 v2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">variable? v1</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">variable? v2</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> v1 v2</span><span class="clo">)))</span></pre></div>
+
+</li><li> Суммы и произведения строятся как списки:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-sum a1 a2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">+</span><span class="pln"> a1 a2</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-product m1 m2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">*</span><span class="pln"> m1 m2</span><span class="clo">))</span></pre></div>
+
+</li><li> Сумма — это список, первый элемент которого — символ <code>+</code>:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum? x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="pun">+</span><span class="clo">)))</span></pre></div>
+
+</li><li> Первое слагаемое — это второй элемент списка суммы:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">addend s</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> s</span><span class="clo">))</span></pre></div>
+
+</li><li> Второе слагаемое — это третий элемент списка суммы:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">augend s</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> s</span><span class="clo">))</span></pre></div>
+
+</li><li> Произведение — это список, первый элемент которого — символ <code>*</code>:
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">product? x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="pun">*</span><span class="clo">)))</span></pre></div>
+
+</li><li> Множитель — это второй элемент списка произведения:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">multiplier p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> p</span><span class="clo">))</span></pre></div>
+
+</li><li> Множимое — это третий элемент списка произведения:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">multiplicand p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> p</span><span class="clo">))</span></pre></div>
+
+</li></ul>
+
+<p>Таким образом, нам нужно лишь скомбинировать их с алгоритмом, воплощённым в <code>deriv</code>,
+чтобы получить работающую программу символьного дифференцирования.  Рассмотрим несколько
+примеров её поведения:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">))</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">))</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span></i><span class="pln">
+   </span><i><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">))</span></i><span class="pln">
+      </span><i><span class="opn">(</span><span class="pun">+</span><span class="pln">  x </span><span class="lit">3</span><span class="clo">)))</span></i>
+</pre></div>
+
+<p>Программа производит ответы, которые верны; однако они неупрощённые.  Верно, что
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mi>d</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mi>y</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+      <mrow>
+        <mi>d</mi>
+        <mi>x</mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mn>0</mn>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mi>y</mi>
+    <mo>,</mo>
+  </mrow>
+</math>
+но мы хотели бы, чтобы программа знала, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mn>0</mn>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>y</mi>
+  </mrow>
+</math>
+и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>0</mn>
+    <mo>+</mo>
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>y</mi>
+  </mrow>
+</math>.  Ответ для второго примера должен был быть просто <code>y</code>.  Как
+показывает третий пример, это становится серьёзной проблемой, когда выражения сложны.
+</p>
+<p>Наша трудность очень похожа на ту, с которой мы столкнулись в реализации рациональных
+чисел: мы не приводили ответы к простейшей форме.  Чтобы выполнить приведение
+рациональных чисел, нам нужно было изменить только конструкторы и селекторы реализации.
+Мы можем принять похожую стратегию здесь.  Мы вообще не будем менять <code>deriv</code>.
+Вместо этого мы изменим <code>make-sum</code> так, что если оба слагаемых — числа, то
+<code>make-sum</code> сложит их и вернёт их сумму.  Также, если одно из слагаемых равно 0, то
+<code>make-sum</code> вернёт другое слагаемое:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-sum a1 a2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln">number? a1 </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> a2</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln">number? a2 </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> a1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? a1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? a2</span><span class="clo">))</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a1 a2</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">+</span><span class="pln"> a1 a2</span><span class="clo">))))</span></pre></div>
+
+<p>Это использует процедуру <code>=number?</code>, которая проверяет, равно ли выражение данному
+числу:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln">number? exp num</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> exp num</span><span class="clo">)))</span></pre></div>
+
+<p>Аналогично, мы изменим <code>make-product</code>, чтобы встроить правила, что 0, умноженный на
+что угодно, есть 0, и 1, умноженная на что угодно, есть сама эта вещь:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-product m1 m2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln">number? m1 </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+             </span><span class="opn">(</span><span class="pun">=</span><span class="pln">number? m2 </span><span class="lit">0</span><span class="clo">))</span><span class="pln"> 
+         </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln">number? m1 </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> m2</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln">number? m2 </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> m1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? m1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? m2</span><span class="clo">))</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> m1 m2</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">*</span><span class="pln"> m1 m2</span><span class="clo">))))</span></pre></div>
+
+<p>Вот как эта версия работает на наших трёх примерах:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">1</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="pln">y</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">))</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">)))</span></i>
+</pre></div>
+
+<p>Хотя это значительное улучшение, третий пример показывает, что нам ещё далеко до
+программы, которая приводит выражения к форме, которую мы могли бы согласиться считать
+«простейшей».  Проблема алгебраического упрощения сложна, потому что, среди прочих
+причин, форма, которая может быть простейшей для одной цели, может не быть таковой для
+другой.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e56"></a>Exercise 2.56:</strong> Покажите, как расширить базовый
+дифференциатор для обработки большего числа видов выражений.  Например, реализуйте
+правило дифференцирования
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mi>d</mi>
+        <mo stretchy="false">(</mo>
+        <msup>
+          <mi>u</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mspace width="0.1ex"/>
+            <mi>n</mi>
+          </mrow>
+        </msup>
+        <mo stretchy="false">)</mo>
+      </mrow>
+      <mrow>
+        <mi>d</mi>
+        <mi>x</mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <msup>
+      <mi>u</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mspace width="0.1ex"/>
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msup>
+    <mspace width="thinmathspace"/>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mrow>
+          <mi>d</mi>
+          <mi>u</mi>
+        </mrow>
+        <mrow>
+          <mi>d</mi>
+          <mi>x</mi>
+        </mrow>
+      </mfrac>
+    </mrow>
+  </mrow>
+</math>
+добавив новое предложение к программе <code>deriv</code> и определив подходящие процедуры
+<code>exponentiation?</code>, <code>base</code>, <code>exponent</code> и <code>make-exponentiation</code>.  (Вы
+можете использовать символ <code>**</code> для обозначения возведения в степень.)  Встройте
+правила, что что угодно, возведённое в степень 0, есть 1, и что угодно, возведённое в
+степень 1, есть сама эта вещь.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e57"></a>Exercise 2.57:</strong> Расширьте программу дифференцирования для
+обработки сумм и произведений произвольного числа (двух или более) членов.  Тогда
+последний пример выше можно было бы выразить как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">))</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span></pre></div>
+
+<p>Постарайтесь сделать это, изменив только представление для сумм и произведений, вообще
+не меняя процедуру <code>deriv</code>.  Например, <code>addend</code> суммы был бы первым членом, а
+<code>augend</code> был бы суммой остальных членов.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e58"></a>Exercise 2.58:</strong> Предположим, мы хотим изменить программу
+дифференцирования так, чтобы она работала с обычной математической нотацией, в которой
+<code>+</code> и <code>*</code> — инфиксные, а не префиксные операторы.  Поскольку программа
+дифференцирования определена в терминах абстрактных данных, мы можем изменить её для
+работы с различными представлениями выражений, изменив лишь предикаты, селекторы и
+конструкторы, определяющие представление алгебраических выражений, над которыми должен
+работать дифференциатор.
+</p>
+<ol>
+<li> Покажите, как сделать это, чтобы дифференцировать алгебраические выражения,
+представленные в инфиксной форме, такие как <code>(x + (3 * (x + (y + 2))))</code>.  Чтобы
+упростить задачу, предположите, что <code>+</code> и <code>*</code> всегда принимают два аргумента и
+что выражения полностью заключены в скобки.
+
+</li><li> Задача становится существенно труднее, если мы допускаем стандартную алгебраическую
+нотацию, такую как <code>(x + 3 * (x + y + 2))</code>, которая отбрасывает ненужные скобки и
+предполагает, что умножение делается до сложения.  Можете ли вы спроектировать
+подходящие предикаты, селекторы и конструкторы для этой нотации так, чтобы наша программа
+производной всё ещё работала?
+
+</li></ol>
+</blockquote>
+
+<a id="g_t2_002e3_002e3"></a>
+<a id="Primer_003a-predstavlenie-mnozhestv"></a>
+<h4 class="subsection"><span class="secnum">2.3.3</span><span class="sectitle">Пример: представление множеств</span></h4>
+
+<p>В предыдущих примерах мы строили представления для двух видов составных объектов
+данных: рациональных чисел и алгебраических выражений.  В одном из этих примеров у нас
+был выбор — упрощать (приводить) выражения во время построения или во время выбора, но,
+кроме этого, выбор представления для этих структур в терминах списков был
+прямолинейным.  Когда мы обращаемся к представлению множеств, выбор представления не
+столь очевиден.  В самом деле, есть несколько возможных представлений, и они значительно
+различаются между собой по нескольким параметрам.
+</p>
+<p>Неформально, множество — это просто набор различных объектов.  Чтобы дать более точное
+определение, мы можем применить метод абстракции данных.  То есть мы определяем
+«множество», задавая операции, которые должны использоваться над множествами.  Это
+<code>union-set</code>, <code>intersection-set</code>, <code>element-of-set?</code> и <code>adjoin-set</code>.
+<code>Element-of-set?</code> — это предикат, который определяет, является ли данный элемент
+членом множества.  <code>Adjoin-set</code> принимает объект и множество как аргументы и
+возвращает множество, которое содержит элементы исходного множества, а также
+присоединённый элемент.  <code>Union-set</code> вычисляет объединение двух множеств — множество,
+содержащее каждый элемент, который появляется в любом из аргументов.
+<code>Intersection-set</code> вычисляет пересечение двух множеств — множество, содержащее
+только элементы, которые появляются в обоих аргументах.  С точки зрения абстракции
+данных мы вольны проектировать любое представление, которое реализует эти операции
+способом, согласующимся с приведёнными выше интерпретациями.<a class="footnote_link" id="DOCF103" href="#FOOT103"><sup>103</sup></a>
+</p>
+<a id="Mnozhestva-kak-neuporyadochennye-spiski"></a>
+<h5 class="subsubheading">Множества как неупорядоченные списки</h5>
+
+<p>Один способ представить множество — это список его элементов, в котором ни один элемент
+не появляется более одного раза.  Пустое множество представляется пустым списком.  В
+этом представлении <code>element-of-set?</code> похожа на процедуру <code>memq</code> из
+<a href="#g_t2_002e3_002e1">2.3.1</a>.  Она использует <code>equal?</code> вместо <code>eq?</code>, чтобы элементы множества
+не обязаны были быть символами:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">element-of-set? x </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? </span><span class="kwd">set</span><span class="clo">)</span><span class="pln"> false</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">equal</span><span class="pun">?</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="kwd">set</span><span class="clo">))</span><span class="pln"> true</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">element-of-set? x </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> </span><span class="kwd">set</span><span class="clo">)))))</span></pre></div>
+
+<p>Используя это, мы можем написать <code>adjoin-set</code>.  Если присоединяемый объект уже в
+множестве, мы просто возвращаем множество.  Иначе мы используем <code>cons</code>, чтобы
+добавить объект к списку, представляющему множество:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">adjoin-set x </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">element-of-set? x </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+      </span><span class="kwd">set</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x </span><span class="kwd">set</span><span class="clo">)))</span></pre></div>
+
+<p>Для <code>intersection-set</code> мы можем использовать рекурсивную стратегию.  Если мы знаем,
+как образовать пересечение <code>set2</code> и <code>cdr</code> списка <code>set1</code>, нам нужно лишь
+решить, включать ли <code>car</code> списка <code>set1</code> в это.  Но это зависит от того,
+находится ли <code>(car set1)</code> также в <code>set2</code>.  Вот получающаяся процедура:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">intersection-set set1 set2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? set1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? set2</span><span class="clo">))</span><span class="pln"> 
+         </span><span class="lit">'</span><span class="opn">(</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">element-of-set? </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> set1</span><span class="clo">)</span><span class="pln"> set2</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> set1</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">intersection-set </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> set1</span><span class="clo">)</span><span class="pln"> 
+                                 set2</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">intersection-set </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> set1</span><span class="clo">)</span><span class="pln"> 
+                                set2</span><span class="clo">))))</span></pre></div>
+
+<p>При проектировании представления один из вопросов, о которых мы должны заботиться, —
+эффективность.  Рассмотрим число шагов, требуемых нашими операциями над множествами.
+Поскольку все они используют <code>element-of-set?</code>, скорость этой операции оказывает
+значительное влияние на эффективность реализации множеств в целом.  Так вот, чтобы
+проверить, является ли объект членом множества, <code>element-of-set?</code>, возможно,
+придётся просканировать всё множество.  (В худшем случае объекта в множестве не
+оказывается.)  Следовательно, если множество имеет <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> элементов,
+<code>element-of-set?</code> может занять до <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> шагов.  Таким образом, число требуемых
+шагов растёт как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Число шагов, требуемых <code>adjoin-set</code>, которая
+использует эту операцию, также растёт как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Для
+<code>intersection-set</code>, которая делает проверку <code>element-of-set?</code> для каждого
+элемента <code>set1</code>, число требуемых шагов растёт как произведение размеров
+участвующих множеств, или <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> для двух множеств размера <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  То
+же будет верно для <code>union-set</code>.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e59"></a>Exercise 2.59:</strong> Реализуйте операцию <code>union-set</code> для
+представления множеств неупорядоченными списками.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e60"></a>Exercise 2.60:</strong> Мы задали, что множество представляется
+списком без дубликатов.  Теперь предположим, что мы допускаем дубликаты.  Например,
+множество <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>2</mn>
+    <mo>,</mo>
+    <mn>3</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math> можно было бы представить списком <code>(2 3 2 1 3 2 2)</code>.
+Спроектируйте процедуры <code>element-of-set?</code>, <code>adjoin-set</code>, <code>union-set</code> и
+<code>intersection-set</code>, которые оперируют этим представлением.  Как сравнивается
+эффективность каждой с соответствующей процедурой для представления без дубликатов?  Есть
+ли приложения, для которых вы бы использовали это представление в предпочтение
+представлению без дубликатов?
+</p></blockquote>
+
+<a id="Mnozhestva-kak-uporyadochennye-spiski"></a>
+<h5 class="subsubheading">Множества как упорядоченные списки</h5>
+
+<p>Один способ ускорить наши операции над множествами — изменить представление так, чтобы
+элементы множества перечислялись в возрастающем порядке.  Чтобы сделать это, нам нужен
+некоторый способ сравнивать два объекта, чтобы мы могли сказать, который больше.
+Например, мы могли бы сравнивать символы лексикографически, или мы могли бы
+договориться о некотором методе присвоения уникального числа объекту, а затем сравнивать
+элементы, сравнивая соответствующие числа.  Чтобы наше обсуждение оставалось простым, мы
+рассмотрим только случай, когда элементы множества — числа, так что мы можем сравнивать
+элементы с помощью <code>&gt;</code> и <code>&lt;</code>.  Мы будем представлять множество чисел,
+перечисляя его элементы в возрастающем порядке.  Тогда как наше первое представление выше
+позволяло нам представлять множество <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>3</mn>
+    <mo>,</mo>
+    <mn>6</mn>
+    <mo>,</mo>
+    <mn>10</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math>, перечисляя элементы в
+любом порядке, наше новое представление позволяет только список <code>(1 3 6 10)</code>.
+</p>
+<p>Одно преимущество упорядочивания проявляется в <code>element-of-set?</code>: при проверке
+наличия элемента нам больше не нужно сканировать всё множество.  Если мы достигаем
+элемента множества, который больше искомого элемента, то мы знаем, что элемента в
+множестве нет:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">element-of-set? x </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? </span><span class="kwd">set</span><span class="clo">)</span><span class="pln"> false</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="kwd">set</span><span class="clo">))</span><span class="pln"> true</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="kwd">set</span><span class="clo">))</span><span class="pln"> false</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">element-of-set? x </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> </span><span class="kwd">set</span><span class="clo">)))))</span></pre></div>
+
+<p>Сколько шагов это экономит?  В худшем случае искомый элемент может быть наибольшим в
+множестве, так что число шагов то же, что и для неупорядоченного представления.  С
+другой стороны, если мы ищем элементы многих разных размеров, мы можем ожидать, что
+иногда мы сможем прекратить поиск в точке около начала списка, а в других случаях нам
+всё ещё нужно будет осмотреть большую часть списка.  В среднем мы должны ожидать, что
+придётся осмотреть около половины элементов множества.  Таким образом, среднее число
+требуемых шагов будет около <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mn>2</mn>
+  </mrow>
+</math>.  Это всё ещё рост <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, но это
+экономит нам, в среднем, множитель 2 в числе шагов по сравнению с предыдущей реализацией.
+</p>
+<p>Мы получаем более впечатляющее ускорение с <code>intersection-set</code>.  В неупорядоченном
+представлении эта операция требовала <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> шагов, потому что мы выполняли
+полное сканирование <code>set2</code> для каждого элемента <code>set1</code>.  Но с упорядоченным
+представлением мы можем использовать более хитрый метод.  Начнём со сравнения начальных
+элементов, <code>x1</code> и <code>x2</code>, двух множеств.  Если <code>x1</code> равно <code>x2</code>, то это
+даёт элемент пересечения, а остаток пересечения — это пересечение <code>cdr</code> двух
+множеств.  Предположим, однако, что <code>x1</code> меньше <code>x2</code>.  Поскольку <code>x2</code> —
+наименьший элемент в <code>set2</code>, мы можем сразу заключить, что <code>x1</code> не может
+появиться нигде в <code>set2</code> и, следовательно, не находится в пересечении.
+Следовательно, пересечение равно пересечению <code>set2</code> с <code>cdr</code> списка <code>set1</code>.
+Аналогично, если <code>x2</code> меньше <code>x1</code>, то пересечение даётся пересечением
+<code>set1</code> с <code>cdr</code> списка <code>set2</code>.  Вот эта процедура:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">intersection-set set1 set2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? set1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? set2</span><span class="clo">))</span><span class="pln">
+      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">x1 </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> set1</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x2 </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> set2</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> x1 x2</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x1 </span><span class="opn">(</span><span class="pln">intersection-set 
+                         </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> set1</span><span class="clo">)</span><span class="pln">
+                         </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> set2</span><span class="clo">))))</span><span class="pln">
+              </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> x1 x2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">intersection-set 
+                          </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> set1</span><span class="clo">)</span><span class="pln"> 
+                          set2</span><span class="clo">))</span><span class="pln">
+              </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> x2 x1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">intersection-set 
+                          set1 
+                          </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> set2</span><span class="clo">)))))))</span></pre></div>
+
+<p>Чтобы оценить число шагов, требуемых этим процессом, заметьте, что на каждом шаге мы
+сводим задачу пересечения к вычислению пересечений меньших множеств — удаляя первый
+элемент из <code>set1</code>, или <code>set2</code>, или обоих.  Таким образом, число требуемых
+шагов — это самое большее сумма размеров <code>set1</code> и <code>set2</code>, а не произведение
+размеров, как в неупорядоченном представлении.  Это рост <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, а не
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> — значительное ускорение, даже для множеств умеренного размера.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e61"></a>Exercise 2.61:</strong> Дайте реализацию <code>adjoin-set</code>,
+используя упорядоченное представление.  По аналогии с <code>element-of-set?</code> покажите,
+как воспользоваться упорядочиванием, чтобы получить процедуру, которая требует в среднем
+примерно вдвое меньше шагов, чем при неупорядоченном представлении.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e62"></a>Exercise 2.62:</strong> Дайте <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>-реализацию
+<code>union-set</code> для множеств, представленных упорядоченными списками.
+</p></blockquote>
+
+<a id="Mnozhestva-kak-dvoichnye-derevxya"></a>
+<h5 class="subsubheading">Множества как двоичные деревья</h5>
+
+<p>Мы можем сделать лучше, чем представление упорядоченным списком, расположив элементы
+множества в форме дерева.  Каждый узел дерева содержит один элемент множества,
+называемый «записью» в этом узле, и связь с каждым из двух других (возможно, пустых)
+узлов.  «Левая» связь указывает на элементы, меньшие чем в узле, а «правая» связь — на
+элементы, бо́льшие чем в узле.  <a href="#Figure-2_002e16">Figure 2.16</a> показывает некоторые деревья, которые
+представляют множество <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>3</mn>
+    <mo>,</mo>
+    <mn>5</mn>
+    <mo>,</mo>
+    <mn>7</mn>
+    <mo>,</mo>
+    <mn>9</mn>
+    <mo>,</mo>
+    <mn>11</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math>.  Одно и то же множество может быть
+представлено деревом несколькими различными способами.  Единственное, что мы требуем для
+допустимого представления, — это чтобы все элементы в левом поддереве были меньше записи
+узла, а все элементы в правом поддереве — больше.
+</p>
+<figure class="float">
+<a id="Figure-2_002e16"></a>
+<object style="width: 45.93ex; height: 21.50ex;" data="fig/chap2/Fig2.16c.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.16:</strong> Различные двоичные деревья, представляющие множество <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>3</mn>
+    <mo>,</mo>
+    <mn>5</mn>
+    <mo>,</mo>
+    <mn>7</mn>
+    <mo>,</mo>
+    <mn>9</mn>
+    <mo>,</mo>
+    <mn>11</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math>.</p>
+</figcaption>
+</figure>
+
+<p>Преимущество древовидного представления таково: предположим, мы хотим проверить, содержится
+ли число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> в множестве.  Мы начинаем со сравнения <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> с записью в верхнем
+узле.  Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> меньше этого, мы знаем, что нам нужно искать только в левом
+поддереве; если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> больше, нам нужно искать только в правом поддереве.  Так вот,
+если дерево «сбалансировано», каждое из этих поддеревьев будет примерно вдвое меньше
+исходного.  Таким образом, за один шаг мы свели задачу поиска в дереве размера <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> к
+поиску в дереве размера <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mn>2</mn>
+  </mrow>
+</math>.  Поскольку размер дерева уменьшается вдвое на
+каждом шаге, мы должны ожидать, что число шагов, нужных для поиска в дереве размера
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, растёт как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.<a class="footnote_link" id="DOCF104" href="#FOOT104"><sup>104</sup></a> Для больших множеств это будет значительным ускорением по сравнению с
+предыдущими представлениями.
+</p>
+<p>Мы можем представлять деревья с помощью списков.  Каждый узел будет списком из трёх
+элементов: запись в узле, левое поддерево и правое поддерево.  Левое или правое поддерево,
+равное пустому списку, будет указывать, что там нет присоединённого поддерева.  Мы можем
+описать это представление следующими процедурами:<a class="footnote_link" id="DOCF105" href="#FOOT105"><sup>105</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">entry tree</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> tree</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">left-branch tree</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> tree</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">right-branch tree</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> tree</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-tree entry left right</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">list entry left right</span><span class="clo">))</span></pre></div>
+
+<p>Теперь мы можем написать процедуру <code>element-of-set?</code>, используя описанную выше
+стратегию:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">element-of-set? x </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? </span><span class="kwd">set</span><span class="clo">)</span><span class="pln"> false</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">entry </span><span class="kwd">set</span><span class="clo">))</span><span class="pln"> true</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">entry </span><span class="kwd">set</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">element-of-set? 
+          x 
+          </span><span class="opn">(</span><span class="pln">left-branch </span><span class="kwd">set</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">&gt;</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">entry </span><span class="kwd">set</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">element-of-set? 
+          x 
+          </span><span class="opn">(</span><span class="pln">right-branch </span><span class="kwd">set</span><span class="clo">)))))</span></pre></div>
+
+<p>Присоединение элемента к множеству реализуется аналогично и также требует
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> шагов.  Чтобы присоединить элемент <code>x</code>, мы сравниваем
+<code>x</code> с записью узла, чтобы определить, должен ли <code>x</code> быть добавлен в правую или
+в левую ветвь, и, присоединив <code>x</code> к подходящей ветви, мы соединяем эту
+новопостроенную ветвь с исходной записью и другой ветвью.  Если <code>x</code> равен записи, мы
+просто возвращаем узел.  Если нас просят присоединить <code>x</code> к пустому дереву, мы
+порождаем дерево, у которого <code>x</code> — запись, а правая и левая ветви пусты.  Вот эта
+процедура:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">adjoin-set x </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? </span><span class="kwd">set</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-tree x </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">entry </span><span class="kwd">set</span><span class="clo">))</span><span class="pln"> </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">entry </span><span class="kwd">set</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-tree 
+          </span><span class="opn">(</span><span class="pln">entry </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">adjoin-set x </span><span class="opn">(</span><span class="pln">left-branch </span><span class="kwd">set</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">right-branch </span><span class="kwd">set</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">&gt;</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">entry </span><span class="kwd">set</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-tree
+          </span><span class="opn">(</span><span class="pln">entry </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">left-branch </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">adjoin-set x </span><span class="opn">(</span><span class="pln">right-branch </span><span class="kwd">set</span><span class="clo">))))))</span></pre></div>
+
+<p>Приведённое выше утверждение, что поиск в дереве можно выполнить за логарифмическое число
+шагов, опирается на предположение, что дерево «сбалансировано», то есть что левое и правое
+поддерево каждого дерева имеют приблизительно одинаковое число элементов, так что каждое
+поддерево содержит около половины элементов своего родителя.  Но как мы можем быть
+уверены, что строимые нами деревья будут сбалансированы?  Даже если мы начинаем со
+сбалансированного дерева, добавление элементов с помощью <code>adjoin-set</code> может произвести
+несбалансированный результат.  Поскольку позиция новоприсоединённого элемента зависит от
+того, как элемент сравнивается с элементами, уже находящимися в множестве, мы можем ожидать,
+что если мы добавляем элементы «случайно», дерево будет стремиться быть сбалансированным в
+среднем.  Но это не гарантия.  Например, если мы начинаем с пустого множества и присоединяем
+числа от 1 до 7 по порядку, мы получаем сильно несбалансированное дерево, показанное на
+<a href="#Figure-2_002e17">Figure 2.17</a>.  В этом дереве все левые поддеревья пусты, так что у него нет
+преимущества перед простым упорядоченным списком.  Один способ решить эту проблему — это
+определить операцию, которая преобразует произвольное дерево в сбалансированное дерево с теми
+же элементами.  Тогда мы можем выполнять это преобразование после каждых нескольких операций
+<code>adjoin-set</code>, чтобы держать наше множество в равновесии.  Есть также другие способы
+решить эту проблему, большинство из которых включают проектирование новых структур данных,
+для которых и поиск, и вставку можно выполнить за <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+шагов.<a class="footnote_link" id="DOCF106" href="#FOOT106"><sup>106</sup></a>
+</p>
+<figure class="float">
+<a id="Figure-2_002e17"></a>
+<object style="width: 26.68ex; height: 26.51ex;" data="fig/chap2/Fig2.17a.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.17:</strong> Несбалансированное дерево, полученное присоединением чисел от 1 до 7 по порядку.</p>
+</figcaption>
+</figure>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e63"></a>Exercise 2.63:</strong> Каждая из следующих двух процедур
+преобразует двоичное дерево в список.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tree-</span><span class="pun">&gt;</span><span class="pln">list-1 tree</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? tree</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">append 
+       </span><span class="opn">(</span><span class="pln">tree-</span><span class="pun">&gt;</span><span class="pln">list-1 
+        </span><span class="opn">(</span><span class="pln">left-branch tree</span><span class="clo">))</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">entry tree</span><span class="clo">)</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">tree-</span><span class="pun">&gt;</span><span class="pln">list-1 
+              </span><span class="opn">(</span><span class="pln">right-branch tree</span><span class="clo">))))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tree-</span><span class="pun">&gt;</span><span class="pln">list-2 tree</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">copy-to-list tree result-list</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? tree</span><span class="clo">)</span><span class="pln">
+        result-list
+        </span><span class="opn">(</span><span class="pln">copy-to-list 
+         </span><span class="opn">(</span><span class="pln">left-branch tree</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">entry tree</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">copy-to-list 
+                </span><span class="opn">(</span><span class="pln">right-branch tree</span><span class="clo">)</span><span class="pln">
+                result-list</span><span class="clo">)))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">copy-to-list tree </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)))</span></pre></div>
+
+<ol>
+<li> Производят ли две процедуры один и тот же результат для каждого дерева?  Если нет, то чем
+различаются результаты?  Какие списки производят две процедуры для деревьев на
+<a href="#Figure-2_002e16">Figure 2.16</a>?
+
+</li><li> Имеют ли две процедуры один и тот же порядок роста в числе шагов, требуемых для
+преобразования сбалансированного дерева с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> элементами в список?  Если нет, то
+какая растёт медленнее?
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e64"></a>Exercise 2.64:</strong> Следующая процедура <code>list-&gt;tree</code>
+преобразует упорядоченный список в сбалансированное двоичное дерево.  Вспомогательная
+процедура <code>partial-tree</code> принимает как аргументы целое число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и список из по
+меньшей мере <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> элементов и строит сбалансированное дерево, содержащее первые
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> элементов списка.  Результат, возвращаемый <code>partial-tree</code>, — это пара
+(образованная с помощью <code>cons</code>), чей <code>car</code> — построенное дерево, а чей
+<code>cdr</code> — список элементов, не включённых в дерево.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-</span><span class="pun">&gt;</span><span class="pln">tree elements</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="opn">(</span><span class="pln">partial-tree 
+        elements </span><span class="opn">(</span><span class="pln">length elements</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">partial-tree elts n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln"> elts</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">left-size 
+             </span><span class="opn">(</span><span class="pln">quotient </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">left-result 
+               </span><span class="opn">(</span><span class="pln">partial-tree 
+                elts left-size</span><span class="clo">)))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">left-tree 
+                 </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> left-result</span><span class="clo">))</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">non-left-elts 
+                 </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> left-result</span><span class="clo">))</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">right-size 
+                 </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> left-size </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+            </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">this-entry 
+                   </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> non-left-elts</span><span class="clo">))</span><span class="pln">
+                  </span><span class="opn">(</span><span class="pln">right-result 
+                   </span><span class="opn">(</span><span class="pln">partial-tree 
+                    </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> non-left-elts</span><span class="clo">)</span><span class="pln">
+                    right-size</span><span class="clo">)))</span><span class="pln">
+              </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">right-tree 
+                     </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> right-result</span><span class="clo">))</span><span class="pln">
+                    </span><span class="opn">(</span><span class="pln">remaining-elts 
+                     </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> right-result</span><span class="clo">)))</span><span class="pln">
+                </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-tree this-entry 
+                                 left-tree 
+                                 right-tree</span><span class="clo">)</span><span class="pln">
+                      remaining-elts</span><span class="clo">))))))))</span></pre></div>
+
+<ol>
+<li> Напишите короткий абзац, объясняющий как можно яснее, как работает <code>partial-tree</code>.
+Нарисуйте дерево, производимое <code>list-&gt;tree</code> для списка <code>(1 3 5 7 9 11)</code>.
+
+</li><li> Каков порядок роста в числе шагов, требуемых <code>list-&gt;tree</code> для преобразования списка
+из <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> элементов?
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e65"></a>Exercise 2.65:</strong> Используйте результаты <a href="#Exercise-2_002e63">Exercise 2.63</a>
+и <a href="#Exercise-2_002e64">Exercise 2.64</a>, чтобы дать <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>-реализации <code>union-set</code> и
+<code>intersection-set</code> для множеств, реализованных как (сбалансированные) двоичные
+деревья.<a class="footnote_link" id="DOCF107" href="#FOOT107"><sup>107</sup></a>
+</p></blockquote>
+
+<a id="Mnozhestva-i-informacionnyi-poisk"></a>
+<h5 class="subsubheading">Множества и информационный поиск</h5>
+
+<p>Мы рассмотрели варианты использования списков для представления множеств и увидели, как
+выбор представления для объекта данных может оказать большое влияние на
+производительность программ, которые используют данные.  Ещё одна причина
+сосредоточиться на множествах в том, что приёмы, обсуждаемые здесь, снова и снова
+появляются в приложениях, связанных с информационным поиском.
+</p>
+<p>Рассмотрим базу данных, содержащую большое число отдельных записей, таких как кадровые
+файлы компании или транзакции в бухгалтерской системе.  Типичная система управления
+данными тратит большое количество времени на доступ к данным в записях или их изменение
+и поэтому требует эффективного метода доступа к записям.  Это делается путём выделения
+части каждой записи, служащей идентифицирующим <a id="index-kliuchom"></a>
+<em>ключом</em>.  Ключом может быть всё
+что угодно, что однозначно идентифицирует запись.  Для кадрового файла это мог бы быть
+табельный номер сотрудника.  Для бухгалтерской системы это мог бы быть номер транзакции.
+Каким бы ни был ключ, когда мы определяем запись как структуру данных, мы должны включить
+процедуру-селектор <code>key</code>, которая извлекает ключ, связанный с данной записью.
+</p>
+<p>Теперь мы представляем базу данных как множество записей.  Чтобы найти запись с данным
+ключом, мы используем процедуру <code>lookup</code>, которая принимает как аргументы ключ и
+базу данных и которая возвращает запись, имеющую этот ключ, или ложь, если такой записи
+нет.  <code>Lookup</code> реализуется почти таким же образом, как <code>element-of-set?</code>.
+Например, если множество записей реализовано как неупорядоченный список, мы могли бы
+использовать
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">lookup given-key set-of-records</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? set-of-records</span><span class="clo">)</span><span class="pln"> false</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">equal</span><span class="pun">?</span><span class="pln"> given-key 
+                 </span><span class="opn">(</span><span class="pln">key </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> set-of-records</span><span class="clo">)))</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> set-of-records</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">lookup given-key 
+                 </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> set-of-records</span><span class="clo">)))))</span></pre></div>
+
+<p>Конечно, есть лучшие способы представлять большие множества, чем неупорядоченные списки.
+Системы информационного поиска, в которых к записям приходится «обращаться случайно»,
+обычно реализуются методом на основе деревьев, таким как представление двоичным деревом,
+обсуждённое ранее.  При проектировании такой системы методология абстракции данных может
+быть большим подспорьем.  Проектировщик может создать начальную реализацию, используя
+простое, прямолинейное представление, такое как неупорядоченные списки.  Это будет
+непригодно для итоговой системы, но может быть полезно, предоставляя «быструю и грязную»
+базу данных, на которой можно тестировать остальную часть системы.  Позднее представление
+данных можно изменить, сделав его более изощрённым.  Если к базе данных обращаются в
+терминах абстрактных селекторов и конструкторов, это изменение представления не потребует
+никаких изменений в остальной части системы.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e66"></a>Exercise 2.66:</strong> Реализуйте процедуру <code>lookup</code> для
+случая, когда множество записей структурировано как двоичное дерево, упорядоченное по
+числовым значениям ключей.
+</p></blockquote>
+
+<a id="g_t2_002e3_002e4"></a>
+<a id="Primer_003a-derevxya-kodirovaniya-Khaffmana"></a>
+<h4 class="subsection"><span class="secnum">2.3.4</span><span class="sectitle">Пример: деревья кодирования Хаффмана</span></h4>
+
+<p>Этот раздел даёт практику использования списочной структуры и абстракции данных для
+манипулирования множествами и деревьями.  Приложение — методы представления данных как
+последовательностей единиц и нулей (битов).  Например, стандартный код ASCII,
+используемый для представления текста в компьютерах, кодирует каждый символ как
+последовательность из семи битов.  Использование семи битов позволяет нам различать
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mn>2</mn>
+    <mn>7</mn>
+  </msup>
+</math>, или 128, возможных различных символов.  Вообще, если мы хотим различать
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> различных символов, нам понадобится использовать <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>log</mi>
+      <mn>2</mn>
+    </msub>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+  </mrow>
+</math> битов на
+символ.  Если все наши сообщения составлены из восьми символов A, B, C, D, E, F, G и H,
+мы можем выбрать код с тремя битами на символ, например
+</p>
+<div class="example">
+<pre class="example">A 000  C 010  E 100  G 110
+B 001  D 011  F 101  H 111
+</pre></div>
+
+<p>С этим кодом сообщение
+</p>
+<div class="example">
+<pre class="example">BACADAEAFABBAAAGAH
+</pre></div>
+
+<p>кодируется как строка из 54 битов
+</p>
+<div class="example">
+<pre class="example">001000010000011000100000101
+000001001000000000110000111
+</pre></div>
+
+<p>Коды, такие как ASCII и приведённый выше код от A до H, известны как коды
+<a id="index-fiksirovannoi-dliny"></a>
+<em>фиксированной длины</em>, потому что они представляют каждый символ сообщения
+одним и тем же числом битов.  Иногда выгодно использовать коды <a id="index-peremennoi"></a>
+длины
+<em>переменной
+длины</em>, в которых разные символы могут представляться разным числом битов.  Например,
+азбука Морзе не использует одно и то же число точек и тире для каждой буквы алфавита.  В
+частности, E, самая частая буква, представляется одной точкой.  Вообще, если наши
+сообщения таковы, что некоторые символы появляются очень часто, а некоторые очень редко,
+мы можем кодировать данные эффективнее (то есть используя меньше битов на сообщение),
+если назначим более короткие коды частым символам.  Рассмотрим следующий альтернативный
+код для букв от A до H:
+</p>
+<div class="example">
+<pre class="example">A 0    C 1010  E 1100  G 1110
+B 100  D 1011  F 1101  H 1111
+</pre></div>
+
+<p>С этим кодом то же сообщение, что и выше, кодируется как строка
+</p>
+<div class="example">
+<pre class="example">100010100101101100011
+010100100000111001111
+</pre></div>
+
+<p>Эта строка содержит 42 бита, так что она экономит более 20% места по сравнению с кодом
+фиксированной длины, показанным выше.
+</p>
+<p>Одна из трудностей использования кода переменной длины — это знать, когда вы достигли
+конца символа при чтении последовательности нулей и единиц.  Азбука Морзе решает эту
+проблему, используя особый <a id="index-razdelyaiushchii-kod"></a>
+<em>разделяющий код</em> (в данном случае паузу) после
+последовательности точек и тире для каждой буквы.  Другое решение — спроектировать код
+так, чтобы никакой полный код какого-либо символа не был началом (или <a id="index-prefiksom"></a>
+<em>префиксом</em>)
+кода другого символа.  Такой код называется <a id="index-prefiksnym-kodom"></a>
+<em>префиксным кодом</em>.  В примере выше A
+кодируется 0, а B кодируется 100, так что никакой другой символ не может иметь код,
+начинающийся с 0 или со 100.
+</p>
+<p>Вообще, мы можем достичь значительной экономии, если используем префиксные коды
+переменной длины, которые пользуются относительными частотами символов в кодируемых
+сообщениях.  Одна конкретная схема для этого называется методом кодирования Хаффмана, по
+имени её первооткрывателя, Дэвида Хаффмана.  Код Хаффмана можно представить как двоичное
+дерево, листья которого — кодируемые символы.  В каждом нелистовом узле дерева находится
+множество, содержащее все символы листьев, лежащих под узлом.  Кроме того, каждому
+символу в листе назначен вес (который является его относительной частотой), а каждый
+нелистовой узел содержит вес, являющийся суммой всех весов листьев, лежащих под ним.  Веса
+не используются в процессе кодирования или декодирования.  Мы увидим ниже, как они
+используются, чтобы помочь построить дерево.
+</p>
+<p><a href="#Figure-2_002e18">Figure 2.18</a> показывает дерево Хаффмана для приведённого выше кода от A до H.  Веса в
+листьях указывают, что дерево было спроектировано для сообщений, в которых A появляется с
+относительной частотой 8, B — с относительной частотой 3, а остальные буквы — каждая с
+относительной частотой 1.
+</p>
+<figure class="float">
+<a id="Figure-2_002e18"></a>
+<object style="width: 53.01ex; height: 35.23ex;" data="fig/chap2/Fig2.18a.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.18:</strong> Дерево кодирования Хаффмана.</p>
+</figcaption>
+</figure>
+
+<p>Имея дерево Хаффмана, мы можем найти кодировку любого символа, начав с корня и двигаясь
+вниз, пока не достигнем листа, который содержит символ.  Каждый раз, когда мы движемся
+вниз по левой ветви, мы добавляем 0 к коду, и каждый раз, когда мы движемся вниз по правой
+ветви, мы добавляем 1.  (Мы решаем, по какой ветви следовать, проверяя, какая ветвь либо
+является листовым узлом для символа, либо содержит символ в своём множестве.)  Например,
+начав от корня дерева на <a href="#Figure-2_002e18">Figure 2.18</a>, мы приходим к листу для D, следуя по правой
+ветви, затем по левой ветви, затем по правой ветви, затем по правой ветви; следовательно,
+код для D — это 1011.
+</p>
+<p>Чтобы декодировать битовую последовательность с помощью дерева Хаффмана, мы начинаем с
+корня и используем последовательные нули и единицы битовой последовательности, чтобы
+определить, двигаться ли вниз по левой или по правой ветви.  Каждый раз, когда мы доходим
+до листа, мы породили новый символ сообщения, в этот момент мы начинаем заново от корня
+дерева, чтобы найти следующий символ.  Например, предположим, нам даны дерево выше и
+последовательность 10001010.  Начав с корня, мы движемся вниз по правой ветви (поскольку
+первый бит строки — 1), затем вниз по левой ветви (поскольку второй бит — 0), затем вниз
+по левой ветви (поскольку третий бит тоже 0).  Это приводит нас к листу для B, так что
+первый символ декодированного сообщения — B.  Теперь мы начинаем снова от корня и делаем
+левый ход, потому что следующий бит в строке — 0.  Это приводит нас к листу для A.  Затем
+мы начинаем снова от корня с остатком строки 1010, так что движемся вправо, влево,
+вправо, влево и достигаем C.  Таким образом, всё сообщение — BAC.
+</p>
+<a id="Porozhdenie-derevxev-Khaffmana"></a>
+<h5 class="subsubheading">Порождение деревьев Хаффмана</h5>
+
+<p>Имея «алфавит» символов и их относительные частоты, как нам построить «наилучший» код?
+(Иными словами, какое дерево закодирует сообщения наименьшим числом битов?)  Хаффман дал
+алгоритм для этого и показал, что получающийся код действительно является наилучшим кодом
+переменной длины для сообщений, где относительная частота символов соответствует
+частотам, с которыми код был построен.  Мы не будем доказывать эту оптимальность кодов
+Хаффмана здесь, но мы покажем, как строятся деревья Хаффмана.<a class="footnote_link" id="DOCF108" href="#FOOT108"><sup>108</sup></a>
+</p>
+<p>Алгоритм порождения дерева Хаффмана очень прост.  Идея в том, чтобы расположить дерево
+так, чтобы символы с наименьшей частотой появлялись дальше всего от корня.  Начните с
+множества листовых узлов, содержащих символы и их частоты, как определено исходными
+данными, из которых должен быть построен код.  Теперь найдите два листа с наименьшими
+весами и слейте их, чтобы произвести узел, у которого эти два узла — его левая и правая
+ветви.  Вес нового узла — это сумма двух весов.  Удалите два листа из исходного множества
+и замените их этим новым узлом.  Теперь продолжайте этот процесс.  На каждом шаге сливайте
+два узла с наименьшими весами, удаляя их из множества и заменяя их узлом, у которого эти
+два — его левая и правая ветви.  Процесс останавливается, когда остаётся только один узел,
+который является корнем всего дерева.  Вот как было порождено дерево Хаффмана с
+<a href="#Figure-2_002e18">Figure 2.18</a>:
+</p>
+<div class="example">
+<pre class="example">Начальные {(A 8) (B 3) (C 1) (D 1)
+листья     (E 1) (F 1) (G 1) (H 1)}
+
+Слияние   {(A 8) (B 3) ({C D} 2)
+           (E 1) (F 1) (G 1) (H 1)}
+
+Слияние   {(A 8) (B 3) ({C D} 2)
+           ({E F} 2) (G 1) (H 1)}
+
+Слияние   {(A 8) (B 3) ({C D} 2)
+           ({E F} 2) ({G H} 2)}
+
+Слияние   {(A 8) (B 3) ({C D} 2)
+           ({E F G H} 4)}
+
+Слияние   {(A 8) ({B C D} 5)
+           ({E F G H} 4)}
+
+Слияние   {(A 8) ({B C D E F G H} 9)}
+
+Итоговое  {({A B C D E F G H} 17)}
+слияние
+</pre></div>
+
+<p>Алгоритм не всегда задаёт уникальное дерево, потому что на каждом шаге может не быть
+уникальных узлов наименьшего веса.  Также выбор порядка, в котором сливаются два узла (то
+есть какой будет правой ветвью, а какой — левой ветвью), произволен.
+</p>
+<a id="Predstavlenie-derevxev-Khaffmana"></a>
+<h5 class="subsubheading">Представление деревьев Хаффмана</h5>
+
+<p>В упражнениях ниже мы будем работать с системой, которая использует деревья Хаффмана,
+чтобы кодировать и декодировать сообщения, и порождает деревья Хаффмана согласно
+алгоритму, очерченному выше.  Мы начнём с обсуждения того, как представляются деревья.
+</p>
+<p>Листья дерева представляются списком, состоящим из символа <code>leaf</code>, символа в листе и
+веса:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-leaf symbol weight</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'leaf</span><span class="pln"> symbol weight</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">leaf? object</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> object</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'leaf</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">symbol-leaf x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">weight-leaf x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> x</span><span class="clo">))</span></pre></div>
+
+<p>Общее дерево будет списком из левой ветви, правой ветви, множества символов и веса.
+Множество символов будет просто списком символов, а не каким-то более изощрённым
+представлением множества.  Когда мы делаем дерево, сливая два узла, мы получаем вес дерева
+как сумму весов узлов, а множество символов — как объединение множеств символов узлов.
+Поскольку наши множества символов представлены как списки, мы можем образовать
+объединение, используя процедуру <code>append</code>, которую мы определили в <a href="2_002e2.xhtml#g_t2_002e2_002e1">2.2.1</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-code-tree left right</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">list left
+        right
+        </span><span class="opn">(</span><span class="pln">append </span><span class="opn">(</span><span class="pln">symbols left</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">symbols right</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">weight left</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">weight right</span><span class="clo">))))</span></pre></div>
+
+<p>Если мы делаем дерево таким образом, у нас есть следующие селекторы:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">left-branch tree</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> tree</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">right-branch tree</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> tree</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">symbols tree</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">leaf? tree</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">list </span><span class="opn">(</span><span class="pln">symbol-leaf tree</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> tree</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">weight tree</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">leaf? tree</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">weight-leaf tree</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cadddr</span><span class="pln"> tree</span><span class="clo">)))</span></pre></div>
+
+<p>Процедуры <code>symbols</code> и <code>weight</code> должны делать нечто слегка различное в
+зависимости от того, вызваны ли они с листом или с общим деревом.  Это простые примеры
+<a id="index-obobshchionnykh-procedur"></a>
+<em>обобщённых процедур</em> (процедур, которые могут обрабатывать более одного вида
+данных), о которых нам предстоит сказать гораздо больше в <a href="2_002e4.xhtml#g_t2_002e4">2.4</a> и <a href="2_002e5.xhtml#g_t2_002e5">2.5</a>.
+</p>
+<a id="Procedura-dekodirovaniya"></a>
+<h5 class="subsubheading">Процедура декодирования</h5>
+
+<p>Следующая процедура реализует алгоритм декодирования.  Она принимает в качестве аргументов
+список нулей и единиц вместе с деревом Хаффмана.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">decode bits tree</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">decode-1 bits current-branch</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? bits</span><span class="clo">)</span><span class="pln">
+        </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">next-branch
+               </span><span class="opn">(</span><span class="pln">choose-branch 
+                </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> bits</span><span class="clo">)</span><span class="pln"> 
+                current-branch</span><span class="clo">)))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">leaf? next-branch</span><span class="clo">)</span><span class="pln">
+              </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> 
+               </span><span class="opn">(</span><span class="pln">symbol-leaf next-branch</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">decode-1 </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> bits</span><span class="clo">)</span><span class="pln"> tree</span><span class="clo">))</span><span class="pln">
+              </span><span class="opn">(</span><span class="pln">decode-1 </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> bits</span><span class="clo">)</span><span class="pln"> 
+                        next-branch</span><span class="clo">)))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">decode-1 bits tree</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">choose-branch bit branch</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> bit </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">left-branch branch</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> bit </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">right-branch branch</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"bad bit: 
+               CHOOSE-BRANCH"</span><span class="pln"> bit</span><span class="clo">))))</span></pre></div>
+
+<p>Процедура <code>decode-1</code> принимает два аргумента: список оставшихся битов и текущую
+позицию в дереве.  Она продолжает двигаться «вниз» по дереву, выбирая левую или правую
+ветвь в зависимости от того, является ли следующий бит в списке нулём или единицей.  (Это
+делается процедурой <code>choose-branch</code>.)  Когда она достигает листа, она возвращает
+символ в этом листе как следующий символ сообщения, присоединяя его через <code>cons</code> к
+результату декодирования остатка сообщения, начиная с корня дерева.  Заметьте проверку
+ошибки в последнем предложении <code>choose-branch</code>, которая жалуется, если процедура
+находит во входных данных что-то, кроме нуля или единицы.
+</p>
+<a id="Mnozhestva-vzveshennykh-elementov"></a>
+<h5 class="subsubheading">Множества взвешенных элементов</h5>
+
+<p>В нашем представлении деревьев каждый нелистовой узел содержит множество символов, которое
+мы представили как простой список.  Однако алгоритм порождения дерева, обсуждённый выше,
+требует, чтобы мы также работали с множествами листьев и деревьев, последовательно сливая
+два наименьших элемента.  Поскольку нам придётся многократно находить наименьший элемент в
+множестве, удобно использовать упорядоченное представление для такого рода множества.
+</p>
+<p>Мы будем представлять множество листьев и деревьев как список элементов, расположенных в
+возрастающем порядке веса.  Следующая процедура <code>adjoin-set</code> для построения множеств
+похожа на ту, что описана в <a href="#Exercise-2_002e61">Exercise 2.61</a>; однако элементы сравниваются по их весам,
+а добавляемый в множество элемент никогда уже не находится в нём.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">adjoin-set x </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? </span><span class="kwd">set</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list x</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">weight x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">weight </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="kwd">set</span><span class="clo">)))</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x </span><span class="kwd">set</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="kwd">set</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">adjoin-set x </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> </span><span class="kwd">set</span><span class="clo">))))))</span></pre></div>
+
+<p>Следующая процедура принимает список пар «символ—частота», таких как
+<code>((A 4) (B 2) (C 1) (D 1))</code>, и строит начальное упорядоченное множество листьев,
+готовое к слиянию согласно алгоритму Хаффмана:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-leaf-set pairs</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? pairs</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">pair </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> pairs</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">adjoin-set 
+         </span><span class="opn">(</span><span class="pln">make-leaf </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> pair</span><span class="clo">)</span><span class="pln">    </span><span class="roman"><span class="com">; symbol</span></span><span class="pln">
+                    </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> pair</span><span class="clo">))</span><span class="pln">  </span><span class="roman"><span class="com">; frequency</span></span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-leaf-set </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> pairs</span><span class="clo">))))))</span></pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e67"></a>Exercise 2.67:</strong> Определите дерево кодирования и образец
+сообщения:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> sample-tree
+  </span><span class="opn">(</span><span class="pln">make-code-tree 
+   </span><span class="opn">(</span><span class="pln">make-leaf </span><span class="lit">'A</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="pln">make-code-tree
+    </span><span class="opn">(</span><span class="pln">make-leaf </span><span class="lit">'B</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">make-code-tree 
+     </span><span class="opn">(</span><span class="pln">make-leaf </span><span class="lit">'D</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">make-leaf </span><span class="lit">'C</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> sample-message 
+  </span><span class="lit">'</span><span class="opn">(</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span></pre></div>
+
+<p>Используйте процедуру <code>decode</code>, чтобы декодировать сообщение, и приведите результат.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e68"></a>Exercise 2.68:</strong> Процедура <code>encode</code> принимает в
+качестве аргументов сообщение и дерево и производит список битов, дающий закодированное
+сообщение.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">encode message tree</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? message</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">append 
+       </span><span class="opn">(</span><span class="pln">encode-symbol </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> message</span><span class="clo">)</span><span class="pln"> 
+                      tree</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">encode </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> message</span><span class="clo">)</span><span class="pln"> tree</span><span class="clo">))))</span></pre></div>
+
+<p><code>Encode-symbol</code> — это процедура, которую вы должны написать, возвращающая список
+битов, который кодирует данный символ согласно данному дереву.  Вы должны спроектировать
+<code>encode-symbol</code> так, чтобы она сигнализировала об ошибке, если символа вообще нет в
+дереве.  Протестируйте свою процедуру, закодировав результат, который вы получили в
+<a href="#Exercise-2_002e67">Exercise 2.67</a>, с образцом дерева и проверив, тот ли он же, что и исходный образец
+сообщения.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e69"></a>Exercise 2.69:</strong> Следующая процедура принимает в качестве
+своего аргумента список пар «символ—частота» (где никакой символ не появляется более чем
+в одной паре) и порождает дерево кодирования Хаффмана согласно алгоритму Хаффмана.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">generate-huffman-tree pairs</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">successive-merge 
+   </span><span class="opn">(</span><span class="pln">make-leaf-set pairs</span><span class="clo">)))</span></pre></div>
+
+<p><code>Make-leaf-set</code> — это процедура, данная выше, которая преобразует список пар в
+упорядоченное множество листьев.  <code>Successive-merge</code> — это процедура, которую вы
+должны написать, используя <code>make-code-tree</code>, чтобы последовательно сливать элементы
+наименьшего веса множества, пока не останется только один элемент, который и является
+искомым деревом Хаффмана.  (Эта процедура слегка хитра, но не очень сложна.  Если вы
+обнаруживаете, что проектируете сложную процедуру, то вы почти наверняка делаете что-то
+неправильно.  Вы можете существенно воспользоваться тем фактом, что мы используем
+упорядоченное представление множества.)
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e70"></a>Exercise 2.70:</strong> Следующий восьмисимвольный алфавит со
+связанными относительными частотами был спроектирован, чтобы эффективно кодировать тексты
+рок-песен 1950-х годов.  (Заметьте, что «символы» «алфавита» не обязаны быть отдельными
+буквами.)
+</p>
+<div class="example">
+<pre class="example">
+A    2    NA  16
+BOOM 1    SHA  3
+GET  2    YIP  9
+JOB  2    WAH  1
+</pre></div>
+
+<p>Используйте <code>generate-huffman-tree</code> (<a href="#Exercise-2_002e69">Exercise 2.69</a>), чтобы породить
+соответствующее дерево Хаффмана, и используйте <code>encode</code> (<a href="#Exercise-2_002e68">Exercise 2.68</a>), чтобы
+закодировать следующее сообщение:
+</p>
+<div class="example">
+<pre class="example">Get a job
+Sha na na na na na na na na
+
+Get a job
+Sha na na na na na na na na
+
+Wah yip yip yip yip 
+yip yip yip yip yip
+Sha boom
+</pre></div>
+
+<p>Сколько битов требуется для кодирования?  Каково наименьшее число битов, которое
+понадобилось бы, чтобы закодировать эту песню, если бы мы использовали код фиксированной
+длины для восьмисимвольного алфавита?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e71"></a>Exercise 2.71:</strong> Предположим, у нас есть дерево Хаффмана для
+алфавита из <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> символов, и что относительные частоты символов — это
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>2</mn>
+    <mo>,</mo>
+    <mn>4</mn>
+    <mo>,</mo>
+    <mo>…<!-- … --></mo>
+    <mo>,</mo>
+    <msup>
+      <mn>2</mn>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msup>
+  </mrow>
+</math>.  Набросайте дерево для <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>=</mo>
+    <mn>5</mn>
+  </mrow>
+</math>; для <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>=</mo>
+    <mn>10</mn>
+  </mrow>
+</math>.
+В таком дереве (для общего <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>) сколько битов требуется, чтобы закодировать самый
+частый символ?  Самый редкий символ?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e72"></a>Exercise 2.72:</strong> Рассмотрите процедуру кодирования, которую
+вы спроектировали в <a href="#Exercise-2_002e68">Exercise 2.68</a>.  Каков порядок роста в числе шагов, нужных, чтобы
+закодировать символ?  Не забудьте включить число шагов, нужных, чтобы просмотреть список
+символов в каждом встреченном узле.  Ответить на этот вопрос в общем случае трудно.
+Рассмотрите частный случай, где относительные частоты <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> символов таковы, как
+описано в <a href="#Exercise-2_002e71">Exercise 2.71</a>, и приведите порядок роста (как функцию от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>) числа
+шагов, нужных, чтобы закодировать самый частый и самый редкий символы алфавита.
+</p></blockquote>
+
+<div class="footnote">
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT98"><p><a class="footnote_backlink" href="#DOCF98"><sup>98</sup></a>
+Допущение цитирования в языке вносит хаос в
+способность рассуждать о языке в простых терминах, потому что оно разрушает понятие о
+том, что равное можно подставлять вместо равного.  Например, три — это один плюс два, но
+слово «три» — не фраза «один плюс два».  Цитирование мощно, потому что оно даёт нам
+способ строить выражения, которые манипулируют другими выражениями (как мы увидим, когда
+будем писать интерпретатор в <a href="Chapter-4.xhtml#Chapter-4">Chapter 4</a>).  Но допущение в языке утверждений, которые
+говорят о других утверждениях того же языка, очень затрудняет поддержание какого-либо
+связного принципа того, что должно означать «равное можно подставлять вместо равного».
+Например, если мы знаем, что вечерняя звезда — это утренняя звезда, то из утверждения
+«вечерняя звезда — это Венера» мы можем вывести «утренняя звезда — это Венера».  Однако
+из «Джон знает, что вечерняя звезда — это Венера» мы не можем заключить, что «Джон знает,
+что утренняя звезда — это Венера».</p>
+</div>
+<div id="FOOT99"><p><a class="footnote_backlink" href="#DOCF99"><sup>99</sup></a>
+Одинарная кавычка
+отличается от двойной кавычки, которую мы использовали, чтобы заключать в неё строки
+символов для печати.  Тогда как одинарную кавычку можно использовать для обозначения
+списков или символов, двойная кавычка используется только со строками символов.  В этой
+книге единственное применение строк символов — это элементы для печати.</p>
+</div>
+<div id="FOOT100"><p><a class="footnote_backlink" href="#DOCF100"><sup>100</sup></a>
+Строго говоря, наше использование знака
+кавычки нарушает общее правило, что все составные выражения в нашем языке должны
+разграничиваться скобками и выглядеть как списки.  Мы можем восстановить эту
+согласованность, введя особую форму <code>quote</code>, которая служит той же цели, что и знак
+кавычки.  Таким образом, мы бы вводили <code>(quote a)</code> вместо <code>'a</code>, и мы бы вводили
+<code>(quote (a b c))</code> вместо <code>'(a b c)</code>.  Именно так и работает интерпретатор.
+Знак кавычки — это просто односимвольное сокращение для обёртывания следующего полного
+выражения в <code>quote</code>, образуя <code>(quote ⟨<var>выражение</var>⟩)</code>.  Это важно, потому
+что поддерживает принцип, что любым выражением, которое видит интерпретатор, можно
+манипулировать как объектом данных.  Например, мы могли бы построить выражение
+<code>(car '(a b c))</code>, которое то же самое, что <code>(car (quote (a b c)))</code>,
+вычислив <code>(list 'car (list 'quote '(a b c)))</code>.</p>
+</div>
+<div id="FOOT101"><p><a class="footnote_backlink" href="#DOCF101"><sup>101</sup></a>
+Мы можем
+считать два символа «одинаковыми», если они состоят из одних и тех же символов в одном и
+том же порядке.  Такое определение обходит глубокий вопрос, к которому мы пока не готовы
+обратиться: смысл «одинаковости» в языке программирования.  Мы вернёмся к этому в
+<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> (<a href="3_002e1.xhtml#g_t3_002e1_002e3">3.1.3</a>).</p>
+</div>
+<div id="FOOT102"><p><a class="footnote_backlink" href="#DOCF102"><sup>102</sup></a>
+На практике программисты
+используют <code>equal?</code>, чтобы сравнивать списки, содержащие как числа, так и символы.
+Числа не считаются символами.  Вопрос о том, являются ли два численно равных числа (как
+проверяется <code>=</code>) также <code>eq?</code>, сильно зависит от реализации.  Лучшее определение
+<code>equal?</code> (такое как то, что идёт как примитив в Scheme) дополнительно оговаривало бы,
+что если <code>a</code> и <code>b</code> — оба числа, то <code>a</code> и <code>b</code> <code>equal?</code>, если они
+численно равны.</p>
+</div>
+<div id="FOOT103"><p><a class="footnote_backlink" href="#DOCF103"><sup>103</sup></a>
+Если мы хотим быть
+более формальными, мы можем уточнить «согласующимся с приведёнными выше интерпретациями»
+как то, что операции удовлетворяют набору правил, таких как эти:
+</p>
+<ul>
+<li> Для любого множества <code>S</code> и любого объекта <code>x</code>
+<code>(element-of-set? x (adjoin-set x S))</code>
+истинно (неформально: «Присоединение объекта к множеству производит множество, которое
+содержит объект»).
+
+</li><li> Для любых множеств <code>S</code> и <code>T</code> и любого объекта <code>x</code>
+<code>(element-of-set? x (union-set S T))</code>
+равно
+<code>(or (element-of-set? x S) (element-of-set? x T))</code>
+(неформально: «Элементы <code>(union S T)</code> — это элементы, которые находятся в <code>S</code>
+или в <code>T</code>»).
+
+</li><li> Для любого объекта <code>x</code>
+<code>(element-of-set? x '())</code>
+ложно (неформально: «Никакой объект не является элементом пустого множества»).
+
+</li></ul>
+</div>
+<div id="FOOT104"><p><a class="footnote_backlink" href="#DOCF104"><sup>104</sup></a>
+Деление размера задачи пополам на
+каждом шаге — отличительная характеристика логарифмического роста, как мы видели на
+алгоритме быстрого возведения в степень из <a href="1_002e2.xhtml#g_t1_002e2_002e4">1.2.4</a> и методе половинного деления из
+<a href="1_002e3.xhtml#g_t1_002e3_002e3">1.3.3</a>.</p>
+</div>
+<div id="FOOT105"><p><a class="footnote_backlink" href="#DOCF105"><sup>105</sup></a>
+Мы представляем множества в
+терминах деревьев, а деревья — в терминах списков; по сути, абстракция данных, построенная
+на абстракции данных.  Мы можем рассматривать процедуры <code>entry</code>, <code>left-branch</code>,
+<code>right-branch</code> и <code>make-tree</code> как способ изолировать абстракцию «двоичного
+дерева» от конкретного способа, которым мы могли бы захотеть представить такое дерево в
+терминах списочной структуры.</p>
+</div>
+<div id="FOOT106"><p><a class="footnote_backlink" href="#DOCF106"><sup>106</sup></a>
+Примеры таких структур включают <a id="index-B_002dderevxya"></a>
+<em>B-деревья</em> и
+<a id="index-krasno_002dchiornye-derevxya"></a>
+<em>красно-чёрные деревья</em>.  Существует большая литература по структурам данных,
+посвящённая этой проблеме.  См. <a href="References.xhtml#Cormen-et-al_002e-1990">Cormen et al. 1990</a>.</p>
+</div>
+<div id="FOOT107"><p><a class="footnote_backlink" href="#DOCF107"><sup>107</sup></a>
+<a href="#Exercise-2_002e63">Exercise 2.63</a> — <a href="#Exercise-2_002e65">Exercise 2.65</a> принадлежат Полу Хилфингеру.</p>
+</div>
+<div id="FOOT108"><p><a class="footnote_backlink" href="#DOCF108"><sup>108</sup></a>
+См. <a href="References.xhtml#Hamming-1980">Hamming 1980</a>
+для обсуждения математических свойств кодов Хаффмана.</p>
+</div>
+</div>
+<nav class="header">
+<p>
+Next: <a href="2_002e4.xhtml#g_t2_002e4" accesskey="n" rel="next">2.4</a>, Prev: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="p" rel="prev">2.2</a>, Up: <a href="#g_t2_002e3" accesskey="u" rel="prev">2.3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+
+
+</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">⇣</a></span><a id="pagebottom"></a>
+</body>
+</html>

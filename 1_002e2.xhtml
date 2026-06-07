@@ -1,0 +1,3637 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ru" lang="ru">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Структура и интерпретация компьютерных программ, 2-е изд.: 1.2</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 1.2" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 1.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-1.xhtml#Chapter-1" rel="prev" title="Chapter 1" />
+<link href="1_002e3.xhtml#g_t1_002e3" rel="next" title="1.3" />
+<link href="1_002e1.xhtml#g_t1_002e1_002e8" rel="prev" title="1.1.8" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t1_002e2"></a>
+<nav class="header">
+<p>
+Next: <a href="1_002e3.xhtml#g_t1_002e3" accesskey="n" rel="next">1.3</a>, Prev: <a href="1_002e1.xhtml#g_t1_002e1" accesskey="p" rel="prev">1.1</a>, Up: <a href="Chapter-1.xhtml#Chapter-1" accesskey="u" rel="prev">Chapter 1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+<a id="Procedury-i-porozhdaemye-imi-processy"></a>
+<h3 class="section"><span class="secnum">1.2</span><span class="sectitle">Процедуры и порождаемые ими процессы</span></h3>
+
+<p>Теперь мы рассмотрели элементы программирования: мы пользовались примитивными
+арифметическими операциями, комбинировали эти операции и абстрагировали эти
+составные операции, определяя их как составные процедуры.  Но этого недостаточно,
+чтобы сказать, что мы умеем программировать.  Наше положение подобно положению
+того, кто выучил правила ходов фигур в шахматах, но ничего не знает о типичных
+дебютах, тактике и стратегии.  Подобно начинающему шахматисту, мы пока не знаем
+распространённых образцов употребления в этой области.  Нам не хватает знания о
+том, какие ходы стоит делать (какие процедуры стоит определять).  Нам не хватает
+опыта, чтобы предсказывать последствия хода (выполнения процедуры).
+</p>
+<p>Способность представлять себе последствия рассматриваемых действий критически важна
+для того, чтобы стать опытным программистом, — как и в любой синтетической,
+творческой деятельности.  Например, чтобы стать опытным фотографом, нужно научиться
+смотреть на сцену и знать, насколько тёмной окажется каждая область на отпечатке при
+каждом возможном выборе условий экспозиции и проявки.  Лишь тогда можно рассуждать в
+обратную сторону, планируя кадрирование, освещение, экспозицию и проявку ради
+получения желаемых эффектов.  Так же и с программированием, где мы планируем ход
+действий, который предпримет процесс, и где мы управляем процессом посредством
+программы.  Чтобы стать знатоками, мы должны научиться представлять себе процессы,
+порождаемые различными видами процедур.  Лишь развив такой навык, мы сможем
+научиться надёжно строить программы, демонстрирующие желаемое поведение.
+</p>
+<p>Процедура — это образец <a id="index-lokalxnoi-evoliucii"></a>
+<em>локальной эволюции</em> вычислительного процесса.  Она
+задаёт, как каждый этап процесса строится на предыдущем.  Нам хотелось бы уметь
+делать утверждения об общем, или <a id="index-globalxnom"></a>
+<em>глобальном</em>, поведении процесса, чья
+локальная эволюция задана процедурой.  В общем случае это очень трудно, но мы можем
+хотя бы попытаться описать некоторые типичные образцы эволюции процессов.
+</p>
+<p>В этом разделе мы рассмотрим некоторые распространённые «формы» процессов,
+порождаемых простыми процедурами.  Мы также исследуем скорости, с которыми эти
+процессы потребляют важные вычислительные ресурсы — время и пространство.  Процедуры,
+которые мы рассмотрим, очень просты.  Их роль подобна роли тестовых таблиц в
+фотографии: это чрезмерно упрощённые прообразы-образцы, а не практические примеры
+сами по себе.
+</p>
+
+<a id="g_t1_002e2_002e1"></a>
+<a id="Lineinaya-rekursiya-i-iteraciya"></a>
+<h4 class="subsection"><span class="secnum">1.2.1</span><span class="sectitle">Линейная рекурсия и итерация</span></h4>
+
+<p>Начнём с рассмотрения функции факториала, определяемой как
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>n</mi>
+  <mo>!</mo>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>⋅<!-- ⋅ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>2</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>⋯<!-- ⋯ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mn>2</mn>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mn>1.</mn>
+  </mrow>
+</math>
+
+Есть много способов вычислять факториалы.  Один из них — воспользоваться
+наблюдением, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>!</mo>
+  </mrow>
+</math> равно <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, умноженному на <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mo>!</mo>
+  </mrow>
+</math>, для
+любого положительного целого <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>n</mi>
+  <mo>!</mo>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mo stretchy="false">[</mo>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>⋅<!-- ⋅ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>2</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>⋯<!-- ⋯ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mn>2</mn>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">]</mo>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mo>!</mo>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+Таким образом, мы можем вычислить <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>!</mo>
+  </mrow>
+</math>, вычислив <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mo>!</mo>
+  </mrow>
+</math> и умножив
+результат на <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Если добавить оговорку, что 1! равно 1, это наблюдение прямо
+переводится в процедуру:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> 
+      </span><span class="lit">1</span><span class="pln"> 
+      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> n </span><span class="opn">(</span><span class="pln">factorial </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))</span></pre></div>
+
+<p>Мы можем воспользоваться подстановочной моделью из <a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>, чтобы понаблюдать
+эту процедуру в действии при вычислении 6!, как показано на <a href="#Figure-1_002e3">Figure 1.3</a>.
+</p>
+<figure class="float">
+<a id="Figure-1_002e3"></a>
+<object style="width: 52.58ex; height: 31.43ex;" data="fig/chap1/Fig1.3d.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 1.3:</strong> Линейный рекурсивный процесс вычисления 6!.</p>
+</figcaption>
+</figure>
+
+<p>Теперь взглянем на вычисление факториалов с другой стороны.  Мы могли бы описать
+правило вычисления <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>!</mo>
+  </mrow>
+</math>, указав, что сначала умножаем 1 на 2, затем результат
+на 3, затем на 4 и так далее, пока не дойдём до <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Более формально: мы
+поддерживаем текущее произведение вместе со счётчиком, который считает от 1 до
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Вычисление можно описать, сказав, что счётчик и произведение одновременно
+меняются от одного шага к следующему по правилу
+</p>
+<div class="example">
+<pre class="example">product <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">←<!-- ← --></mo>
+</math> counter * product
+counter <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">←<!-- ← --></mo>
+</math> counter + 1
+</pre></div>
+
+<p>и оговорив, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>!</mo>
+  </mrow>
+</math> — это значение произведения, когда счётчик превышает
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.
+</p>
+<p>И снова мы можем переписать наше описание как процедуру вычисления
+факториалов:<a class="footnote_link" id="DOCF29" href="#FOOT29"><sup>29</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">fact-iter </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> n</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fact-iter product counter max-count</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> counter max-count</span><span class="clo">)</span><span class="pln">
+      product
+      </span><span class="opn">(</span><span class="pln">fact-iter </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> counter product</span><span class="clo">)</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> counter </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+                 max-count</span><span class="clo">)))</span></pre></div>
+
+<p>Как и раньше, мы можем воспользоваться подстановочной моделью, чтобы представить
+себе процесс вычисления 6!, как показано на <a href="#Figure-1_002e4">Figure 1.4</a>.
+</p>
+<figure class="float">
+<a id="Figure-1_002e4"></a>
+<object style="width: 23.40ex; height: 23.31ex;" data="fig/chap1/Fig1.4d.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 1.4:</strong> Линейный итеративный процесс вычисления 6!.</p>
+</figcaption>
+</figure>
+
+<p>Сравните два процесса.  С одной точки зрения, они почти не различаются.  Оба
+вычисляют одну и ту же математическую функцию на одной и той же области, и каждый
+требует числа шагов, пропорционального <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, чтобы вычислить <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>!</mo>
+  </mrow>
+</math>.  В
+самом деле, оба процесса выполняют даже одну и ту же последовательность умножений,
+получая одну и ту же последовательность частичных произведений.  С другой стороны,
+когда мы рассматриваем «формы» этих двух процессов, мы обнаруживаем, что они
+эволюционируют совершенно по-разному.
+</p>
+<p>Рассмотрим первый процесс.  Подстановочная модель обнаруживает форму расширения с
+последующим сжатием, указанную стрелкой на <a href="#Figure-1_002e3">Figure 1.3</a>.  Расширение происходит,
+когда процесс выстраивает цепочку <a id="index-otlozhennykh-operacii"></a>
+<em>отложенных операций</em> (в данном случае —
+цепочку умножений).  Сжатие происходит, когда операции фактически выполняются.  Этот
+тип процесса, характеризуемый цепочкой отложенных операций, называется
+<a id="index-rekursivnym-processom"></a>
+<em>рекурсивным процессом</em>.  Выполнение такого процесса требует, чтобы
+интерпретатор отслеживал операции, которые предстоит выполнить позже.  При вычислении
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>!</mo>
+  </mrow>
+</math> длина цепочки отложенных умножений, а значит, и объём сведений, нужных,
+чтобы её отслеживать, растёт линейно с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> (пропорционально <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>) — так же,
+как и число шагов.  Такой процесс называется <a id="index-lineinym-rekursivnym-processom"></a>
+<em>линейным рекурсивным процессом</em>.
+</p>
+<p>В противоположность этому второй процесс не растёт и не сжимается.  На каждом шаге
+всё, что нам нужно отслеживать при любом <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, — это текущие значения переменных
+<code>product</code>, <code>counter</code> и <code>max-count</code>.  Мы называем это
+<a id="index-iterativnym-processom"></a>
+<em>итеративным процессом</em>.  Вообще, итеративный процесс — это процесс,
+состояние которого можно описать фиксированным числом <a id="index-peremennykh-sostoyaniya"></a>
+<em>переменных состояния</em>
+вместе с фиксированным правилом, описывающим, как переменные состояния должны
+обновляться при переходе процесса из состояния в состояние, и (необязательной)
+проверкой окончания, задающей условия, при которых процесс должен завершиться.  При
+вычислении <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>!</mo>
+  </mrow>
+</math> требуемое число шагов растёт линейно с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Такой
+процесс называется <a id="index-lineinym-iterativnym-processom"></a>
+<em>линейным итеративным процессом</em>.
+</p>
+<p>Различие между двумя процессами можно увидеть и иначе.  В итеративном случае
+программные переменные дают полное описание состояния процесса в любой момент.  Если
+бы мы остановили вычисление между шагами, всё, что нужно было бы сделать для
+возобновления вычисления, — это снабдить интерпретатор значениями трёх программных
+переменных.  Не так с рекурсивным процессом.  В этом случае есть некоторая
+дополнительная «скрытая» информация, поддерживаемая интерпретатором и не
+содержащаяся в программных переменных, которая указывает, «где находится процесс»
+при прохождении цепочки отложенных операций.  Чем длиннее цепочка, тем больше
+информации нужно поддерживать.<a class="footnote_link" id="DOCF30" href="#FOOT30"><sup>30</sup></a>
+</p>
+<p>Противопоставляя итерацию и рекурсию, мы должны быть внимательны, чтобы не путать
+понятие рекурсивного <a id="index-processa"></a>
+<em>процесса</em> с понятием рекурсивной <a id="index-procedury"></a>
+<em>процедуры</em>.
+Когда мы описываем процедуру как рекурсивную, мы имеем в виду синтаксический факт,
+что определение процедуры ссылается (прямо или косвенно) на саму процедуру.  Но
+когда мы описываем процесс как следующий, скажем, линейно рекурсивному образцу, мы
+говорим о том, как эволюционирует процесс, а не о синтаксисе того, как написана
+процедура.  Может показаться смущающим, что мы говорим о рекурсивной процедуре,
+такой как <code>fact-iter</code>, как о порождающей итеративный процесс.  Однако процесс и
+впрямь итеративен: его состояние полностью схватывается тремя переменными состояния,
+и интерпретатору достаточно отслеживать лишь три переменные, чтобы выполнить процесс.
+</p>
+<p>Одна из причин, по которой различие между процессом и процедурой может сбивать с
+толку, состоит в том, что большинство реализаций распространённых языков (включая
+Ada, Pascal и C) устроены так, что интерпретация любой рекурсивной процедуры
+потребляет объём памяти, растущий с числом вызовов процедур, даже когда описываемый
+процесс в принципе итеративен.  Как следствие, эти языки могут описывать итеративные
+процессы, лишь прибегая к специальным «циклическим конструкциям», таким как
+<code>do</code>, <code>repeat</code>, <code>until</code>, <code>for</code> и <code>while</code>.  Реализация
+Scheme, которую мы рассмотрим в <a href="Chapter-5.xhtml#Chapter-5">Chapter 5</a>, не страдает этим недостатком.  Она
+будет выполнять итеративный процесс в постоянном пространстве, даже если итеративный
+процесс описан рекурсивной процедурой.  Реализация с таким свойством называется
+<a id="index-khvostovo_002drekursivnoi"></a>
+<em>хвостово-рекурсивной</em>.  При хвостово-рекурсивной реализации итерацию можно
+выразить с помощью обычного механизма вызова процедур, так что специальные
+итерационные конструкции полезны лишь как синтаксический сахар.<a class="footnote_link" id="DOCF31" href="#FOOT31"><sup>31</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e9"></a>Exercise 1.9:</strong> Каждая из следующих двух процедур задаёт
+метод сложения двух положительных целых чисел через процедуры <code>inc</code>,
+увеличивающую свой аргумент на 1, и <code>dec</code>, уменьшающую свой аргумент на 1.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> a </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+      b 
+      </span><span class="opn">(</span><span class="pln">inc </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">dec a</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> a </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+      b 
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">dec a</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">inc b</span><span class="clo">))))</span></pre></div>
+
+<p>С помощью подстановочной модели проиллюстрируйте процесс, порождаемый каждой
+процедурой при вычислении <code>(+ 4 5)</code>.  Эти процессы итеративные или рекурсивные?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e10"></a>Exercise 1.10:</strong> Следующая процедура вычисляет
+математическую функцию, называемую функцией Аккермана.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">A x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> y </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> y</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> y </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">A </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> x </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pln">A x </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> y </span><span class="lit">1</span><span class="clo">))))))</span></pre></div>
+
+<p>Каковы значения следующих выражений?
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">A </span><span class="lit">1</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">A </span><span class="lit">2</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">A </span><span class="lit">3</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)</span></pre></div>
+
+<p>Рассмотрите следующие процедуры, где <code>A</code> — процедура, определённая выше:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f n</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">A </span><span class="lit">0</span><span class="pln"> n</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">g n</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">A </span><span class="lit">1</span><span class="pln"> n</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">h n</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">A </span><span class="lit">2</span><span class="pln"> n</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">k n</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> n n</span><span class="clo">))</span></pre></div>
+
+<p>Дайте сжатые математические определения функций, вычисляемых процедурами <code>f</code>,
+<code>g</code> и <code>h</code>, для положительных целых значений <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Например,
+<code>(k n)</code> вычисляет <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>5</mn>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>.
+</p></blockquote>
+
+<a id="g_t1_002e2_002e2"></a>
+<a id="Drevovidnaya-rekursiya"></a>
+<h4 class="subsection"><span class="secnum">1.2.2</span><span class="sectitle">Древовидная рекурсия</span></h4>
+
+<p>Ещё один распространённый образец вычисления называется <a id="index-drevovidnoi"></a>
+рекурсией
+<em>древовидной
+рекурсией</em>.  В качестве примера рассмотрим вычисление последовательности чисел
+Фибоначчи, в которой каждое число есть сумма двух предыдущих:
+</p>
+<div style="text-align: center">0, 1, 1, 2, 3, 5, 8, 13, 21, ….
+</div>
+<p>В общем виде числа Фибоначчи можно определить правилом
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtext>Fib</mtext>
+  <mo stretchy="false">(</mo>
+  <mi>n</mi>
+  <mo stretchy="false">)</mo>
+  <mspace width="thickmathspace"/>
+  <mo>=</mo>
+  <mspace width="thickmathspace"/>
+  <mrow>
+    <mo>{</mo>
+    <mtable columnalign="left left" rowspacing="4pt" columnspacing="1em">
+      <mtr>
+        <mtd>
+          <mn>0</mn>
+        </mtd>
+        <mtd>
+          <mspace width="thickmathspace"/>
+          <mtext>if</mtext>
+          <mspace width="thickmathspace"/>
+          <mspace width="thickmathspace"/>
+          <mi>n</mi>
+          <mo>=</mo>
+          <mn>0</mn>
+          <mo>,</mo>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd>
+          <mn>1</mn>
+        </mtd>
+        <mtd>
+          <mspace width="thickmathspace"/>
+          <mtext>if</mtext>
+          <mspace width="thickmathspace"/>
+          <mspace width="thickmathspace"/>
+          <mi>n</mi>
+          <mo>=</mo>
+          <mn>1</mn>
+          <mo>,</mo>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd>
+          <mtext>Fib</mtext>
+          <mo stretchy="false">(</mo>
+          <mi>n</mi>
+          <mo>−<!-- − --></mo>
+          <mn>1</mn>
+          <mo stretchy="false">)</mo>
+          <mo>+</mo>
+          <mtext>Fib</mtext>
+          <mo stretchy="false">(</mo>
+          <mi>n</mi>
+          <mo>−<!-- − --></mo>
+          <mn>2</mn>
+          <mo stretchy="false">)</mo>
+        </mtd>
+        <mtd>
+          <mspace width="thickmathspace"/>
+          <mtext>otherwise</mtext>
+          <mo>.</mo>
+        </mtd>
+      </mtr>
+    </mtable>
+  </mrow>
+</math>
+
+Мы можем сразу перевести это определение в рекурсивную процедуру вычисления чисел
+Фибоначчи:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pln">fib </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">2</span><span class="clo">))))))</span></pre></div>
+
+<p>Рассмотрим образец этого вычисления.  Чтобы вычислить <code>(fib 5)</code>, мы вычисляем
+<code>(fib 4)</code> и <code>(fib 3)</code>.  Чтобы вычислить <code>(fib 4)</code>, мы вычисляем
+<code>(fib 3)</code> и <code>(fib 2)</code>.  В общем случае развёрнутый процесс выглядит как
+дерево, показанное на <a href="#Figure-1_002e5">Figure 1.5</a>.  Заметьте, что на каждом уровне (кроме
+нижнего) ветви раздваиваются; это отражает тот факт, что процедура <code>fib</code>
+вызывает себя дважды при каждом обращении.
+</p>
+<figure class="float">
+<a id="Figure-1_002e5"></a>
+<object style="width: 58.07ex; height: 36.18ex;" data="fig/chap1/Fig1.5d.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 1.5:</strong> Древовидно-рекурсивный процесс, порождаемый при вычислении <code>(fib 5)</code>.</p>
+</figcaption>
+</figure>
+
+<p>Эта процедура поучительна как прообраз древовидной рекурсии, но это ужасный способ
+вычислять числа Фибоначчи, потому что она проделывает уйму избыточных вычислений.
+Заметьте на <a href="#Figure-1_002e5">Figure 1.5</a>, что всё вычисление <code>(fib 3)</code> — почти половина
+работы — дублируется.  На самом деле нетрудно показать, что число раз, которое
+процедура вычислит <code>(fib 1)</code> или <code>(fib 0)</code> (вообще говоря — число листьев
+в приведённом дереве), в точности равно <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Чтобы получить
+представление о том, насколько это плохо, можно показать, что значение
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> растёт экспоненциально с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Точнее (см.
+<a href="#Exercise-1_002e13">Exercise 1.13</a>), <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> — ближайшее целое к
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>φ<!-- φ --></mi>
+      <mi>n</mi>
+    </msup>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msqrt>
+      <mn>5</mn>
+    </msqrt>
+  </mrow>
+</math>, где
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>φ<!-- φ --></mi>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mfrac>
+    <mrow>
+      <mn>1</mn>
+      <mo>+</mo>
+      <msqrt>
+        <mn>5</mn>
+      </msqrt>
+    </mrow>
+    <mn>2</mn>
+  </mfrac>
+  <mspace width="thinmathspace"/>
+  <mo>≈<!-- ≈ --></mo>
+  <mspace width="thinmathspace"/>
+  <mn>1.6180</mn>
+</math>
+
+есть <a id="index-zolotoe-sechenie"></a>
+<em>золотое сечение</em>, удовлетворяющее уравнению
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <msup>
+    <mi>φ<!-- φ --></mi>
+    <mn>2</mn>
+  </msup>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>φ<!-- φ --></mi>
+    <mo>+</mo>
+    <mn>1.</mn>
+  </mrow>
+</math>
+
+Таким образом, процесс использует число шагов, растущее экспоненциально со входом.
+С другой стороны, требуемое пространство растёт лишь линейно со входом, потому что в
+любой момент вычисления нам нужно отслеживать только те узлы, что находятся над нами
+в дереве.  В общем случае число шагов, требуемое древовидно-рекурсивным процессом,
+будет пропорционально числу узлов в дереве, а требуемое пространство — максимальной
+глубине дерева.
+</p>
+<p>Мы можем также сформулировать итеративный процесс вычисления чисел Фибоначчи.  Идея
+в том, чтобы использовать пару целых чисел <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>, инициализированных
+значениями <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib(1) = 1</mtext>
+  </mrow>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib(0) = 0</mtext>
+  </mrow>
+</math>, и многократно
+применять одновременные преобразования
+</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="left" rowspacing="4pt" columnspacing="1em">
+    <mtr>
+      <mtd>
+        <mi>a</mi>
+        <mspace width="thickmathspace"/>
+        <mo stretchy="false">←<!-- ← --></mo>
+        <mspace width="thickmathspace"/>
+        <mi>a</mi>
+        <mo>+</mo>
+        <mi>b</mi>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi>b</mi>
+        <mspace width="thickmathspace"/>
+        <mo stretchy="false">←<!-- ← --></mo>
+        <mspace width="thickmathspace"/>
+        <mi>a</mi>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
+<p>Нетрудно показать, что после <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-кратного применения этого преобразования
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> будут равны соответственно <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> и
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Таким образом, числа Фибоначчи можно вычислять итеративно с
+помощью процедуры
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib n</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">fib-iter </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> n</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib-iter a b count</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> count </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      b
+      </span><span class="opn">(</span><span class="pln">fib-iter </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln"> a </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> count </span><span class="lit">1</span><span class="clo">))))</span></pre></div>
+
+<p>Этот второй метод вычисления <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> — линейная итерация.  Различие в
+числе шагов, требуемых двумя методами, — один линеен по <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, другой растёт так
+же быстро, как и сам <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, — огромно даже для малых входов.
+</p>
+<p>Из этого не следует заключать, что древовидно-рекурсивные процессы бесполезны.
+Когда мы будем рассматривать процессы, работающие с иерархически структурированными
+данными, а не с числами, мы обнаружим, что древовидная рекурсия — естественный и
+мощный инструмент.<a class="footnote_link" id="DOCF32" href="#FOOT32"><sup>32</sup></a> Но даже в
+числовых операциях древовидно-рекурсивные процессы могут быть полезны, помогая нам
+понимать и проектировать программы.  Например, хотя первая процедура <code>fib</code>
+гораздо менее эффективна, чем вторая, она прямолинейнее, будучи немногим более чем
+переводом на Lisp определения последовательности Фибоначчи.  Чтобы сформулировать
+итеративный алгоритм, потребовалось заметить, что вычисление можно переформулировать
+как итерацию с тремя переменными состояния.
+</p>
+<a id="Primer_003a-razmen-monet"></a>
+<h5 class="subsubheading">Пример: размен монет</h5>
+
+<p>Чтобы придумать итеративный алгоритм для чисел Фибоначчи, нужна лишь капелька
+смекалки.  В противоположность этому рассмотрим такую задачу: сколькими разными
+способами можно разменять 1 доллар, имея полудоллары, четвертаки, даймы, никели и
+пенни?  В более общем виде — можем ли мы написать процедуру, вычисляющую число
+способов разменять любую заданную денежную сумму?
+</p>
+<p>У этой задачи есть простое решение в виде рекурсивной процедуры.  Предположим, мы
+мыслим имеющиеся виды монет упорядоченными некоторым образом.  Тогда выполняется
+такое соотношение:
+</p>
+<p>Число способов разменять сумму <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, используя <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> видов монет, равно
+</p>
+<ul>
+<li> числу способов разменять сумму <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, используя все виды монет, кроме первого,
+плюс
+
+</li><li> число способов разменять сумму <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mo>−<!-- − --></mo>
+    <mi>d</mi>
+  </mrow>
+</math>, используя все <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> видов монет,
+где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>d</mi>
+</math> — достоинство первого вида монет.
+
+</li></ul>
+
+<p>Чтобы понять, почему это верно, заметим, что способы размена можно разделить на две
+группы: те, что не используют ни одной монеты первого вида, и те, что используют.
+Поэтому общее число способов разменять некоторую сумму равно числу способов
+разменять эту сумму без использования монет первого вида плюс число способов
+разменять её в предположении, что мы используем монету первого вида.  Но последнее
+число равно числу способов разменять ту сумму, что остаётся после использования
+одной монеты первого вида.
+</p>
+<p>Таким образом, мы можем рекурсивно свести задачу размена данной суммы к задаче
+размена меньших сумм меньшим числом видов монет.  Внимательно рассмотрите это
+правило сведения и убедитесь, что мы можем использовать его для описания алгоритма,
+если зададим следующие вырожденные случаи:<a class="footnote_link" id="DOCF33" href="#FOOT33"><sup>33</sup></a>
+</p>
+<ul>
+<li> Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> в точности равно 0, мы должны засчитать это как 1 способ размена.
+
+</li><li> Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> меньше 0, мы должны засчитать это как 0 способов размена.
+
+</li><li> Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> равно 0, мы должны засчитать это как 0 способов размена.
+
+</li></ul>
+
+<p>Это описание легко перевести в рекурсивную процедуру:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">count-change amount</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">cc amount </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cc amount kinds-of-coins</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> amount </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> amount </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+             </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> kinds-of-coins </span><span class="lit">0</span><span class="clo">))</span><span class="pln"> 
+         </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cc amount </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> kinds-of-coins </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">cc </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> amount </span><span class="opn">(</span><span class="pln">first-denomination 
+                           kinds-of-coins</span><span class="clo">))</span><span class="pln">
+                kinds-of-coins</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">first-denomination kinds-of-coins</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> kinds-of-coins </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> kinds-of-coins </span><span class="lit">2</span><span class="clo">)</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> kinds-of-coins </span><span class="lit">3</span><span class="clo">)</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> kinds-of-coins </span><span class="lit">4</span><span class="clo">)</span><span class="pln"> </span><span class="lit">25</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> kinds-of-coins </span><span class="lit">5</span><span class="clo">)</span><span class="pln"> </span><span class="lit">50</span><span class="clo">)))</span></pre></div>
+
+<p>(Процедура <code>first-denomination</code> принимает на вход число имеющихся видов монет и
+возвращает достоинство первого вида.  Здесь мы мыслим монеты упорядоченными от
+большего к меньшему, но подошёл бы любой порядок.)  Теперь мы можем ответить на наш
+исходный вопрос о размене доллара:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">count-change </span><span class="lit">100</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">292</span></i>
+</pre></div>
+
+<p><code>Count-change</code> порождает древовидно-рекурсивный процесс с избыточностями,
+подобными тем, что были в нашей первой реализации <code>fib</code>.  (Вычисление этого 292
+займёт изрядное время.)  С другой стороны, неочевидно, как спроектировать лучший
+алгоритм для вычисления результата, и мы оставляем эту задачу как вызов.  Наблюдение,
+что древовидно-рекурсивный процесс может быть крайне неэффективным, но зачастую его
+легко задать и понять, привело к предложению, что лучшее из обоих миров можно
+получить, спроектировав «умный компилятор», который преобразовывал бы
+древовидно-рекурсивные процедуры в более эффективные процедуры, вычисляющие тот же
+результат.<a class="footnote_link" id="DOCF34" href="#FOOT34"><sup>34</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e11"></a>Exercise 1.11:</strong> Функция <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> задана правилом, что
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mi>n</mi>
+  </mrow>
+</math>, если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>&lt;</mo>
+    <mn>3</mn>
+  </mrow>
+</math>, и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>2</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>3</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>≥<!-- ≥ --></mo>
+    <mn>3</mn>
+  </mrow>
+</math>.
+Напишите процедуру, вычисляющую <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> посредством рекурсивного процесса.  Напишите
+процедуру, вычисляющую <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> посредством итеративного процесса.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e12"></a>Exercise 1.12:</strong> Следующий узор из чисел называется
+<a id="index-treugolxnikom-Paskalya"></a>
+<em>треугольником Паскаля</em>.
+</p>
+<div class="example">
+<pre class="example">         1
+       1   1
+     1   2   1
+   1   3   3   1
+ 1   4   6   4   1
+       . . .
+</pre></div>
+
+<p>Числа по краям треугольника все равны 1, а каждое число внутри треугольника есть
+сумма двух чисел над ним.<a class="footnote_link" id="DOCF35" href="#FOOT35"><sup>35</sup></a> Напишите процедуру, вычисляющую элементы треугольника
+Паскаля посредством рекурсивного процесса.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e13"></a>Exercise 1.13:</strong> Докажите, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> —
+ближайшее целое к <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>φ<!-- φ --></mi>
+      <mi>n</mi>
+    </msup>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msqrt>
+      <mn>5</mn>
+    </msqrt>
+  </mrow>
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <msqrt>
+      <mn>5</mn>
+    </msqrt>
+    <mo stretchy="false">)</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mn>2</mn>
+  </mrow>
+</math>.
+Подсказка: пусть <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>ψ<!-- ψ --></mi>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>−<!-- − --></mo>
+    <msqrt>
+      <mn>5</mn>
+    </msqrt>
+    <mo stretchy="false">)</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mn>2</mn>
+  </mrow>
+</math>.  Воспользуйтесь индукцией и
+определением чисел Фибоначчи (см. <a href="#g_t1_002e2_002e2">1.2.2</a>), чтобы доказать, что
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>φ<!-- φ --></mi>
+      <mi>n</mi>
+    </msup>
+    <mo>−<!-- − --></mo>
+    <msup>
+      <mi>ψ<!-- ψ --></mi>
+      <mi>n</mi>
+    </msup>
+    <mo stretchy="false">)</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msqrt>
+      <mn>5</mn>
+    </msqrt>
+  </mrow>
+</math>.
+</p></blockquote>
+
+<a id="g_t1_002e2_002e3"></a>
+<a id="Poryadki-rosta"></a>
+<h4 class="subsection"><span class="secnum">1.2.3</span><span class="sectitle">Порядки роста</span></h4>
+
+<p>Предыдущие примеры показывают, что процессы могут значительно различаться по
+скоростям, с которыми они потребляют вычислительные ресурсы.  Один удобный способ
+описать это различие — воспользоваться понятием <a id="index-poryadka-rosta"></a>
+<em>порядка роста</em>, чтобы
+получить грубую меру ресурсов, требуемых процессом, по мере того как входные данные
+становятся больше.
+</p>
+<p>Пусть <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> — параметр, измеряющий размер задачи, а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> — объём
+ресурсов, которые процесс требует для задачи размера <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  В наших предыдущих
+примерах мы брали <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> равным числу, для которого вычисляется заданная функция,
+но есть и другие возможности.  Например, если наша цель — вычислить приближение к
+квадратному корню числа, мы могли бы взять <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> равным требуемому числу верных
+цифр.  Для умножения матриц мы могли бы взять <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> равным числу строк в
+матрицах.  В общем случае есть ряд свойств задачи, по отношению к которым желательно
+анализировать данный процесс.  Аналогично, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> может измерять число
+используемых внутренних регистров памяти, число выполненных элементарных машинных
+операций и так далее.  В компьютерах, выполняющих за раз лишь фиксированное число
+операций, требуемое время будет пропорционально числу выполненных элементарных
+машинных операций.
+</p>
+<p>Мы говорим, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> имеет порядок роста <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, что
+записывается <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> (читается «тета от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>»),
+если существуют положительные постоянные <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>k</mi>
+    <mn>1</mn>
+  </msub>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>k</mi>
+    <mn>2</mn>
+  </msub>
+</math>, не зависящие от
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, такие, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>k</mi>
+      <mn>1</mn>
+    </msub>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>≤<!-- ≤ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>≤<!-- ≤ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>k</mi>
+      <mn>2</mn>
+    </msub>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> при любом
+достаточно большом значении <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  (Иными словами, при больших <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>
+значение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> зажато между <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>k</mi>
+      <mn>1</mn>
+    </msub>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>k</mi>
+      <mn>2</mn>
+    </msub>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.)
+</p>
+<p>Например, для линейного рекурсивного процесса вычисления факториала, описанного в
+<a href="#g_t1_002e2_002e1">1.2.1</a>, число шагов растёт пропорционально входу <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Таким образом,
+число шагов, требуемых этим процессом, растёт как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Мы также
+видели, что требуемое пространство растёт как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Для итеративного
+факториала число шагов по-прежнему <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, но пространство —
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, то есть постоянно.<a class="footnote_link" id="DOCF36" href="#FOOT36"><sup>36</sup></a> Древовидно-рекурсивное вычисление чисел Фибоначчи требует
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>φ<!-- φ --></mi>
+      <mi>n</mi>
+    </msup>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> шагов и пространства <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math>
+— золотое сечение, описанное в <a href="#g_t1_002e2_002e2">1.2.2</a>.
+</p>
+<p>Порядки роста дают лишь грубое описание поведения процесса.  Например, процесс,
+требующий <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mn>2</mn>
+  </msup>
+</math> шагов, процесс, требующий <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1000</mn>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math> шагов, и процесс,
+требующий <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>10</mn>
+    <mi>n</mi>
+  </mrow>
+  <mo>+</mo>
+  <mn>17</mn>
+</math> шагов, — все имеют порядок роста
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  С другой стороны, порядок роста даёт полезное указание на то,
+как, по нашим ожиданиям, изменится поведение процесса при изменении размера задачи.
+Для <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> (линейного) процесса удвоение размера примерно удвоит объём
+используемых ресурсов.  Для экспоненциального процесса каждое приращение размера
+задачи умножает потребление ресурсов на постоянный множитель.  В оставшейся части
+<a href="#g_t1_002e2">1.2</a> мы рассмотрим два алгоритма, чей порядок роста логарифмический, так что
+удвоение размера задачи увеличивает потребность в ресурсах на постоянную величину.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e14"></a>Exercise 1.14:</strong> Нарисуйте дерево, иллюстрирующее
+процесс, порождаемый процедурой <code>count-change</code> из <a href="#g_t1_002e2_002e2">1.2.2</a> при размене 11
+центов.  Каковы порядки роста пространства и числа шагов, используемых этим
+процессом, по мере увеличения разменимой суммы?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e15"></a>Exercise 1.15:</strong> Синус угла (заданного в радианах)
+можно вычислить, воспользовавшись приближением <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>x</mi>
+    <mo>≈<!-- ≈ --></mo>
+    <mi>x</mi>
+  </mrow>
+</math>, если
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> достаточно мал, и тригонометрическим тождеством
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>x</mi>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mfrac>
+      <mi>x</mi>
+      <mn>3</mn>
+    </mfrac>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>−<!-- − --></mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <msup>
+      <mi>sin</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mfrac>
+      <mi>x</mi>
+      <mn>3</mn>
+    </mfrac>
+  </mrow>
+</math>
+
+чтобы уменьшить величину аргумента sin.  (Для целей этого упражнения угол считается
+«достаточно малым», если его величина не превышает 0,1 радиана.)  Эти идеи воплощены
+в следующих процедурах:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x x</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube x</span><span class="clo">))))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sine angle</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">not </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs angle</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0.1</span><span class="clo">))</span><span class="pln">
+       angle
+       </span><span class="opn">(</span><span class="pln">p </span><span class="opn">(</span><span class="pln">sine </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> angle </span><span class="lit">3.0</span><span class="clo">)))))</span></pre></div>
+
+<ol>
+<li> Сколько раз применяется процедура <code>p</code> при вычислении <code>(sine 12.15)</code>?
+
+</li><li> Каков порядок роста по пространству и числу шагов (как функция от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>),
+используемых процессом, порождаемым процедурой <code>sine</code> при вычислении
+<code>(sine a)</code>?
+
+</li></ol>
+</blockquote>
+
+<a id="g_t1_002e2_002e4"></a>
+<a id="Vozvedenie-v-stepenx"></a>
+<h4 class="subsection"><span class="secnum">1.2.4</span><span class="sectitle">Возведение в степень</span></h4>
+
+<p>Рассмотрим задачу вычисления степени данного числа.  Нам нужна процедура, которая
+принимает в качестве аргументов основание <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> и положительный целый показатель
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и вычисляет <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>b</mi>
+    <mi>n</mi>
+  </msup>
+</math>.  Один способ сделать это — через рекурсивное
+определение
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="left" rowspacing="4pt" columnspacing="1em">
+    <mtr>
+      <mtd>
+        <msup>
+          <mi>b</mi>
+          <mi>n</mi>
+        </msup>
+        <mspace width="thinmathspace"/>
+        <mo>=</mo>
+        <mspace width="thinmathspace"/>
+        <mi>b</mi>
+        <mo>⋅<!-- ⋅ --></mo>
+        <msup>
+          <mi>b</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>−<!-- − --></mo>
+            <mn>1</mn>
+          </mrow>
+        </msup>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <msup>
+          <mi>b</mi>
+          <mn>0</mn>
+        </msup>
+        <mspace width="thinmathspace"/>
+        <mo>=</mo>
+        <mspace width="thinmathspace"/>
+        <mn>1</mn>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
+которое легко переводится в процедуру
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">expt b n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+      </span><span class="lit">1</span><span class="pln"> 
+      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> b </span><span class="opn">(</span><span class="pln">expt b </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))</span></pre></div>
+
+<p>Это линейный рекурсивный процесс, требующий <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> шагов и
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> пространства.  Как и в случае факториала, мы легко можем
+сформулировать эквивалентную линейную итерацию:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">expt b n</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">expt-iter b n </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">expt-iter b counter product</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> counter </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      product
+      </span><span class="opn">(</span><span class="pln">expt-iter b
+                 </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> counter </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> b product</span><span class="clo">))))</span></pre></div>
+
+<p>Эта версия требует <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> шагов и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> пространства.
+</p>
+<p>Мы можем вычислять степени за меньшее число шагов, пользуясь последовательным
+возведением в квадрат.  Например, вместо того чтобы вычислять <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>b</mi>
+    <mn>8</mn>
+  </msup>
+</math> как
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>b</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+  </mrow>
+  <mo>⋅<!-- ⋅ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+  </mrow>
+  <mo>⋅<!-- ⋅ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mi>b</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+мы можем вычислить его за три умножения:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="left" rowspacing="4pt" columnspacing="1em">
+    <mtr>
+      <mtd>
+        <msup>
+          <mi>b</mi>
+          <mn>2</mn>
+        </msup>
+        <mspace width="thinmathspace"/>
+        <mo>=</mo>
+        <mspace width="thinmathspace"/>
+        <mi>b</mi>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mi>b</mi>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <msup>
+          <mi>b</mi>
+          <mn>4</mn>
+        </msup>
+        <mspace width="thinmathspace"/>
+        <mo>=</mo>
+        <mspace width="thinmathspace"/>
+        <msup>
+          <mi>b</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>⋅<!-- ⋅ --></mo>
+        <msup>
+          <mi>b</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <msup>
+          <mi>b</mi>
+          <mn>8</mn>
+        </msup>
+        <mspace width="thinmathspace"/>
+        <mo>=</mo>
+        <mspace width="thinmathspace"/>
+        <msup>
+          <mi>b</mi>
+          <mn>4</mn>
+        </msup>
+        <mo>⋅<!-- ⋅ --></mo>
+        <msup>
+          <mi>b</mi>
+          <mn>4</mn>
+        </msup>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
+Этот способ прекрасно работает для показателей, являющихся степенями двойки.  Мы
+можем воспользоваться последовательным возведением в квадрат и при вычислении
+степеней в общем случае, если применим правило
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="left left" rowspacing="4pt" columnspacing="1em">
+    <mtr>
+      <mtd>
+        <msup>
+          <mi>b</mi>
+          <mi>n</mi>
+        </msup>
+        <mspace width="thinmathspace"/>
+        <mo>=</mo>
+        <mspace width="thinmathspace"/>
+        <mo stretchy="false">(</mo>
+        <msup>
+          <mi>b</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo>/</mo>
+            </mrow>
+            <mn>2</mn>
+          </mrow>
+        </msup>
+        <msup>
+          <mo stretchy="false">)</mo>
+          <mn>2</mn>
+        </msup>
+      </mtd>
+      <mtd>
+        <mtext>if</mtext>
+        <mspace width="thickmathspace"/>
+        <mi>n</mi>
+        <mspace width="thickmathspace"/>
+        <mtext>is even</mtext>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <msup>
+          <mi>b</mi>
+          <mi>n</mi>
+        </msup>
+        <mspace width="thinmathspace"/>
+        <mo>=</mo>
+        <mspace width="thinmathspace"/>
+        <mi>b</mi>
+        <mo>⋅<!-- ⋅ --></mo>
+        <msup>
+          <mi>b</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>−<!-- − --></mo>
+            <mn>1</mn>
+          </mrow>
+        </msup>
+      </mtd>
+      <mtd>
+        <mtext>if</mtext>
+        <mspace width="thickmathspace"/>
+        <mi>n</mi>
+        <mspace width="thickmathspace"/>
+        <mtext>is odd</mtext>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
+Этот метод можно выразить как процедуру:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fast-expt b n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">even? n</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">fast-expt b </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> n </span><span class="lit">2</span><span class="clo">))))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> b </span><span class="opn">(</span><span class="pln">fast-expt b </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))))</span></pre></div>
+
+<p>где предикат, проверяющий, чётно ли целое число, определяется через примитивную
+процедуру <code>remainder</code> так:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">even? n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">remainder n </span><span class="lit">2</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span></pre></div>
+
+<p>Процесс, развиваемый <code>fast-expt</code>, растёт логарифмически по <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и по
+пространству, и по числу шагов.  Чтобы убедиться в этом, заметьте, что вычисление
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mn>2</mn>
+      <mi>n</mi>
+    </mrow>
+  </msup>
+</math> с помощью <code>fast-expt</code> требует лишь на одно умножение больше, чем
+вычисление <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>b</mi>
+    <mi>n</mi>
+  </msup>
+</math>.  Поэтому размер показателя, который мы можем вычислить,
+(приблизительно) удваивается с каждым новым разрешённым умножением.  Таким образом,
+число умножений, требуемых для показателя <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, растёт примерно так же быстро,
+как логарифм <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> по основанию 2.  Этот процесс имеет рост <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.<a class="footnote_link" id="DOCF37" href="#FOOT37"><sup>37</sup></a>
+</p>
+<p>Различие между ростом <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> и ростом <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+становится разительным, когда <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> становится большим.  Например,
+<code>fast-expt</code> для <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> = 1000 требует лишь 14 умножений.<a class="footnote_link" id="DOCF38" href="#FOOT38"><sup>38</sup></a> Можно также воспользоваться идеей последовательного возведения в
+квадрат, чтобы придумать итеративный алгоритм, вычисляющий степени за
+логарифмическое число шагов (см. <a href="#Exercise-1_002e16">Exercise 1.16</a>), хотя, как это часто бывает с
+итеративными алгоритмами, он записывается не так прямолинейно, как рекурсивный
+алгоритм.<a class="footnote_link" id="DOCF39" href="#FOOT39"><sup>39</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e16"></a>Exercise 1.16:</strong> Спроектируйте процедуру, развивающую
+итеративный процесс возведения в степень, который пользуется последовательным
+возведением в квадрат и использует логарифмическое число шагов, как и
+<code>fast-expt</code>.  (Подсказка: пользуясь наблюдением, что
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo>/</mo>
+        </mrow>
+        <mn>2</mn>
+      </mrow>
+    </msup>
+    <msup>
+      <mo stretchy="false">)</mo>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>b</mi>
+      <mn>2</mn>
+    </msup>
+    <msup>
+      <mo stretchy="false">)</mo>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo>/</mo>
+        </mrow>
+        <mn>2</mn>
+      </mrow>
+    </msup>
+  </mrow>
+</math>, держите вместе с показателем <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и
+основанием <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> дополнительную переменную состояния <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и определите
+преобразование состояния так, чтобы произведение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <msup>
+      <mi>b</mi>
+      <mi>n</mi>
+    </msup>
+  </mrow>
+</math> не менялось от
+состояния к состоянию.  В начале процесса <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> берётся равным 1, а ответ даётся
+значением <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> в конце процесса.  В общем случае приём определения
+<a id="index-invariantnoi-velichiny"></a>
+<em>инвариантной величины</em>, остающейся неизменной от состояния к состоянию, —
+мощный способ размышлять о проектировании итеративных алгоритмов.)
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e17"></a>Exercise 1.17:</strong> Алгоритмы возведения в степень из
+этого раздела основаны на выполнении возведения в степень посредством повторного
+умножения.  Сходным образом можно выполнять целочисленное умножение посредством
+повторного сложения.  Следующая процедура умножения (в которой предполагается, что
+наш язык умеет только складывать, но не умножать) аналогична процедуре <code>expt</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> b </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">0</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> b </span><span class="lit">1</span><span class="clo">)))))</span></pre></div>
+
+<p>Этот алгоритм требует числа шагов, линейного по <code>b</code>.  Теперь предположим, что
+мы включаем, вместе со сложением, операции <code>double</code>, удваивающую целое число,
+и <code>halve</code>, делящую (чётное) целое число на 2.  Пользуясь ими, спроектируйте
+процедуру умножения, аналогичную <code>fast-expt</code>, которая использует
+логарифмическое число шагов.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e18"></a>Exercise 1.18:</strong> Пользуясь результатами
+<a href="#Exercise-1_002e16">Exercise 1.16</a> и <a href="#Exercise-1_002e17">Exercise 1.17</a>, придумайте процедуру, порождающую
+итеративный процесс умножения двух целых чисел через сложение, удвоение и деление
+пополам и использующую логарифмическое число шагов.<a class="footnote_link" id="DOCF40" href="#FOOT40"><sup>40</sup></a>
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e19"></a>Exercise 1.19:</strong> Существует остроумный алгоритм
+вычисления чисел Фибоначчи за логарифмическое число шагов.  Вспомните преобразование
+переменных состояния <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> в процессе <code>fib-iter</code> из <a href="#g_t1_002e2_002e2">1.2.2</a>:
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+  <mo stretchy="false">←<!-- ← --></mo>
+  <mi>a</mi>
+  <mo>+</mo>
+  <mi>b</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+  <mo stretchy="false">←<!-- ← --></mo>
+  <mi>a</mi>
+</math>.  Назовём это преобразование <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>T</mi>
+</math> и
+заметим, что применение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>T</mi>
+</math> снова и снова, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> раз, начиная с 1 и 0, даёт
+пару <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Иными словами, числа
+Фибоначчи получаются применением <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>T</mi>
+    <mi>n</mi>
+  </msup>
+</math> — <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-й степени преобразования
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>T</mi>
+</math> — начиная с пары (1, 0).  Теперь рассмотрите <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>T</mi>
+</math> как частный случай
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>p</mi>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>q</mi>
+    <mo>=</mo>
+    <mn>1</mn>
+  </mrow>
+</math> в семействе преобразований <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>T</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>p</mi>
+      <mi>q</mi>
+    </mrow>
+  </msub>
+</math>, где
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>T</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>p</mi>
+      <mi>q</mi>
+    </mrow>
+  </msub>
+</math> преобразует пару <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>a</mi>
+    <mo>,</mo>
+    <mi>b</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> по правилу
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+  <mo stretchy="false">←<!-- ← --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>b</mi>
+    <mi>q</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mi>q</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mi>p</mi>
+  </mrow>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+  <mo stretchy="false">←<!-- ← --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>b</mi>
+    <mi>p</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mi>q</mi>
+  </mrow>
+</math>.  Покажите, что если
+применить такое преобразование <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>T</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>p</mi>
+      <mi>q</mi>
+    </mrow>
+  </msub>
+</math> дважды, то эффект тот же, что и от
+одного преобразования <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>T</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <msup>
+        <mi>p</mi>
+        <mo>′</mo>
+      </msup>
+      <msup>
+        <mi>q</mi>
+        <mo>′</mo>
+      </msup>
+    </mrow>
+  </msub>
+</math> того же вида, и вычислите <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>p</mi>
+    <mo>′</mo>
+  </msup>
+  <mspace width="negativethinmathspace"/>
+</math> и
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>q</mi>
+    <mo>′</mo>
+  </msup>
+  <mspace width="negativethinmathspace"/>
+</math> через <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>p</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>q</mi>
+</math>.  Это даёт нам явный способ возводить эти
+преобразования в квадрат, и тем самым мы можем вычислять <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>T</mi>
+    <mi>n</mi>
+  </msup>
+</math> последовательным
+возведением в квадрат, как в процедуре <code>fast-expt</code>.  Сложите всё это вместе,
+чтобы дополнить следующую процедуру, работающую за логарифмическое число
+шагов:<a class="footnote_link" id="DOCF41" href="#FOOT41"><sup>41</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fib-iter </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> n</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib-iter a b p q count</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> count </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+         b</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">even? count</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">fib-iter a
+                   b
+                   ⟨</span><span class="pun">??</span><span class="pln">⟩  </span><span class="com">;compute </span><var><span class="com">p'</span></var><span class="pln">
+                   ⟨</span><span class="pun">??</span><span class="pln">⟩  </span><span class="com">;compute </span><var><span class="com">q'</span></var><span class="pln">
+                   </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> count </span><span class="lit">2</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">fib-iter </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> b q</span><span class="clo">)</span><span class="pln"> 
+                      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a q</span><span class="clo">)</span><span class="pln"> 
+                      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a p</span><span class="clo">))</span><span class="pln">
+                   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> b p</span><span class="clo">)</span><span class="pln"> 
+                      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a q</span><span class="clo">))</span><span class="pln">
+                   p
+                   q
+                   </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> count </span><span class="lit">1</span><span class="clo">)))))</span></pre></div>
+</blockquote>
+
+<a id="g_t1_002e2_002e5"></a>
+<a id="Naibolxshie-obshchie-deliteli"></a>
+<h4 class="subsection"><span class="secnum">1.2.5</span><span class="sectitle">Наибольшие общие делители</span></h4>
+
+<p>Наибольший общий делитель (<abbr>НОД</abbr>) двух целых чисел <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>
+определяется как наибольшее целое число, которое делит и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> без
+остатка.  Например, <abbr>НОД</abbr> чисел 16 и 28 равен 4.  В <a href="Chapter-2.xhtml#Chapter-2">Chapter 2</a>, когда мы
+будем исследовать, как реализовать арифметику рациональных чисел, нам понадобится
+уметь вычислять <abbr>НОД</abbr>, чтобы приводить рациональные числа к несократимому виду.
+(Чтобы привести рациональное число к несократимому виду, нужно поделить и числитель,
+и знаменатель на их <abbr>НОД</abbr>.  Например, 16/28 сокращается до 4/7.)  Один способ
+найти <abbr>НОД</abbr> двух целых чисел — разложить их на множители и поискать общие
+множители, но есть знаменитый алгоритм, гораздо более эффективный.
+</p>
+<p>Идея алгоритма основана на наблюдении, что если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>r</mi>
+</math> — остаток от деления
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> на <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>, то общие делители <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> в точности те же, что и
+общие делители <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>r</mi>
+</math>.  Таким образом, мы можем воспользоваться
+уравнением
+</p>
+<div class="example">
+<pre class="example">НОД(a,b) = НОД(b,r)
+</pre></div>
+
+<p>чтобы последовательно сводить задачу вычисления <abbr>НОД</abbr> к задаче вычисления
+<abbr>НОД</abbr> всё меньших и меньших пар целых чисел.  Например,
+</p>
+<div class="example">
+<pre class="example">НОД(206,40) = НОД(40,6)
+            = НОД(6,4)
+            = НОД(4,2)
+            = НОД(2,0) = 2
+</pre></div>
+
+<p>сводит <abbr>НОД</abbr>(206, 40) к <abbr>НОД</abbr>(2, 0), который равен 2.  Можно показать, что,
+начав с любых двух положительных целых чисел и выполняя повторные сведения, мы всегда
+в конце концов получим пару, в которой второе число равно 0.  Тогда <abbr>НОД</abbr> — это
+другое число пары.  Этот метод вычисления <abbr>НОД</abbr> известен как <a id="index-algoritm"></a>
+Евклида
+<em>алгоритм
+Евклида</em>.<a class="footnote_link" id="DOCF42" href="#FOOT42"><sup>42</sup></a>
+</p>
+<p>Алгоритм Евклида легко выразить как процедуру:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">gcd a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> b </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      a
+      </span><span class="opn">(</span><span class="pln">gcd b </span><span class="opn">(</span><span class="pln">remainder a b</span><span class="clo">))))</span></pre></div>
+
+<p>Это порождает итеративный процесс, число шагов которого растёт как логарифм
+участвующих чисел.
+</p>
+<p>Тот факт, что число шагов, требуемых алгоритмом Евклида, имеет логарифмический рост,
+состоит в любопытном отношении с числами Фибоначчи:
+</p>
+<blockquote>
+<p><strong>Теорема Ламе:</strong> Если алгоритму Евклида требуется <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> шагов, чтобы
+вычислить <abbr>НОД</abbr> некоторой пары, то меньшее число в этой паре должно быть больше
+или равно <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math>-му числу Фибоначчи.<a class="footnote_link" id="DOCF43" href="#FOOT43"><sup>43</sup></a>
+</p></blockquote>
+
+<p>Мы можем воспользоваться этой теоремой, чтобы получить оценку порядка роста для
+алгоритма Евклида.  Пусть <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> — меньший из двух входов процедуры.  Если процесс
+занимает <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> шагов, то должно выполняться
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+  <mo>≥<!-- ≥ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>≈<!-- ≈ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>φ<!-- φ --></mi>
+      <mi>k</mi>
+    </msup>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msqrt>
+      <mn>5</mn>
+    </msqrt>
+  </mrow>
+</math>.  Поэтому число шагов
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> растёт как логарифм (по основанию <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math>) от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Следовательно,
+порядок роста — <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e20"></a>Exercise 1.20:</strong> Процесс, порождаемый процедурой,
+конечно же, зависит от правил, используемых интерпретатором.  В качестве примера
+рассмотрите итеративную процедуру <code>gcd</code>, приведённую выше.  Предположим, мы
+интерпретируем эту процедуру с помощью вычисления в нормальном порядке, как обсуждалось
+в <a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>.  (Правило вычисления в нормальном порядке для <code>if</code> описано в
+<a href="1_002e1.xhtml#Exercise-1_002e5">Exercise 1.5</a>.)  С помощью метода подстановки (для нормального порядка)
+проиллюстрируйте процесс, порождаемый при вычислении <code>(gcd 206 40)</code>, и укажите
+операции <code>remainder</code>, которые фактически выполняются.  Сколько операций
+<code>remainder</code> фактически выполняется при вычислении <code>(gcd 206 40)</code> в
+нормальном порядке?  А при вычислении в аппликативном порядке?
+</p></blockquote>
+
+<a id="g_t1_002e2_002e6"></a>
+<a id="Primer_003a-proverka-na-prostotu"></a>
+<h4 class="subsection"><span class="secnum">1.2.6</span><span class="sectitle">Пример: проверка на простоту</span></h4>
+
+<p>Этот раздел описывает два метода проверки простоты целого числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>: один с
+порядком роста <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msqrt>
+      <mi>n</mi>
+    </msqrt>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, и «вероятностный» алгоритм с порядком
+роста <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Упражнения в конце раздела предлагают
+программистские проекты, основанные на этих алгоритмах.
+</p>
+<a id="Poisk-delitelei"></a>
+<h5 class="subsubheading">Поиск делителей</h5>
+
+<p>С древних времён математиков завораживали задачи, связанные с простыми числами, и
+многие работали над задачей определения способов проверки чисел на простоту.  Один
+способ проверить, простое ли число, — найти делители числа.  Следующая программа
+находит наименьший целочисленный делитель (больший 1) данного числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Она
+делает это прямолинейно, проверяя <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> на делимость последовательными целыми
+числами, начиная с 2.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">smallest-divisor n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">find-divisor n </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">find-divisor n test-divisor</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">&gt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square test-divisor</span><span class="clo">)</span><span class="pln"> n</span><span class="clo">)</span><span class="pln"> 
+         n</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">divides? test-divisor n</span><span class="clo">)</span><span class="pln"> 
+         test-divisor</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">find-divisor 
+               n 
+               </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> test-divisor </span><span class="lit">1</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">divides? a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">remainder b a</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span></pre></div>
+
+<p>Проверить, простое ли число, можно так: <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> простое тогда и только тогда, когда
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> — свой собственный наименьший делитель.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">prime? n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="opn">(</span><span class="pln">smallest-divisor n</span><span class="clo">)))</span></pre></div>
+
+<p>Проверка окончания для <code>find-divisor</code> основана на том, что если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> не
+простое, то у него должен быть делитель, меньший или равный
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msqrt>
+    <mi>n</mi>
+  </msqrt>
+</math>.<a class="footnote_link" id="DOCF44" href="#FOOT44"><sup>44</sup></a>
+Это значит, что алгоритму нужно проверять лишь делители между 1 и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msqrt>
+    <mi>n</mi>
+  </msqrt>
+</math>.
+Следовательно, число шагов, требуемых, чтобы определить <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> как простое, будет
+иметь порядок роста <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msqrt>
+      <mi>n</mi>
+    </msqrt>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.
+</p>
+<a id="Test-Ferma"></a>
+<h5 class="subsubheading">Тест Ферма</h5>
+
+<p>Проверка простоты с порядком <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> основана на результате из
+теории чисел, известном как малая теорема Ферма.<a class="footnote_link" id="DOCF45" href="#FOOT45"><sup>45</sup></a>
+</p>
+<blockquote>
+<p><strong>Малая теорема Ферма:</strong> Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> — простое число, а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> — любое
+положительное целое число, меньшее <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, то <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, возведённое в <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-ю
+степень, конгруэнтно <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.
+</p></blockquote>
+
+<p>(Два числа называются <a id="index-kongruentnymi-po-moduliu"></a>
+<em>конгруэнтными по модулю</em> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, если они оба дают
+один и тот же остаток при делении на <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Остаток числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> при делении на
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> называют также <a id="index-ostatkom"></a>
+<em>остатком</em> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> <a id="index-po-moduliu"></a>
+<em>по модулю</em> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, или
+просто <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> <a id="index-po-moduliu-1"></a>
+<em>по модулю</em> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.)
+</p>
+<p>Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> не простое, то, вообще говоря, большинство чисел <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math> не
+будут удовлетворять приведённому соотношению.  Это приводит к следующему алгоритму
+проверки простоты: для данного числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> выберем случайное число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math>
+и вычислим остаток от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>a</mi>
+    <mi>n</mi>
+  </msup>
+</math> по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Если результат не равен
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, то <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> заведомо не простое.  Если он равен <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, то велики шансы,
+что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> простое.  Теперь выберем ещё одно случайное число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и проверим
+его тем же методом.  Если оно тоже удовлетворяет уравнению, то мы можем быть ещё
+увереннее, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> простое.  Перебирая всё больше и больше значений <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, мы
+можем повышать нашу уверенность в результате.  Этот алгоритм известен как тест Ферма.
+</p>
+<p>Чтобы реализовать тест Ферма, нам нужна процедура, вычисляющая степень числа по
+модулю другого числа:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">expmod base exp m</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> exp </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">even? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">remainder 
+          </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">expmod base </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> exp </span><span class="lit">2</span><span class="clo">)</span><span class="pln"> m</span><span class="clo">))</span><span class="pln">
+          m</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">remainder 
+          </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> base </span><span class="opn">(</span><span class="pln">expmod base </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> exp </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> m</span><span class="clo">))</span><span class="pln">
+          m</span><span class="clo">))))</span></pre></div>
+
+<p>Это очень похоже на процедуру <code>fast-expt</code> из <a href="#g_t1_002e2_002e4">1.2.4</a>.  Она пользуется
+последовательным возведением в квадрат, так что число шагов растёт логарифмически с
+показателем.<a class="footnote_link" id="DOCF46" href="#FOOT46"><sup>46</sup></a>
+</p>
+<p>Тест Ферма выполняется выбором случайного числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> между 1 и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+</math>
+включительно и проверкой того, равен ли остаток по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-й
+степени <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> самому <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>.  Случайное число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> выбирается с помощью
+процедуры <code>random</code>, которую мы предполагаем включённой в Scheme как примитив.
+<code>Random</code> возвращает неотрицательное целое число, меньшее своего целочисленного
+входа.  Поэтому, чтобы получить случайное число между 1 и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+</math>, мы вызываем
+<code>random</code> со входом <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+</math> и прибавляем 1 к результату:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fermat-test n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">try-it a</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">expmod a n n</span><span class="clo">)</span><span class="pln"> a</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">try-it </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pln">random </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))</span></pre></div>
+
+<p>Следующая процедура запускает тест заданное число раз, указанное параметром.  Её
+значение истинно, если тест успешен каждый раз, и ложно в противном случае.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fast-prime? n times</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> times </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> true</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">fermat-test n</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">fast-prime? n </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> times </span><span class="lit">1</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> false</span><span class="clo">)))</span></pre></div>
+
+<a id="Veroyatnostnye-metody"></a>
+<h5 class="subsubheading">Вероятностные методы</h5>
+
+<p>Тест Ферма отличается по характеру от большинства привычных алгоритмов, в которых
+вычисляют ответ, гарантированно правильный.  Здесь же полученный ответ лишь вероятно
+правилен.  Точнее, если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> когда-либо проваливает тест Ферма, мы можем быть
+уверены, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> не простое.  Но тот факт, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> проходит тест, будучи
+чрезвычайно сильным указанием, всё же не является гарантией, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> простое.
+Нам хотелось бы сказать, что для любого числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, если мы выполняем тест
+достаточно много раз и обнаруживаем, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> всегда проходит тест, то
+вероятность ошибки в нашей проверке простоты можно сделать сколь угодно малой.
+</p>
+<p>К сожалению, это утверждение не вполне верно.  Существуют числа, которые обманывают
+тест Ферма: числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, которые не простые и всё же обладают свойством, что
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>a</mi>
+    <mi>n</mi>
+  </msup>
+</math> конгруэнтно <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> для всех целых <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math>.
+Такие числа чрезвычайно редки, так что на практике тест Ферма вполне
+надёжен.<a class="footnote_link" id="DOCF47" href="#FOOT47"><sup>47</sup></a>
+</p>
+<p>Существуют разновидности теста Ферма, которые нельзя обмануть.  В этих тестах, как и
+в методе Ферма, простоту целого числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> проверяют, выбирая случайное целое
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math> и проверяя некоторое условие, зависящее от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>.  (См.
+<a href="#Exercise-1_002e28">Exercise 1.28</a> в качестве примера такого теста.)  С другой стороны, в
+противоположность тесту Ферма, можно доказать, что для любого <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> условие не
+выполняется для большинства целых <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math>, если только <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> не простое.
+Таким образом, если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> проходит тест при некотором случайном выборе <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>,
+шансы более чем равны тому, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> простое.  Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> проходит тест при
+двух случайных выборах <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, шансы больше 3 из 4, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> простое.
+Запуская тест со всё большим числом случайно выбранных значений <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, мы можем
+сделать вероятность ошибки сколь угодно малой.
+</p>
+<p>Существование тестов, для которых можно доказать, что шанс ошибки становится сколь
+угодно малым, пробудило интерес к алгоритмам этого типа, ставшим известными как
+<a id="index-veroyatnostnye-algoritmy"></a>
+<em>вероятностные алгоритмы</em>.  В этой области ведётся большое количество
+исследований, и вероятностные алгоритмы были плодотворно применены во многих
+областях.<a class="footnote_link" id="DOCF48" href="#FOOT48"><sup>48</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e21"></a>Exercise 1.21:</strong> С помощью процедуры
+<code>smallest-divisor</code> найдите наименьший делитель каждого из следующих чисел: 199,
+1999, 19999.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e22"></a>Exercise 1.22:</strong> Большинство реализаций Lisp включают
+примитив <code>runtime</code>, возвращающий целое число, которое задаёт количество
+времени, в течение которого работает система (измеренное, например, в
+микросекундах).  Следующая процедура <code>timed-prime-test</code>, будучи вызвана с целым
+числом <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, печатает <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и проверяет, простое ли <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>
+простое, процедура печатает три звёздочки, за которыми следует количество
+затраченного на тест времени.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">timed-prime-test n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">start-prime-test n </span><span class="opn">(</span><span class="pln">runtime</span><span class="clo">)))</span></pre></div>
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">start-prime-test n start-time</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">prime? n</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">report-prime </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">runtime</span><span class="clo">)</span><span class="pln"> 
+                       start-time</span><span class="clo">))))</span></pre></div>
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">report-prime elapsed-time</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display </span><span class="str">" *** "</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display elapsed-time</span><span class="clo">))</span></pre></div>
+
+<p>Пользуясь этой процедурой, напишите процедуру <code>search-for-primes</code>, проверяющую
+простоту последовательных нечётных целых чисел в заданном диапазоне.  Воспользуйтесь
+своей процедурой, чтобы найти три наименьших простых числа, больших 1000; больших
+10 000; больших 100 000; больших 1 000 000.  Отметьте время, нужное для проверки
+каждого простого числа.  Поскольку алгоритм проверки имеет порядок роста
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msqrt>
+      <mi>n</mi>
+    </msqrt>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, следует ожидать, что проверка простых чисел около 10 000
+займёт примерно в <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msqrt>
+    <mn>10</mn>
+  </msqrt>
+</math> раз больше времени, чем проверка простых чисел
+около 1000.  Подтверждают ли это ваши данные о времени?  Насколько хорошо данные для
+100 000 и 1 000 000 подтверждают предсказание <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msqrt>
+      <mi>n</mi>
+    </msqrt>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>?  Совместим
+ли ваш результат с представлением, что программы на вашей машине выполняются за время,
+пропорциональное числу шагов, требуемых для вычисления?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e23"></a>Exercise 1.23:</strong> Процедура <code>smallest-divisor</code>,
+показанная в начале этого раздела, проделывает уйму ненужных проверок: после того
+как она проверяет, делится ли число на 2, нет смысла проверять, делится ли оно на
+любые большие чётные числа.  Это наводит на мысль, что значения, используемые для
+<code>test-divisor</code>, должны быть не 2, 3, 4, 5, 6, …, а скорее 2, 3, 5, 7, 9,
+….  Чтобы реализовать это изменение, определите процедуру <code>next</code>,
+возвращающую 3, если её вход равен 2, и иначе возвращающую свой вход плюс 2.
+Измените процедуру <code>smallest-divisor</code>, чтобы она использовала
+<code>(next test-divisor)</code> вместо <code>(+ test-divisor 1)</code>.  С
+<code>timed-prime-test</code>, включающей эту изменённую версию <code>smallest-divisor</code>,
+запустите тест для каждого из 12 простых чисел, найденных в <a href="#Exercise-1_002e22">Exercise 1.22</a>.
+Поскольку это изменение вдвое сокращает число шагов проверки, следует ожидать, что
+оно будет работать примерно вдвое быстрее.  Подтверждается ли это ожидание?  Если
+нет, каково наблюдаемое отношение скоростей двух алгоритмов и как вы объясните тот
+факт, что оно отличается от 2?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e24"></a>Exercise 1.24:</strong> Измените процедуру
+<code>timed-prime-test</code> из <a href="#Exercise-1_002e22">Exercise 1.22</a>, чтобы она использовала
+<code>fast-prime?</code> (метод Ферма), и проверьте каждое из 12 простых чисел, найденных
+вами в том упражнении.  Поскольку тест Ферма имеет рост <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, как,
+по вашим ожиданиям, время проверки простых чисел около 1 000 000 будет соотноситься
+со временем, нужным для проверки простых чисел около 1000?  Подтверждают ли это ваши
+данные?  Можете ли вы объяснить любое обнаруженное расхождение?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e25"></a>Exercise 1.25:</strong> Алисса П. Хакер сетует, что мы
+проделали много лишней работы, написав <code>expmod</code>.  В конце концов, говорит она,
+раз мы уже умеем вычислять степени, мы могли бы просто написать
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">expmod base exp m</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">remainder </span><span class="opn">(</span><span class="pln">fast-expt base exp</span><span class="clo">)</span><span class="pln"> m</span><span class="clo">))</span></pre></div>
+
+<p>Права ли она?  Послужила бы эта процедура столь же хорошо для нашего быстрого
+средства проверки простоты?  Объясните.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e26"></a>Exercise 1.26:</strong> Луи Резонер испытывает большие
+трудности с <a href="#Exercise-1_002e24">Exercise 1.24</a>.  Его проверка <code>fast-prime?</code>, кажется,
+работает медленнее, чем его проверка <code>prime?</code>.  Луи зовёт на помощь свою
+подругу Эву Лу Атор.  Когда они изучают код Луи, они обнаруживают, что он переписал
+процедуру <code>expmod</code>, чтобы использовать явное умножение, а не вызов
+<code>square</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">expmod base exp m</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> exp </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">even? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">remainder 
+          </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">expmod base </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> exp </span><span class="lit">2</span><span class="clo">)</span><span class="pln"> m</span><span class="clo">)</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">expmod base </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> exp </span><span class="lit">2</span><span class="clo">)</span><span class="pln"> m</span><span class="clo">))</span><span class="pln">
+          m</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">remainder 
+          </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> base 
+             </span><span class="opn">(</span><span class="pln">expmod base </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> exp </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> m</span><span class="clo">))</span><span class="pln">
+          m</span><span class="clo">))))</span></pre></div>
+
+<p>«Не понимаю, какая тут может быть разница», — говорит Луи.  «А я понимаю».<!-- /@w -->
+говорит Эва.  «Написав процедуру так, ты превратил процесс <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> в
+процесс <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>».  Объясните.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e27"></a>Exercise 1.27:</strong> Покажите, что числа Кармайкла,
+перечисленные в <a href="#Footnote-47">Footnote 47</a>, действительно обманывают тест Ферма.  То есть
+напишите процедуру, которая принимает целое число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и проверяет, конгруэнтно
+ли <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>a</mi>
+    <mi>n</mi>
+  </msup>
+</math> числу <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> для каждого <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math>, и
+испытайте свою процедуру на данных числах Кармайкла.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e28"></a>Exercise 1.28:</strong> Один вариант теста Ферма, который
+нельзя обмануть, называется <a id="index-testom-Millera_002d_002dRabina"></a>
+<em>тестом Миллера—Рабина</em> (<a href="References.xhtml#Miller-1976">Miller 1976</a>;
+<a href="References.xhtml#Rabin-1980">Rabin 1980</a>).  Он исходит из альтернативной формы малой теоремы Ферма, которая
+утверждает, что если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> — простое число, а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> — любое положительное
+целое число, меньшее <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, то <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, возведённое в <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>-ю степень,
+конгруэнтно 1 по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Чтобы проверить простоту числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> тестом
+Миллера—Рабина, мы выбираем случайное число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math> и возводим <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> в
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>-ю степень по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, используя процедуру <code>expmod</code>.
+Однако всякий раз, когда мы выполняем в <code>expmod</code> шаг возведения в квадрат, мы
+проверяем, не обнаружили ли мы «нетривиальный квадратный корень из 1 по модулю
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>», то есть число, не равное 1 или <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+</math>, квадрат которого равен 1 по
+модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Можно доказать, что если такой нетривиальный квадратный корень из 1
+существует, то <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> не простое.  Можно также доказать, что если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> —
+нечётное число, не являющееся простым, то по крайней мере для половины чисел
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math> вычисление <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>a</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>n</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msup>
+</math> таким способом обнаружит нетривиальный
+квадратный корень из 1 по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  (Вот почему тест Миллера—Рабина нельзя
+обмануть.)  Измените процедуру <code>expmod</code>, чтобы она сигнализировала, если
+обнаружит нетривиальный квадратный корень из 1, и воспользуйтесь этим, чтобы
+реализовать тест Миллера—Рабина процедурой, аналогичной <code>fermat-test</code>.
+Проверьте свою процедуру, испытав различные известные простые и непростые числа.
+Подсказка: один удобный способ заставить <code>expmod</code> сигнализировать — сделать так,
+чтобы она возвращала 0.
+</p></blockquote>
+
+<div class="footnote">
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT29"><p><a class="footnote_backlink" href="#DOCF29"><sup>29</sup></a>
+В настоящей программе мы, вероятно, использовали бы блочную
+структуру, введённую в предыдущем разделе, чтобы спрятать определение
+<code>fact-iter</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">iter product counter</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> counter n</span><span class="clo">)</span><span class="pln">
+        product
+        </span><span class="opn">(</span><span class="pln">iter </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> counter product</span><span class="clo">)</span><span class="pln">
+              </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> counter </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">iter </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span></pre></div>
+
+<p>Здесь мы этого не сделали, чтобы свести к минимуму число вещей, о которых нужно
+думать одновременно.</p>
+</div>
+<div id="FOOT30"><p><a class="footnote_backlink" href="#DOCF30"><sup>30</sup></a>
+Когда мы будем обсуждать реализацию процедур
+на регистровых машинах в <a href="Chapter-5.xhtml#Chapter-5">Chapter 5</a>, мы увидим, что любой итеративный процесс
+можно реализовать «аппаратно» как машину с фиксированным набором регистров и без
+вспомогательной памяти.  В противоположность этому реализация рекурсивного процесса
+требует машины, использующей вспомогательную структуру данных, известную как
+<a id="index-stek"></a>
+<em>стек</em>.</p>
+</div>
+<div id="FOOT31"><p><a class="footnote_backlink" href="#DOCF31"><sup>31</sup></a>
+Хвостовая
+рекурсия давно известна как приём оптимизации в компиляторах.  Связную семантическую
+основу хвостовой рекурсии дал Карл <a href="References.xhtml#Hewitt-_00281977_0029">Hewitt (1977)</a>, объяснивший её в терминах
+модели вычислений с «передачей сообщений», которую мы обсудим в <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>.
+Вдохновлённые этим, Джеральд Джей Сассман и Гай Льюис Стил-младший (см.
+<a href="References.xhtml#Steele-and-Sussman-1975">Steele and Sussman 1975</a>) построили хвостово-рекурсивный интерпретатор Scheme.
+Позже Стил показал, как хвостовая рекурсия следует из естественного способа
+компиляции вызовов процедур (<a href="References.xhtml#Steele-1977">Steele 1977</a>).  Стандарт <abbr>IEEE</abbr> для Scheme
+требует, чтобы реализации Scheme были хвостово-рекурсивными.</p>
+</div>
+<div id="FOOT32"><p><a class="footnote_backlink" href="#DOCF32"><sup>32</sup></a>
+Пример этого был намёком приведён в <a href="1_002e1.xhtml#g_t1_002e1_002e3">1.1.3</a>.  Сам
+интерпретатор вычисляет выражения древовидно-рекурсивным процессом.</p>
+</div>
+<div id="FOOT33"><p><a class="footnote_backlink" href="#DOCF33"><sup>33</sup></a>
+Например, подробно проследите,
+как правило сведения применяется к задаче размена 10 центов монетами по 1 и 5
+центов.</p>
+</div>
+<div id="FOOT34"><p><a class="footnote_backlink" href="#DOCF34"><sup>34</sup></a>
+Один из подходов к борьбе с избыточными вычислениями — устроить
+дело так, чтобы мы автоматически строили таблицу значений по мере их вычисления.
+Каждый раз, когда нас просят применить процедуру к некоторому аргументу, мы сперва
+смотрим, не сохранено ли уже значение в таблице, и в этом случае избегаем выполнения
+избыточного вычисления.  Эта стратегия, известная как <a id="index-tabulirovanie"></a>
+<em>табулирование</em>, или
+<a id="index-memoizaciya"></a>
+<em>мемоизация</em>, реализуется довольно прямолинейно.  Табулирование иногда можно
+использовать, чтобы преобразовать процессы, требующие экспоненциального числа шагов
+(такие как <code>count-change</code>), в процессы, чьи требования к пространству и времени
+растут линейно со входом.  См. <a href="3_002e3.xhtml#Exercise-3_002e27">Exercise 3.27</a>.</p>
+</div>
+<div id="FOOT35"><p><a class="footnote_backlink" href="#DOCF35"><sup>35</sup></a>
+Элементы треугольника Паскаля называются
+<a id="index-binomialxnymi-koefficientami"></a>
+<em>биномиальными коэффициентами</em>, поскольку строка с номером <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> состоит
+из коэффициентов членов разложения <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>y</mi>
+    <msup>
+      <mo stretchy="false">)</mo>
+      <mi>n</mi>
+    </msup>
+  </mrow>
+</math>.  Этот узор для вычисления
+коэффициентов появился в основополагающем труде Блеза Паскаля 1653 года по теории
+вероятностей, <cite>Traité du triangle arithmétique</cite>.  Согласно <a href="References.xhtml#Knuth-_00281973_0029">Knuth (1973)</a>,
+тот же узор встречается в <cite>Szu-yuen Yü-chien</cite> («Драгоценное зеркало четырёх
+элементов»), опубликованном китайским математиком Чжу Шицзе в 1303 году, в трудах
+персидского поэта и математика XII века Омара Хайяма и в трудах индийского математика
+XII века Бхаскары Ачарьи.</p>
+</div>
+<div id="FOOT36"><p><a class="footnote_backlink" href="#DOCF36"><sup>36</sup></a>
+Эти утверждения скрывают изрядную
+долю упрощения.  Например, если мы считаем шаги процесса «машинными операциями», то
+делаем допущение, что число машинных операций, нужных для выполнения, скажем,
+умножения, не зависит от размера перемножаемых чисел, — а это ложно, если числа
+достаточно велики.  Сходные замечания справедливы и для оценок пространства.  Как и
+проектирование и описание процесса, анализ процесса можно проводить на различных
+уровнях абстракции.</p>
+</div>
+<div id="FOOT37"><p><a class="footnote_backlink" href="#DOCF37"><sup>37</sup></a>
+Точнее,
+требуемое число умножений равно логарифму <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> по основанию 2 минус 1 плюс число
+единиц в двоичном представлении <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Эта сумма всегда меньше удвоенного
+логарифма <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> по основанию 2.  Произвольные постоянные <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>k</mi>
+    <mn>1</mn>
+  </msub>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>k</mi>
+    <mn>2</mn>
+  </msub>
+</math>
+в определении нотации порядка означают, что для логарифмического процесса основание,
+по которому берутся логарифмы, не имеет значения, так что все такие процессы
+описываются как <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.</p>
+</div>
+<div id="FOOT38"><p><a class="footnote_backlink" href="#DOCF38"><sup>38</sup></a>
+Вы можете
+задаться вопросом, кому вообще есть дело до возведения чисел в 1000-ю степень.  См.
+<a href="#g_t1_002e2_002e6">1.2.6</a>.</p>
+</div>
+<div id="FOOT39"><p><a class="footnote_backlink" href="#DOCF39"><sup>39</sup></a>
+Этот итеративный алгоритм древен.  Он встречается в
+<cite>Chandah-sutra</cite> Ачарьи Пингалы, написанной до 200 года <abbr>до н.э.</abbr>  Полное
+обсуждение и анализ этого и других методов возведения в степень см. в
+<a href="References.xhtml#Knuth-1981">Knuth 1981</a>, раздел 4.6.3.</p>
+</div>
+<div id="FOOT40"><p><a class="footnote_backlink" href="#DOCF40"><sup>40</sup></a>
+Этот алгоритм, иногда
+известный как «русский крестьянский способ» умножения, древен.  Примеры его
+применения находят в папирусе Ринда — одном из двух старейших существующих
+математических документов, написанном около 1700 года <abbr>до н.э.</abbr> (и скопированном
+с ещё более древнего документа) египетским писцом по имени Ахмес.</p>
+</div>
+<div id="FOOT41"><p><a class="footnote_backlink" href="#DOCF41"><sup>41</sup></a>
+Это упражнение предложил нам Джо Стой на основе примера из
+<a href="References.xhtml#Kaldewaij-1990">Kaldewaij 1990</a>.</p>
+</div>
+<div id="FOOT42"><p><a class="footnote_backlink" href="#DOCF42"><sup>42</sup></a>
+Алгоритм Евклида так называется потому, что он встречается в
+<cite>Elements</cite> Евклида (книга 7, ок. 300 года <abbr>до н.э.</abbr>).  Согласно
+<a href="References.xhtml#Knuth-_00281973_0029">Knuth (1973)</a>, его можно считать древнейшим известным нетривиальным алгоритмом.
+Древнеегипетский способ умножения (<a href="#Exercise-1_002e18">Exercise 1.18</a>) наверняка древнее, но, как
+объясняет Кнут, алгоритм Евклида — древнейший из известных, представленных как общий
+алгоритм, а не как набор иллюстративных примеров.</p>
+</div>
+<div id="FOOT43"><p><a class="footnote_backlink" href="#DOCF43"><sup>43</sup></a>
+Эта теорема была доказана в 1845 году
+Габриэлем Ламе, французским математиком и инженером, известным главным образом своим
+вкладом в математическую физику.  Чтобы доказать теорему, мы рассматриваем пары
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mi>k</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mi>k</mi>
+    </msub>
+    <mo>≥<!-- ≥ --></mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+  </mrow>
+</math>, для которых алгоритм Евклида
+завершается за <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> шагов.  Доказательство основано на утверждении, что если
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo stretchy="false">→<!-- → --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mi>k</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo stretchy="false">→<!-- → --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> — три
+последовательные пары в процессе сведения, то должно выполняться
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+</math>.  Чтобы проверить это утверждение, учтите, что шаг
+сведения определяется применением преобразования <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>=</mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+  </mrow>
+</math>,
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>=</mo>
+  </mrow>
+</math> остаток от деления <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+</math> на <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+</math>.  Второе равенство
+означает, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>q</mi>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+  </mrow>
+</math> для некоторого положительного целого
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>q</mi>
+</math>.  А поскольку <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>q</mi>
+</math> должно быть не меньше 1, мы имеем
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>q</mi>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+</math>.  Но на предыдущем шаге сведения мы
+имеем <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>=</mo>
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+</math>.  Поэтому <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>=</mo>
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+</math>.  Это
+проверяет утверждение.  Теперь мы можем доказать теорему индукцией по <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> —
+числу шагов, которое требуется алгоритму для завершения.  Результат верен для
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>k</mi>
+    <mo>=</mo>
+    <mn>1</mn>
+  </mrow>
+</math>, поскольку это требует лишь, чтобы <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> было не меньше
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>1</mn>
+  </mrow>
+</math>.  Теперь предположим, что результат верен для всех целых
+чисел, меньших или равных <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math>, и установим результат для <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>k</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+  </mrow>
+</math>.  Пусть
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo stretchy="false">→<!-- → --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mi>k</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo stretchy="false">→<!-- → --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> — последовательные
+пары в процессе сведения.  По нашему предположению индукции мы имеем
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Таким
+образом, применяя только что доказанное утверждение вместе с определением чисел
+Фибоначчи, получаем
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>,
+что завершает доказательство теоремы Ламе.</p>
+</div>
+<div id="FOOT44"><p><a class="footnote_backlink" href="#DOCF44"><sup>44</sup></a>
+Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>d</mi>
+</math> — делитель <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, то и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mspace width="thinmathspace"/>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mspace width="thinmathspace"/>
+    <mi>d</mi>
+  </mrow>
+</math>
+тоже.  Но <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>d</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mspace width="thinmathspace"/>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mspace width="thinmathspace"/>
+    <mi>d</mi>
+  </mrow>
+</math> не могут оба быть больше <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msqrt>
+    <mi>n</mi>
+  </msqrt>
+</math>.</p>
+</div>
+<div id="FOOT45"><p><a class="footnote_backlink" href="#DOCF45"><sup>45</sup></a>
+Пьер де Ферма (1601—1665)
+считается основателем современной теории чисел.  Он получил много важных
+теоретико-числовых результатов, но обычно сообщал лишь результаты, не приводя своих
+доказательств.  Малая теорема Ферма была сформулирована в письме, которое он написал
+в 1640 году.  Первое опубликованное доказательство дал Эйлер в 1736 году (а более
+раннее, идентичное доказательство было обнаружено в неопубликованных рукописях
+Лейбница).  Самый знаменитый из результатов Ферма — известный как Великая теорема
+Ферма — был набросан в 1637 году на его экземпляре книги <cite>Arithmetic</cite> (греческого
+математика III века Диофанта) с замечанием: «Я нашёл этому поистине замечательное
+доказательство, но эти поля слишком малы, чтобы вместить его».  Нахождение
+доказательства Великой теоремы Ферма стало одним из самых знаменитых вызовов в теории
+чисел.  Полное решение было наконец дано в 1995 году Эндрю Уайлсом из Принстонского
+университета.</p>
+</div>
+<div id="FOOT46"><p><a class="footnote_backlink" href="#DOCF46"><sup>46</sup></a>
+Шаги сведения в случаях, когда показатель <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>e</mi>
+</math> больше 1,
+основаны на том, что для любых целых <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>m</mi>
+</math> мы можем найти
+остаток от произведения <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> на <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>m</mi>
+</math>, вычислив по
+отдельности остатки <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>m</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>m</mi>
+</math>,
+перемножив их, а затем взяв остаток результата по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>m</mi>
+</math>.  Например, в
+случае чётного <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>e</mi>
+</math> мы вычисляем остаток от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>e</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mo>/</mo>
+      </mrow>
+      <mn>2</mn>
+    </mrow>
+  </msup>
+</math> по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>m</mi>
+</math>,
+возводим его в квадрат и берём остаток по модулю <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>m</mi>
+</math>.  Этот приём полезен тем,
+что позволяет проводить вычисление, ни разу не имея дела с числами, намного большими
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>m</mi>
+</math>.  (Сравните <a href="#Exercise-1_002e25">Exercise 1.25</a>.)</p>
+</div>
+<div id="FOOT47"><p><a class="footnote_backlink" href="#DOCF47"><sup>47</sup></a>
+<a id="Footnote-47"></a>Числа, обманывающие тест Ферма, называются
+<a id="index-chislami-Karmaikla"></a>
+<em>числами Кармайкла</em>, и о них мало что известно, кроме того, что они
+чрезвычайно редки.  Ниже 100 000 000 имеется 255 чисел Кармайкла.  Несколько
+наименьших — это 561, 1105, 1729, 2465, 2821 и 6601.  При проверке простоты очень
+больших чисел, выбранных случайно, шанс наткнуться на значение, обманывающее тест
+Ферма, меньше, чем шанс, что космическое излучение заставит компьютер ошибиться при
+выполнении «правильного» алгоритма.  Считать алгоритм негодным по первой причине, но
+не по второй, — иллюстрация различия между математикой и инженерией.</p>
+</div>
+<div id="FOOT48"><p><a class="footnote_backlink" href="#DOCF48"><sup>48</sup></a>
+Одно из самых поразительных применений вероятностной проверки на
+простоту относится к области криптографии.  Хотя сейчас вычислительно невозможно
+разложить на множители произвольное 200-значное число, простоту такого числа можно
+проверить за несколько секунд тестом Ферма.  Этот факт лежит в основе приёма
+построения «невзламываемых кодов», предложенного <a href="References.xhtml#Rivest-et-al_002e-_00281977_0029">Rivest et al. (1977)</a>.
+Получившийся <a id="index-algoritm-RSA"></a>
+<em>алгоритм RSA</em> стал широко используемым приёмом повышения
+безопасности электронных коммуникаций.  Из-за этого и связанных с ним разработок
+изучение простых чисел, некогда считавшееся олицетворением темы «чистой» математики,
+изучаемой лишь ради неё самой, теперь оказывается имеющим важные практические
+применения в криптографии, электронных денежных переводах и информационном поиске.</p>
+</div>
+</div>
+<nav class="header">
+<p>
+Next: <a href="1_002e3.xhtml#g_t1_002e3" accesskey="n" rel="next">1.3</a>, Prev: <a href="1_002e1.xhtml#g_t1_002e1" accesskey="p" rel="prev">1.1</a>, Up: <a href="#g_t1_002e2" accesskey="u" rel="prev">1.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+
+
+</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">⇣</a></span><a id="pagebottom"></a>
+</body>
+</html>

@@ -1,0 +1,3052 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ru" lang="ru">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Структура и интерпретация компьютерных программ, 2-е изд.: 1.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 1.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 1.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-1.xhtml#Chapter-1" rel="prev" title="Chapter 1" />
+<link href="Chapter-2.xhtml#Chapter-2" rel="next" title="Chapter 2" />
+<link href="1_002e2.xhtml#g_t1_002e2_002e6" rel="prev" title="1.2.6" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t1_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="Chapter-2.xhtml#Chapter-2" accesskey="n" rel="next">Chapter 2</a>, Prev: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="p" rel="prev">1.2</a>, Up: <a href="Chapter-1.xhtml#Chapter-1" accesskey="u" rel="prev">Chapter 1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+<a id="Formulirovanie-abstrakcii-cherez-procedury-vysshego-poryadka"></a>
+<h3 class="section"><span class="secnum">1.3</span><span class="sectitle">Формулирование абстракций через процедуры высшего порядка</span></h3>
+
+<p>Мы видели, что процедуры — это, по сути, абстракции, описывающие составные операции
+над числами независимо от конкретных чисел.  Например, когда мы пишем
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x x</span><span class="clo">))</span></pre></div>
+
+<p>мы говорим не о кубе какого-то конкретного числа, а о методе получения куба любого
+числа.  Конечно, мы могли бы обойтись и без определения этой процедуры, всякий раз
+записывая выражения вроде
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x x</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y y y</span><span class="clo">)</span></pre></div>
+
+<p>и никогда не упоминая <code>cube</code> явно.  Это поставило бы нас в серьёзно невыгодное
+положение, вынуждая работать всегда на уровне тех конкретных операций, которые
+случайно оказались примитивами языка (в данном случае умножения), а не в терминах
+операций более высокого уровня.  Наши программы умели бы вычислять кубы, но нашему
+языку недоставало бы способности выразить понятие возведения в куб.  Одно из того,
+чего мы должны требовать от мощного языка программирования, — это способность
+строить абстракции, присваивая имена общим образцам, и затем работать прямо в
+терминах абстракций.  Процедуры дают эту способность.  Вот почему все языки
+программирования, кроме самых примитивных, включают механизмы определения процедур.
+</p>
+<p>Однако даже в числовой обработке мы будем сильно ограничены в своей способности
+создавать абстракции, если будем ограничены процедурами, чьи параметры обязаны быть
+числами.  Часто один и тот же программный образец используется с рядом различных
+процедур.  Чтобы выражать такие образцы как понятия, нам понадобится строить
+процедуры, которые могут принимать процедуры в качестве аргументов или возвращать
+процедуры в качестве значений.  Процедуры, манипулирующие процедурами, называются
+<a id="index-procedurami-vysshego-poryadka"></a>
+<em>процедурами высшего порядка</em>.  Этот раздел показывает, как процедуры высшего
+порядка могут служить мощными механизмами абстракции, колоссально увеличивая
+выразительную силу нашего языка.
+</p>
+
+<a id="g_t1_002e3_002e1"></a>
+<a id="Procedury-kak-argumenty"></a>
+<h4 class="subsection"><span class="secnum">1.3.1</span><span class="sectitle">Процедуры как аргументы</span></h4>
+
+<p>Рассмотрим следующие три процедуры.  Первая вычисляет сумму целых чисел от <code>a</code>
+до <code>b</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-integers a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln"> 
+      </span><span class="lit">0</span><span class="pln"> 
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="opn">(</span><span class="pln">sum-integers </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span></pre></div>
+
+<p>Вторая вычисляет сумму кубов целых чисел в заданном диапазоне:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-cubes a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln"> 
+      </span><span class="lit">0</span><span class="pln"> 
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube a</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">sum-cubes </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span></pre></div>
+
+<p>Третья вычисляет сумму последовательности членов ряда
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mfrac>
+    <mn>1</mn>
+    <mrow>
+      <mn>1</mn>
+      <mo>⋅<!-- ⋅ --></mo>
+      <mn>3</mn>
+    </mrow>
+  </mfrac>
+  <mo>+</mo>
+  <mfrac>
+    <mn>1</mn>
+    <mrow>
+      <mn>5</mn>
+      <mo>⋅<!-- ⋅ --></mo>
+      <mn>7</mn>
+    </mrow>
+  </mfrac>
+  <mo>+</mo>
+  <mfrac>
+    <mn>1</mn>
+    <mrow>
+      <mn>9</mn>
+      <mo>⋅<!-- ⋅ --></mo>
+      <mn>11</mn>
+    </mrow>
+  </mfrac>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>…<!-- … --></mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+который сходится к <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>π<!-- π --></mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mn>8</mn>
+  </mrow>
+</math> (очень медленно):<a class="footnote_link" id="DOCF49" href="#FOOT49"><sup>49</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pi-sum a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">0</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1.0</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">2</span><span class="clo">)))</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">pi-sum </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">4</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span></pre></div>
+
+<p>Эти три процедуры явно разделяют общий лежащий в основе образец.  Они по большей
+части идентичны, различаясь лишь именем процедуры, функцией от <code>a</code>,
+используемой для вычисления прибавляемого члена, и функцией, дающей следующее
+значение <code>a</code>.  Мы могли бы породить каждую из процедур, заполнив прорези в одном
+и том же шаблоне:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">имя</span></var><span class="pln">⟩ a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">0</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">слагаемое</span></var><span class="pln">⟩ a</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">имя</span></var><span class="pln">⟩ </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">следующий</span></var><span class="pln">⟩ a</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">))))</span></pre></div>
+
+<p>Наличие такого общего образца — сильное свидетельство того, что есть полезная
+абстракция, ждущая, чтобы её вывели на поверхность.  И в самом деле, математики
+давным-давно выделили абстракцию <a id="index-summirovaniya-ryada"></a>
+<em>суммирования ряда</em> и изобрели
+«сигма-обозначения», например
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <munderover>
+      <mo>∑<!-- ∑ --></mo>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>=</mo>
+        <mi>a</mi>
+      </mrow>
+      <mi>b</mi>
+    </munderover>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>a</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>+</mo>
+  <mo>⋯<!-- ⋯ --></mo>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+чтобы выразить это понятие.  Сила сигма-обозначений в том, что они позволяют
+математикам иметь дело с самим понятием суммирования, а не только с конкретными
+суммами — например, формулировать общие результаты о суммах, не зависящие от
+конкретного суммируемого ряда.
+</p>
+<p>Аналогично, как проектировщики программ, мы хотели бы, чтобы наш язык был достаточно
+мощным, чтобы мы могли написать процедуру, выражающую само понятие суммирования, а не
+только процедуры, вычисляющие конкретные суммы.  Мы легко можем сделать это в нашем
+процедурном языке, взяв показанный выше общий шаблон и превратив «прорези» в
+формальные параметры:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum term a next b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">0</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">term a</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">sum term </span><span class="opn">(</span><span class="pln">next a</span><span class="clo">)</span><span class="pln"> next b</span><span class="clo">))))</span></pre></div>
+
+<p>Заметьте, что <code>sum</code> принимает в качестве своих аргументов нижнюю и верхнюю
+границы <code>a</code> и <code>b</code> вместе с процедурами <code>term</code> и <code>next</code>.  Мы
+можем пользоваться <code>sum</code> так же, как любой процедурой.  Например, мы можем
+воспользоваться ею (вместе с процедурой <code>inc</code>, увеличивающей свой аргумент на
+1), чтобы определить <code>sum-cubes</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">inc n</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-cubes a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sum cube a inc b</span><span class="clo">))</span></pre></div>
+
+<p>Пользуясь этим, мы можем вычислить сумму кубов целых чисел от 1 до 10:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">sum-cubes </span><span class="lit">1</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">3025</span></i>
+</pre></div>
+
+<p>С помощью тождественной процедуры для вычисления члена мы можем определить
+<code>sum-integers</code> через <code>sum</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">identity x</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-integers a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sum identity a inc b</span><span class="clo">))</span></pre></div>
+
+<p>Тогда мы можем сложить целые числа от 1 до 10:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">sum-integers </span><span class="lit">1</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">55</span></i>
+</pre></div>
+
+<p>Точно так же мы можем определить <code>pi-sum</code>:<a class="footnote_link" id="DOCF50" href="#FOOT50"><sup>50</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pi-sum a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pi-term x</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1.0</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">2</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pi-next x</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sum pi-term a pi-next b</span><span class="clo">))</span></pre></div>
+
+<p>Пользуясь этими процедурами, мы можем вычислить приближение к <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>π<!-- π --></mi>
+</math>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pi-sum </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1000</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">3.139592655589783</span></i>
+</pre></div>
+
+<p>Как только у нас есть <code>sum</code>, мы можем использовать её как строительный блок при
+формулировании дальнейших понятий.  Например, определённый интеграл функции <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>
+между пределами <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> можно численно приблизить по формуле
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msubsup>
+      <mo>∫<!-- ∫ --></mo>
+      <mi>a</mi>
+      <mi>b</mi>
+    </msubsup>
+    <mspace width="-0.3em"/>
+    <mi>f</mi>
+  </mrow>
+  <mspace width="thickmathspace"/>
+  <mo>=</mo>
+  <mspace width="thickmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow>
+      <mo>[</mo>
+      <mspace width="thickmathspace"/>
+      <mi>f</mi>
+      <mrow>
+        <mo>(</mo>
+        <mi>a</mi>
+        <mo>+</mo>
+        <mfrac>
+          <mrow>
+            <mi>d</mi>
+            <mi>x</mi>
+          </mrow>
+          <mn>2</mn>
+        </mfrac>
+        <mo>)</mo>
+      </mrow>
+    </mrow>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>+</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mrow>
+      <mo>(</mo>
+      <mi>a</mi>
+      <mo>+</mo>
+      <mi>d</mi>
+      <mi>x</mi>
+      <mo>+</mo>
+      <mfrac>
+        <mrow>
+          <mi>d</mi>
+          <mi>x</mi>
+        </mrow>
+        <mn>2</mn>
+      </mfrac>
+      <mo>)</mo>
+    </mrow>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>+</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow>
+      <mi>f</mi>
+      <mrow>
+        <mo>(</mo>
+        <mi>a</mi>
+        <mo>+</mo>
+        <mn>2</mn>
+        <mi>d</mi>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mfrac>
+          <mrow>
+            <mi>d</mi>
+            <mi>x</mi>
+          </mrow>
+          <mn>2</mn>
+        </mfrac>
+        <mo>)</mo>
+      </mrow>
+      <mspace width="thinmathspace"/>
+      <mo>+</mo>
+      <mspace width="thinmathspace"/>
+      <mo>…<!-- … --></mo>
+      <mspace width="thickmathspace"/>
+      <mo>]</mo>
+    </mrow>
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math>
+
+для малых значений <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math>.  Это можно выразить прямо как процедуру:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">integral f a b dx</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-dx x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x dx</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum f </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> dx </span><span class="lit">2.0</span><span class="clo">))</span><span class="pln"> add-dx b</span><span class="clo">)</span><span class="pln"> 
+     dx</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">integral cube </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0.01</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">.24998750000000042</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">integral cube </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">.249999875000001</span></i>
+</pre></div>
+
+<p>(Точное значение интеграла <code>cube</code> между 0 и 1 равно 1/4.)
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e29"></a>Exercise 1.29:</strong> Правило Симпсона — более точный метод
+численного интегрирования, чем метод, проиллюстрированный выше.  По правилу Симпсона
+интеграл функции <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> между <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> приближается как
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mfrac>
+    <mi>h</mi>
+    <mn>3</mn>
+  </mfrac>
+  <mo stretchy="false">(</mo>
+  <msub>
+    <mi>y</mi>
+    <mn>0</mn>
+  </msub>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <msub>
+      <mi>y</mi>
+      <mn>1</mn>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <msub>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <msub>
+      <mi>y</mi>
+      <mn>3</mn>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <msub>
+      <mi>y</mi>
+      <mn>4</mn>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mo>⋯<!-- ⋯ --></mo>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <msub>
+      <mi>y</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>2</mn>
+      </mrow>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <msub>
+      <mi>y</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>+</mo>
+    <msub>
+      <mi>y</mi>
+      <mi>n</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>h</mi>
+    <mo>=</mo>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo>−<!-- − --></mo>
+    <mi>a</mi>
+    <mo stretchy="false">)</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>n</mi>
+  </mrow>
+</math> для некоторого чётного целого <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, а
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>a</mi>
+    <mo>+</mo>
+    <mi>k</mi>
+    <mi>h</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  (Увеличение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> увеличивает точность приближения.)
+Определите процедуру, которая принимает в качестве аргументов <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>,
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и возвращает значение интеграла, вычисленное по правилу Симпсона.
+Воспользуйтесь своей процедурой, чтобы проинтегрировать <code>cube</code> между 0 и 1 (при
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>=</mo>
+    <mn>100</mn>
+  </mrow>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>=</mo>
+    <mn>1000</mn>
+  </mrow>
+</math>), и сравните результаты с результатами процедуры
+<code>integral</code>, показанной выше.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e30"></a>Exercise 1.30:</strong> Процедура <code>sum</code> выше порождает
+линейную рекурсию.  Процедуру можно переписать так, чтобы суммирование выполнялось
+итеративно.  Покажите, как это сделать, заполнив недостающие выражения в следующем
+определении:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum term a next b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">iter a result</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> ⟨</span><span class="pun">??</span><span class="pln">⟩
+        ⟨</span><span class="pun">??</span><span class="pln">⟩
+        </span><span class="opn">(</span><span class="pln">iter ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">iter ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e31"></a>Exercise 1.31:</strong> 
+</p>
+<ol>
+<li> Процедура <code>sum</code> — лишь простейшая из обширного множества похожих абстракций,
+которые можно схватить как процедуры высшего порядка.<a class="footnote_link" id="DOCF51" href="#FOOT51"><sup>51</sup></a>  Напишите аналогичную процедуру под
+названием <code>product</code>, возвращающую произведение значений функции в точках на
+заданном диапазоне.  Покажите, как определить <code>factorial</code> через <code>product</code>.
+Воспользуйтесь также <code>product</code>, чтобы вычислить приближения к <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>π<!-- π --></mi>
+</math> по
+формуле<a class="footnote_link" id="DOCF52" href="#FOOT52"><sup>52</sup></a>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mfrac>
+    <mi>π<!-- π --></mi>
+    <mn>4</mn>
+  </mfrac>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mn>2</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>4</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>4</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>6</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>6</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>8</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mo>⋯<!-- ⋯ --></mo>
+      </mrow>
+      <mrow>
+        <mn>3</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>3</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>5</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>5</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>7</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>7</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mo>⋯<!-- ⋯ --></mo>
+      </mrow>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+</li><li> Если ваша процедура <code>product</code> порождает рекурсивный процесс, напишите такую,
+которая порождает итеративный процесс.  Если она порождает итеративный процесс,
+напишите такую, которая порождает рекурсивный процесс.
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e32"></a>Exercise 1.32:</strong> 
+</p>
+<ol>
+<li> Покажите, что <code>sum</code> и <code>product</code> (<a href="#Exercise-1_002e31">Exercise 1.31</a>) — оба частные случаи
+ещё более общего понятия, называемого <code>accumulate</code>, которое объединяет набор
+членов, используя некоторую общую функцию накопления:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">accumulate 
+ combiner null-value term a next b</span><span class="clo">)</span></pre></div>
+
+<p><code>Accumulate</code> принимает в качестве аргументов те же спецификации члена и
+диапазона, что <code>sum</code> и <code>product</code>, вместе с процедурой <code>combiner</code> (от
+двух аргументов), задающей, как текущий член должен объединяться с накоплением
+предыдущих членов, и значением <code>null-value</code>, задающим, какое базовое значение
+использовать, когда члены кончаются.  Напишите <code>accumulate</code> и покажите, как
+<code>sum</code> и <code>product</code> можно определить как простые вызовы <code>accumulate</code>.
+</p>
+</li><li> Если ваша процедура <code>accumulate</code> порождает рекурсивный процесс, напишите такую,
+которая порождает итеративный процесс.  Если она порождает итеративный процесс,
+напишите такую, которая порождает рекурсивный процесс.
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e33"></a>Exercise 1.33:</strong> Вы можете получить ещё более общую
+версию <code>accumulate</code> (<a href="#Exercise-1_002e32">Exercise 1.32</a>), введя понятие <a id="index-filxtra"></a>
+<em>фильтра</em> на
+объединяемые члены.  То есть объединять только те члены, которые получены из значений
+диапазона, удовлетворяющих заданному условию.  Получающаяся абстракция
+<code>filtered-accumulate</code> принимает те же аргументы, что и accumulate, вместе с
+дополнительным предикатом от одного аргумента, задающим фильтр.  Напишите
+<code>filtered-accumulate</code> как процедуру.  Покажите, как выразить следующее с помощью
+<code>filtered-accumulate</code>:
+</p>
+<ol>
+<li> сумму квадратов простых чисел в интервале от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> до <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> (предполагая, что
+предикат <code>prime?</code> у вас уже написан);
+
+</li><li> произведение всех положительных целых чисел, меньших <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, которые взаимно просты
+с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> (то есть всех положительных целых <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>i</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math> таких, что
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>GCD</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>i</mi>
+    <mo>,</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>1</mn>
+  </mrow>
+</math>).
+
+</li></ol>
+</blockquote>
+
+<a id="g_t1_002e3_002e2"></a>
+<a id="Postroenie-procedur-s-pomoshchxiu-Lambda"></a>
+<h4 class="subsection"><span class="secnum">1.3.2</span><span class="sectitle">Построение процедур с помощью <code>Lambda</code></span></h4>
+
+<p>При использовании <code>sum</code>, как в <a href="#g_t1_002e3_002e1">1.3.1</a>, кажется ужасно неуклюжим то, что
+приходится определять тривиальные процедуры вроде <code>pi-term</code> и <code>pi-next</code>
+лишь затем, чтобы использовать их как аргументы нашей процедуры высшего порядка.
+Вместо того чтобы определять <code>pi-next</code> и <code>pi-term</code>, удобнее было бы иметь
+способ прямо указать «процедуру, возвращающую свой вход, увеличенный на 4» и
+«процедуру, возвращающую обратную величину произведения своего входа на свой вход
+плюс 2».  Мы можем сделать это, введя специальную форму <code>lambda</code>, создающую
+процедуры.  С помощью <code>lambda</code> мы можем описать то, что нам нужно, как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">))</span></pre></div>
+
+<p>и
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1.0</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">2</span><span class="clo">))))</span></pre></div>
+
+<p>Тогда нашу процедуру <code>pi-sum</code> можно выразить без определения каких-либо
+вспомогательных процедур как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pi-sum a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sum </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1.0</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">2</span><span class="clo">))))</span><span class="pln">
+       a
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
+       b</span><span class="clo">))</span></pre></div>
+
+<p>Снова используя <code>lambda</code>, мы можем написать процедуру <code>integral</code>, не
+определяя вспомогательной процедуры <code>add-dx</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">integral f a b dx</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum f </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> dx </span><span class="lit">2.0</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x dx</span><span class="clo">))</span><span class="pln">
+            b</span><span class="clo">)</span><span class="pln">
+     dx</span><span class="clo">))</span></pre></div>
+
+<p>Вообще, <code>lambda</code> используется для создания процедур так же, как <code>define</code>,
+за исключением того, что для процедуры не указывается никакого имени:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">формальные-параметры</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> ⟨</span><var><span class="pun">тело</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>Получающаяся процедура — точно такая же процедура, как и созданная с помощью
+<code>define</code>.  Единственное различие в том, что она не связана ни с каким именем в
+окружении.  В самом деле,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">plus4 x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">))</span></pre></div>
+
+<p>эквивалентно
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> plus4 </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">4</span><span class="clo">)))</span></pre></div>
+
+<p>Выражение <code>lambda</code> можно прочитать так:
+</p>
+<div class="example">
+<pre class="example">(lambda                (x) (+           x  4))
+   |                    |  |            |  |
+процедура от аргумента  x  складывающая x  и 4
+</pre></div>
+
+<p>Как и любое выражение, имеющее процедуру своим значением, выражение <code>lambda</code>
+можно использовать как оператор в комбинации, такой как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x y </span><span class="opn">(</span><span class="pln">square z</span><span class="clo">)))</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">12</span></i>
+</pre></div>
+
+<p>или, более общо, в любом контексте, где мы обычно использовали бы имя
+процедуры.<a class="footnote_link" id="DOCF53" href="#FOOT53"><sup>53</sup></a>
+</p>
+<a id="Ispolxzovanie-let-dlya-sozdaniya-lokalxnykh-peremennykh"></a>
+<h5 class="subsubheading">Использование <code>let</code> для создания локальных переменных</h5>
+
+<p>Ещё одно применение <code>lambda</code> — создание локальных переменных.  Нам часто нужны
+в наших процедурах локальные переменные помимо тех, что связаны как формальные
+параметры.  Например, предположим, что мы хотим вычислить функцию
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo>,</mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mi>y</mi>
+    <msup>
+      <mo stretchy="false">)</mo>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>−<!-- − --></mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>−<!-- − --></mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+которую мы могли бы также выразить как
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mi>a</mi>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>1</mn>
+          <mo>+</mo>
+          <mi>x</mi>
+          <mi>y</mi>
+          <mo>,</mo>
+        </mrow>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mpadded height="0" depth="0">
+            <mphantom>
+              <mo stretchy="false">(</mo>
+              <mi>x</mi>
+              <mo>,</mo>
+              <mi>y</mi>
+              <mo stretchy="false">)</mo>
+            </mphantom>
+          </mpadded>
+        </mrow>
+        <mi>b</mi>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>1</mn>
+          <mo>−<!-- − --></mo>
+          <mi>y</mi>
+          <mo>,</mo>
+        </mrow>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>f</mi>
+          <mo stretchy="false">(</mo>
+          <mi>x</mi>
+          <mo>,</mo>
+          <mi>y</mi>
+          <mo stretchy="false">)</mo>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>x</mi>
+          <msup>
+            <mi>a</mi>
+            <mn>2</mn>
+          </msup>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>y</mi>
+          <mi>b</mi>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>a</mi>
+          <mi>b</mi>
+          <mo>.</mo>
+        </mrow>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
+Записывая процедуру для вычисления <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, мы хотели бы включить в качестве
+локальных переменных не только <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>, но и имена промежуточных величин
+вроде <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>.  Один способ добиться этого — использовать
+вспомогательную процедуру, чтобы связать локальные переменные:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f-helper a b</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">square a</span><span class="clo">))</span><span class="pln">
+       </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y b</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">f-helper </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln"> 
+            </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">)))</span></pre></div>
+
+<p>Конечно, мы могли бы использовать выражение <code>lambda</code>, чтобы задать анонимную
+процедуру для связывания наших локальных переменных.  Тело <code>f</code> тогда становится
+единственным вызовом этой процедуры:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">square a</span><span class="clo">))</span><span class="pln"> 
+        </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y b</span><span class="clo">)</span><span class="pln"> 
+        </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b</span><span class="clo">)))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">)))</span></pre></div>
+
+<p>Эта конструкция настолько полезна, что существует специальная форма под названием
+<code>let</code>, делающая её использование более удобным.  С помощью <code>let</code> процедуру
+<code>f</code> можно было бы записать как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">a </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">b </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">square a</span><span class="clo">))</span><span class="pln">
+       </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y b</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b</span><span class="clo">))))</span></pre></div>
+
+<p>Общая форма выражения <code>let</code> такова:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">⟨</span><var><span class="pun">перем₁</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">выр₁</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">перем₂</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">выр₂</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+      </span><span class="roman"><span class="pun">…</span></span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">перемₙ</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">вырₙ</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+  ⟨</span><var><span class="pun">тело</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>что можно мыслить как утверждение
+</p>
+<div class="example">
+<pre class="example">let ⟨<var>перем₁</var>⟩ <span class="roman">имеет значение</span> ⟨<var>выр₁</var>⟩ <span class="roman">и</span>
+    ⟨<var>перем₂</var>⟩ <span class="roman">имеет значение</span> ⟨<var>выр₂</var>⟩ <span class="roman">и</span>
+    <span class="roman">…</span>
+    ⟨<var>перемₙ</var>⟩ <span class="roman">имеет значение</span> ⟨<var>вырₙ</var>⟩
+  <span class="roman">в</span> ⟨<var>тело</var>⟩
+</pre></div>
+
+<p>Первая часть выражения <code>let</code> — это список пар «имя—выражение».  Когда <code>let</code>
+вычисляется, каждое имя связывается со значением соответствующего выражения.  Тело
+<code>let</code> вычисляется с этими именами, связанными как локальные переменные.
+Происходит это так, что выражение <code>let</code> интерпретируется как альтернативный
+синтаксис для
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">перем₁</span></var><span class="pln">⟩ </span><span class="roman"><span class="pun">…</span></span><span class="pln"> ⟨</span><var><span class="pun">перемₙ</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+   ⟨</span><var><span class="pun">тело</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+ ⟨</span><var><span class="pun">выр₁</span></var><span class="pln">⟩
+ </span><span class="roman"><span class="pun">…</span></span><span class="pln">
+ ⟨</span><var><span class="pun">вырₙ</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>Никакого нового механизма в интерпретаторе для предоставления локальных переменных
+не требуется.  Выражение <code>let</code> — просто синтаксический сахар для лежащего в
+основе применения <code>lambda</code>.
+</p>
+<p>Из этой эквивалентности видно, что область действия переменной, заданной выражением
+<code>let</code>, — это тело <code>let</code>.  Это влечёт, что:
+</p>
+<ul>
+<li> <code>Let</code> позволяет связывать переменные настолько локально, насколько возможно, к
+тому месту, где они будут использоваться.  Например, если значение <code>x</code> равно 5,
+то значение выражения
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">x </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="lit">10</span><span class="clo">)))</span><span class="pln">
+   x</span><span class="clo">)</span></pre></div>
+
+<p>равно 38.  Здесь <code>x</code> в теле <code>let</code> равен 3, так что значение выражения
+<code>let</code> равно 33.  С другой стороны, <code>x</code>, являющийся вторым аргументом
+самого внешнего <code>+</code>, по-прежнему равен 5.
+</p>
+</li><li> Значения переменных вычисляются вне <code>let</code>.  Это важно, когда выражения, дающие
+значения локальным переменным, зависят от переменных, имеющих те же имена, что и сами
+локальные переменные.  Например, если значение <code>x</code> равно 2, выражение
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">x </span><span class="lit">3</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">y </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">2</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">))</span></pre></div>
+
+<p>будет иметь значение 12, потому что внутри тела <code>let</code> <code>x</code> будет равен 3, а
+<code>y</code> будет равен 4 (что есть внешний <code>x</code> плюс 2).
+</p>
+</li></ul>
+
+<p>Иногда мы можем использовать внутренние определения, чтобы получить тот же эффект,
+что и с <code>let</code>.  Например, мы могли бы определить процедуру <code>f</code> выше как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> a 
+    </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> b </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">square a</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y b</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b</span><span class="clo">)))</span></pre></div>
+
+<p>Однако мы предпочитаем использовать <code>let</code> в подобных ситуациях, а внутренний
+<code>define</code> — только для внутренних процедур.<a class="footnote_link" id="DOCF54" href="#FOOT54"><sup>54</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e34"></a>Exercise 1.34:</strong> Предположим, мы определяем процедуру
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f g</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">g </span><span class="lit">2</span><span class="clo">))</span></pre></div>
+
+<p>Тогда мы имеем
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">f square</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">4</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">f </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> z </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> z </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+</span><i><span class="lit">6</span></i>
+</pre></div>
+
+<p>Что произойдёт, если мы (извращённо) попросим интерпретатор вычислить комбинацию
+<code>(f f)</code>?  Объясните.
+</p></blockquote>
+
+<a id="g_t1_002e3_002e3"></a>
+<a id="Procedury-kak-obobshchionnye-metody"></a>
+<h4 class="subsection"><span class="secnum">1.3.3</span><span class="sectitle">Процедуры как обобщённые методы</span></h4>
+
+<p>Мы ввели составные процедуры в <a href="1_002e1.xhtml#g_t1_002e1_002e4">1.1.4</a> как механизм абстрагирования образцов
+числовых операций, чтобы сделать их независимыми от конкретных участвующих чисел.  С
+процедурами высшего порядка, такими как процедура <code>integral</code> из <a href="#g_t1_002e3_002e1">1.3.1</a>, мы
+начали видеть более мощный вид абстракции: процедуры, используемые для выражения
+обобщённых методов вычисления, независимых от конкретных участвующих функций.  В этом
+разделе мы обсудим два более сложных примера — обобщённые методы нахождения нулей и
+неподвижных точек функций — и покажем, как эти методы можно выразить прямо как
+процедуры.
+</p>
+<a id="Poisk-kornei-uravnenii-metodom-polovinnogo-deleniya"></a>
+<h5 class="subsubheading">Поиск корней уравнений методом половинного деления</h5>
+
+<a id="index-Metod-polovinnogo-deleniya"></a>
+<p><em>Метод половинного деления</em> — простой, но мощный приём нахождения корней
+уравнения <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> — непрерывная функция.  Идея в том, что
+если нам даны точки <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> такие, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>a</mi>
+    <mo stretchy="false">)</mo>
+    <mo>&lt;</mo>
+    <mn>0</mn>
+    <mo>&lt;</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, то у
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> должен быть по крайней мере один нуль между <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>.  Чтобы
+найти нуль, пусть <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> — среднее <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>, и вычислим <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.
+Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>&gt;</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, то у <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> должен быть нуль между <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>.
+Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>&lt;</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, то у <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> должен быть нуль между <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>.
+Продолжая таким образом, мы можем выделять всё меньшие и меньшие интервалы, на которых
+у <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> должен быть нуль.  Когда мы достигаем точки, где интервал достаточно мал,
+процесс останавливается.  Поскольку интервал неопределённости уменьшается вдвое на
+каждом шаге процесса, требуемое число шагов растёт как
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>L</mi>
+    <mspace width="thinmathspace"/>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mspace width="thinmathspace"/>
+    <mi>T</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>L</mi>
+</math> — длина исходного интервала, а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>T</mi>
+</math>
+— допуск ошибки (то есть размер интервала, который мы будем считать «достаточно
+малым»).  Вот процедура, реализующая эту стратегию:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">search f neg-point pos-point</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">midpoint 
+         </span><span class="opn">(</span><span class="pln">average neg-point pos-point</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">close-enough? neg-point pos-point</span><span class="clo">)</span><span class="pln">
+        midpoint
+        </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">test-value </span><span class="opn">(</span><span class="pln">f midpoint</span><span class="clo">)))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> 
+           </span><span class="opn">((</span><span class="pln">positive? test-value</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">search f neg-point midpoint</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">((</span><span class="pln">negative? test-value</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">search f midpoint pos-point</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> midpoint</span><span class="clo">))))))</span></pre></div>
+
+<p>Мы предполагаем, что изначально нам даны функция <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> вместе с точками, в которых
+её значения отрицательны и положительны.  Сначала мы вычисляем среднюю точку двух
+данных точек.  Затем мы проверяем, достаточно ли мал данный интервал, и если так, то
+просто возвращаем среднюю точку как наш ответ.  Иначе мы вычисляем в качестве
+проверочного значения значение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> в средней точке.  Если проверочное значение
+положительно, то мы продолжаем процесс с новым интервалом, идущим от исходной
+отрицательной точки до средней.  Если проверочное значение отрицательно, мы
+продолжаем с интервалом от средней точки до положительной.  Наконец, есть
+возможность, что проверочное значение равно 0, и в этом случае средняя точка сама
+является искомым корнем.
+</p>
+<p>Чтобы проверить, «достаточно ли близки» концы, мы можем воспользоваться процедурой,
+похожей на ту, что использовалась в <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a> для вычисления квадратных
+корней:<a class="footnote_link" id="DOCF55" href="#FOOT55"><sup>55</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">close-enough? x y</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">))</span></pre></div>
+
+<p><code>Search</code> неудобно использовать напрямую, потому что мы можем случайно дать ему
+точки, в которых значения <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> не имеют требуемого знака, и в этом случае мы
+получим неверный ответ.  Вместо этого мы будем использовать <code>search</code> через
+следующую процедуру, которая проверяет, какой из концов имеет отрицательное значение
+функции, а какой — положительное, и вызывает процедуру <code>search</code>
+соответственно.  Если функция имеет один и тот же знак в двух данных точках, метод
+половинного деления использовать нельзя, и в этом случае процедура сигнализирует об
+ошибке.<a class="footnote_link" id="DOCF56" href="#FOOT56"><sup>56</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">half-interval-method f a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">a-value </span><span class="opn">(</span><span class="pln">f a</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">b-value </span><span class="opn">(</span><span class="pln">f b</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">negative? a-value</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">positive? b-value</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">search f a b</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">((</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">negative? b-value</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">positive? a-value</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">search f b a</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+           </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Values are not of 
+                   opposite sign"</span><span class="pln"> a b</span><span class="clo">)))))</span></pre></div>
+
+<p>Следующий пример использует метод половинного деления, чтобы приблизить <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>π<!-- π --></mi>
+</math>
+как корень <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>x</mi>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math> между 2 и 4:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">half-interval-method sin </span><span class="lit">2.0</span><span class="pln"> </span><span class="lit">4.0</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">3.14111328125</span></i>
+</pre></div>
+
+<p>Вот другой пример, использующий метод половинного деления для поиска корня уравнения
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>−<!-- − --></mo>
+    <mn>2</mn>
+    <mi>x</mi>
+    <mo>−<!-- − --></mo>
+    <mn>3</mn>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math> между 1 и 2:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">half-interval-method 
+ </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
+ </span><span class="lit">1.0</span><span class="pln">
+ </span><span class="lit">2.0</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">1.89306640625</span></i>
+</pre></div>
+
+<a id="Poisk-nepodvizhnykh-tochek-funkcii"></a>
+<h5 class="subsubheading">Поиск неподвижных точек функций</h5>
+
+<p>Число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> называется <a id="index-nepodvizhnoi-tochkoi"></a>
+<em>неподвижной точкой</em> функции <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, если
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> удовлетворяет уравнению <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mi>x</mi>
+  </mrow>
+</math>.  Для некоторых функций <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>
+мы можем найти неподвижную точку, начав с начального предположения и многократно
+применяя <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+  <mspace width="1em"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+  <mspace width="1em"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+  <mspace width="1em"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>…<!-- … --></mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+пока значение не перестанет сильно меняться.  Пользуясь этой идеей, мы можем
+придумать процедуру <code>fixed-point</code>, которая принимает в качестве входов функцию и
+начальное предположение и выдаёт приближение к неподвижной точке функции.  Мы
+применяем функцию многократно, пока не найдём два последовательных значения, разность
+которых меньше некоторого предписанного допуска:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> tolerance </span><span class="lit">0.00001</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fixed-point f first-guess</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">close-enough? v1 v2</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> v1 v2</span><span class="clo">))</span><span class="pln"> 
+       tolerance</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">try guess</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">next </span><span class="opn">(</span><span class="pln">f guess</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">close-enough? guess next</span><span class="clo">)</span><span class="pln">
+          next
+          </span><span class="opn">(</span><span class="pln">try next</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">try first-guess</span><span class="clo">))</span></pre></div>
+
+<p>Например, мы можем воспользоваться этим методом, чтобы приблизить неподвижную точку
+функции косинуса, начав с 1 как начального приближения:<a class="footnote_link" id="DOCF57" href="#FOOT57"><sup>57</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">fixed-point cos </span><span class="lit">1.0</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">.7390822985224023</span></i>
+</pre></div>
+
+<p>Аналогично мы можем найти решение уравнения <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mi>cos</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>y</mi>
+  </mrow>
+</math>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">fixed-point </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sin y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cos y</span><span class="clo">)))</span><span class="pln">
+             </span><span class="lit">1.0</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">1.2587315962971173</span></i>
+</pre></div>
+
+<p>Процесс неподвижной точки напоминает процесс, который мы использовали для нахождения
+квадратных корней в <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.  Оба основаны на идее многократного улучшения
+предположения, пока результат не удовлетворит некоторому критерию.  В самом деле, мы
+легко можем сформулировать вычисление квадратного корня как поиск неподвижной точки.
+Вычисление квадратного корня некоторого числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> требует нахождения <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>
+такого, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>=</mo>
+    <mi>x</mi>
+  </mrow>
+</math>.  Приведя это уравнение к эквивалентной форме
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>, мы узнаём, что ищем неподвижную точку
+функции<a class="footnote_link" id="DOCF58" href="#FOOT58"><sup>58</sup></a> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>, и поэтому мы можем попытаться вычислять
+квадратные корни как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fixed-point </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+               </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
+
+<p>К сожалению, этот поиск неподвижной точки не сходится.  Рассмотрим начальное
+предположение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>1</mn>
+  </msub>
+</math>.  Следующее предположение — <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msub>
+    <mo>=</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msub>
+      <mi>y</mi>
+      <mn>1</mn>
+    </msub>
+  </mrow>
+</math>, а
+следующее — <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>3</mn>
+  </msub>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msub>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msub>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msub>
+      <mi>y</mi>
+      <mn>1</mn>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>=</mo>
+  <msub>
+    <mi>y</mi>
+    <mn>1</mn>
+  </msub>
+</math>.  Это приводит к
+бесконечному циклу, в котором два предположения <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>1</mn>
+  </msub>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>2</mn>
+  </msub>
+</math> повторяются
+снова и снова, колеблясь вокруг ответа.
+</p>
+<p>Один способ управлять такими колебаниями — не давать предположениям меняться так
+сильно.  Поскольку ответ всегда между нашим предположением <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>,
+мы можем сделать новое предположение, которое не так далеко от <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>, как
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>, усреднив <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>, так что следующее предположение
+после <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> будет <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>2</mn>
+      </mfrac>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> вместо <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>.  Процесс
+построения такой последовательности предположений — это просто процесс поиска
+неподвижной точки <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+  <mo stretchy="false">↦<!-- ↦ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>2</mn>
+      </mfrac>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fixed-point 
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">average y </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x y</span><span class="clo">)))</span><span class="pln">
+   </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
+
+<p>(Заметьте, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>2</mn>
+      </mfrac>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> — простое преобразование уравнения
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+    <mo>;</mo>
+  </mrow>
+</math> чтобы вывести его, прибавьте <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> к обеим сторонам уравнения
+и поделите на 2.)
+</p>
+<p>С этой модификацией процедура квадратного корня работает.  В самом деле, если
+размотать определения, можно увидеть, что порождаемая здесь последовательность
+приближений к квадратному корню в точности та же, что и порождаемая нашей исходной
+процедурой квадратного корня из <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.  Этот подход усреднения последовательных
+приближений к решению — приём, который мы называем <a id="index-usrednionnym-zatukhaniem"></a>
+<em>усреднённым затуханием</em>, —
+часто помогает сходимости поисков неподвижной точки.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e35"></a>Exercise 1.35:</strong> Покажите, что золотое сечение
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math> (<a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>) — неподвижная точка преобразования
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>x</mi>
+  </mrow>
+</math>, и воспользуйтесь этим фактом, чтобы вычислить
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math> с помощью процедуры <code>fixed-point</code>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e36"></a>Exercise 1.36:</strong> Измените <code>fixed-point</code> так,
+чтобы она печатала порождаемую ею последовательность приближений, используя примитивы
+<code>newline</code> и <code>display</code>, показанные в <a href="1_002e2.xhtml#Exercise-1_002e22">Exercise 1.22</a>.  Затем найдите
+решение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>x</mi>
+      <mi>x</mi>
+    </msup>
+    <mo>=</mo>
+    <mn>1000</mn>
+  </mrow>
+</math>, найдя неподвижную точку
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+  <mo stretchy="false">↦<!-- ↦ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <mn>1000</mn>
+    <mo stretchy="false">)</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  (Используйте примитивную процедуру Scheme
+<code>log</code>, вычисляющую натуральные логарифмы.)  Сравните число шагов, которое это
+занимает, с усреднённым затуханием и без него.  (Заметьте, что вы не можете запустить
+<code>fixed-point</code> с предположением 1, так как это привело бы к делению на
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>.)
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e37"></a>Exercise 1.37:</strong> 
+</p>
+<ol>
+<li> Бесконечная <a id="index-nepreryvnaya-drobx"></a>
+<em>непрерывная дробь</em> — это выражение вида
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>f</mi>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <msub>
+        <mi>N</mi>
+        <mn>1</mn>
+      </msub>
+      <mrow>
+        <msub>
+          <mi>D</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>+</mo>
+        <mfrac>
+          <msub>
+            <mi>N</mi>
+            <mn>2</mn>
+          </msub>
+          <mrow>
+            <msub>
+              <mi>D</mi>
+              <mn>2</mn>
+            </msub>
+            <mo>+</mo>
+            <mfrac>
+              <msub>
+                <mi>N</mi>
+                <mn>3</mn>
+              </msub>
+              <mrow>
+                <msub>
+                  <mi>D</mi>
+                  <mn>3</mn>
+                </msub>
+                <mo>+</mo>
+                <mo>…<!-- … --></mo>
+              </mrow>
+            </mfrac>
+          </mrow>
+        </mfrac>
+      </mrow>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+В качестве примера можно показать, что разложение в бесконечную непрерывную дробь, у
+которого все <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>N</mi>
+    <mi>i</mi>
+  </msub>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>D</mi>
+    <mi>i</mi>
+  </msub>
+</math> равны 1, даёт <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>φ<!-- φ --></mi>
+  </mrow>
+</math>, где
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math> — золотое сечение (описанное в <a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>).  Один способ приблизить
+бесконечную непрерывную дробь — оборвать разложение после заданного числа членов.
+Такой обрыв — так называемая <a id="index-k_002dchlennaya-konechnaya-nepreryvnaya-drobx"></a>
+<em><i>k</i>-членная конечная непрерывная дробь</em> —
+имеет вид
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <msub>
+        <mi>N</mi>
+        <mn>1</mn>
+      </msub>
+      <mrow>
+        <msub>
+          <mi>D</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>+</mo>
+        <mfrac>
+          <msub>
+            <mi>N</mi>
+            <mn>2</mn>
+          </msub>
+          <mrow>
+            <mo>⋱<!-- ⋱ --></mo>
+            <mo>+</mo>
+            <mfrac>
+              <msub>
+                <mi>N</mi>
+                <mi>k</mi>
+              </msub>
+              <msub>
+                <mi>D</mi>
+                <mi>k</mi>
+              </msub>
+            </mfrac>
+          </mrow>
+        </mfrac>
+      </mrow>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+Предположим, что <code>n</code> и <code>d</code> — процедуры одного аргумента (индекса члена
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>i</mi>
+</math>), возвращающие <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>N</mi>
+    <mi>i</mi>
+  </msub>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>D</mi>
+    <mi>i</mi>
+  </msub>
+</math> членов непрерывной дроби.  Определите
+процедуру <code>cont-frac</code> такую, чтобы вычисление <code>(cont-frac n d k)</code> вычисляло
+значение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math>-членной конечной непрерывной дроби.  Проверьте свою процедуру,
+приближая <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>φ<!-- φ --></mi>
+  </mrow>
+</math> с помощью
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">cont-frac </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">i</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1.0</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">i</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1.0</span><span class="clo">)</span><span class="pln">
+           k</span><span class="clo">)</span></pre></div>
+
+<p>для последовательных значений <code>k</code>.  Насколько большим нужно сделать <code>k</code>,
+чтобы получить приближение, точное до 4 десятичных знаков?
+</p>
+</li><li> Если ваша процедура <code>cont-frac</code> порождает рекурсивный процесс, напишите такую,
+которая порождает итеративный процесс.  Если она порождает итеративный процесс,
+напишите такую, которая порождает рекурсивный процесс.
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e38"></a>Exercise 1.38:</strong> В 1737 году швейцарский математик
+Леонард Эйлер опубликовал мемуар <cite>De Fractionibus Continuis</cite>, который включал
+разложение в непрерывную дробь для <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>e</mi>
+    <mo>−<!-- − --></mo>
+    <mn>2</mn>
+  </mrow>
+</math>, где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>e</mi>
+</math> — основание
+натуральных логарифмов.  В этой дроби все <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>N</mi>
+    <mi>i</mi>
+  </msub>
+</math> равны 1, а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>D</mi>
+    <mi>i</mi>
+  </msub>
+</math>
+последовательно равны 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, ….  Напишите программу,
+использующую вашу процедуру <code>cont-frac</code> из <a href="#Exercise-1_002e37">Exercise 1.37</a>, чтобы приблизить
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>e</mi>
+</math>, на основе разложения Эйлера.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e39"></a>Exercise 1.39:</strong> Представление функции тангенса
+непрерывной дробью было опубликовано в 1770 году немецким математиком
+И. Г. Ламбертом:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>tan</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>x</mi>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mi>x</mi>
+      <mrow>
+        <mn>1</mn>
+        <mo>−<!-- − --></mo>
+        <mfrac>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+          <mrow>
+            <mn>3</mn>
+            <mo>−<!-- − --></mo>
+            <mfrac>
+              <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+              </msup>
+              <mrow>
+                <mn>5</mn>
+                <mo>−<!-- − --></mo>
+                <mo>…<!-- … --></mo>
+              </mrow>
+            </mfrac>
+          </mrow>
+        </mfrac>
+      </mrow>
+    </mfrac>
+    <mspace width="thinmathspace"/>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+где <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> в радианах.  Определите процедуру <code>(tan-cf x k)</code>, вычисляющую
+приближение к функции тангенса на основе формулы Ламберта.  <code>k</code> задаёт число
+вычисляемых членов, как в <a href="#Exercise-1_002e37">Exercise 1.37</a>.
+</p></blockquote>
+
+<a id="g_t1_002e3_002e4"></a>
+<a id="Procedury-kak-vozvrashchaemye-znacheniya"></a>
+<h4 class="subsection"><span class="secnum">1.3.4</span><span class="sectitle">Процедуры как возвращаемые значения</span></h4>
+
+<p>Приведённые выше примеры показывают, как способность передавать процедуры в качестве
+аргументов значительно усиливает выразительную силу нашего языка программирования.  Мы
+можем достичь ещё большей выразительной силы, создавая процедуры, возвращаемые
+значения которых сами являются процедурами.
+</p>
+<p>Мы можем проиллюстрировать эту идею, снова взглянув на пример с неподвижной точкой,
+описанный в конце <a href="#g_t1_002e3_002e3">1.3.3</a>.  Мы сформулировали новую версию процедуры квадратного
+корня как поиск неподвижной точки, начав с наблюдения, что <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msqrt>
+    <mi>x</mi>
+  </msqrt>
+</math> —
+неподвижная точка функции <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>.  Затем мы воспользовались
+усреднённым затуханием, чтобы заставить приближения сходиться.  Усреднённое затухание
+— полезный обобщённый приём сам по себе.  А именно, для данной функции <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> мы
+рассматриваем функцию, значение которой в <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> равно среднему <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> и
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.
+</p>
+<p>Мы можем выразить идею усреднённого затухания с помощью следующей процедуры:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">average-damp f</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> 
+    </span><span class="opn">(</span><span class="pln">average x </span><span class="opn">(</span><span class="pln">f x</span><span class="clo">))))</span></pre></div>
+
+<p><code>Average-damp</code> — это процедура, которая принимает в качестве аргумента процедуру
+<code>f</code> и возвращает в качестве значения процедуру (порождённую <code>lambda</code>),
+которая, будучи применена к числу <code>x</code>, выдаёт среднее <code>x</code> и <code>(f x)</code>.
+Например, применение <code>average-damp</code> к процедуре <code>square</code> даёт процедуру,
+значение которой в некотором числе <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> есть среднее <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>x</mi>
+    <mn>2</mn>
+  </msup>
+</math>.
+Применение этой получившейся процедуры к 10 возвращает среднее 10 и 100, то есть
+55:<a class="footnote_link" id="DOCF59" href="#FOOT59"><sup>59</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">average-damp square</span><span class="clo">)</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">55</span></i>
+</pre></div>
+
+<p>Пользуясь <code>average-damp</code>, мы можем переформулировать процедуру квадратного корня
+так:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fixed-point 
+   </span><span class="opn">(</span><span class="pln">average-damp 
+    </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x y</span><span class="clo">)))</span><span class="pln">
+   </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
+
+<p>Заметьте, как эта формулировка делает явными три идеи метода: поиск неподвижной точки,
+усреднённое затухание и функцию <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>.  Поучительно сравнить эту
+формулировку метода квадратного корня с исходной версией, данной в <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.
+Помните, что эти процедуры выражают один и тот же процесс, и заметьте, насколько яснее
+становится идея, когда мы выражаем процесс в терминах этих абстракций.  Вообще,
+существует много способов сформулировать процесс как процедуру.  Опытные программисты
+умеют выбирать процедурные формулировки, которые особенно прозрачны и в которых
+полезные элементы процесса выставлены как отдельные сущности, пригодные для повторного
+использования в других приложениях.  Как простой пример повторного использования,
+заметьте, что кубический корень <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> — неподвижная точка функции
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>, так что мы можем немедленно обобщить нашу процедуру
+квадратного корня до процедуры, извлекающей кубические корни:<a class="footnote_link" id="DOCF60" href="#FOOT60"><sup>60</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube-root x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fixed-point 
+   </span><span class="opn">(</span><span class="pln">average-damp 
+    </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> 
+      </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">))))</span><span class="pln">
+   </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
+
+<a id="Metod-Nxiutona"></a>
+<h5 class="subsubheading">Метод Ньютона</h5>
+
+<p>Когда мы впервые ввели процедуру квадратного корня, в <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>, мы упомянули, что
+это частный случай <a id="index-metoda-Nxiutona"></a>
+<em>метода Ньютона</em>.  Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> —
+дифференцируемая функция, то решение уравнения <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math> есть неподвижная
+точка функции <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, где
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mi>x</mi>
+  <mo>−<!-- − --></mo>
+  <mfrac>
+    <mrow>
+      <mi>g</mi>
+      <mo stretchy="false">(</mo>
+      <mi>x</mi>
+      <mo stretchy="false">)</mo>
+    </mrow>
+    <mrow>
+      <mi>D</mi>
+      <mi>g</mi>
+      <mo stretchy="false">(</mo>
+      <mi>x</mi>
+      <mo stretchy="false">)</mo>
+    </mrow>
+  </mfrac>
+</math>
+
+а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>D</mi>
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> — производная <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math>, вычисленная в <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>.  Метод Ньютона —
+это использование метода неподвижной точки, который мы видели выше, для приближения
+решения уравнения путём нахождения неподвижной точки функции
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+  </mrow>
+</math>.<a class="footnote_link" id="DOCF61" href="#FOOT61"><sup>61</sup></a>
+</p>
+<p>Для многих функций <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> и для достаточно хороших начальных предположений о <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>
+метод Ньютона очень быстро сходится к решению
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>.<a class="footnote_link" id="DOCF62" href="#FOOT62"><sup>62</sup></a>
+</p>
+<p>Чтобы реализовать метод Ньютона как процедуру, мы должны сначала выразить идею
+производной.  Заметьте, что «производная», как и усреднённое затухание, — это нечто,
+преобразующее одну функцию в другую.  Например, производная функции
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+  </mrow>
+</math> — это функция <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mn>3</mn>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>.  Вообще, если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> —
+функция, а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math> — малое число, то производная <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>D</mi>
+    <mi>g</mi>
+  </mrow>
+</math> функции <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> —
+это функция, значение которой в любом числе <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> задаётся (в пределе малого
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math>) выражением
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>D</mi>
+  <mi>g</mi>
+  <mo stretchy="false">(</mo>
+  <mi>x</mi>
+  <mo stretchy="false">)</mo>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mi>g</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mi>d</mi>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+        <mo>−<!-- − --></mo>
+        <mi>g</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+      <mrow>
+        <mi>d</mi>
+        <mi>x</mi>
+      </mrow>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+Таким образом, мы можем выразить идею производной (взяв <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math> равным, скажем,
+0.00001) как процедуру
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">deriv g</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">g </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x dx</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pln">g x</span><span class="clo">))</span><span class="pln">
+       dx</span><span class="clo">)))</span></pre></div>
+
+<p>вместе с определением
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> dx </span><span class="lit">0.00001</span><span class="clo">)</span></pre></div>
+
+<p>Как и <code>average-damp</code>, <code>deriv</code> — это процедура, которая принимает процедуру
+в качестве аргумента и возвращает процедуру в качестве значения.  Например, чтобы
+приблизить производную <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+  </mrow>
+</math> в 5 (чьё точное значение равно 75), мы
+можем вычислить
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x x</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">((</span><span class="pln">deriv cube</span><span class="clo">)</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">75.00014999664018</span></i>
+</pre></div>
+
+<p>С помощью <code>deriv</code> мы можем выразить метод Ньютона как процесс неподвижной точки:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">newton-transform g</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> x </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="pln">g x</span><span class="clo">)</span><span class="pln"> 
+            </span><span class="opn">((</span><span class="pln">deriv g</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">newtons-method g guess</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fixed-point </span><span class="opn">(</span><span class="pln">newton-transform g</span><span class="clo">)</span><span class="pln"> 
+               guess</span><span class="clo">))</span></pre></div>
+
+<p>Процедура <code>newton-transform</code> выражает формулу из начала этого раздела, а
+<code>newtons-method</code> легко определяется через неё.  Она принимает в качестве
+аргументов процедуру, вычисляющую функцию, для которой мы хотим найти нуль, вместе с
+начальным предположением.  Например, чтобы найти квадратный корень <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, мы можем
+воспользоваться методом Ньютона для нахождения нуля функции <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>−<!-- − --></mo>
+    <mi>x</mi>
+  </mrow>
+</math>,
+начав с начального предположения 1.<a class="footnote_link" id="DOCF63" href="#FOOT63"><sup>63</sup></a>
+</p>
+<p>Это даёт ещё одну форму процедуры квадратного корня:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">newtons-method 
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> 
+   </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
+
+<a id="Abstrakcii-i-pervoklassnye-procedury"></a>
+<h5 class="subsubheading">Абстракции и первоклассные процедуры</h5>
+
+<p>Мы видели два способа выразить вычисление квадратного корня как частный случай более
+обобщённого метода: один раз как поиск неподвижной точки и один раз с помощью метода
+Ньютона.  Поскольку сам метод Ньютона был выражен как процесс неподвижной точки, мы на
+самом деле видели два способа вычислять квадратные корни как неподвижные точки.  Каждый
+метод начинается с функции и находит неподвижную точку некоторого преобразования этой
+функции.  Мы можем выразить саму эту обобщённую идею как процедуру:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fixed-point-of-transform 
+         g transform guess</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fixed-point </span><span class="opn">(</span><span class="pln">transform g</span><span class="clo">)</span><span class="pln"> guess</span><span class="clo">))</span></pre></div>
+
+<p>Эта очень обобщённая процедура принимает в качестве своих аргументов процедуру
+<code>g</code>, вычисляющую некоторую функцию, процедуру, преобразующую <code>g</code>, и начальное
+предположение.  Возвращаемый результат — неподвижная точка преобразованной функции.
+</p>
+<p>Пользуясь этой абстракцией, мы можем переформулировать первое вычисление квадратного
+корня из этого раздела (где мы ищем неподвижную точку усреднённо-затухающей версии
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>) как частный случай этого обобщённого метода:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fixed-point-of-transform 
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+   average-damp
+   </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
+
+<p>Аналогично мы можем выразить второе вычисление квадратного корня из этого раздела
+(частный случай метода Ньютона, который находит неподвижную точку ньютонова
+преобразования <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>−<!-- − --></mo>
+    <mi>x</mi>
+  </mrow>
+</math>) как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fixed-point-of-transform 
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+   newton-transform
+   </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
+
+<p>Мы начали раздел <a href="#g_t1_002e3">1.3</a> с наблюдения, что составные процедуры — критически важный
+механизм абстракции, поскольку они позволяют нам выражать обобщённые методы вычисления
+как явные элементы нашего языка программирования.  Теперь мы увидели, как процедуры
+высшего порядка позволяют нам манипулировать этими обобщёнными методами, чтобы
+создавать дальнейшие абстракции.
+</p>
+<p>Как программисты, мы должны быть внимательны к возможностям выявить лежащие в основе
+наших программ абстракции, строить на них и обобщать их, чтобы создавать более мощные
+абстракции.  Это не значит, что программы всегда следует писать в максимально
+абстрактном виде; знатоки-программисты умеют выбирать уровень абстракции, подходящий
+их задаче.  Но важно уметь мыслить в терминах этих абстракций, чтобы быть готовыми
+применить их в новых контекстах.  Значимость процедур высшего порядка в том, что они
+позволяют нам представлять эти абстракции явно, как элементы нашего языка
+программирования, так что с ними можно обращаться так же, как с прочими вычислительными
+элементами.
+</p>
+<p>Вообще, языки программирования налагают ограничения на способы, которыми можно
+манипулировать вычислительными элементами.  Об элементах с наименьшими ограничениями
+говорят, что они обладают <a id="index-pervoklassnym"></a>
+<em>первоклассным</em> статусом.  Вот некоторые «права и
+привилегии» первоклассных элементов:<a class="footnote_link" id="DOCF64" href="#FOOT64"><sup>64</sup></a>
+</p>
+<ul>
+<li> их можно именовать переменными;
+
+</li><li> их можно передавать как аргументы процедурам;
+
+</li><li> их можно возвращать как результаты процедур;
+
+</li><li> их можно включать в структуры данных.<a class="footnote_link" id="DOCF65" href="#FOOT65"><sup>65</sup></a>
+
+</li></ul>
+
+<p>Lisp, в отличие от других распространённых языков программирования, наделяет процедуры
+полным первоклассным статусом.  Это создаёт трудности для эффективной реализации, но
+получающийся выигрыш в выразительной силе огромен.<a class="footnote_link" id="DOCF66" href="#FOOT66"><sup>66</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e40"></a>Exercise 1.40:</strong> Определите процедуру <code>cubic</code>,
+которую можно использовать вместе с процедурой <code>newtons-method</code> в выражениях вида
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">newtons-method </span><span class="opn">(</span><span class="pln">cubic a b c</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span></pre></div>
+
+<p>для приближения нулей кубического многочлена <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>+</mo>
+    <mi>a</mi>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mi>b</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>c</mi>
+  </mrow>
+</math>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e41"></a>Exercise 1.41:</strong> Определите процедуру <code>double</code>,
+которая принимает в качестве аргумента процедуру одного аргумента и возвращает
+процедуру, применяющую исходную процедуру дважды.  Например, если <code>inc</code> —
+процедура, прибавляющая 1 к своему аргументу, то <code>(double inc)</code> должна быть
+процедурой, прибавляющей 2.  Какое значение возвращает
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(((</span><span class="pln">double </span><span class="opn">(</span><span class="pln">double double</span><span class="clo">))</span><span class="pln"> inc</span><span class="clo">)</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e42"></a>Exercise 1.42:</strong> Пусть <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> — две функции
+одного аргумента.  <a id="index-Kompoziciya"></a>
+<em>Композиция</em> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> после <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> определяется как
+функция <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Определите процедуру <code>compose</code>,
+реализующую композицию.  Например, если <code>inc</code> — процедура, прибавляющая 1 к
+своему аргументу,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">compose square inc</span><span class="clo">)</span><span class="pln"> </span><span class="lit">6</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">49</span></i>
+</pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e43"></a>Exercise 1.43:</strong> Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> — числовая функция, а
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> — положительное целое число, то мы можем образовать <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-кратное
+повторное применение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, которое определяется как функция, значение которой в
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> равно <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mo>…<!-- … --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>…<!-- … --></mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Например, если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> — функция
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+  </mrow>
+</math>, то <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-кратное повторное применение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> — это
+функция <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>n</mi>
+  </mrow>
+</math>.  Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> — операция возведения числа в
+квадрат, то <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-кратное повторное применение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> — это функция, возводящая
+свой аргумент в степень <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mn>2</mn>
+    <mi>n</mi>
+  </msup>
+</math>.  Напишите процедуру, которая принимает на вход
+процедуру, вычисляющую <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, и положительное целое число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> и возвращает
+процедуру, вычисляющую <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-кратное повторное применение <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>.  Вашу процедуру
+должно быть можно использовать так:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">repeated square </span><span class="lit">2</span><span class="clo">)</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">625</span></i>
+</pre></div>
+
+<p>Подсказка: вам может оказаться удобным воспользоваться <code>compose</code> из
+<a href="#Exercise-1_002e42">Exercise 1.42</a>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e44"></a>Exercise 1.44:</strong> Идея <a id="index-sglazhivaniya"></a>
+<em>сглаживания</em> функции —
+важное понятие в обработке сигналов.  Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> — функция, а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math> —
+некоторое малое число, то сглаженная версия <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> — это функция, значение которой в
+точке <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> есть среднее <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo>−<!-- − --></mo>
+    <mi>d</mi>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>d</mi>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.
+Напишите процедуру <code>smooth</code>, которая принимает на вход процедуру, вычисляющую
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, и возвращает процедуру, вычисляющую сглаженную <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>.  Иногда бывает
+ценно сглаживать функцию многократно (то есть сглаживать сглаженную функцию, и так
+далее), чтобы получить <a id="index-n_002dkratno-sglazhennuiu-funkciiu"></a>
+<em><i>n</i>-кратно сглаженную функцию</em>.  Покажите, как
+породить <i>n</i>-кратно сглаженную функцию любой данной функции, используя <code>smooth</code>
+и <code>repeated</code> из <a href="#Exercise-1_002e43">Exercise 1.43</a>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e45"></a>Exercise 1.45:</strong> В <a href="#g_t1_002e3_002e3">1.3.3</a> мы видели, что попытка
+вычислять квадратные корни наивным нахождением неподвижной точки
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math> не сходится и что это можно исправить усреднённым затуханием.
+Тот же метод работает для нахождения кубических корней как неподвижных точек
+усреднённо-затухающей <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>.  К сожалению, процесс не работает для
+корней четвёртой степени — одного усреднённого затухания недостаточно, чтобы поиск
+неподвижной точки для <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mn>3</mn>
+    </msup>
+  </mrow>
+</math> сошёлся.  С другой стороны, если мы
+применяем усреднённое затухание дважды (то есть используем усреднённое затухание от
+усреднённого затухания <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mn>3</mn>
+    </msup>
+  </mrow>
+</math>), поиск неподвижной точки сходится.
+Проделайте некоторые эксперименты, чтобы определить, сколько усреднённых затуханий
+требуется для вычисления корней <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-й степени как поиска неподвижной точки,
+основанного на повторном усреднённом затухании <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mspace width="0.1em"/>
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msup>
+  </mrow>
+</math>.
+Воспользуйтесь этим, чтобы реализовать простую процедуру вычисления корней <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>-й
+степени, используя <code>fixed-point</code>, <code>average-damp</code> и процедуру
+<code>repeated</code> из <a href="#Exercise-1_002e43">Exercise 1.43</a>.  Предполагайте, что любые нужные вам
+арифметические операции доступны как примитивы.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e46"></a>Exercise 1.46:</strong> Несколько численных методов,
+описанных в этой главе, — частные случаи чрезвычайно обобщённой вычислительной
+стратегии, известной как <a id="index-iterativnoe-uluchshenie"></a>
+<em>итеративное улучшение</em>.  Итеративное улучшение
+говорит, что для вычисления чего-либо мы начинаем с начального предположения об ответе,
+проверяем, достаточно ли хорошо предположение, и иначе улучшаем предположение и
+продолжаем процесс, используя улучшенное предположение как новое.  Напишите процедуру
+<code>iterative-improve</code>, которая принимает в качестве аргументов две процедуры: метод,
+сообщающий, достаточно ли хорошо предположение, и метод улучшения предположения.
+<code>Iterative-improve</code> должна возвращать в качестве своего значения процедуру,
+которая принимает предположение как аргумент и продолжает улучшать предположение, пока
+оно не станет достаточно хорошим.  Перепишите процедуру <code>sqrt</code> из <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a> и
+процедуру <code>fixed-point</code> из <a href="#g_t1_002e3_002e3">1.3.3</a> в терминах <code>iterative-improve</code>.
+</p></blockquote>
+
+<div class="footnote">
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT49"><p><a class="footnote_backlink" href="#DOCF49"><sup>49</sup></a>
+Этот ряд, обычно
+записываемый в эквивалентной форме
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mi>π<!-- π --></mi>
+      <mn>4</mn>
+    </mfrac>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>−<!-- − --></mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>3</mn>
+      </mfrac>
+    </mrow>
+    <mo>+</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>5</mn>
+      </mfrac>
+    </mrow>
+  </mrow>
+  <mo>−<!-- − --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>7</mn>
+      </mfrac>
+    </mrow>
+    <mo>+</mo>
+    <mo>…<!-- … --></mo>
+  </mrow>
+</math>, принадлежит
+Лейбницу.  Как использовать его как основу для некоторых хитрых числовых трюков, мы
+увидим в <a href="3_002e5.xhtml#g_t3_002e5_002e3">3.5.3</a>.</p>
+</div>
+<div id="FOOT50"><p><a class="footnote_backlink" href="#DOCF50"><sup>50</sup></a>
+Заметьте, что мы
+воспользовались блочной структурой (<a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a>), чтобы вложить определения
+<code>pi-next</code> и <code>pi-term</code> внутрь <code>pi-sum</code>, поскольку эти процедуры вряд ли
+будут полезны для какой-либо иной цели.  Как избавиться от них совсем, мы увидим в
+<a href="#g_t1_002e3_002e2">1.3.2</a>.</p>
+</div>
+<div id="FOOT51"><p><a class="footnote_backlink" href="#DOCF51"><sup>51</sup></a>
+Цель <a href="#Exercise-1_002e31">Exercise 1.31</a>
+— <a href="#Exercise-1_002e33">Exercise 1.33</a> — продемонстрировать выразительную силу, достигаемую
+использованием подходящей абстракции для объединения многих внешне разрозненных
+операций.  Однако, хотя накопление и фильтрация — изящные идеи, наши руки сейчас
+несколько связаны в их использовании, поскольку у нас пока нет структур данных,
+дающих подходящие средства объединения для этих абстракций.  Мы вернёмся к этим идеям
+в <a href="2_002e2.xhtml#g_t2_002e2_002e3">2.2.3</a>, когда покажем, как использовать <a id="index-posledovatelxnosti"></a>
+<em>последовательности</em> как
+интерфейсы для объединения фильтров и накопителей, чтобы строить ещё более мощные
+абстракции.  Там мы увидим, как эти методы по-настоящему раскрываются как мощный и
+изящный подход к проектированию программ.</p>
+</div>
+<div id="FOOT52"><p><a class="footnote_backlink" href="#DOCF52"><sup>52</sup></a>
+Эту формулу открыл английский математик XVII века Джон Уоллис.</p>
+</div>
+<div id="FOOT53"><p><a class="footnote_backlink" href="#DOCF53"><sup>53</sup></a>
+Людям, изучающим Lisp, было бы яснее и менее устрашающе, если бы
+использовалось имя более очевидное, чем <code>lambda</code>, — например,
+<code>make-procedure</code>.  Но это соглашение прочно укоренилось.  Обозначение
+позаимствовано из λ-исчисления — математического формализма, введённого
+математическим логиком Алонзо <a href="References.xhtml#Church-_00281941_0029">Church (1941)</a>.  Чёрч разработал λ-исчисление,
+чтобы дать строгое основание для изучения понятий функции и применения функции.
+λ-исчисление стало основным инструментом для математических исследований семантики
+языков программирования.</p>
+</div>
+<div id="FOOT54"><p><a class="footnote_backlink" href="#DOCF54"><sup>54</sup></a>
+Понимание внутренних
+определений достаточно хорошо, чтобы быть уверенным, что программа означает то, что
+мы намереваемся, требует более сложной модели процесса вычисления, чем та, что мы
+представили в этой главе.  Однако с внутренними определениями процедур эти тонкости
+не возникают.  Мы вернёмся к этому вопросу в <a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a>, после того как узнаем
+больше о вычислении.</p>
+</div>
+<div id="FOOT55"><p><a class="footnote_backlink" href="#DOCF55"><sup>55</sup></a>
+Мы использовали 0.001 как представительное «малое» число, чтобы
+обозначить допуск приемлемой ошибки в вычислении.  Подходящий допуск для реального
+вычисления зависит от решаемой задачи и от ограничений компьютера и алгоритма.  Это
+часто очень тонкое соображение, требующее помощи специалиста по численному анализу
+или какого-нибудь иного волшебника.</p>
+</div>
+<div id="FOOT56"><p><a class="footnote_backlink" href="#DOCF56"><sup>56</sup></a>
+Этого можно добиться с помощью <code>error</code>, которая принимает в
+качестве аргументов некоторое число элементов, печатаемых как сообщения об ошибке.</p>
+</div>
+<div id="FOOT57"><p><a class="footnote_backlink" href="#DOCF57"><sup>57</sup></a>
+Попробуйте это во
+время скучной лекции: установите свой калькулятор в режим радиан и затем многократно
+нажимайте кнопку <code>cos</code>, пока не получите неподвижную точку.</p>
+</div>
+<div id="FOOT58"><p><a class="footnote_backlink" href="#DOCF58"><sup>58</sup></a>
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">↦<!-- ↦ --></mo>
+</math> (читается «отображается в») — это способ, которым
+математик записывает <code>lambda</code>.  <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math> означает
+<code>(lambda (y) (/ x y))</code>, то есть функцию, значение которой в <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> равно
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>.</p>
+</div>
+<div id="FOOT59"><p><a class="footnote_backlink" href="#DOCF59"><sup>59</sup></a>
+Заметьте, что это комбинация, оператор которой сам является комбинацией.
+<a href="1_002e1.xhtml#Exercise-1_002e4">Exercise 1.4</a> уже демонстрировало способность образовывать такие комбинации, но
+то был лишь игрушечный пример.  Здесь же мы начинаем видеть настоящую нужду в таких
+комбинациях — когда применяем процедуру, полученную как значение, возвращённое
+процедурой высшего порядка.</p>
+</div>
+<div id="FOOT60"><p><a class="footnote_backlink" href="#DOCF60"><sup>60</sup></a>
+См.
+<a href="#Exercise-1_002e45">Exercise 1.45</a> для дальнейшего обобщения.</p>
+</div>
+<div id="FOOT61"><p><a class="footnote_backlink" href="#DOCF61"><sup>61</sup></a>
+Учебники элементарного анализа обычно описывают метод Ньютона в
+терминах последовательности приближений
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>n</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>=</mo>
+  <msub>
+    <mi>x</mi>
+    <mi>n</mi>
+  </msub>
+  <mo>−<!-- − --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>x</mi>
+      <mi>n</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+    <mspace width="thinmathspace"/>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>D</mi>
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>x</mi>
+      <mi>n</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Наличие языка для разговора о процессах и
+использование идеи неподвижных точек упрощает описание метода.</p>
+</div>
+<div id="FOOT62"><p><a class="footnote_backlink" href="#DOCF62"><sup>62</sup></a>
+Метод Ньютона не всегда сходится к ответу, но можно
+показать, что в благоприятных случаях каждая итерация удваивает точность приближения к
+решению по числу цифр.  В таких случаях метод Ньютона будет сходиться гораздо быстрее
+метода половинного деления.</p>
+</div>
+<div id="FOOT63"><p><a class="footnote_backlink" href="#DOCF63"><sup>63</sup></a>
+Для нахождения квадратных корней метод
+Ньютона быстро сходится к верному решению из любой начальной точки.</p>
+</div>
+<div id="FOOT64"><p><a class="footnote_backlink" href="#DOCF64"><sup>64</sup></a>
+Понятие первоклассного статуса элементов
+языка программирования принадлежит британскому информатику Кристоферу Стрэчи
+(1916–1975).</p>
+</div>
+<div id="FOOT65"><p><a class="footnote_backlink" href="#DOCF65"><sup>65</sup></a>
+Примеры этого мы увидим после того,
+как введём структуры данных в <a href="Chapter-2.xhtml#Chapter-2">Chapter 2<!-- /@w --></a>.</p>
+</div>
+<div id="FOOT66"><p><a class="footnote_backlink" href="#DOCF66"><sup>66</sup></a>
+Главные затраты на
+реализацию первоклассных процедур состоят в том, что возможность возвращать процедуры
+как значения требует резервировать память для свободных переменных процедуры даже
+тогда, когда процедура не выполняется.  В реализации Scheme, которую мы будем изучать
+в <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>, эти переменные хранятся в окружении процедуры.</p>
+</div>
+</div>
+<nav class="header">
+<p>
+Next: <a href="Chapter-2.xhtml#Chapter-2" accesskey="n" rel="next">Chapter 2</a>, Prev: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="p" rel="prev">1.2</a>, Up: <a href="#g_t1_002e3" accesskey="u" rel="prev">1.3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+
+
+</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">⇣</a></span><a id="pagebottom"></a>
+</body>
+</html>

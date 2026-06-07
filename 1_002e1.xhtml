@@ -1,0 +1,1717 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ru" lang="ru">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Структура и интерпретация компьютерных программ, 2-е изд.: 1.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 1.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 1.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-1.xhtml#Chapter-1" rel="prev" title="Chapter 1" />
+<link href="1_002e2.xhtml#g_t1_002e2" rel="next" title="1.2" />
+<link href="Chapter-1.xhtml#Chapter-1" rel="prev" title="Chapter 1" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t1_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="n" rel="next">1.2</a>, Prev: <a href="Chapter-1.xhtml#Chapter-1" accesskey="p" rel="prev">Chapter 1</a>, Up: <a href="Chapter-1.xhtml#Chapter-1" accesskey="u" rel="prev">Chapter 1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+<a id="Elementy-programmirovaniya"></a>
+<h3 class="section"><span class="secnum">1.1</span><span class="sectitle">Элементы программирования</span></h3>
+
+<p>Мощный язык программирования — это больше, чем просто средство поручить
+компьютеру выполнять задачи.  Язык служит ещё и каркасом, в рамках которого мы
+организуем свои мысли о процессах.  Поэтому, описывая язык, мы должны уделять
+особое внимание средствам, которые язык предоставляет для объединения простых
+идей в более сложные.  У всякого мощного языка есть для этого три механизма:
+</p>
+<ul>
+<li> <b>примитивные выражения</b>,
+представляющие простейшие сущности, с которыми имеет дело язык,
+
+</li><li> <b>средства комбинирования</b>,
+с помощью которых из более простых элементов строятся составные, и
+
+</li><li> <b>средства абстракции</b>,
+с помощью которых составные элементы можно именовать и обращаться с ними как с
+единым целым.
+
+</li></ul>
+
+<p>В программировании мы имеем дело с двумя видами элементов: процедурами и данными.
+(Позже мы обнаружим, что на самом деле они не так уж различны.)  Неформально
+говоря, данные — это «нечто», чем мы хотим манипулировать, а процедуры — это
+описания правил манипулирования данными.  Таким образом, всякий мощный язык
+программирования должен уметь описывать примитивные данные и примитивные
+процедуры и должен обладать способами комбинирования и абстрагирования процедур
+и данных.
+</p>
+<p>В этой главе мы будем иметь дело только с простыми числовыми данными, чтобы
+сосредоточиться на правилах построения процедур.<a class="footnote_link" id="DOCF4" href="#FOOT4"><sup>4</sup></a> В последующих главах мы увидим, что эти же
+правила позволяют строить процедуры и для манипулирования составными данными.
+</p>
+
+<a id="g_t1_002e1_002e1"></a>
+<a id="Vyrazheniya"></a>
+<h4 class="subsection"><span class="secnum">1.1.1</span><span class="sectitle">Выражения</span></h4>
+
+<p>Один из простых способов начать программировать — рассмотреть несколько типичных
+взаимодействий с интерпретатором диалекта Lisp под названием Scheme.  Представьте,
+что вы сидите за компьютерным терминалом.  Вы набираете <a id="index-vyrazhenie"></a>
+<em>выражение</em>, и
+интерпретатор отвечает, отображая результат <a id="index-vychisleniya"></a>
+<em>вычисления</em> этого выражения.
+</p>
+<p>Один из видов примитивных выражений, которые вы можете набрать, — это число.
+(Точнее, набираемое вами выражение состоит из цифр, представляющих число в
+десятичной системе.)  Если предъявить Lisp число
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="lit">486</span></pre></div>
+
+<p>интерпретатор ответит, напечатав<a class="footnote_link" id="DOCF5" href="#FOOT5"><sup>5</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><i><span class="lit">486</span></i>
+</pre></div>
+
+<p>Выражения, представляющие числа, можно объединять с выражением, представляющим
+примитивную процедуру (такую как <code>+</code> или <code>*</code>), чтобы образовать
+составное выражение, представляющее применение процедуры к этим числам.  Например<!-- /@w -->:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">137</span><span class="pln"> </span><span class="lit">349</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">486</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">1000</span><span class="pln"> </span><span class="lit">334</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">666</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">99</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">495</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">2</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">2.7</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">12.7</span></i>
+</pre></div>
+
+<p>Выражения подобного рода, образованные заключением списка выражений в скобки для
+обозначения применения процедуры, называются <a id="index-kombinaciyami"></a>
+<em>комбинациями</em>.  Самый левый
+элемент в списке называется <a id="index-operatorom"></a>
+<em>оператором</em>, а остальные элементы —
+<a id="index-operandami"></a>
+<em>операндами</em>.  Значение комбинации получается применением процедуры,
+заданной оператором, к <a id="index-argumentam"></a>
+<em>аргументам</em> — значениям операндов.
+</p>
+<p>Соглашение помещать оператор слева от операндов называется <a id="index-prefiksnoi"></a>
+записью
+<em>префиксной
+записью</em>, и поначалу оно может несколько сбивать с толку, поскольку существенно
+отступает от привычного математического соглашения.  Однако у префиксной записи
+есть несколько преимуществ.  Одно из них в том, что она способна вмещать
+процедуры, которые могут принимать произвольное число аргументов, как в следующих
+примерах:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">21</span><span class="pln"> </span><span class="lit">35</span><span class="pln"> </span><span class="lit">12</span><span class="pln"> </span><span class="lit">7</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">75</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">12</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">1200</span></i>
+</pre></div>
+
+<p>Никакой неоднозначности не возникает, потому что оператор всегда является самым
+левым элементом, а вся комбинация ограничена скобками.
+</p>
+<p>Второе преимущество префиксной записи в том, что она естественным образом
+расширяется, позволяя комбинациям быть <i>вложенными</i>, то есть содержать
+комбинации, элементы которых сами являются комбинациями:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="lit">6</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">19</span></i>
+</pre></div>
+
+<p>Глубине такой вложенности и общей сложности выражений, которые способен вычислить
+интерпретатор Lisp, нет (в принципе) предела.  Это мы, люди, путаемся даже в
+сравнительно простых выражениях вроде
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)))</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="lit">7</span><span class="clo">)</span><span class="pln"> </span><span class="lit">6</span><span class="clo">))</span></pre></div>
+
+<p>которое интерпретатор без труда вычислит как 57.  Мы можем помочь себе, записав
+такое выражение в виде
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">3</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="lit">7</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">6</span><span class="clo">))</span></pre></div>
+
+<p>следуя соглашению о форматировании, известному как <a id="index-formatirovannaya"></a>
+печать
+<em>форматированная
+печать</em>, при котором каждая длинная комбинация записывается так, чтобы операнды
+были выровнены по вертикали.  Получающиеся отступы наглядно показывают структуру
+выражения.<a class="footnote_link" id="DOCF6" href="#FOOT6"><sup>6</sup></a>
+</p>
+<p>Даже при сложных выражениях интерпретатор всегда работает в одном и том же
+основном цикле: он читает выражение с терминала, вычисляет это выражение и
+печатает результат.  Об этом режиме работы часто говорят, что интерпретатор
+работает в <a id="index-cikle-_00abchtenie_002dvychislenie_002dpechatx_00bb"></a>
+<em>цикле «чтение-вычисление-печать»</em>.  Заметьте, в частности, что
+указывать интерпретатору явно печатать значение выражения не требуется.<a class="footnote_link" id="DOCF7" href="#FOOT7"><sup>7</sup></a>
+</p>
+<a id="g_t1_002e1_002e2"></a>
+<a id="Imenovanie-i-okruzhenie"></a>
+<h4 class="subsection"><span class="secnum">1.1.2</span><span class="sectitle">Именование и окружение</span></h4>
+
+<p>Важнейший аспект языка программирования — предоставляемые им средства использовать
+имена для обращения к вычислительным объектам.  Мы говорим, что имя обозначает
+<a id="index-peremennuiu"></a>
+<em>переменную</em>, <a id="index-znacheniem"></a>
+<em>значением</em> которой является объект.
+</p>
+<p>В диалекте Lisp под названием Scheme мы именуем вещи с помощью <code>define</code>.
+Набрав
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> size </span><span class="lit">2</span><span class="clo">)</span></pre></div>
+
+<p>мы заставляем интерпретатор связать значение 2 с именем
+<code>size</code>.<a class="footnote_link" id="DOCF8" href="#FOOT8"><sup>8</sup></a> Как только
+имя <code>size</code> связано с числом 2, мы можем обращаться к значению 2 по имени:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">size
+</span><i><span class="lit">2</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> size</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">10</span></i>
+</pre></div>
+
+<p>Вот ещё примеры использования <code>define</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> pi </span><span class="lit">3.14159</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> radius </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> pi </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> radius radius</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">314.159</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> circumference </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> pi radius</span><span class="clo">))</span><span class="pln">
+
+circumference
+</span><i><span class="lit">62.8318</span></i>
+</pre></div>
+
+<p><code>Define</code> — простейшее средство абстракции в нашем языке, ведь оно позволяет
+нам использовать простые имена для обращения к результатам составных операций,
+таким как длина окружности <code>circumference</code>, вычисленная выше.  Вообще говоря,
+вычислительные объекты могут иметь весьма сложную структуру, и было бы крайне
+неудобно всякий раз, когда мы хотим ими воспользоваться, держать в памяти и
+повторять все их детали.  В самом деле, сложные программы строятся постепенным
+возведением вычислительных объектов всё возрастающей сложности.  Интерпретатор
+делает такое пошаговое построение программ особенно удобным, потому что связи
+«имя — объект» можно создавать постепенно, в последовательных взаимодействиях.
+Эта особенность поощряет постепенную разработку и тестирование программ и во
+многом ответственна за то, что программа на Lisp обычно состоит из большого числа
+сравнительно простых процедур.
+</p>
+<p>Должно быть ясно, что возможность связывать значения с символами и позже извлекать
+их означает, что интерпретатор должен поддерживать своего рода память,
+отслеживающую пары «имя — объект».  Эта память называется <a id="index-okruzheniem"></a>
+<em>окружением</em>
+(точнее, <a id="index-globalxnym-okruzheniem"></a>
+<em>глобальным окружением</em>, поскольку позже мы увидим, что
+вычисление может затрагивать несколько разных окружений).<a class="footnote_link" id="DOCF9" href="#FOOT9"><sup>9</sup></a>
+</p>
+<a id="g_t1_002e1_002e3"></a>
+<a id="Vychislenie-kombinacii"></a>
+<h4 class="subsection"><span class="secnum">1.1.3</span><span class="sectitle">Вычисление комбинаций</span></h4>
+
+<p>Одна из наших целей в этой главе — выделить вопросы, связанные с процедурным
+мышлением.  Показательный пример: при вычислении комбинаций интерпретатор и сам
+следует некоторой процедуре.
+</p>
+<blockquote>
+<p>Чтобы вычислить комбинацию, проделай следующее:
+</p>
+<ol>
+<li> Вычисли подвыражения комбинации.
+
+</li><li> Примени процедуру, являющуюся значением самого левого подвыражения (оператора),
+к аргументам, являющимся значениями остальных подвыражений (операндов).
+
+</li></ol>
+</blockquote>
+
+<p>Даже это простое правило иллюстрирует несколько важных моментов, касающихся
+процессов вообще.  Во-первых, заметьте, что первый шаг предписывает: чтобы
+выполнить процесс вычисления комбинации, мы должны сперва выполнить процесс
+вычисления над каждым элементом комбинации.  Таким образом, правило вычисления по
+своей природе <a id="index-rekursivno"></a>
+<em>рекурсивно</em>: оно включает в себя, как один из своих шагов,
+необходимость обратиться к самому себе.<a class="footnote_link" id="DOCF10" href="#FOOT10"><sup>10</sup></a>
+</p>
+<p>Обратите внимание, как сжато идея рекурсии позволяет выразить то, что в случае
+глубоко вложенной комбинации иначе выглядело бы довольно сложным процессом.
+Например, вычисление
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">6</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">7</span><span class="clo">))</span></pre></div>
+
+<p>требует применить правило вычисления к четырём разным комбинациям.  Мы можем
+получить картину этого процесса, представив комбинацию в виде дерева, как показано
+на <a href="#Figure-1_002e1">Figure 1.1</a>.  Каждая комбинация изображается узлом, из которого исходят
+ветви, соответствующие оператору и операндам комбинации.  Конечные узлы (то есть
+узлы, из которых не исходит ветвей) представляют либо операторы, либо числа.  Глядя
+на вычисление в терминах дерева, можно вообразить, что значения операндов
+просачиваются вверх, начиная с конечных узлов и объединяясь на всё более высоких
+уровнях.  В общем случае мы увидим, что рекурсия — очень мощный приём для работы с
+иерархическими, древовидными объектами.  По сути, форма правила вычисления вида
+«просачивание значений вверх» — пример общего рода процессов, известного как
+<a id="index-drevovidnoe-nakoplenie"></a>
+<em>древовидное накопление</em>.
+</p>
+<figure class="float">
+<a id="Figure-1_002e1"></a>
+<object style="width: 20.38ex; height: 20.46ex;" data="fig/chap1/Fig1.1g.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 1.1:</strong> Древовидное представление, показывающее значение каждой подкомбинации.</p>
+</figcaption>
+</figure>
+
+<p>Далее заметьте, что повторное применение первого шага приводит нас к моменту,
+когда нужно вычислять уже не комбинации, а примитивные выражения — такие как цифры,
+встроенные операторы или другие имена.  С примитивными случаями мы справляемся,
+постановив, что
+</p>
+<ul>
+<li> значения цифр — это числа, которые они обозначают,
+
+</li><li> значения встроенных операторов — это последовательности машинных команд,
+выполняющих соответствующие операции, и
+
+</li><li> значения прочих имён — это объекты, связанные с этими именами в окружении.
+
+</li></ul>
+
+<p>Второе правило можно рассматривать как частный случай третьего, если постановить,
+что символы вроде <code>+</code> и <code>*</code> тоже включены в глобальное окружение и
+связаны с последовательностями машинных команд, которые и являются их
+«значениями».  Ключевой момент, который стоит заметить, — это роль окружения в
+определении смысла символов в выражениях.  В интерактивном языке вроде Lisp
+бессмысленно говорить о значении выражения вроде <code>(+ x 1)</code>, не указав никаких
+сведений об окружении, которое придало бы смысл символу <code>x</code> (да и символу
+<code>+</code>).  Как мы увидим в <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>, общее понятие окружения как контекста,
+в котором происходит вычисление, будет играть важную роль в нашем понимании
+выполнения программ.
+</p>
+<p>Заметьте, что данное выше правило вычисления не обрабатывает определения.
+Например, вычисление <code>(define x 3)</code> не применяет <code>define</code> к двум
+аргументам, один из которых — значение символа <code>x</code>, а другой — 3, поскольку
+назначение <code>define</code> как раз и состоит в том, чтобы связать <code>x</code> со
+значением.  (То есть <code>(define x 3)</code> — не комбинация.)
+</p>
+<p>Такие исключения из общего правила вычисления называются <a id="index-specialxnymi"></a>
+формами
+<em>специальными
+формами</em>.  <code>Define</code> — единственный пример специальной формы, который мы пока
+видели, но вскоре встретим и другие.  У каждой специальной формы своё правило
+вычисления.  Различные виды выражений (каждый со своим правилом вычисления)
+составляют синтаксис языка программирования.  По сравнению с большинством других
+языков программирования у Lisp очень простой синтаксис: правило вычисления
+выражений можно описать одним простым общим правилом вместе со специализированными
+правилами для небольшого числа специальных форм.<a class="footnote_link" id="DOCF11" href="#FOOT11"><sup>11</sup></a>
+</p>
+<a id="g_t1_002e1_002e4"></a>
+<a id="Sostavnye-procedury"></a>
+<h4 class="subsection"><span class="secnum">1.1.4</span><span class="sectitle">Составные процедуры</span></h4>
+
+<p>В Lisp мы выделили некоторые элементы, которые должны присутствовать в любом
+мощном языке программирования:
+</p>
+<ul>
+<li> Числа и арифметические операции — это примитивные данные и процедуры.
+
+</li><li> Вложение комбинаций даёт средство комбинирования операций.
+
+</li><li> Определения, связывающие имена со значениями, дают ограниченное средство
+абстракции.
+
+</li></ul>
+
+<p>Теперь мы узнаем об <a id="index-opredeleniyakh-procedur"></a>
+<em>определениях процедур</em> — куда более мощном приёме
+абстракции, с помощью которого составной операции можно дать имя и затем
+обращаться к ней как к единому целому.
+</p>
+<p>Начнём с того, как выразить идею «возведения в квадрат».  Мы могли бы сказать:
+«Чтобы возвести нечто в квадрат, умножь его само на себя».  В нашем языке это
+выражается так:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">))</span></pre></div>
+
+<p>Понимать это можно следующим образом:
+</p>
+<div class="example">
+<pre class="example">(define (square x)              (*        x        x))
+   |        |       |            |         |          |
+ Чтобы возвести нечто в квадрат, умножь    его    само на себя.
+</pre></div>
+
+<p>Перед нами <a id="index-sostavnaya-procedura"></a>
+<em>составная процедура</em>, которой дано имя <code>square</code>.
+Процедура представляет операцию умножения чего-либо само на себя.  Тому, что нужно
+умножить, дано локальное имя <code>x</code>, играющее ту же роль, что и местоимение в
+естественном языке.  Вычисление определения создаёт эту составную процедуру и
+связывает её с именем <code>square</code>.<a class="footnote_link" id="DOCF12" href="#FOOT12"><sup>12</sup></a>
+</p>
+<p>Общая форма определения процедуры такова:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pun">имя</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">формальные</span><span class="pln"> </span><span class="pun">параметры</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> ⟨</span><var><span class="pun">тело</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p><code>⟨</code><var>имя</var><code>⟩</code> — это символ, который будет связан с определением
+процедуры в окружении.<a class="footnote_link" id="DOCF13" href="#FOOT13"><sup>13</sup></a>
+<code>⟨</code><var>формальные<!-- /@w --> параметры<!-- /@w --></var><code>⟩</code> — это имена, используемые внутри
+тела процедуры для обращения к соответствующим аргументам процедуры.
+<code>⟨</code><var>тело</var><code>⟩</code> — это выражение, которое даст значение применения
+процедуры, когда формальные параметры будут заменены фактическими аргументами, к
+которым процедура применяется.<a class="footnote_link" id="DOCF14" href="#FOOT14"><sup>14</sup></a>  <code>⟨</code><var>имя</var><code>⟩</code> и
+<code>⟨</code><var>формальные параметры</var><code>⟩</code> группируются внутри скобок — ровно так
+же, как они стояли бы при настоящем вызове определяемой процедуры.
+</p>
+<p>Определив <code>square</code>, мы теперь можем им пользоваться:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">square </span><span class="lit">21</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">441</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">49</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">square </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">81</span></i>
+</pre></div>
+
+<p>Мы можем также использовать <code>square</code> как строительный блок при определении
+других процедур.  Например, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>x</mi>
+    <mn>2</mn>
+  </msup>
+  <mo>+</mo>
+  <msup>
+    <mi>y</mi>
+    <mn>2</mn>
+  </msup>
+</math> можно выразить как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">))</span></pre></div>
+
+<p>Мы легко определим процедуру <code>sum-of-squares</code>, которая по любым двум числам,
+данным как аргументы, выдаёт сумму их квадратов:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-of-squares x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">sum-of-squares </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">25</span></i>
+</pre></div>
+
+<p>Теперь мы можем использовать <code>sum-of-squares</code> как строительный блок при
+построении дальнейших процедур:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f a</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sum-of-squares </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a </span><span class="lit">2</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">f </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">136</span></i>
+</pre></div>
+
+<p>Составные процедуры используются точно так же, как примитивные.  В самом деле, по
+данному выше определению <code>sum-of-squares</code> нельзя сказать, была ли <code>square</code>
+встроена в интерпретатор, как <code>+</code> и <code>*</code>, или определена как составная
+процедура.
+</p>
+<a id="g_t1_002e1_002e5"></a>
+<a id="Podstanovochnaya-modelx-primeneniya-procedur"></a>
+<h4 class="subsection"><span class="secnum">1.1.5</span><span class="sectitle">Подстановочная модель применения процедур</span></h4>
+
+<p>Чтобы вычислить комбинацию, оператор которой именует составную процедуру,
+интерпретатор следует во многом тому же процессу, что и для комбинаций, операторы
+которых именуют примитивные процедуры (мы описали его в <a href="#g_t1_002e1_002e3">1.1.3</a>).  То есть
+интерпретатор вычисляет элементы комбинации и применяет процедуру (являющуюся
+значением оператора комбинации) к аргументам (являющимся значениями операндов
+комбинации).
+</p>
+<p>Можно считать, что механизм применения примитивных процедур к аргументам встроен
+в интерпретатор.  Для составных процедур процесс применения таков:
+</p>
+<blockquote>
+<p>Чтобы применить составную процедуру к аргументам, вычисли тело процедуры, заменив
+каждый формальный параметр соответствующим аргументом.
+</p></blockquote>
+
+<p>Чтобы проиллюстрировать этот процесс, вычислим комбинацию
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">f </span><span class="lit">5</span><span class="clo">)</span></pre></div>
+
+<p>где <code>f</code> — процедура, определённая в <a href="#g_t1_002e1_002e4">1.1.4</a>.  Начнём с извлечения тела
+<code>f</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">sum-of-squares </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a </span><span class="lit">2</span><span class="clo">))</span></pre></div>
+
+<p>Затем заменим формальный параметр <code>a</code> аргументом 5:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">sum-of-squares </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span></pre></div>
+
+<p>Таким образом, задача сводится к вычислению комбинации с двумя операндами и
+оператором <code>sum-of-squares</code>.  Вычисление этой комбинации включает три
+подзадачи.  Мы должны вычислить оператор, чтобы получить применяемую процедуру, и
+должны вычислить операнды, чтобы получить аргументы.  Поскольку <code>(+ 5 1)</code> даёт
+6, а <code>(* 5 2)</code> даёт 10, нам нужно применить процедуру <code>sum-of-squares</code> к
+6 и 10.  Эти значения подставляются вместо формальных параметров <code>x</code> и
+<code>y</code> в теле <code>sum-of-squares</code>, сводя выражение к
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square </span><span class="lit">6</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square </span><span class="lit">10</span><span class="clo">))</span></pre></div>
+
+<p>Если воспользоваться определением <code>square</code>, это сводится к
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">6</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="lit">10</span><span class="clo">))</span></pre></div>
+
+<p>что умножением сводится к
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">36</span><span class="pln"> </span><span class="lit">100</span><span class="clo">)</span></pre></div>
+
+<p>и, наконец, к
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="lit">136</span></pre></div>
+
+<p>Только что описанный процесс называется <a id="index-podstanovochnoi-modelxiu"></a>
+<em>подстановочной моделью</em> применения
+процедур.  Её можно принять за модель, определяющую «смысл» применения процедуры —
+по крайней мере в том, что касается процедур этой главы.  Однако следует
+подчеркнуть два момента:
+</p>
+<ul>
+<li> Назначение подстановки — помочь нам размышлять о применении процедур, а не дать
+описание того, как интерпретатор работает на самом деле.  Типичные интерпретаторы
+не вычисляют применение процедур, манипулируя текстом процедуры ради подстановки
+значений вместо формальных параметров.  На практике «подстановка» достигается
+использованием локального окружения для формальных параметров.  Мы обсудим это
+подробнее в <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> и <a href="Chapter-4.xhtml#Chapter-4">Chapter 4</a>, когда детально рассмотрим реализацию
+интерпретатора.
+
+</li><li> На протяжении этой книги мы представим последовательность всё более развитых
+моделей того, как работают интерпретаторы, завершив полной реализацией
+интерпретатора и компилятора в <a href="Chapter-5.xhtml#Chapter-5">Chapter 5</a>.  Подстановочная модель — лишь
+первая из этих моделей, способ начать формально размышлять о процессе вычисления.
+Вообще, моделируя явления в науке и технике, мы начинаем с упрощённых, неполных
+моделей.  По мере того как мы рассматриваем вещи подробнее, эти простые модели
+становятся недостаточными и должны заменяться более точными.  Подстановочная модель
+не исключение.  В частности, когда в <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> мы обратимся к использованию
+процедур с «изменяемыми данными», мы увидим, что подстановочная модель рушится и
+должна быть заменена более сложной моделью применения процедур.<a class="footnote_link" id="DOCF15" href="#FOOT15"><sup>15</sup></a>
+
+</li></ul>
+
+<a id="Applikativnyi-poryadok-protiv-normalxnogo-poryadka"></a>
+<h5 class="subsubheading">Аппликативный порядок против нормального порядка</h5>
+
+<p>Согласно описанию вычисления, данному в <a href="#g_t1_002e1_002e3">1.1.3</a>, интерпретатор сначала
+вычисляет оператор и операнды, а затем применяет получившуюся процедуру к
+получившимся аргументам.  Это не единственный способ выполнять вычисление.
+Альтернативная модель вычисления не вычисляла бы операнды, пока их значения не
+понадобятся.  Вместо этого она сначала подставляла бы выражения-операнды вместо
+параметров, пока не получила бы выражение, содержащее только примитивные операторы,
+и лишь затем выполняла бы вычисление.  Если бы мы пользовались этим методом,
+вычисление <code>(f 5)</code> шло бы согласно такой последовательности раскрытий
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">sum-of-squares </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span><span class="pln"> 
+   </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span><span class="pln"> 
+   </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)))</span></pre></div>
+
+<p>за которыми следуют свёртки
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">6</span><span class="clo">)</span><span class="pln"> 
+   </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="lit">10</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">36</span><span class="pln"> </span><span class="lit">100</span><span class="clo">)</span><span class="pln">
+
+</span><span class="lit">136</span></pre></div>
+
+<p>Это даёт тот же ответ, что и наша предыдущая модель вычисления, но процесс иной.
+В частности, вычисления <code>(+ 5 1)</code> и <code>(* 5 2)</code> здесь выполняются дважды
+каждое — что соответствует свёртке выражения <code>(* x x)</code>, где <code>x</code> заменён
+соответственно на <code>(+ 5 1)</code> и <code>(* 5 2)</code>.
+</p>
+<p>Этот альтернативный метод вычисления «полностью раскрой, а потом сворачивай»
+известен как <a id="index-vychislenie-v-normalxnom-poryadke"></a>
+<em>вычисление в нормальном порядке</em> — в противоположность методу
+«вычисли аргументы, а потом применяй», который интерпретатор использует на самом
+деле и который называется <a id="index-vychisleniem-v-applikativnom-poryadke"></a>
+<em>вычислением в аппликативном порядке</em>.  Можно
+показать, что для применений процедур, которые моделируются подстановкой (включая
+все процедуры первых двух глав этой книги) и дают допустимые значения, вычисление в
+нормальном и в аппликативном порядке даёт одно и то же значение.  (Пример
+«недопустимого» значения, на котором вычисление в нормальном и аппликативном
+порядке не даёт одинакового результата, см. в <a href="#Exercise-1_002e5">Exercise 1.5</a>.)
+</p>
+<p>Lisp использует вычисление в аппликативном порядке — отчасти из-за дополнительной
+эффективности, получаемой за счёт того, что удаётся избежать многократных
+вычислений выражений вроде проиллюстрированных выше <code>(+ 5 1)</code> и <code>(* 5 2)</code>,
+а более существенно — потому что с вычислением в нормальном порядке становится
+гораздо сложнее иметь дело, когда мы выходим за пределы процедур, моделируемых
+подстановкой.  С другой стороны, вычисление в нормальном порядке может быть
+чрезвычайно ценным инструментом, и некоторые его следствия мы исследуем в
+<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> и <a href="Chapter-4.xhtml#Chapter-4">Chapter 4</a>.<a class="footnote_link" id="DOCF16" href="#FOOT16"><sup>16</sup></a>
+</p>
+<a id="g_t1_002e1_002e6"></a>
+<a id="Uslovnye-vyrazheniya-i-predikaty"></a>
+<h4 class="subsection"><span class="secnum">1.1.6</span><span class="sectitle">Условные выражения и предикаты</span></h4>
+
+<p>Выразительная сила класса процедур, которые мы умеем определять на данный момент,
+весьма ограничена, потому что у нас нет способа делать проверки и выполнять разные
+операции в зависимости от результата проверки.  Например, мы не можем определить
+процедуру, которая вычисляет абсолютную величину числа, проверяя, положительно
+число, отрицательно или равно нулю, и совершая разные действия в разных случаях по
+правилу
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow>
+    <mo>|</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>x</mi>
+    </mrow>
+    <mo>|</mo>
+  </mrow>
+  <mspace width="thickmathspace"/>
+  <mo>=</mo>
+  <mspace width="thickmathspace"/>
+  <mrow>
+    <mo>{</mo>
+    <mtable columnalign="right left left" rowspacing="4pt" columnspacing="1em">
+      <mtr>
+        <mtd>
+          <mi>x</mi>
+        </mtd>
+        <mtd>
+          <mspace width="thickmathspace"/>
+          <mtext>if</mtext>
+        </mtd>
+        <mtd>
+          <mi>x</mi>
+          <mo>&gt;<!-- > --></mo>
+          <mn>0</mn>
+          <mo>,</mo>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd>
+          <mn>0</mn>
+        </mtd>
+        <mtd>
+          <mspace width="thickmathspace"/>
+          <mtext>if</mtext>
+        </mtd>
+        <mtd>
+          <mi>x</mi>
+          <mo>=</mo>
+          <mn>0</mn>
+          <mo>,</mo>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd>
+          <mo>−<!-- − --></mo>
+          <mi>x</mi>
+        </mtd>
+        <mtd>
+          <mspace width="thickmathspace"/>
+          <mtext>if</mtext>
+        </mtd>
+        <mtd>
+          <mi>x</mi>
+          <mo>&lt;<!-- < --></mo>
+          <mn>0.</mn>
+        </mtd>
+      </mtr>
+    </mtable>
+  </mrow>
+</math>
+
+Эта конструкция называется <a id="index-razborom-sluchaev"></a>
+<em>разбором случаев</em>, и в Lisp есть специальная
+форма для записи такого разбора случаев.  Она называется <code>cond</code> (от
+«conditional» — «условный») и используется так:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">&gt;</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> x</span><span class="clo">))))</span></pre></div>
+
+<p>Общая форма условного выражения такова:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">p</span><span class="pun">₁</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">e</span><span class="pun">₁</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">p</span><span class="pun">₂</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">e</span><span class="pun">₂</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+      </span><span class="roman"><span class="pun">…</span></span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">p</span><span class="pun">ₙ</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">e</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+
+<p>она состоит из символа <code>cond</code>, за которым следуют заключённые в скобки пары
+выражений
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">p</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">e</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>называемые <a id="index-predlozheniyami"></a>
+<em>предложениями</em>.  Первое выражение в каждой паре — это
+<a id="index-predikat"></a>
+<em>предикат</em>, то есть выражение, значение которого истолковывается как истина
+либо ложь.<a class="footnote_link" id="DOCF17" href="#FOOT17"><sup>17</sup></a>
+</p>
+<p>Условные выражения вычисляются так.  Сначала вычисляется предикат <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <msub>
+      <mi>p</mi>
+      <mn>1</mn>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>.
+Если его значение ложно, то вычисляется <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <msub>
+      <mi>p</mi>
+      <mn>2</mn>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>.  Если значение
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <msub>
+      <mi>p</mi>
+      <mn>2</mn>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> тоже ложно, вычисляется <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <msub>
+      <mi>p</mi>
+      <mn>3</mn>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>.  Этот процесс продолжается,
+пока не найдётся предикат, значение которого истинно; в этом случае интерпретатор
+возвращает как значение условного выражения значение соответствующего
+<a id="index-vyrazheniya_002dsledstviya"></a>
+<em>выражения-следствия</em> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mi>e</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> этого предложения.  Если ни один из
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mi>p</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> не оказался истинным, значение <code>cond</code> не определено.
+</p>
+<p>Слово <a id="index-predikat-1"></a>
+<em>предикат</em> употребляется как для процедур, возвращающих истину или
+ложь, так и для выражений, вычисляющихся в истину или ложь.  Процедура абсолютной
+величины <code>abs</code> использует примитивные предикаты <code>&gt;</code>, <code>&lt;</code> и
+<code>=</code>.<a class="footnote_link" id="DOCF18" href="#FOOT18"><sup>18</sup></a> Они
+принимают два числа как аргументы и проверяют, является ли первое число
+соответственно больше, меньше или равно второму, возвращая истину или ложь сообразно
+этому.
+</p>
+<p>Другой способ записать процедуру абсолютной величины таков:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> x</span><span class="clo">)))</span></pre></div>
+
+<p>что по-русски можно выразить так: «Если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> меньше нуля, верни <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>−<!-- − --></mo>
+    <mi>x</mi>
+  </mrow>
+</math>;
+иначе верни <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>».  <code>Else</code> — особый символ, который можно использовать
+вместо <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mi>p</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> в последнем предложении <code>cond</code>.  Это заставляет <code>cond</code>
+вернуть как своё значение значение соответствующего <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mi>e</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> всякий раз, когда
+все предыдущие предложения были пропущены.  По сути, на месте <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mi>p</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> здесь
+можно использовать любое выражение, которое всегда вычисляется в истинное значение.
+</p>
+<p>Вот ещё один способ записать процедуру абсолютной величины:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+      x</span><span class="clo">))</span></pre></div>
+
+<p>Здесь используется специальная форма <code>if</code> — ограниченный вид условного
+выражения, применимый, когда в разборе случаев ровно два случая.  Общая форма
+выражения <code>if</code> такова:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">if</span><span class="pln"> ⟨</span><var><span class="pun">предикат</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">следствие</span></var><span class="pln">⟩ ⟨</span><var><span class="pun">альтернатива</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>Чтобы вычислить выражение <code>if</code>, интерпретатор начинает с вычисления части
+<code>⟨</code><var>предикат</var><code>⟩</code> выражения.  Если <code>⟨</code><var>предикат</var><code>⟩</code>
+вычисляется в истинное значение, интерпретатор затем вычисляет
+<code>⟨</code><var>следствие</var><code>⟩</code> и возвращает его значение.  Иначе он вычисляет
+<code>⟨</code><var>альтернатива</var><code>⟩</code> и возвращает её значение.<a class="footnote_link" id="DOCF19" href="#FOOT19"><sup>19</sup></a>
+</p>
+<p>Помимо примитивных предикатов вроде <code>&lt;</code>, <code>=</code> и <code>&gt;</code>, есть операции
+логической композиции, позволяющие строить составные предикаты.  Три наиболее часто
+используемые таковы:
+</p>
+<ul>
+<li> <code>(and ⟨<var>e₁</var>⟩ <span class="roman">…</span> ⟨<var>eₙ</var>⟩)</code>
+
+<p>Интерпретатор вычисляет выражения <code>⟨</code><var>e</var><code>⟩</code> по одному, слева направо.
+Если какое-либо <code>⟨</code><var>e</var><code>⟩</code> вычисляется в ложь, значением выражения
+<code>and</code> является ложь, и остальные <code>⟨</code><var>e</var><code>⟩</code> не вычисляются.  Если
+все <code>⟨</code><var>e</var><code>⟩</code> вычисляются в истинные значения, значением выражения
+<code>and</code> является значение последнего из них.
+</p>
+</li><li> <code>(or ⟨<var>e₁</var>⟩ <span class="roman">…</span> ⟨<var>eₙ</var>⟩)</code>
+
+<p>Интерпретатор вычисляет выражения <code>⟨</code><var>e</var><code>⟩</code> по одному, слева направо.
+Если какое-либо <code>⟨</code><var>e</var><code>⟩</code> вычисляется в истинное значение, это
+значение возвращается как значение выражения <code>or</code>, и остальные
+<code>⟨</code><var>e</var><code>⟩</code> не вычисляются.  Если все <code>⟨</code><var>e</var><code>⟩</code> вычисляются
+в ложь, значением выражения <code>or</code> является ложь.
+</p>
+</li><li> <code>(not ⟨<var>e</var>⟩)</code>
+
+<p>Значение выражения <code>not</code> истинно, когда выражение <code>⟨</code><var>e</var><code>⟩</code>
+вычисляется в ложь, и ложно в противном случае.
+</p>
+</li></ul>
+
+<p>Заметьте, что <code>and</code> и <code>or</code> — специальные формы, а не процедуры, потому что
+их подвыражения не обязательно все вычисляются.  <code>Not</code> — обычная процедура.
+</p>
+<p>В качестве примера их использования: условие, что число <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> лежит в диапазоне
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>5</mn>
+  <mo>&lt;</mo>
+  <mi>x</mi>
+  <mo>&lt;</mo>
+  <mn>10</mn>
+</math>, можно выразить как
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> x </span><span class="lit">5</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> x </span><span class="lit">10</span><span class="clo">))</span></pre></div>
+
+<p>В качестве другого примера определим предикат, проверяющий, что одно число больше
+либо равно другому:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;=</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> x y</span><span class="clo">)))</span></pre></div>
+
+<p>или, как вариант, так:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;=</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">not </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> x y</span><span class="clo">)))</span></pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e1"></a>Exercise 1.1:</strong> Ниже приведена последовательность
+выражений.  Какой результат напечатает интерпретатор в ответ на каждое выражение?
+Считайте, что последовательность вычисляется в том порядке, в каком она приведена.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="lit">10</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">6</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> a </span><span class="lit">3</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> b </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a b </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">=</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> b a</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> b </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b</span><span class="clo">)))</span><span class="pln">
+    b
+    a</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> a </span><span class="lit">4</span><span class="clo">)</span><span class="pln"> </span><span class="lit">6</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> b </span><span class="lit">4</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> a</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> b a</span><span class="clo">)</span><span class="pln"> b a</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">&gt;</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln"> a</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">((</span><span class="pun">&lt;</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln"> b</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="lit">-1</span><span class="clo">))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e2"></a>Exercise 1.2:</strong> Переведите следующее выражение в
+префиксную форму:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mn>5</mn>
+        <mo>+</mo>
+        <mn>4</mn>
+        <mo>+</mo>
+        <mo stretchy="false">(</mo>
+        <mn>2</mn>
+        <mo>−<!-- − --></mo>
+        <mo stretchy="false">(</mo>
+        <mn>3</mn>
+        <mo>−<!-- − --></mo>
+        <mo stretchy="false">(</mo>
+        <mn>6</mn>
+        <mo>+</mo>
+        <mfrac>
+          <mn>4</mn>
+          <mn>5</mn>
+        </mfrac>
+        <mo stretchy="false">)</mo>
+        <mo stretchy="false">)</mo>
+        <mo stretchy="false">)</mo>
+      </mrow>
+      <mrow>
+        <mn>3</mn>
+        <mo stretchy="false">(</mo>
+        <mn>6</mn>
+        <mo>−<!-- − --></mo>
+        <mn>2</mn>
+        <mo stretchy="false">)</mo>
+        <mo stretchy="false">(</mo>
+        <mn>2</mn>
+        <mo>−<!-- − --></mo>
+        <mn>7</mn>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e3"></a>Exercise 1.3:</strong> Определите процедуру, которая принимает
+три числа как аргументы и возвращает сумму квадратов двух бо́льших из них.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e4"></a>Exercise 1.4:</strong> Заметьте, что наша модель вычисления
+допускает комбинации, операторы которых — составные выражения.  Используйте это
+наблюдение, чтобы описать поведение следующей процедуры:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a-plus-abs-b a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> b </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="pun">-</span><span class="clo">)</span><span class="pln"> a b</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e5"></a>Exercise 1.5:</strong> Бен Битдидл изобрёл проверку, чтобы
+определить, использует ли интерпретатор, с которым он имеет дело, вычисление в
+аппликативном порядке или в нормальном.  Он определяет следующие две процедуры:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">test x y</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+      </span><span class="lit">0</span><span class="pln"> 
+      y</span><span class="clo">))</span></pre></div>
+
+<p>Затем он вычисляет выражение
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">test </span><span class="lit">0</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p</span><span class="clo">))</span></pre></div>
+
+<p>Какое поведение Бен будет наблюдать с интерпретатором, использующим вычисление в
+аппликативном порядке?  Какое поведение он будет наблюдать с интерпретатором,
+использующим вычисление в нормальном порядке?  Обоснуйте ответ.  (Считайте, что
+правило вычисления специальной формы <code>if</code> одинаково независимо от того,
+использует ли интерпретатор нормальный или аппликативный порядок: сначала
+вычисляется выражение-предикат, и результат определяет, вычислять ли
+выражение-следствие или выражение-альтернативу.)
+</p></blockquote>
+
+<a id="Sec_002e1_002e1_002e7"></a><a id="g_t1_002e1_002e7"></a>
+<a id="Primer_003a-kvadratnye-korni-po-metodu-Nxiutona"></a>
+<h4 class="subsection"><span class="secnum">1.1.7</span><span class="sectitle">Пример: квадратные корни по методу Ньютона</span></h4>
+
+<p>Процедуры в том виде, в каком они введены выше, во многом похожи на обычные
+математические функции.  Они задают значение, определяемое одним или несколькими
+параметрами.  Но между математическими функциями и компьютерными процедурами есть
+важное различие.  Процедуры должны быть эффективными (в смысле выполнимости).
+</p>
+<p>Показательный пример — задача вычисления квадратных корней.  Функцию квадратного
+корня можно определить так:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <msqrt>
+    <mi>x</mi>
+  </msqrt>
+  <mspace width="thickmathspace"/>
+  <mspace width="thickmathspace"/>
+  <mo>=</mo>
+  <mspace width="thickmathspace"/>
+  <mspace width="thickmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>the</mtext>
+    <mspace width="thickmathspace"/>
+    <mspace width="thickmathspace"/>
+    <mi>y</mi>
+  </mrow>
+  <mspace width="thickmathspace"/>
+  <mspace width="thickmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>such that</mtext>
+  </mrow>
+  <mspace width="thickmathspace"/>
+  <mspace width="thickmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>≥<!-- ≥ --></mo>
+    <mn>0</mn>
+  </mrow>
+  <mspace width="thickmathspace"/>
+  <mspace width="thickmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>and</mtext>
+    <mspace width="thickmathspace"/>
+    <mspace width="thickmathspace"/>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>=</mo>
+    <mi>x</mi>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+Это описывает вполне законную математическую функцию.  Мы могли бы пользоваться ею,
+чтобы распознавать, является ли одно число квадратным корнем другого, или выводить
+общие факты о квадратных корнях.  С другой стороны, это определение не описывает
+процедуру.  В самом деле, оно почти ничего не говорит нам о том, как на деле найти
+квадратный корень данного числа.  Не поможет и переформулировка этого определения
+на псевдо-Lisp:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">the y </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;=</span><span class="pln"> y </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+              </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))))</span></pre></div>
+
+<p>Это лишь ходит по кругу.
+</p>
+<p>Противопоставление функции и процедуры — отражение общего различия между описанием
+свойств вещей и описанием того, как делать вещи, или, как это иногда называют,
+различия между декларативным знанием и императивным знанием.  В математике мы
+обычно имеем дело с декларативными описаниями (что есть), тогда как в информатике
+мы обычно имеем дело с императивными описаниями (как делать).<a class="footnote_link" id="DOCF20" href="#FOOT20"><sup>20</sup></a>
+</p>
+<p>Как же вычисляют квадратные корни?  Самый распространённый способ — воспользоваться
+методом последовательных приближений Ньютона, который гласит: всякий раз, когда у
+нас есть догадка <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> о значении квадратного корня числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, мы можем
+простым действием получить лучшую догадку (более близкую к настоящему квадратному
+корню), усреднив <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> с <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>.<a class="footnote_link" id="DOCF21" href="#FOOT21"><sup>21</sup></a>
+Например, квадратный корень из 2 можно вычислить так.  Пусть наша начальная
+догадка — 1:
+</p>
+<div class="example">
+<pre class="example">Догадка   Частное       Среднее
+
+1         (2/1)  = 2    ((2 + 1)/2)  = 1.5
+
+1.5       (2/1.5)       ((1.3333 + 1.5)/2)
+            = 1.3333      = 1.4167
+
+1.4167    (2/1.4167)    ((1.4167 + 1.4118)/2) 
+            = 1.4118      = 1.4142  
+
+1.4142    ...           ...
+</pre></div>
+
+<p>Продолжая этот процесс, мы получаем всё более и более точные приближения к
+квадратному корню.
+</p>
+<p>Теперь формализуем процесс в терминах процедур.  Мы начинаем со значения
+подкоренного числа (числа, квадратный корень которого пытаемся вычислить) и со
+значения догадки.  Если догадка достаточно хороша для наших целей, мы закончили;
+если нет — мы должны повторить процесс с улучшенной догадкой.  Эту базовую стратегию
+запишем как процедуру:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt-iter guess x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess x</span><span class="clo">)</span><span class="pln">
+      guess
+      </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="opn">(</span><span class="pln">improve guess x</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)))</span></pre></div>
+
+<p>Догадка улучшается усреднением её с частным подкоренного числа и старой догадки:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">improve guess x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">average guess </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x guess</span><span class="clo">)))</span></pre></div>
+
+<p>где
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">average x y</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span></pre></div>
+
+<p>Нам нужно также сказать, что мы понимаем под «достаточно хороша».  Следующего
+варианта хватит для иллюстрации, но это не очень хорошая проверка.  (См.
+<a href="#Exercise-1_002e7">Exercise 1.7</a>.)  Идея в том, чтобы улучшать ответ, пока он не станет
+достаточно близок — так, чтобы его квадрат отличался от подкоренного числа меньше
+чем на заранее заданный допуск (здесь 0,001):<a class="footnote_link" id="DOCF22" href="#FOOT22"><sup>22</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square guess</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">))</span></pre></div>
+
+<p>Наконец, нам нужен способ начать.  Например, мы всегда можем предположить, что
+квадратный корень любого числа равен 1:<a class="footnote_link" id="DOCF23" href="#FOOT23"><sup>23</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="lit">1.0</span><span class="pln"> x</span><span class="clo">))</span></pre></div>
+
+<p>Если набрать эти определения интерпретатору, мы сможем пользоваться <code>sqrt</code>
+так же, как любой процедурой:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">sqrt </span><span class="lit">9</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">3.00009155413138</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">100</span><span class="pln"> </span><span class="lit">37</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">11.704699917758145</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt </span><span class="lit">2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt </span><span class="lit">3</span><span class="clo">)))</span><span class="pln">
+</span><i><span class="lit">1.7739279023207892</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">sqrt </span><span class="lit">1000</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">1000.000369924366</span></i>
+</pre></div>
+
+<p>Программа <code>sqrt</code> показывает также, что простого процедурного языка, введённого
+нами до сих пор, достаточно, чтобы написать любую чисто числовую программу, какую
+можно было бы написать, скажем, на C или Pascal.  Это может показаться удивительным,
+ведь мы не включили в наш язык никаких итеративных (циклических) конструкций,
+велящих компьютеру делать что-то снова и снова.  <code>Sqrt-iter</code>, напротив,
+показывает, как итерацию можно осуществить безо всякой особой конструкции, кроме
+обычной способности вызывать процедуру.<a class="footnote_link" id="DOCF24" href="#FOOT24"><sup>24</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e6"></a>Exercise 1.6:</strong> Алисса П. Хакер не понимает, зачем
+<code>if</code> нужно предоставлять как специальную форму.  «Почему я не могу просто
+определить его как обычную процедуру через <code>cond</code>?» — спрашивает она.
+Подруга Алиссы, Эва Лу Атор, утверждает, что это и впрямь можно сделать, и
+определяет новую версию <code>if</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">new-if predicate 
+                then-clause 
+                else-clause</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">(</span><span class="pln">predicate then-clause</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> else-clause</span><span class="clo">)))</span></pre></div>
+
+<p>Эва демонстрирует программу Алиссе:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">new-if </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">5</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">new-if </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">0</span></i>
+</pre></div>
+
+<p>В восторге Алисса использует <code>new-if</code>, чтобы переписать программу извлечения
+квадратного корня:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt-iter guess x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">new-if </span><span class="opn">(</span><span class="pln">good-enough? guess x</span><span class="clo">)</span><span class="pln">
+          guess
+          </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="opn">(</span><span class="pln">improve guess x</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)))</span></pre></div>
+
+<p>Что произойдёт, когда Алисса попробует вычислить этим квадратные корни?  Объясните.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e7"></a>Exercise 1.7:</strong> Проверка <code>good-enough?</code>,
+используемая при вычислении квадратных корней, будет не очень действенной для
+нахождения квадратных корней очень малых чисел.  К тому же в реальных компьютерах
+арифметические операции почти всегда выполняются с ограниченной точностью.  Это
+делает нашу проверку неадекватной для очень больших чисел.  Объясните эти
+утверждения с примерами, показывающими, как проверка даёт сбой для малых и больших
+чисел.  Альтернативная стратегия реализации <code>good-enough?</code> — следить за тем,
+как <code>guess</code> меняется от одной итерации к следующей, и останавливаться, когда
+изменение составляет очень малую долю догадки.  Спроектируйте процедуру извлечения
+квадратного корня, использующую такого рода проверку окончания.  Лучше ли она
+работает для малых и больших чисел?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e8"></a>Exercise 1.8:</strong> Метод Ньютона для кубических корней
+основан на том, что если <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> — приближение к кубическому корню числа <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>,
+то лучшее приближение даётся значением
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>x</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo>/</mo>
+          </mrow>
+          <msup>
+            <mi>y</mi>
+            <mn>2</mn>
+          </msup>
+        </mrow>
+        <mo>+</mo>
+        <mn>2</mn>
+        <mi>y</mi>
+      </mrow>
+      <mn>3</mn>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+Воспользуйтесь этой формулой, чтобы реализовать процедуру извлечения кубического
+корня по аналогии с процедурой извлечения квадратного корня.  (В <a href="1_002e3.xhtml#g_t1_002e3_002e4">1.3.4</a> мы
+увидим, как реализовать метод Ньютона в общем виде как абстракцию этих процедур
+извлечения квадратного и кубического корней.)
+</p></blockquote>
+
+<a id="g_t1_002e1_002e8"></a>
+<a id="Procedury-kak-abstrakcii-vida-_00abchiornyi-yashchik_00bb"></a>
+<h4 class="subsection"><span class="secnum">1.1.8</span><span class="sectitle">Процедуры как абстракции вида «чёрный ящик»</span></h4>
+
+<p><code>Sqrt</code> — наш первый пример процесса, определённого набором взаимно
+определённых процедур.  Заметьте, что определение <code>sqrt-iter</code>
+<a id="index-rekursivno-1"></a>
+<em>рекурсивно</em>, то есть процедура определена через саму себя.  Мысль о том,
+что процедуру можно определить через саму себя, может смущать; может казаться
+неясным, как такое «круговое» определение вообще способно иметь смысл, не говоря уж
+о том, чтобы задавать вполне определённый процесс, выполняемый компьютером.  Это
+будет рассмотрено более тщательно в <a href="1_002e2.xhtml#g_t1_002e2">1.2</a>.  Но сначала рассмотрим некоторые
+другие важные моменты, проиллюстрированные примером <code>sqrt</code>.
+</p>
+<p>Заметьте, что задача вычисления квадратных корней естественно разбивается на ряд
+подзадач: как определить, достаточно ли хороша догадка, как улучшить догадку и так
+далее.  Каждая из этих задач решается отдельной процедурой.  Всю программу
+<code>sqrt</code> можно рассматривать как гроздь процедур (показанную на <a href="#Figure-1_002e2">Figure 1.2</a>),
+отражающую разбиение задачи на подзадачи.
+</p>
+<figure class="float">
+<a id="Figure-1_002e2"></a>
+<object style="width: 34.97ex; height: 15.63ex;" data="fig/chap1/Fig1.2.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 1.2:</strong> Процедурная декомпозиция программы <code>sqrt</code>.</p>
+</figcaption>
+</figure>
+
+<p>Важность этой стратегии декомпозиции не просто в том, что программа делится на
+части.  В конце концов, любую большую программу можно поделить на части — первые
+десять строк, следующие десять строк, следующие десять строк и так далее.  Дело,
+скорее, в том, что критически важно, чтобы каждая процедура решала опознаваемую
+задачу, которую можно использовать как модуль при определении других процедур.
+Например, когда мы определяем процедуру <code>good-enough?</code> через <code>square</code>, мы
+можем рассматривать процедуру <code>square</code> как «чёрный ящик».  В этот момент нас не
+заботит, <em>как</em> процедура вычисляет свой результат, — лишь тот факт, что она
+вычисляет квадрат.  Подробности того, как вычисляется квадрат, можно скрыть, чтобы
+рассмотреть их позднее.  В самом деле, с точки зрения процедуры <code>good-enough?</code>
+<code>square</code> — не вполне процедура, а скорее абстракция процедуры, так называемая
+<a id="index-procedurnaya-abstrakciya"></a>
+<em>процедурная абстракция</em>.  На этом уровне абстракции любая процедура,
+вычисляющая квадрат, одинаково хороша.
+</p>
+<p>Таким образом, если рассматривать только возвращаемые ими значения, следующие две
+процедуры возведения числа в квадрат должны быть неразличимы.  Каждая принимает
+числовой аргумент и выдаёт как значение квадрат этого числа.<a class="footnote_link" id="DOCF25" href="#FOOT25"><sup>25</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">exp </span><span class="opn">(</span><span class="pln">double </span><span class="opn">(</span><span class="pln">log x</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">double x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x x</span><span class="clo">))</span></pre></div>
+
+<p>Итак, определение процедуры должно уметь скрывать детали.  Пользователи процедуры,
+возможно, не писали её сами, а получили от другого программиста как чёрный ящик.
+Пользователю не должно требоваться знать, как процедура реализована, чтобы ею
+пользоваться.
+</p>
+<a id="Lokalxnye-imena"></a>
+<h5 class="subsubheading">Локальные имена</h5>
+
+<p>Одна деталь реализации процедуры, которая не должна иметь значения для пользователя
+процедуры, — это выбор реализатором имён для формальных параметров процедуры.
+Поэтому следующие процедуры должны быть неразличимы:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y y</span><span class="clo">))</span></pre></div>
+
+<p>Этот принцип — что смысл процедуры должен быть независим от имён параметров,
+выбранных её автором, — на поверхности кажется самоочевидным, но его следствия
+глубоки.  Простейшее следствие в том, что имена параметров процедуры должны быть
+локальными по отношению к телу процедуры.  Например, мы использовали <code>square</code>
+в определении <code>good-enough?</code> в нашей процедуре извлечения квадратного корня:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square guess</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">))</span></pre></div>
+
+<p>Замысел автора <code>good-enough?</code> — определить, находится ли квадрат первого
+аргумента в пределах заданного допуска от второго аргумента.  Мы видим, что автор
+<code>good-enough?</code> использовал имя <code>guess</code> для обращения к первому аргументу
+и <code>x</code> — для обращения ко второму.  Аргумент <code>square</code> — это <code>guess</code>.
+Если автор <code>square</code> использовал <code>x</code> (как выше) для обращения к этому
+аргументу, то мы видим, что <code>x</code> в <code>good-enough?</code> должен быть иным
+<code>x</code>, нежели тот, что в <code>square</code>.  Выполнение процедуры <code>square</code> не
+должно затрагивать значение <code>x</code>, используемое <code>good-enough?</code>, потому что
+это значение <code>x</code> может понадобиться <code>good-enough?</code> уже после того, как
+<code>square</code> завершит вычисление.
+</p>
+<p>Если бы параметры не были локальными по отношению к телам соответствующих процедур,
+то параметр <code>x</code> в <code>square</code> можно было бы спутать с параметром <code>x</code> в
+<code>good-enough?</code>, и поведение <code>good-enough?</code> зависело бы от того, какую
+версию <code>square</code> мы использовали.  Тогда <code>square</code> не была бы тем чёрным
+ящиком, который нам нужен.
+</p>
+<p>Формальный параметр процедуры играет в определении процедуры совершенно особую роль:
+неважно, какое имя у формального параметра.  Такое имя называется <a id="index-svyazannoi"></a>
+переменной
+<em>связанной
+переменной</em>, и мы говорим, что определение процедуры <a id="index-svyazyvaet"></a>
+<em>связывает</em> свои
+формальные параметры.  Смысл определения процедуры не меняется, если связанную
+переменную согласованно переименовать по всему определению.<a class="footnote_link" id="DOCF26" href="#FOOT26"><sup>26</sup></a>  Если переменная
+не связана, мы говорим, что она <a id="index-svobodna"></a>
+<em>свободна</em>.  Множество выражений, для
+которых связывание определяет имя, называется <a id="index-oblastxiu-deistviya"></a>
+<em>областью действия</em> этого
+имени.  В определении процедуры связанные переменные, объявленные как формальные
+параметры процедуры, имеют областью действия тело процедуры.
+</p>
+<p>В приведённом выше определении <code>good-enough?</code> переменные <code>guess</code> и
+<code>x</code> — связанные, а <code>&lt;</code>, <code>-</code>, <code>abs</code> и <code>square</code> — свободные.
+Смысл <code>good-enough?</code> должен быть независим от имён, которые мы выбираем для
+<code>guess</code> и <code>x</code>, лишь бы они были различны и отличались от <code>&lt;</code>,
+<code>-</code>, <code>abs</code> и <code>square</code>.  (Если бы мы переименовали <code>guess</code> в
+<code>abs</code>, мы внесли бы баг, <a id="index-zakhvativ"></a>
+<em>захватив</em> переменную <code>abs</code>.  Она
+превратилась бы из свободной в связанную.)  Однако смысл <code>good-enough?</code> не
+независим от имён её свободных переменных.  Он, безусловно, зависит от (внешнего по
+отношению к этому определению) факта, что символ <code>abs</code> именует процедуру
+вычисления абсолютной величины числа.  <code>Good-enough?</code> будет вычислять другую
+функцию, если в её определении заменить <code>abs</code> на <code>cos</code>.
+</p>
+<a id="Vnutrennie-opredeleniya-i-blochnaya-struktura"></a>
+<h5 class="subsubheading">Внутренние определения и блочная структура</h5>
+
+<p>До сих пор нам доступен один вид изоляции имён: формальные параметры процедуры
+локальны по отношению к телу процедуры.  Программа извлечения квадратного корня
+иллюстрирует ещё один способ, которым нам хотелось бы управлять использованием имён.
+Существующая программа состоит из отдельных процедур:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="lit">1.0</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt-iter guess x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess x</span><span class="clo">)</span><span class="pln">
+      guess
+      </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="opn">(</span><span class="pln">improve guess x</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square guess</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">improve guess x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">average guess </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x guess</span><span class="clo">)))</span></pre></div>
+
+<p>Проблема этой программы в том, что единственная процедура, важная для пользователей
+<code>sqrt</code>, — это <code>sqrt</code>.  Остальные процедуры (<code>sqrt-iter</code>,
+<code>good-enough?</code> и <code>improve</code>) лишь засоряют их сознание.  Они не могут
+определить какую-либо другую процедуру с именем <code>good-enough?</code> в составе другой
+программы, работающей вместе с программой извлечения квадратного корня, потому что
+<code>sqrt</code> в ней нуждается.  Особенно остро проблема стоит при построении больших
+систем многими отдельными программистами.  Например, при построении большой
+библиотеки числовых процедур многие числовые функции вычисляются как
+последовательные приближения и потому могут иметь вспомогательные процедуры с
+именами <code>good-enough?</code> и <code>improve</code>.  Нам хотелось бы локализовать
+подпроцедуры, спрятав их внутри <code>sqrt</code>, чтобы <code>sqrt</code> могла сосуществовать
+с другими последовательными приближениями, у каждого из которых своя собственная
+процедура <code>good-enough?</code>.  Чтобы сделать это возможным, мы позволяем процедуре
+иметь внутренние определения, локальные для этой процедуры.  Например, в задаче
+извлечения квадратного корня мы можем написать
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess x</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square guess</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">improve guess x</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">average guess </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x guess</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt-iter guess x</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess x</span><span class="clo">)</span><span class="pln">
+        guess
+        </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="opn">(</span><span class="pln">improve guess x</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="lit">1.0</span><span class="pln"> x</span><span class="clo">))</span></pre></div>
+
+<p>Такое вложение определений, называемое <a id="index-blochnoi-strukturoi"></a>
+<em>блочной структурой</em>, по сути и есть
+правильное решение простейшей задачи упаковки имён.  Но здесь притаилась идея
+получше.  Помимо того, что мы помещаем определения вспомогательных процедур внутрь,
+мы можем их упростить.  Поскольку <code>x</code> связан в определении <code>sqrt</code>,
+процедуры <code>good-enough?</code>, <code>improve</code> и <code>sqrt-iter</code>, определённые
+внутри <code>sqrt</code>, находятся в области действия <code>x</code>.  Поэтому необязательно
+явно передавать <code>x</code> каждой из этих процедур.  Вместо этого мы позволяем
+<code>x</code> быть свободной переменной во внутренних определениях, как показано ниже.
+Тогда <code>x</code> получает своё значение из аргумента, с которым вызывается
+объемлющая процедура <code>sqrt</code>.  Эта дисциплина называется <a id="index-leksicheskoi"></a>
+областью видимости
+<em>лексической
+областью видимости</em>.<a class="footnote_link" id="DOCF27" href="#FOOT27"><sup>27</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square guess</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">improve guess</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">average guess </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x guess</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt-iter guess</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess</span><span class="clo">)</span><span class="pln">
+        guess
+        </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="opn">(</span><span class="pln">improve guess</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
+
+<p>Мы будем широко пользоваться блочной структурой, чтобы разбивать большие программы
+на удобоваримые куски.<a class="footnote_link" id="DOCF28" href="#FOOT28"><sup>28</sup></a>
+Идея блочной структуры зародилась в языке программирования Algol 60.  Она
+встречается в большинстве развитых языков программирования и является важным
+инструментом, помогающим организовать построение больших программ.
+</p>
+<div class="footnote">
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT4"><p><a class="footnote_backlink" href="#DOCF4"><sup>4</sup></a>
+Назвать числа
+«простыми данными» — откровенный блеф.  На деле обращение с числами — один из
+самых хитрых и запутанных аспектов любого языка программирования.  Вот некоторые
+типичные связанные с этим вопросы.  В одних компьютерных системах различают
+<a id="index-celye-chisla"></a>
+<em>целые числа</em>, такие как 2, и <a id="index-veshchestvennye-chisla"></a>
+<em>вещественные числа</em>, такие как
+2.71.  Отличается ли вещественное число 2.00 от целого 2?  Те же ли
+арифметические операции применяются к целым числам, что и к вещественным?  Даёт
+ли 6, делённое на 2, результат 3 или 3.0?  Сколь большое число мы можем
+представить?  Сколько десятичных знаков точности мы можем представить?  Совпадает
+ли диапазон целых чисел с диапазоном вещественных?  И сверх всех этих вопросов,
+разумеется, лежит целый ряд проблем, связанных с ошибками округления и
+усечения, — вся наука численного анализа.  Поскольку в этой книге мы
+сосредоточены на крупномасштабном проектировании программ, а не на численных
+методах, мы будем игнорировать эти проблемы.  Числовые примеры в этой главе будут
+проявлять обычное поведение округления, наблюдаемое при использовании
+арифметических операций, сохраняющих ограниченное число десятичных знаков
+точности в нецелочисленных операциях.</p>
+</div>
+<div id="FOOT5"><p><a class="footnote_backlink" href="#DOCF5"><sup>5</sup></a>
+На протяжении всей книги, когда мы
+хотим подчеркнуть различие между вводом, набранным пользователем, и ответом,
+напечатанным интерпретатором, мы будем показывать последний наклонным шрифтом.</p>
+</div>
+<div id="FOOT6"><p><a class="footnote_backlink" href="#DOCF6"><sup>6</sup></a>
+Системы Lisp обычно предоставляют средства, помогающие
+пользователю форматировать выражения.  Два особенно полезных средства — то,
+которое автоматически делает отступ до нужной позиции форматированной печати при
+переходе на новую строку, и то, которое подсвечивает парную левую скобку всякий
+раз, когда набирается правая.</p>
+</div>
+<div id="FOOT7"><p><a class="footnote_backlink" href="#DOCF7"><sup>7</sup></a>
+Lisp
+придерживается соглашения, что всякое выражение имеет значение.  Это соглашение
+вместе со старой репутацией Lisp как неэффективного языка породило шутку Алана
+Перлиса (перефразировавшего Оскара Уайльда): «программисты на Lisp знают значение
+всего, но не знают стоимости ничего».</p>
+</div>
+<div id="FOOT8"><p><a class="footnote_backlink" href="#DOCF8"><sup>8</sup></a>
+В этой книге мы не показываем ответ интерпретатора на
+вычисление определений, поскольку он сильно зависит от реализации.</p>
+</div>
+<div id="FOOT9"><p><a class="footnote_backlink" href="#DOCF9"><sup>9</sup></a>
+<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>
+покажет, что это понятие окружения принципиально важно как для понимания работы
+интерпретатора, так и для реализации интерпретаторов.</p>
+</div>
+<div id="FOOT10"><p><a class="footnote_backlink" href="#DOCF10"><sup>10</sup></a>
+Может показаться странным, что
+правило вычисления в первом же шаге велит вычислять самый левый элемент
+комбинации, ведь пока что им может быть лишь оператор вроде <code>+</code> или <code>*</code>,
+представляющий встроенную примитивную процедуру наподобие сложения или умножения.
+Позже мы увидим, что бывает полезно работать с комбинациями, операторы которых
+сами являются составными выражениями.</p>
+</div>
+<div id="FOOT11"><p><a class="footnote_backlink" href="#DOCF11"><sup>11</sup></a>
+Специальные
+синтаксические формы, которые суть лишь удобные альтернативные поверхностные
+структуры для того, что можно записать более единообразно, иногда называют
+<a id="index-sintaksicheskim-sakharom"></a>
+<em>синтаксическим сахаром</em> — выражение, введённое Питером Лэндином.  По
+сравнению с пользователями других языков программисты на Lisp, как правило, меньше
+озабочены вопросами синтаксиса.  (Для контраста загляните в любое руководство по
+Pascal и заметьте, какая его часть посвящена описанию синтаксиса.)  Это
+пренебрежение синтаксисом отчасти обусловлено гибкостью Lisp, которая позволяет
+легко менять поверхностный синтаксис, а отчасти — наблюдением, что многие «удобные»
+синтаксические конструкции, делающие язык менее единообразным, в итоге причиняют
+больше хлопот, чем того стоят, когда программы становятся большими и сложными.  По
+словам Алана Перлиса, «синтаксический сахар вызывает рак точек с запятой».</p>
+</div>
+<div id="FOOT12"><p><a class="footnote_backlink" href="#DOCF12"><sup>12</sup></a>
+Заметьте, что здесь объединяются две
+разные операции: мы создаём процедуру и мы даём ей имя <code>square</code>.  Возможно —
+и притом важно — уметь разделять эти два понятия: создавать процедуры, не именуя
+их, и давать имена уже созданным процедурам.  Как это делать, мы увидим в
+<a href="1_002e3.xhtml#g_t1_002e3_002e2">1.3.2</a>.</p>
+</div>
+<div id="FOOT13"><p><a class="footnote_backlink" href="#DOCF13"><sup>13</sup></a>
+На протяжении всей книги мы будем описывать общий
+синтаксис выражений с помощью наклонных символов, заключённых в угловые скобки, —
+например, <code>⟨</code><var>имя</var><code>⟩</code>, — чтобы обозначить «гнёзда» в выражении,
+которые нужно заполнить, когда такое выражение действительно используется.</p>
+</div>
+<div id="FOOT14"><p><a class="footnote_backlink" href="#DOCF14"><sup>14</sup></a>
+В более общем случае телом процедуры может
+быть последовательность выражений.  В этом случае интерпретатор по очереди
+вычисляет каждое выражение последовательности и возвращает значение последнего
+выражения как значение применения процедуры.</p>
+</div>
+<div id="FOOT15"><p><a class="footnote_backlink" href="#DOCF15"><sup>15</sup></a>
+Несмотря
+на простоту идеи подстановки, дать строгое математическое определение процесса
+подстановки оказывается на удивление сложно.  Затруднение возникает из-за возможной
+путаницы между именами, используемыми для формальных параметров процедуры, и
+(возможно, совпадающими) именами, используемыми в выражениях, к которым процедура
+может применяться.  В самом деле, в литературе по логике и семантике
+программирования есть долгая история ошибочных определений <a id="index-podstanovki"></a>
+<em>подстановки</em>.
+Аккуратное обсуждение подстановки см. в <a href="References.xhtml#Stoy-1977">Stoy 1977</a>.</p>
+</div>
+<div id="FOOT16"><p><a class="footnote_backlink" href="#DOCF16"><sup>16</sup></a>
+В <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> мы введём
+<a id="index-potokovuiu-obrabotku"></a>
+<em>потоковую обработку</em> — способ обращения с внешне «бесконечными»
+структурами данных за счёт включения ограниченной формы вычисления в нормальном
+порядке.  В <a href="4_002e2.xhtml#g_t4_002e2">4.2</a> мы изменим интерпретатор Scheme, чтобы получить вариант
+Scheme с нормальным порядком.</p>
+</div>
+<div id="FOOT17"><p><a class="footnote_backlink" href="#DOCF17"><sup>17</sup></a>
+«Истолковывается как истина либо ложь» означает следующее.  В
+Scheme есть два выделенных значения, обозначаемых константами <code>#t</code> и
+<code>#f</code>.  Проверяя значение предиката, интерпретатор истолковывает <code>#f</code> как
+ложь.  Любое другое значение трактуется как истина.  (Так что наличие <code>#t</code>
+логически излишне, но удобно.)  В этой книге мы будем использовать имена
+<code>true</code> и <code>false</code>, связанные со значениями <code>#t</code> и <code>#f</code>
+соответственно.</p>
+</div>
+<div id="FOOT18"><p><a class="footnote_backlink" href="#DOCF18"><sup>18</sup></a>
+<code>Abs</code> использует также оператор «минус» <code>-</code>, который,
+будучи применён к одному операнду, как в <code>(- x)</code>, обозначает отрицание.</p>
+</div>
+<div id="FOOT19"><p><a class="footnote_backlink" href="#DOCF19"><sup>19</sup></a>
+Небольшое
+различие между <code>if</code> и <code>cond</code> в том, что часть <code>⟨</code><var>e</var><code>⟩</code>
+каждого предложения <code>cond</code> может быть последовательностью выражений.  Если
+соответствующий <code>⟨</code><var>p</var><code>⟩</code> оказывается истинным, выражения
+<code>⟨</code><var>e</var><code>⟩</code> вычисляются по очереди, и значение последнего выражения
+последовательности возвращается как значение <code>cond</code>.  В выражении же <code>if</code>
+части <code>⟨</code><var>следствие</var><code>⟩</code> и <code>⟨</code><var>альтернатива</var><code>⟩</code> должны
+быть одиночными выражениями.</p>
+</div>
+<div id="FOOT20"><p><a class="footnote_backlink" href="#DOCF20"><sup>20</sup></a>
+Декларативные
+и императивные описания тесно связаны — как, собственно, связаны математика и
+информатика.  Например, сказать, что ответ, выдаваемый программой, «правилен», —
+значит сделать декларативное утверждение о программе.  Существует большой объём
+исследований, нацеленных на разработку приёмов доказательства правильности
+программ, и значительная часть технических трудностей этой темы связана с переходом
+между императивными утверждениями (из которых строятся программы) и декларативными
+утверждениями (из которых можно делать выводы).  В сходном ключе важная современная
+область проектирования языков программирования — исследование так называемых языков
+сверхвысокого уровня, в которых программируют прямо в терминах декларативных
+утверждений.  Идея в том, чтобы сделать интерпретаторы достаточно изощрёнными, чтобы
+по заданному программистом знанию «что есть» они могли автоматически порождать
+знание «как делать».  В общем случае это невозможно, но есть важные области, где
+достигнут прогресс.  Мы вернёмся к этой идее в <a href="Chapter-4.xhtml#Chapter-4">Chapter 4</a>.</p>
+</div>
+<div id="FOOT21"><p><a class="footnote_backlink" href="#DOCF21"><sup>21</sup></a>
+Этот алгоритм извлечения
+квадратного корня на самом деле является частным случаем метода Ньютона — общего
+приёма нахождения корней уравнений.  Сам алгоритм извлечения квадратного корня был
+разработан Героном Александрийским в первом веке <abbr>н.э.</abbr>  Как выразить общий
+метод Ньютона в виде процедуры на Lisp, мы увидим в <a href="1_002e3.xhtml#g_t1_002e3_002e4">1.3.4</a>.</p>
+</div>
+<div id="FOOT22"><p><a class="footnote_backlink" href="#DOCF22"><sup>22</sup></a>
+Мы обычно будем давать
+предикатам имена, оканчивающиеся вопросительным знаком, чтобы помнить, что это
+предикаты.  Это всего лишь стилистическое соглашение.  Для интерпретатора
+вопросительный знак — обычный символ.</p>
+</div>
+<div id="FOOT23"><p><a class="footnote_backlink" href="#DOCF23"><sup>23</sup></a>
+Заметьте, что начальную догадку мы
+выражаем как 1.0, а не 1.  Во многих реализациях Lisp это не имело бы значения.
+Однако <abbr>MIT</abbr> Scheme различает точные целые и десятичные значения, и деление
+двух целых даёт рациональное число, а не десятичное.  Например, деление 10 на 6
+даёт 5/3, тогда как деление 10.0 на 6.0 даёт 1.6666666666666667.  (Как реализовать
+арифметику рациональных чисел, мы узнаем в <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>.)  Если мы начинаем с
+начальной догадки 1 в нашей программе извлечения квадратного корня, а <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> —
+точное целое, то все последующие значения, получаемые в вычислении квадратного
+корня, будут рациональными числами, а не десятичными.  Смешанные операции над
+рациональными и десятичными числами всегда дают десятичные, так что начало с
+начальной догадки 1.0 заставляет все последующие значения быть десятичными.</p>
+</div>
+<div id="FOOT24"><p><a class="footnote_backlink" href="#DOCF24"><sup>24</sup></a>
+Читателям, обеспокоенным вопросами
+эффективности использования вызовов процедур для реализации итерации, стоит обратить
+внимание на замечания о «хвостовой рекурсии» в <a href="1_002e2.xhtml#g_t1_002e2_002e1">1.2.1</a>.</p>
+</div>
+<div id="FOOT25"><p><a class="footnote_backlink" href="#DOCF25"><sup>25</sup></a>
+Даже неясно,
+какая из этих процедур — более эффективная реализация.  Это зависит от доступного
+оборудования.  Есть машины, для которых «очевидная» реализация оказывается менее
+эффективной.  Представьте машину, в которой обширные таблицы логарифмов и
+антилогарифмов хранятся очень эффективным образом.</p>
+</div>
+<div id="FOOT26"><p><a class="footnote_backlink" href="#DOCF26"><sup>26</sup></a>
+Понятие
+согласованного переименования на самом деле тонко и трудно поддаётся формальному
+определению.  Знаменитые логики допускали здесь конфузные ошибки.</p>
+</div>
+<div id="FOOT27"><p><a class="footnote_backlink" href="#DOCF27"><sup>27</sup></a>
+Лексическая область видимости предписывает, что
+свободные переменные в процедуре считаются ссылающимися на связывания, сделанные
+объемлющими определениями процедур; то есть они отыскиваются в окружении, в котором
+процедура была определена.  Как это работает в подробностях, мы увидим в главе 3,
+когда будем изучать окружения и детальное поведение интерпретатора.<a id="Footnote-28"></a></p>
+</div>
+<div id="FOOT28"><p><a class="footnote_backlink" href="#DOCF28"><sup>28</sup></a>
+Встроенные определения должны идти в начале тела
+процедуры.  Руководство не несёт ответственности за последствия запуска программ, в
+которых определение и использование переплетены.</p>
+</div>
+</div>
+<nav class="header">
+<p>
+Next: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="n" rel="next">1.2</a>, Prev: <a href="Chapter-1.xhtml#Chapter-1" accesskey="p" rel="prev">Chapter 1</a>, Up: <a href="#g_t1_002e1" accesskey="u" rel="prev">1.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+</nav>
+
+
+</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">⇣</a></span><a id="pagebottom"></a>
+</body>
+</html>
