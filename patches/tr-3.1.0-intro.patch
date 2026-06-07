@@ -1,0 +1,80 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index b4a2df3..6927d52 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -13642,43 +13642,40 @@ Plus @,{c}a change, plus c'est la m@^{e}me chose.@*
+ @end menu
+ 
+ @node	3.1, 3.2, Chapter 3, Chapter 3
+-@section Assignment and Local State
+-
+-We ordinarily view the world as populated by independent objects, each of which
+-has a state that changes over time.  An object is said to ``have state'' if its
+-behavior is influenced by its history.  A bank account, for example, has state
+-in that the answer to the question ``Can I withdraw $100?''  depends upon the
+-history of deposit and withdrawal transactions.  We can characterize an
+-object's state by one or more @newterm{state variables}, which among them
+-maintain enough information about history to determine the object's current
+-behavior.  In a simple banking system, we could characterize the state of an
+-account by a current balance rather than by remembering the entire history of
+-account transactions.
+-
+-In a system composed of many objects, the objects are rarely completely
+-independent.  Each may influence the states of others through interactions,
+-which serve to couple the state variables of one object to those of other
+-objects.  Indeed, the view that a system is composed of separate objects is
+-most useful when the state variables of the system can be grouped into closely
+-coupled subsystems that are only loosely coupled to other subsystems.
+-
+-This view of a system can be a powerful framework for organizing computational
+-models of the system.  For such a model to be modular, it should be decomposed
+-into computational objects that model the actual objects in the system.  Each
+-computational object must have its own @newterm{local state variables}
+-describing the actual object's state.  Since the states of objects in the
+-system being modeled change over time, the state variables of the corresponding
+-computational objects must also change.  If we choose to model the flow of time
+-in the system by the elapsed time in the computer, then we must have a way to
+-construct computational objects whose behaviors change as our programs run.  In
+-particular, if we wish to model state variables by ordinary symbolic names in
+-the programming language, then the language must provide an @newterm{assignment operator} 
+-to enable us to change the value associated with a name.
++@section Присваивание и локальное состояние
++
++Мы обычно рассматриваем мир как населённый независимыми объектами, каждый из которых имеет
++состояние, меняющееся со временем.  Об объекте говорят, что он «обладает состоянием», если
++его поведение зависит от его истории.  Банковский счёт, например, обладает состоянием в том
++смысле, что ответ на вопрос «Могу ли я снять 100 долларов?» зависит от истории транзакций
++вкладов и снятий.  Мы можем охарактеризовать состояние объекта одной или несколькими
++@newterm{переменными состояния}, которые в совокупности хранят достаточно информации об
++истории, чтобы определить текущее поведение объекта.  В простой банковской системе мы могли
++бы охарактеризовать состояние счёта текущим балансом, а не запоминанием всей истории
++транзакций по счёту.
++
++В системе, составленной из многих объектов, объекты редко полностью независимы.  Каждый может
++влиять на состояния других через взаимодействия, которые служат для связывания переменных
++состояния одного объекта с переменными других объектов.  В самом деле, взгляд, что система
++составлена из отдельных объектов, наиболее полезен, когда переменные состояния системы можно
++сгруппировать в тесно связанные подсистемы, которые лишь слабо связаны с другими подсистемами.
++
++Этот взгляд на систему может быть мощным каркасом для организации вычислительных моделей
++системы.  Чтобы такая модель была модульной, она должна быть разложена на вычислительные
++объекты, которые моделируют действительные объекты в системе.  Каждый вычислительный объект
++должен иметь свои собственные @newterm{локальные переменные состояния}, описывающие состояние
++действительного объекта.  Поскольку состояния объектов в моделируемой системе меняются со
++временем, переменные состояния соответствующих вычислительных объектов также должны меняться.
++Если мы выбираем моделировать течение времени в системе прошедшим временем в компьютере, то у
++нас должен быть способ строить вычислительные объекты, чьи поведения меняются по мере того, как
++исполняются наши программы.  В частности, если мы желаем моделировать переменные состояния
++обычными символьными именами в языке программирования, то язык должен предоставлять
++@newterm{оператор присваивания}, чтобы позволить нам менять значение, связанное с именем.
+ 
+ @menu
+-* 3.1.1::            Local State Variables
+-* 3.1.2::            The Benefits of Introducing Assignment
+-* 3.1.3::            The Costs of Introducing Assignment
++* 3.1.1::            Локальные переменные состояния
++* 3.1.2::            Преимущества введения присваивания
++* 3.1.3::            Издержки введения присваивания
+ @end menu
+ 
+ @node	3.1.1, 3.1.2, 3.1, 3.1

@@ -1,0 +1,418 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 6927d52..a55d925 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -13679,17 +13679,16 @@ Plus @,{c}a change, plus c'est la m@^{e}me chose.@*
+ @end menu
+ 
+ @node	3.1.1, 3.1.2, 3.1, 3.1
+-@subsection Local State Variables
++@subsection Локальные переменные состояния
+ 
+-To illustrate what we mean by having a computational object with time-varying
+-state, let us model the situation of withdrawing money from a bank account.  We
+-will do this using a procedure @code{withdraw}, which takes as argument an
+-@code{amount} to be withdrawn.  If there is enough money in the account to
+-accommodate the withdrawal, then @code{withdraw} should return the balance
+-remaining after the withdrawal.  Otherwise, @code{withdraw} should return the
+-message @emph{Insufficient funds}. For example, if we begin with $100 in the
+-account, we should obtain the following sequence of responses using
+-@code{withdraw}:
++Чтобы проиллюстрировать, что мы имеем в виду под наличием вычислительного объекта с
++изменяющимся во времени состоянием, давайте смоделируем ситуацию снятия денег с банковского
++счёта.  Мы сделаем это, используя процедуру @code{withdraw}, которая принимает в качестве
++аргумента @code{amount} — сумму, подлежащую снятию.  Если на счёте достаточно денег, чтобы
++вместить снятие, то @code{withdraw} должна вернуть баланс, оставшийся после снятия.  Иначе
++@code{withdraw} должна вернуть сообщение @emph{Insufficient funds} («Недостаточно средств»).
++Например, если мы начинаем со 100 долларов на счёте, мы должны получить следующую
++последовательность ответов, используя @code{withdraw}:
+ 
+ @lisp
+ (withdraw 25)
+@@ -13706,27 +13705,24 @@ account, we should obtain the following sequence of responses using
+ @end lisp
+ 
+ @noindent
+-Observe that the expression @code{(withdraw 25)}, evaluated twice, yields
+-different values.  This is a new kind of behavior for a procedure.  Until now,
+-all our procedures could be viewed as specifications for computing mathematical
+-functions.  A call to a procedure computed the value of the function applied to
+-the given arguments, and two calls to the same procedure with the same
+-arguments always produced the same result.@footnote{Actually, this is not quite
+-true.  One exception was the random-number generator in @ref{1.2.6}.
+-Another exception involved the operation/type tables we introduced in 
+-@ref{2.4.3}, where the values of two calls to @code{get} with the same
+-arguments depended on intervening calls to @code{put}.  On the other hand,
+-until we introduce assignment, we have no way to create such procedures
+-ourselves.}
++Заметьте, что выражение @code{(withdraw 25)}, вычисленное дважды, даёт разные значения.  Это
++новый вид поведения для процедуры.  До сих пор все наши процедуры можно было рассматривать как
++спецификации для вычисления математических функций.  Вызов процедуры вычислял значение функции,
++применённой к данным аргументам, и два вызова одной и той же процедуры с одними и теми же
++аргументами всегда производили один и тот же результат.@footnote{На самом деле это не совсем
++так.  Одним исключением был генератор случайных чисел в @ref{1.2.6}.  Другое исключение
++касалось таблиц операций и типов, которые мы ввели в @ref{2.4.3}, где значения двух вызовов
++@code{get} с одними и теми же аргументами зависели от промежуточных вызовов @code{put}.  С
++другой стороны, пока мы не вводим присваивание, у нас нет способа создавать такие процедуры
++самим.}
+ 
+-To implement @code{withdraw}, we can use a variable @code{balance} to indicate
+-the balance of money in the account and define @code{withdraw} as a procedure
+-that accesses @code{balance}.  The @code{withdraw} procedure checks to see if
+-@code{balance} is at least as large as the requested @code{amount}.  If so,
+-@code{withdraw} decrements @code{balance} by @code{amount} and returns the new
+-value of @code{balance}.  Otherwise, @code{withdraw} returns the
+-@emph{Insufficient funds} message.  Here are the definitions of @code{balance}
+-and @code{withdraw}:
++Чтобы реализовать @code{withdraw}, мы можем использовать переменную @code{balance}, чтобы
++обозначать баланс денег на счёте, и определить @code{withdraw} как процедуру, которая
++обращается к @code{balance}.  Процедура @code{withdraw} проверяет, по меньшей мере ли
++@code{balance} столь же велик, как запрошенная @code{amount}.  Если так, @code{withdraw}
++уменьшает @code{balance} на @code{amount} и возвращает новое значение @code{balance}.  Иначе
++@code{withdraw} возвращает сообщение @emph{Insufficient funds}.  Вот определения @code{balance}
++и @code{withdraw}:
+ 
+ @lisp
+ (define balance 100)
+@@ -13739,65 +13735,61 @@ and @code{withdraw}:
+ @end lisp
+ 
+ @noindent
+-Decrementing @code{balance} is accomplished by the expression
++Уменьшение @code{balance} достигается выражением
+ 
+ @lisp
+ (set! balance (- balance amount))
+ @end lisp
+ 
+ @noindent
+-This uses the @code{set!} special form, whose syntax is
++Оно использует особую форму @code{set!}, синтаксис которой —
+ 
+ @lisp
+-(set! ⟨@var{name}⟩ ⟨@var{new-value}⟩)
++(set! ⟨@var{имя}⟩ ⟨@var{новое-значение}⟩)
+ @end lisp
+ 
+ @noindent
+-Here @code{⟨}@var{name}@code{⟩} is a symbol and @code{⟨}@var{new-value}@code{⟩} is any expression.
+-@code{Set!} changes @code{⟨}@var{name}@code{⟩} so that its value is the result obtained by
+-evaluating @code{⟨}@var{new-value}@code{⟩}.  In the case at hand, we are changing
+-@code{balance} so that its new value will be the result of subtracting
+-@code{amount} from the previous value of @code{balance}.@footnote{The value of
+-a @code{set!} expression is implementation-dependent.  @code{Set!} should be
+-used only for its effect, not for its value.
++Здесь @code{⟨}@var{имя}@code{⟩} — это символ, а @code{⟨}@var{новое-значение}@code{⟩} — любое
++выражение.  @code{Set!} меняет @code{⟨}@var{имя}@code{⟩} так, чтобы его значением стал
++результат, полученный вычислением @code{⟨}@var{нового-значения}@code{⟩}.  В рассматриваемом
++случае мы меняем @code{balance} так, чтобы его новым значением стал результат вычитания
++@code{amount} из предыдущего значения @code{balance}.@footnote{Значение выражения @code{set!}
++зависит от реализации.  @code{Set!} следует использовать только ради его эффекта, а не ради
++его значения.
+ 
+-The name @code{set!} reflects a naming convention used in Scheme: Operations
+-that change the values of variables (or that change data structures, as we will
+-see in @ref{3.3}) are given names that end with an exclamation point.
+-This is similar to the convention of designating predicates by names that end
+-with a question mark.}
++Имя @code{set!} отражает соглашение об именовании, используемое в Scheme: операциям, которые
++меняют значения переменных (или которые меняют структуры данных, как мы увидим в @ref{3.3}),
++даются имена, оканчивающиеся восклицательным знаком.  Это похоже на соглашение обозначать
++предикаты именами, оканчивающимися вопросительным знаком.}
+ 
+-@code{Withdraw} also uses the @code{begin} special form to cause two
+-expressions to be evaluated in the case where the @code{if} test is true: first
+-decrementing @code{balance} and then returning the value of @code{balance}.  In
+-general, evaluating the expression
++@code{Withdraw} также использует особую форму @code{begin}, чтобы заставить два выражения быть
++вычисленными в случае, когда проверка @code{if} истинна: сначала уменьшая @code{balance}, а
++затем возвращая значение @code{balance}.  Вообще, вычисление выражения
+ 
+ @lisp
+ (begin ⟨@var{exp₁}⟩ ⟨@var{exp₂}⟩ @r{…} ⟨@var{expₖ}⟩)
+ @end lisp
+ 
+ @noindent
+-causes the expressions @math{{⟨exp_1⟩}} through @math{{⟨exp_k⟩}} to be evaluated
+-in sequence and the value of the final expression @math{{⟨exp_k⟩}} to be
+-returned as the value of the entire @code{begin} form.@footnote{We have already
+-used @code{begin} implicitly in our programs, because in Scheme the body of a
+-procedure can be a sequence of expressions.  Also, the @code{⟨}@var{consequent}@code{⟩} part
+-of each clause in a @code{cond} expression can be a sequence of expressions
+-rather than a single expression.}
++заставляет выражения @math{{⟨exp_1⟩}} по @math{{⟨exp_k⟩}} быть вычисленными по порядку, а
++значение последнего выражения @math{{⟨exp_k⟩}} — быть возвращённым как значение всей формы
++@code{begin}.@footnote{Мы уже неявно использовали @code{begin} в наших программах, потому что в
++Scheme тело процедуры может быть последовательностью выражений.  Также часть
++@code{⟨}@var{следствие}@code{⟩} каждого предложения в выражении @code{cond} может быть
++последовательностью выражений, а не единственным выражением.}
+ 
+-Although @code{withdraw} works as desired, the variable @code{balance} presents
+-a problem.  As specified above, @code{balance} is a name defined in the global
+-environment and is freely accessible to be examined or modified by any
+-procedure.  It would be much better if we could somehow make @code{balance}
+-internal to @code{withdraw}, so that @code{withdraw} would be the only
+-procedure that could access @code{balance} directly and any other procedure
+-could access @code{balance} only indirectly (through calls to @code{withdraw}).
+-This would more accurately model the notion that @code{balance} is a local
+-state variable used by @code{withdraw} to keep track of the state of the
+-account.
++Хотя @code{withdraw} работает как желалось, переменная @code{balance} представляет проблему.
++Как задано выше, @code{balance} — это имя, определённое в глобальном окружении, и свободно
++доступно для исследования или изменения любой процедурой.  Было бы намного лучше, если бы мы
++могли как-то сделать @code{balance} внутренней по отношению к @code{withdraw}, чтобы
++@code{withdraw} была единственной процедурой, которая могла бы обращаться к @code{balance}
++напрямую, а любая другая процедура могла бы обращаться к @code{balance} только косвенно (через
++вызовы @code{withdraw}).  Это точнее моделировало бы представление о том, что @code{balance} —
++локальная переменная состояния, используемая @code{withdraw}, чтобы отслеживать состояние
++счёта.
+ 
+-We can make @code{balance} internal to @code{withdraw} by rewriting the
+-definition as follows:
++Мы можем сделать @code{balance} внутренней по отношению к @code{withdraw}, переписав определение
++следующим образом:
+ 
+ @lisp
+ (define new-withdraw
+@@ -13811,45 +13803,38 @@ definition as follows:
+ @end lisp
+ 
+ @noindent
+-What we have done here is use @code{let} to establish an environment with a
+-local variable @code{balance}, bound to the initial value 100.  Within this
+-local environment, we use @code{lambda} to create a procedure that takes
+-@code{amount} as an argument and behaves like our previous @code{withdraw}
+-procedure.  This procedure---returned as the result of evaluating the
+-@code{let} expression---is @code{new-withdraw}, which behaves in precisely the
+-same way as @code{withdraw} but whose variable @code{balance} is not accessible
+-by any other procedure.@footnote{In programming-language jargon, the variable
+-@code{balance} is said to be @newterm{encapsulated} within the
+-@code{new-withdraw} procedure.  Encapsulation reflects the general
+-system-design principle known as the @newterm{hiding principle}: One can make a
+-system more modular and robust by protecting parts of the system from each
+-other; that is, by providing information access only to those parts of the
+-system that have a ``need to know.''}
+-
+-Combining @code{set!} with local variables is the general programming technique
+-we will use for constructing computational objects with local state.
+-Unfortunately, using this technique raises a serious problem: When we first
+-introduced procedures, we also introduced the substitution model of evaluation
+-(@ref{1.1.5}) to provide an interpretation of what procedure
+-application means.  We said that applying a procedure should be interpreted as
+-evaluating the body of the procedure with the formal parameters replaced by
+-their values.  The trouble is that, as soon as we introduce assignment into our
+-language, substitution is no longer an adequate model of procedure application.
+-(We will see why this is so in @ref{3.1.3}.)  As a consequence, we
+-technically have at this point no way to understand why the @code{new-withdraw}
+-procedure behaves as claimed above.  In order to really understand a procedure
+-such as @code{new-withdraw}, we will need to develop a new model of procedure
+-application.  In @ref{3.2} we will introduce such a model, together
+-with an explanation of @code{set!} and local variables.  First, however, we
+-examine some variations on the theme established by @code{new-withdraw}.
+-
+-The following procedure, @code{make-withdraw}, creates ``withdrawal
+-processors.''  The formal parameter @code{balance} in @code{make-withdraw}
+-specifies the initial amount of money in the account.@footnote{In contrast with
+-@code{new-withdraw} above, we do not have to use @code{let} to make
+-@code{balance} a local variable, since formal parameters are already local.
+-This will be clearer after the discussion of the environment model of
+-evaluation in @ref{3.2}.  (See also @ref{Exercise 3.10}.)}
++Что мы здесь сделали — это использовали @code{let}, чтобы установить окружение с локальной
++переменной @code{balance}, связанной с начальным значением 100.  Внутри этого локального
++окружения мы используем @code{lambda}, чтобы создать процедуру, которая принимает @code{amount}
++как аргумент и ведёт себя как наша предыдущая процедура @code{withdraw}.  Эта процедура —
++возвращённая как результат вычисления выражения @code{let} — это @code{new-withdraw}, которая
++ведёт себя точно так же, как @code{withdraw}, но чья переменная @code{balance} недоступна
++никакой другой процедуре.@footnote{На жаргоне языков программирования говорят, что переменная
++@code{balance} @newterm{инкапсулирована} внутри процедуры @code{new-withdraw}.  Инкапсуляция
++отражает общий принцип проектирования систем, известный как @newterm{принцип сокрытия}: можно
++сделать систему более модульной и устойчивой, защищая части системы друг от друга; то есть
++предоставляя доступ к информации только тем частям системы, которым «нужно знать».}
++
++Комбинирование @code{set!} с локальными переменными — это общий приём программирования, который
++мы будем использовать для построения вычислительных объектов с локальным состоянием.  К
++сожалению, использование этого приёма поднимает серьёзную проблему: когда мы впервые ввели
++процедуры, мы также ввели подстановочную модель вычислений (@ref{1.1.5}), чтобы дать
++интерпретацию того, что означает применение процедуры.  Мы сказали, что применение процедуры
++следует интерпретировать как вычисление тела процедуры с формальными параметрами, заменёнными
++их значениями.  Беда в том, что, как только мы вводим присваивание в наш язык, подстановка
++больше не является адекватной моделью применения процедуры.  (Мы увидим, почему это так, в
++@ref{3.1.3}.)  Как следствие, технически у нас на данный момент нет способа понять, почему
++процедура @code{new-withdraw} ведёт себя так, как заявлено выше.  Чтобы действительно понять
++процедуру, такую как @code{new-withdraw}, нам понадобится разработать новую модель применения
++процедуры.  В @ref{3.2} мы введём такую модель вместе с объяснением @code{set!} и локальных
++переменных.  Сначала, однако, мы рассмотрим некоторые вариации на тему, установленную
++@code{new-withdraw}.
++
++Следующая процедура, @code{make-withdraw}, создаёт «обработчики снятия».  Формальный параметр
++@code{balance} в @code{make-withdraw} задаёт начальную сумму денег на счёте.@footnote{В отличие
++от @code{new-withdraw} выше, нам не нужно использовать @code{let}, чтобы сделать @code{balance}
++локальной переменной, поскольку формальные параметры уже локальны.  Это станет яснее после
++обсуждения модели вычислений с окружениями в @ref{3.2}.  (См. также @ref{Exercise 3.10}.)}
+ 
+ @lisp
+ (define (make-withdraw balance)
+@@ -13862,8 +13847,8 @@ evaluation in @ref{3.2}.  (See also @ref{Exercise 3.10}.)}
+ @end lisp
+ 
+ @noindent
+-@code{Make-withdraw} can be used as follows to create two objects @code{W1} and
+-@code{W2}:
++@code{Make-withdraw} можно использовать следующим образом, чтобы создать два объекта @code{W1}
++и @code{W2}:
+ 
+ @lisp
+ (define W1 (make-withdraw 100))
+@@ -13883,13 +13868,12 @@ evaluation in @ref{3.2}.  (See also @ref{Exercise 3.10}.)}
+ @end lisp
+ 
+ @noindent
+-Observe that @code{W1} and @code{W2} are completely independent objects, each
+-with its own local state variable @code{balance}.  Withdrawals from one do not
+-affect the other.
++Заметьте, что @code{W1} и @code{W2} — полностью независимые объекты, каждый со своей собственной
++локальной переменной состояния @code{balance}.  Снятия с одного не влияют на другой.
+ 
+-We can also create objects that handle deposits as well as withdrawals, and
+-thus we can represent simple bank accounts.  Here is a procedure that returns a
+-``bank-account object'' with a specified initial balance:
++Мы можем также создавать объекты, которые обрабатывают и вклады, и снятия, и таким образом мы
++можем представлять простые банковские счета.  Вот процедура, которая возвращает «объект
++банковского счёта» с заданным начальным балансом:
+ 
+ @lisp
+ (define (make-account balance)
+@@ -13911,17 +13895,16 @@ thus we can represent simple bank accounts.  Here is a procedure that returns a
+ @end lisp
+ 
+ @noindent
+-Each call to @code{make-account} sets up an environment with a local state
+-variable @code{balance}.  Within this environment, @code{make-account} defines
+-procedures @code{deposit} and @code{withdraw} that access @code{balance} and an
+-additional procedure @code{dispatch} that takes a ``message'' as input and
+-returns one of the two local procedures.  The @code{dispatch} procedure itself
+-is returned as the value that represents the bank-account object.  This is
+-precisely the @newterm{message-passing} style of programming that we saw in
+-@ref{2.4.3}, although here we are using it in conjunction with the
+-ability to modify local variables.
++Каждый вызов @code{make-account} устанавливает окружение с локальной переменной состояния
++@code{balance}.  Внутри этого окружения @code{make-account} определяет процедуры @code{deposit}
++и @code{withdraw}, которые обращаются к @code{balance}, и дополнительную процедуру
++@code{dispatch}, которая принимает «сообщение» как вход и возвращает одну из двух локальных
++процедур.  Сама процедура @code{dispatch} возвращается как значение, представляющее объект
++банковского счёта.  Это в точности стиль программирования с @newterm{передачей сообщений},
++который мы видели в @ref{2.4.3}, хотя здесь мы используем его в сочетании со способностью
++изменять локальные переменные.
+ 
+-@code{Make-account} can be used as follows:
++@code{Make-account} можно использовать следующим образом:
+ 
+ @lisp
+ (define acc (make-account 100))
+@@ -13940,27 +13923,25 @@ ability to modify local variables.
+ @end lisp
+ 
+ @noindent
+-Each call to @code{acc} returns the locally defined @code{deposit} or
+-@code{withdraw} procedure, which is then applied to the specified
+-@code{amount}.  As was the case with @code{make-withdraw}, another call to
+-@code{make-account}
++Каждый вызов @code{acc} возвращает локально определённую процедуру @code{deposit} или
++@code{withdraw}, которая затем применяется к заданной @code{amount}.  Как было в случае с
++@code{make-withdraw}, другой вызов @code{make-account}
+ 
+ @lisp
+ (define acc2 (make-account 100))
+ @end lisp
+ 
+ @noindent
+-will produce a completely separate account object, which maintains its own
+-local @code{balance}.
++произведёт полностью отдельный объект счёта, который поддерживает свой собственный локальный
++@code{balance}.
+ 
+ @quotation
+-@strong{@anchor{Exercise 3.1}Exercise 3.1:} An @newterm{accumulator} is a
+-procedure that is called repeatedly with a single numeric argument and
+-accumulates its arguments into a sum.  Each time it is called, it returns the
+-currently accumulated sum.  Write a procedure @code{make-accumulator} that
+-generates accumulators, each maintaining an independent sum.  The input to
+-@code{make-accumulator} should specify the initial value of the sum; for
+-example
++@strong{@anchor{Exercise 3.1}Exercise 3.1:} @newterm{Накопитель} — это процедура, которая
++многократно вызывается с единственным числовым аргументом и накапливает свои аргументы в сумму.
++Каждый раз, когда она вызывается, она возвращает текущую накопленную сумму.  Напишите процедуру
++@code{make-accumulator}, которая порождает накопители, каждый из которых поддерживает
++независимую сумму.  Вход для @code{make-accumulator} должен задавать начальное значение суммы;
++например
+ 
+ @lisp
+ (define A (make-accumulator 5))
+@@ -13974,18 +13955,16 @@ example
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 3.2}Exercise 3.2:} In software-testing applications,
+-it is useful to be able to count the number of times a given procedure is
+-called during the course of a computation.  Write a procedure
+-@code{make-monitored} that takes as input a procedure, @code{f}, that itself
+-takes one input.  The result returned by @code{make-monitored} is a third
+-procedure, say @code{mf}, that keeps track of the number of times it has been
+-called by maintaining an internal counter.  If the input to @code{mf} is the
+-special symbol @code{how-many-calls?}, then @code{mf} returns the value of the
+-counter.  If the input is the special symbol @code{reset-count}, then @code{mf}
+-resets the counter to zero.  For any other input, @code{mf} returns the result
+-of calling @code{f} on that input and increments the counter.  For instance, we
+-could make a monitored version of the @code{sqrt} procedure:
++@strong{@anchor{Exercise 3.2}Exercise 3.2:} В приложениях тестирования программ полезно уметь
++подсчитывать число раз, которое данная процедура вызывается в ходе вычисления.  Напишите
++процедуру @code{make-monitored}, которая принимает в качестве входа процедуру @code{f}, которая
++сама принимает один вход.  Результат, возвращаемый @code{make-monitored}, — это третья
++процедура, скажем @code{mf}, которая отслеживает число раз, которое она была вызвана, поддерживая
++внутренний счётчик.  Если вход для @code{mf} — особый символ @code{how-many-calls?}, то
++@code{mf} возвращает значение счётчика.  Если вход — особый символ @code{reset-count}, то
++@code{mf} сбрасывает счётчик в нуль.  Для любого другого входа @code{mf} возвращает результат
++вызова @code{f} на этом входе и увеличивает счётчик.  Например, мы могли бы сделать
++отслеживаемую версию процедуры @code{sqrt}:
+ 
+ @lisp
+ (define s (make-monitored sqrt))
+@@ -13999,18 +13978,17 @@ could make a monitored version of the @code{sqrt} procedure:
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 3.3}Exercise 3.3:} Modify the @code{make-account}
+-procedure so that it creates password-protected accounts.  That is,
+-@code{make-account} should take a symbol as an additional argument, as in
++@strong{@anchor{Exercise 3.3}Exercise 3.3:} Измените процедуру @code{make-account} так, чтобы
++она создавала счета, защищённые паролем.  То есть @code{make-account} должна принимать символ
++как дополнительный аргумент, как в
+ 
+ @lisp
+ (define acc 
+   (make-account 100 'secret-password))
+ @end lisp
+ 
+-The resulting account object should process a request only if it is accompanied
+-by the password with which the account was created, and should otherwise return
+-a complaint:
++Получающийся объект счёта должен обрабатывать запрос только если он сопровождается паролем, с
++которым счёт был создан, и должен иначе возвращать жалобу:
+ 
+ @lisp
+ ((acc 'secret-password 'withdraw) 40)
+@@ -14022,10 +14000,10 @@ a complaint:
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 3.4}Exercise 3.4:} Modify the @code{make-account}
+-procedure of @ref{Exercise 3.3} by adding another local state variable so that,
+-if an account is accessed more than seven consecutive times with an incorrect
+-password, it invokes the procedure @code{call-the-cops}.
++@strong{@anchor{Exercise 3.4}Exercise 3.4:} Измените процедуру @code{make-account} из
++@ref{Exercise 3.3}, добавив ещё одну локальную переменную состояния так, чтобы, если к счёту
++обращаются более семи раз подряд с неправильным паролем, он вызывал процедуру
++@code{call-the-cops}.
+ @end quotation
+ 
+ @node	3.1.2, 3.1.3, 3.1.1, 3.1

@@ -1,0 +1,512 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 8cbb563..017082c 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -14209,24 +14209,22 @@ Scheme тело процедуры может быть последовател
+ @end quotation
+ 
+ @node	3.1.3, 3.2, Chapter 3, 3.1
+-@subsection The Costs of Introducing Assignment
++@subsection Издержки введения присваивания
+ 
+-As we have seen, the @code{set!} operation enables us to model objects that
+-have local state.  However, this advantage comes at a price.  Our programming
+-language can no longer be interpreted in terms of the substitution model of
+-procedure application that we introduced in @ref{1.1.5}.  Moreover, no
+-simple model with ``nice'' mathematical properties can be an adequate framework
+-for dealing with objects and assignment in programming languages.
++Как мы видели, операция @code{set!} позволяет нам моделировать объекты, обладающие локальным
++состоянием.  Однако это преимущество достаётся ценой.  Наш язык программирования больше нельзя
++интерпретировать в терминах подстановочной модели применения процедуры, которую мы ввели в
++@ref{1.1.5}.  Более того, никакая простая модель с «приятными» математическими свойствами не
++может быть адекватным каркасом для работы с объектами и присваиванием в языках программирования.
+ 
+-So long as we do not use assignments, two evaluations of the same procedure
+-with the same arguments will produce the same result, so that procedures can be
+-viewed as computing mathematical functions.  Programming without any use of
+-assignments, as we did throughout the first two chapters of this book, is
+-accordingly known as @newterm{functional programming}.
++Пока мы не используем присваивания, два вычисления одной и той же процедуры с одними и теми же
++аргументами будут производить один и тот же результат, так что процедуры можно рассматривать
++как вычисляющие математические функции.  Программирование без всякого использования
++присваиваний, как мы делали на протяжении первых двух глав этой книги, соответственно известно
++как @newterm{функциональное программирование}.
+ 
+-To understand how assignment complicates matters, consider a simplified version
+-of the @code{make-withdraw} procedure of @ref{3.1.1} that does not
+-bother to check for an insufficient amount:
++Чтобы понять, как присваивание усложняет дело, рассмотрим упрощённую версию процедуры
++@code{make-withdraw} из @ref{3.1.1}, которая не утруждает себя проверкой на недостаточную сумму:
+ 
+ @lisp
+ (define (make-simplified-withdraw balance)
+@@ -14244,8 +14242,8 @@ bother to check for an insufficient amount:
+ @end lisp
+ 
+ @noindent
+-Compare this procedure with the following @code{make-decrementer} procedure,
+-which does not use @code{set!}:
++Сравните эту процедуру со следующей процедурой @code{make-decrementer}, которая не использует
++@code{set!}:
+ 
+ @lisp
+ (define (make-decrementer balance)
+@@ -14254,9 +14252,9 @@ which does not use @code{set!}:
+ @end lisp
+ 
+ @noindent
+-@code{Make-decrementer} returns a procedure that subtracts its input from a
+-designated amount @code{balance}, but there is no accumulated effect over
+-successive calls, as with @code{make-simplified-withdraw}:
++@code{Make-decrementer} возвращает процедуру, которая вычитает свой вход из назначенной суммы
++@code{balance}, но нет накопленного эффекта при последовательных вызовах, как с
++@code{make-simplified-withdraw}:
+ 
+ @lisp
+ (define D (make-decrementer 25))
+@@ -14269,47 +14267,45 @@ successive calls, as with @code{make-simplified-withdraw}:
+ @end lisp
+ 
+ @noindent
+-We can use the substitution model to explain how @code{make-decrementer} works.
+-For instance, let us analyze the evaluation of the expression
++Мы можем использовать подстановочную модель, чтобы объяснить, как работает
++@code{make-decrementer}.  Например, давайте проанализируем вычисление выражения
+ 
+ @lisp
+ ((make-decrementer 25) 20)
+ @end lisp
+ 
+ @noindent
+-We first simplify the operator of the combination by substituting 25 for
+-@code{balance} in the body of @code{make-decrementer}.  This reduces the
+-expression to
++Сначала мы упрощаем оператор комбинации, подставляя 25 вместо @code{balance} в тело
++@code{make-decrementer}.  Это сводит выражение к
+ 
+ @lisp
+ ((lambda (amount) (- 25 amount)) 20)
+ @end lisp
+ 
+ @noindent
+-Now we apply the operator by substituting 20 for @code{amount} in the body of
+-the @code{lambda} expression:
++Теперь мы применяем оператор, подставляя 20 вместо @code{amount} в тело выражения
++@code{lambda}:
+ 
+ @lisp
+ (- 25 20)
+ @end lisp
+ 
+ @noindent
+-The final answer is 5.
++Окончательный ответ — 5.
+ 
+-Observe, however, what happens if we attempt a similar substitution analysis
+-with @code{make-simplified-withdraw}:
++Заметьте, однако, что происходит, если мы пытаемся выполнить аналогичный подстановочный анализ
++с @code{make-simplified-withdraw}:
+ 
+ @lisp
+ ((make-simplified-withdraw 25) 20)
+ @end lisp
+ 
+ @noindent
+-We first simplify the operator by substituting 25 for @code{balance} in the
+-body of @code{make-simplified-withdraw}.  This reduces the expression
+-to@footnote{We don't substitute for the occurrence of @code{balance} in the
+-@code{set!} expression because the @code{⟨}@var{name}@code{⟩} in a @code{set!} is not
+-evaluated.  If we did substitute for it, we would get @code{(set! 25 (- 25
+-amount))}, which makes no sense.}
++Сначала мы упрощаем оператор, подставляя 25 вместо @code{balance} в тело
++@code{make-simplified-withdraw}.  Это сводит выражение к@footnote{Мы не подставляем вместо
++вхождения @code{balance} в выражении @code{set!}, потому что @code{⟨}@var{имя}@code{⟩} в
++@code{set!} не вычисляется.  Если бы мы подставили вместо него, мы получили бы @code{(set! 25
++(- 25 amount))}, что не имеет смысла.}
+ 
+ @lisp
+ ((lambda (amount) 
+@@ -14318,39 +14314,36 @@ amount))}, which makes no sense.}
+ @end lisp
+ 
+ @noindent
+-Now we apply the operator by substituting 20 for @code{amount} in the body of
+-the @code{lambda} expression:
++Теперь мы применяем оператор, подставляя 20 вместо @code{amount} в тело выражения
++@code{lambda}:
+ 
+ @lisp
+ (set! balance (- 25 20)) 25
+ @end lisp
+ 
+ @noindent
+-If we adhered to the substitution model, we would have to say that the meaning
+-of the procedure application is to first set @code{balance} to 5 and then
+-return 25 as the value of the expression.  This gets the wrong answer.  In
+-order to get the correct answer, we would have to somehow distinguish the first
+-occurrence of @code{balance} (before the effect of the @code{set!})  from the
+-second occurrence of @code{balance} (after the effect of the @code{set!}), and
+-the substitution model cannot do this.
++Если бы мы придерживались подстановочной модели, нам пришлось бы сказать, что смысл применения
++процедуры в том, чтобы сначала установить @code{balance} в 5, а затем вернуть 25 как значение
++выражения.  Это даёт неправильный ответ.  Чтобы получить правильный ответ, нам пришлось бы
++как-то отличать первое вхождение @code{balance} (до эффекта @code{set!}) от второго вхождения
++@code{balance} (после эффекта @code{set!}), а подстановочная модель не может этого сделать.
+ 
+-The trouble here is that substitution is based ultimately on the notion that
+-the symbols in our language are essentially names for values.  But as soon as
+-we introduce @code{set!} and the idea that the value of a variable can change,
+-a variable can no longer be simply a name.  Now a variable somehow refers to a
+-place where a value can be stored, and the value stored at this place can
+-change.  In @ref{3.2} we will see how environments play this role of
+-``place'' in our computational model.
++Беда здесь в том, что подстановка в конечном счёте основана на представлении, что символы в
++нашем языке — это по существу имена для значений.  Но как только мы вводим @code{set!} и идею,
++что значение переменной может меняться, переменная больше не может быть просто именем.  Теперь
++переменная как-то ссылается на место, где может храниться значение, и значение, хранящееся в
++этом месте, может меняться.  В @ref{3.2} мы увидим, как окружения играют эту роль «места» в
++нашей вычислительной модели.
+ 
+-@subsubheading Sameness and change
++@subsubheading Тождество и изменение
+ 
+-The issue surfacing here is more profound than the mere breakdown of a
+-particular model of computation.  As soon as we introduce change into our
+-computational models, many notions that were previously straightforward become
+-problematical.  Consider the concept of two things being ``the same.''
++Вопрос, всплывающий здесь, глубже, чем простой развал конкретной модели вычислений.  Как только
++мы вводим изменение в наши вычислительные модели, многие понятия, которые прежде были
++прямолинейны, становятся проблематичными.  Рассмотрите понятие двух вещей, являющихся
++«одинаковыми».
+ 
+-Suppose we call @code{make-decrementer} twice with the same argument to create
+-two procedures:
++Предположим, мы вызываем @code{make-decrementer} дважды с одним и тем же аргументом, чтобы
++создать две процедуры:
+ 
+ @lisp
+ (define D1 (make-decrementer 25))
+@@ -14358,12 +14351,12 @@ two procedures:
+ @end lisp
+ 
+ @noindent
+-Are @code{D1} and @code{D2} the same?  An acceptable answer is yes, because
+-@code{D1} and @code{D2} have the same computational behavior---each is a
+-procedure that subtracts its input from 25.  In fact, @code{D1} could be
+-substituted for @code{D2} in any computation without changing the result.
++Одинаковы ли @code{D1} и @code{D2}?  Приемлемый ответ — да, потому что @code{D1} и @code{D2}
++имеют одно и то же вычислительное поведение — каждая является процедурой, которая вычитает свой
++вход из 25.  В самом деле, @code{D1} можно было бы подставить вместо @code{D2} в любом
++вычислении, не меняя результата.
+ 
+-Contrast this with making two calls to @code{make-simplified-withdraw}:
++Сопоставьте это с выполнением двух вызовов @code{make-simplified-withdraw}:
+ 
+ @lisp
+ (define W1 (make-simplified-withdraw 25))
+@@ -14371,9 +14364,8 @@ Contrast this with making two calls to @code{make-simplified-withdraw}:
+ @end lisp
+ 
+ @noindent
+-Are @code{W1} and @code{W2} the same?  Surely not, because calls to @code{W1}
+-and @code{W2} have distinct effects, as shown by the following sequence of
+-interactions:
++Одинаковы ли @code{W1} и @code{W2}?  Разумеется, нет, потому что вызовы @code{W1} и @code{W2}
++имеют различные эффекты, как показано следующей последовательностью взаимодействий:
+ 
+ @lisp
+ (W1 20)
+@@ -14387,34 +14379,29 @@ interactions:
+ @end lisp
+ 
+ @noindent
+-Even though @code{W1} and @code{W2} are ``equal'' in the sense that they are
+-both created by evaluating the same expression, @code{(make-simplified-withdraw
+-25)}, it is not true that @code{W1} could be substituted for @code{W2} in any
+-expression without changing the result of evaluating the expression.
++Хотя @code{W1} и @code{W2} «равны» в том смысле, что они оба созданы вычислением одного и того
++же выражения, @code{(make-simplified-withdraw 25)}, неверно, что @code{W1} можно было бы
++подставить вместо @code{W2} в любом выражении, не меняя результата вычисления выражения.
+ 
+-A language that supports the concept that ``equals can be substituted for
+-equals'' in an expression without changing the value of the expression is said
+-to be @newterm{referentially transparent}.  Referential transparency is
+-violated when we include @code{set!} in our computer language.  This makes it
+-tricky to determine when we can simplify expressions by substituting equivalent
+-expressions.  Consequently, reasoning about programs that use assignment
+-becomes drastically more difficult.
++О языке, который поддерживает представление, что «равные можно подставлять вместо равных» в
++выражении, не меняя значения выражения, говорят, что он @newterm{ссылочно прозрачен}.  Ссылочная
++прозрачность нарушается, когда мы включаем @code{set!} в наш компьютерный язык.  Это делает
++хитрым определение того, когда мы можем упрощать выражения, подставляя эквивалентные выражения.
++Следовательно, рассуждать о программах, использующих присваивание, становится резко труднее.
+ 
+-Once we forgo referential transparency, the notion of what it means for
+-computational objects to be ``the same'' becomes difficult to capture in a
+-formal way.  Indeed, the meaning of ``same'' in the real world that our
+-programs model is hardly clear in itself.  In general, we can determine that
+-two apparently identical objects are indeed ``the same one'' only by modifying
+-one object and then observing whether the other object has changed in the same
+-way.  But how can we tell if an object has ``changed'' other than by observing
+-the ``same'' object twice and seeing whether some property of the object
+-differs from one observation to the next?  Thus, we cannot determine ``change''
+-without some @emph{a priori} notion of ``sameness,'' and we cannot determine
+-sameness without observing the effects of change.
++Как только мы отказываемся от ссылочной прозрачности, понятие того, что значит для
++вычислительных объектов быть «одинаковыми», становится трудным схватить формальным образом.  В
++самом деле, смысл «одинаковости» в реальном мире, который моделируют наши программы, едва ли
++ясен сам по себе.  Вообще, мы можем определить, что два внешне идентичных объекта действительно
++«один и тот же», только изменив один объект и затем понаблюдав, изменился ли другой объект таким
++же образом.  Но как мы можем сказать, «изменился» ли объект, иначе как наблюдая «один и тот же»
++объект дважды и видя, отличается ли некоторое свойство объекта от одного наблюдения к другому?
++Таким образом, мы не можем определить «изменение» без некоторого @emph{априорного} понятия
++«одинаковости», и мы не можем определить одинаковость без наблюдения эффектов изменения.
+ 
+-As an example of how this issue arises in programming, consider the situation
+-where Peter and Paul have a bank account with $100 in it.  There is a
+-substantial difference between modeling this as
++В качестве примера того, как этот вопрос возникает в программировании, рассмотрите ситуацию,
++где у Питера и Пола есть банковский счёт со 100 долларами на нём.  Есть существенная разница
++между моделированием этого как
+ 
+ @lisp
+ (define peter-acc (make-account 100))
+@@ -14422,7 +14409,7 @@ substantial difference between modeling this as
+ @end lisp
+ 
+ @noindent
+-and modeling it as
++и моделированием этого как
+ 
+ @lisp
+ (define peter-acc (make-account 100))
+@@ -14430,55 +14417,48 @@ and modeling it as
+ @end lisp
+ 
+ @noindent
+-In the first situation, the two bank accounts are distinct.  Transactions made
+-by Peter will not affect Paul's account, and vice versa.  In the second
+-situation, however, we have defined @code{paul-acc} to be @emph{the same thing}
+-as @code{peter-acc}.  In effect, Peter and Paul now have a joint bank account,
+-and if Peter makes a withdrawal from @code{peter-acc} Paul will observe less
+-money in @code{paul-acc}.  These two similar but distinct situations can cause
+-confusion in building computational models.  With the shared account, in
+-particular, it can be especially confusing that there is one object (the bank
+-account) that has two different names (@code{peter-acc} and @code{paul-acc});
+-if we are searching for all the places in our program where @code{paul-acc} can
+-be changed, we must remember to look also at things that change
+-@code{peter-acc}.@footnote{The phenomenon of a single computational object
+-being accessed by more than one name is known as @newterm{aliasing}.  The joint
+-bank account situation illustrates a very simple example of an alias.  In
+-@ref{3.3} we will see much more complex examples, such as ``distinct''
+-compound data structures that share parts.  Bugs can occur in our programs if
+-we forget that a change to an object may also, as a ``side effect,'' change a
+-``different'' object because the two ``different'' objects are actually a
+-single object appearing under different aliases.  These so-called
+-@newterm{side-effect bugs} are so difficult to locate and to analyze that some
+-people have proposed that programming languages be designed in such a way as to
+-not allow side effects or aliasing (@ref{Lampson et al. 1981}; 
++В первой ситуации два банковских счёта различны.  Транзакции, совершённые Питером, не повлияют
++на счёт Пола, и наоборот.  Во второй ситуации, однако, мы определили @code{paul-acc} как
++@emph{ту же самую вещь}, что и @code{peter-acc}.  По сути, у Питера и Пола теперь совместный
++банковский счёт, и если Питер совершает снятие с @code{peter-acc}, Пол будет наблюдать меньше
++денег на @code{paul-acc}.  Эти две похожие, но различные ситуации могут вызвать путаницу при
++построении вычислительных моделей.  С общим счётом, в частности, может особенно сбивать с толку
++то, что есть один объект (банковский счёт), у которого два разных имени (@code{peter-acc} и
++@code{paul-acc}); если мы ищем все места в нашей программе, где @code{paul-acc} может быть
++изменён, мы должны помнить смотреть также на вещи, которые меняют
++@code{peter-acc}.@footnote{Явление, когда к единственному вычислительному объекту обращаются
++более чем по одному имени, известно как @newterm{совмещение имён}.  Ситуация совместного
++банковского счёта иллюстрирует очень простой пример совмещённого имени.  В @ref{3.3} мы увидим
++гораздо более сложные примеры, такие как «различные» составные структуры данных, которые
++разделяют части.  В наших программах могут возникать ошибки, если мы забываем, что изменение
++объекта может также, как «побочный эффект», изменить «другой» объект, потому что два «различных»
++объекта на самом деле являются единственным объектом, появляющимся под разными совмещёнными
++именами.  Эти так называемые @newterm{ошибки из-за побочных эффектов} столь трудно
++локализовать и анализировать, что некоторые люди предлагали проектировать языки программирования
++таким образом, чтобы не допускать побочных эффектов или совмещения имён (@ref{Lampson et al. 1981};
+ @ref{Morris et al. 1980}).}
+ 
+-With reference to the above remarks on ``sameness'' and ``change,'' observe
+-that if Peter and Paul could only examine their bank balances, and could not
+-perform operations that changed the balance, then the issue of whether the two
+-accounts are distinct would be moot.  In general, so long as we never modify
+-data objects, we can regard a compound data object to be precisely the totality
+-of its pieces.  For example, a rational number is determined by giving its
+-numerator and its denominator.  But this view is no longer valid in the
+-presence of change, where a compound data object has an ``identity'' that is
+-something different from the pieces of which it is composed.  A bank account is
+-still ``the same'' bank account even if we change the balance by making a
+-withdrawal; conversely, we could have two different bank accounts with the same
+-state information.  This complication is a consequence, not of our programming
+-language, but of our perception of a bank account as an object.  We do not, for
+-example, ordinarily regard a rational number as a changeable object with
+-identity, such that we could change the numerator and still have ``the same''
+-rational number.
+-
+-@subsubheading Pitfalls of imperative programming
+-
+-In contrast to functional programming, programming that makes extensive use of
+-assignment is known as @newterm{imperative programming}.  In addition to
+-raising complications about computational models, programs written in
+-imperative style are susceptible to bugs that cannot occur in functional
+-programs.  For example, recall the iterative factorial program from 
+-@ref{1.2.1}:
++В отношении вышеприведённых замечаний об «одинаковости» и «изменении» заметьте, что если бы
++Питер и Пол могли только исследовать свои банковские балансы и не могли выполнять операции,
++которые меняют баланс, то вопрос о том, различны ли два счёта, был бы спорным.  Вообще, пока мы
++никогда не изменяем объекты данных, мы можем рассматривать составной объект данных как в точности
++совокупность его частей.  Например, рациональное число определяется заданием его числителя и его
++знаменателя.  Но этот взгляд больше не действителен при наличии изменения, где у составного
++объекта данных есть «идентичность», которая есть нечто отличное от частей, из которых он состоит.
++Банковский счёт по-прежнему «тот же самый» банковский счёт, даже если мы меняем баланс, совершая
++снятие; и наоборот, у нас могло бы быть два разных банковских счёта с одной и той же информацией
++о состоянии.  Это усложнение — следствие не нашего языка программирования, а нашего восприятия
++банковского счёта как объекта.  Мы, например, обычно не рассматриваем рациональное число как
++изменяемый объект с идентичностью, такой что мы могли бы изменить числитель и всё ещё иметь «то
++же самое» рациональное число.
++
++@subsubheading Ловушки императивного программирования
++
++В противоположность функциональному программированию, программирование, которое широко
++использует присваивание, известно как @newterm{императивное программирование}.  Помимо того что
++оно поднимает усложнения о вычислительных моделях, программы, написанные в императивном стиле,
++подвержены ошибкам, которые не могут возникнуть в функциональных программах.  Например,
++вспомните итеративную программу вычисления факториала из @ref{1.2.1}:
+ 
+ @lisp
+ (define (factorial n)
+@@ -14491,9 +14471,9 @@ programs.  For example, recall the iterative factorial program from
+ @end lisp
+ 
+ @noindent
+-Instead of passing arguments in the internal iterative loop, we could adopt a
+-more imperative style by using explicit assignment to update the values of the
+-variables @code{product} and @code{counter}:
++Вместо передачи аргументов во внутреннем итеративном цикле мы могли бы принять более
++императивный стиль, используя явное присваивание, чтобы обновлять значения переменных
++@code{product} и @code{counter}:
+ 
+ @lisp
+ (define (factorial n)
+@@ -14510,10 +14490,9 @@ variables @code{product} and @code{counter}:
+ @end lisp
+ 
+ @noindent
+-This does not change the results produced by the program, but it does introduce
+-a subtle trap.  How do we decide the order of the assignments?  As it happens,
+-the program is correct as written.  But writing the assignments in the opposite
+-order
++Это не меняет результатов, производимых программой, но это вводит тонкую ловушку.  Как мы решаем
++порядок присваиваний?  Как оказывается, программа верна как написана.  Но запись присваиваний в
++противоположном порядке
+ 
+ @lisp
+ (set! counter (+ counter 1))
+@@ -14521,38 +14500,34 @@ order
+ @end lisp
+ 
+ @noindent
+-would have produced a different, incorrect result.  In general, programming
+-with assignment forces us to carefully consider the relative orders of the
+-assignments to make sure that each statement is using the correct version of
+-the variables that have been changed.  This issue simply does not arise in
+-functional programs.@footnote{In view of this, it is ironic that introductory
+-programming is most often taught in a highly imperative style.  This may be a
+-vestige of a belief, common throughout the 1960s and 1970s, that programs that
+-call procedures must inherently be less efficient than programs that perform
+-assignments.  (@ref{Steele 1977} debunks this argument.)  Alternatively it may
+-reflect a view that step-by-step assignment is easier for beginners to
+-visualize than procedure call.  Whatever the reason, it often saddles beginning
+-programmers with ``should I set this variable before or after that one''
+-concerns that can complicate programming and obscure the important ideas.}
+-
+-The complexity of imperative programs becomes even worse if we consider
+-applications in which several processes execute concurrently.  We will return
+-to this in @ref{3.4}.  First, however, we will address the issue of
+-providing a computational model for expressions that involve assignment, and
+-explore the uses of objects with local state in designing simulations.
+-
+-@quotation
+-@strong{@anchor{Exercise 3.7}Exercise 3.7:} Consider the bank account objects
+-created by @code{make-account}, with the password modification described in
+-@ref{Exercise 3.3}.  Suppose that our banking system requires the ability to
+-make joint accounts.  Define a procedure @code{make-joint} that accomplishes
+-this.  @code{Make-joint} should take three arguments.  The first is a
+-password-protected account.  The second argument must match the password with
+-which the account was defined in order for the @code{make-joint} operation to
+-proceed.  The third argument is a new password.  @code{Make-joint} is to create
+-an additional access to the original account using the new password.  For
+-example, if @code{peter-acc} is a bank account with password
+-@code{open-sesame}, then
++произвела бы другой, неправильный результат.  Вообще, программирование с присваиванием вынуждает
++нас тщательно рассматривать относительные порядки присваиваний, чтобы убедиться, что каждое
++утверждение использует правильную версию изменённых переменных.  Этот вопрос просто не возникает
++в функциональных программах.@footnote{Ввиду этого иронично, что вводное программирование чаще
++всего преподаётся в сильно императивном стиле.  Это может быть пережитком убеждения,
++распространённого на протяжении 1960-х и 1970-х годов, что программы, вызывающие процедуры,
++должны быть по своей природе менее эффективны, чем программы, выполняющие присваивания.
++(@ref{Steele 1977} развенчивает этот аргумент.)  Или же это может отражать взгляд, что
++пошаговое присваивание новичкам легче визуализировать, чем вызов процедуры.  Какова бы ни была
++причина, это часто обременяет начинающих программистов заботами «следует ли мне установить эту
++переменную до или после той», которые могут усложнять программирование и затемнять важные идеи.}
++
++Сложность императивных программ становится ещё хуже, если мы рассматриваем приложения, в
++которых несколько процессов исполняются параллельно.  Мы вернёмся к этому в @ref{3.4}.  Сначала,
++однако, мы обратимся к вопросу предоставления вычислительной модели для выражений, включающих
++присваивание, и исследуем использования объектов с локальным состоянием при проектировании
++моделирований.
++
++@quotation
++@strong{@anchor{Exercise 3.7}Exercise 3.7:} Рассмотрите объекты банковского счёта, создаваемые
++@code{make-account}, с модификацией пароля, описанной в @ref{Exercise 3.3}.  Предположим, что
++наша банковская система требует способности делать совместные счета.  Определите процедуру
++@code{make-joint}, которая выполняет это.  @code{Make-joint} должна принимать три аргумента.
++Первый — это защищённый паролем счёт.  Второй аргумент должен совпадать с паролем, с которым счёт
++был определён, чтобы операция @code{make-joint} могла продолжиться.  Третий аргумент — новый
++пароль.  @code{Make-joint} должна создать дополнительный доступ к исходному счёту, используя
++новый пароль.  Например, если @code{peter-acc} — банковский счёт с паролем @code{open-sesame},
++то
+ 
+ @lisp
+ (define paul-acc
+@@ -14562,28 +14537,26 @@ example, if @code{peter-acc} is a bank account with password
+ @end lisp
+ 
+ @noindent
+-will allow one to make transactions on @code{peter-acc} using the name
+-@code{paul-acc} and the password @code{rosebud}.  You may wish to modify your
+-solution to @ref{Exercise 3.3} to accommodate this new feature.
++позволит совершать транзакции на @code{peter-acc}, используя имя @code{paul-acc} и пароль
++@code{rosebud}.  Возможно, вам захочется изменить ваше решение @ref{Exercise 3.3}, чтобы вместить
++эту новую возможность.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 3.8}Exercise 3.8:} When we defined the evaluation
+-model in @ref{1.1.3}, we said that the first step in evaluating an
+-expression is to evaluate its subexpressions.  But we never specified the order
+-in which the subexpressions should be evaluated (e.g., left to right or right
+-to left).  When we introduce assignment, the order in which the arguments to a
+-procedure are evaluated can make a difference to the result.  Define a simple
+-procedure @code{f} such that evaluating 
++@strong{@anchor{Exercise 3.8}Exercise 3.8:} Когда мы определили модель вычисления в @ref{1.1.3},
++мы сказали, что первый шаг при вычислении выражения — вычислить его подвыражения.  Но мы никогда
++не указывали порядок, в котором следует вычислять подвыражения (например, слева направо или
++справа налево).  Когда мы вводим присваивание, порядок, в котором вычисляются аргументы
++процедуры, может влиять на результат.  Определите простую процедуру @code{f} такую, что
++вычисление
+ 
+ @lisp
+ (+ (f 0) (f 1))
+ @end lisp
+ 
+ @noindent
+-will return 0 if
+-the arguments to @code{+} are evaluated from left to right but will return 1 if
+-the arguments are evaluated from right to left.
++вернёт 0, если аргументы @code{+} вычисляются слева направо, но вернёт 1, если аргументы
++вычисляются справа налево.
+ @end quotation
+ 
+ @node	3.2, 3.3, 3.1, Chapter 3
