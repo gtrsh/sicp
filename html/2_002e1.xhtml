@@ -31,70 +31,68 @@
 <p>
 Next: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="n" rel="next">2.2</a>, Prev: <a href="Chapter-2.xhtml#Chapter-2" accesskey="p" rel="prev">Chapter 2</a>, Up: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
-<a id="Introduction-to-Data-Abstraction"></a>
-<h3 class="section"><span class="secnum">2.1</span><span class="sectitle">Introduction to Data Abstraction</span></h3>
+<a id="Vvedenie-v-abstrakciiu-dannykh"></a>
+<h3 class="section"><span class="secnum">2.1</span><span class="sectitle">Введение в абстракцию данных</span></h3>
 
-<p>In <a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a>, we noted that a procedure used as an element in
-creating a more complex procedure could be regarded not only as a collection of
-particular operations but also as a procedural abstraction.  That is, the
-details of how the procedure was implemented could be suppressed, and the
-particular procedure itself could be replaced by any other procedure with the
-same overall behavior.  In other words, we could make an abstraction that would
-separate the way the procedure would be used from the details of how the
-procedure would be implemented in terms of more primitive procedures.  The
-analogous notion for compound data is called <a id="index-data-abstraction-1"></a>
-<em>data abstraction</em>.  Data
-abstraction is a methodology that enables us to isolate how a compound data
-object is used from the details of how it is constructed from more primitive
-data objects.
+<p>В <a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a> мы отметили, что процедуру, используемую как элемент при создании более
+сложной процедуры, можно рассматривать не только как набор конкретных операций, но и
+как процедурную абстракцию.  То есть подробности того, как процедура была реализована,
+можно было скрыть, а саму конкретную процедуру можно было заменить любой другой
+процедурой с тем же общим поведением.  Иными словами, мы могли сделать абстракцию,
+которая отделяла бы то, как процедура используется, от подробностей того, как
+процедура реализована в терминах более примитивных процедур.  Аналогичное понятие для
+составных данных называется <a id="index-abstrakciei-dannykh-1"></a>
+<em>абстракцией данных</em>.  Абстракция данных — это
+методология, которая позволяет нам изолировать то, как составной объект данных
+используется, от подробностей того, как он строится из более примитивных объектов
+данных.
 </p>
-<p>The basic idea of data abstraction is to structure the programs that are to use
-compound data objects so that they operate on “abstract data.” That is, our
-programs should use data in such a way as to make no assumptions about the data
-that are not strictly necessary for performing the task at hand.  At the same
-time, a “concrete” data representation is defined independent of the programs
-that use the data.  The interface between these two parts of our system will be
-a set of procedures, called <a id="index-selectors"></a>
-<em>selectors</em> and <a id="index-constructors"></a>
-<em>constructors</em>,
-that implement the abstract data in terms of the concrete representation.  To
-illustrate this technique, we will consider how to design a set of procedures
-for manipulating rational numbers.
+<p>Основная идея абстракции данных в том, чтобы строить программы, которые будут
+использовать составные объекты данных, так, чтобы они работали с «абстрактными
+данными».  То есть наши программы должны использовать данные таким образом, чтобы не
+делать о данных никаких предположений, кроме строго необходимых для выполнения текущей
+задачи.  В то же время «конкретное» представление данных определяется независимо от
+программ, которые используют данные.  Интерфейсом между этими двумя частями нашей
+системы будет набор процедур, называемых <a id="index-selektorami"></a>
+<em>селекторами</em> и
+<a id="index-konstruktorami"></a>
+<em>конструкторами</em>, которые реализуют абстрактные данные в терминах конкретного
+представления.  Чтобы проиллюстрировать этот приём, мы рассмотрим, как спроектировать
+набор процедур для манипулирования рациональными числами.
 </p>
 
 <a id="g_t2_002e1_002e1"></a>
-<a id="Example_003a-Arithmetic-Operations-for-Rational-Numbers"></a>
-<h4 class="subsection"><span class="secnum">2.1.1</span><span class="sectitle">Example: Arithmetic Operations for Rational Numbers</span></h4>
+<a id="Primer_003a-arifmeticheskie-operacii-nad-racionalxnymi-chislami"></a>
+<h4 class="subsection"><span class="secnum">2.1.1</span><span class="sectitle">Пример: арифметические операции над рациональными числами</span></h4>
 
-<p>Suppose we want to do arithmetic with rational numbers.  We want to be able to
-add, subtract, multiply, and divide them and to test whether two rational
-numbers are equal.
+<p>Предположим, мы хотим выполнять арифметику с рациональными числами.  Мы хотим уметь
+складывать, вычитать, умножать и делить их, а также проверять, равны ли два
+рациональных числа.
 </p>
-<p>Let us begin by assuming that we already have a way of constructing a rational
-number from a numerator and a denominator.  We also assume that, given a
-rational number, we have a way of extracting (or selecting) its numerator and
-its denominator.  Let us further assume that the constructor and selectors are
-available as procedures:
+<p>Начнём с предположения, что у нас уже есть способ построить рациональное число из
+числителя и знаменателя.  Мы также предполагаем, что для данного рационального числа
+у нас есть способ извлечь (или выбрать) его числитель и знаменатель.  Предположим
+далее, что конструктор и селекторы доступны как процедуры:
 </p>
 <ul>
-<li> <code>(make-rat ⟨<var>n</var>⟩ ⟨<var>d</var>⟩)</code> returns the rational number whose numerator 
-is the integer <code>⟨<var>n</var>⟩</code> and whose denominator is the integer 
+<li> <code>(make-rat ⟨<var>n</var>⟩ ⟨<var>d</var>⟩)</code> возвращает рациональное число, числитель
+которого — целое число <code>⟨<var>n</var>⟩</code>, а знаменатель — целое число
 <code>⟨<var>d</var>⟩</code>.
 
-</li><li> <code>(numer ⟨<var>x</var>⟩)</code> returns the numerator of the rational number 
+</li><li> <code>(numer ⟨<var>x</var>⟩)</code> возвращает числитель рационального числа
 <code>⟨<var>x</var>⟩</code>.
 
-</li><li> <code>(denom ⟨<var>x</var>⟩)</code> returns the denominator of the rational number 
+</li><li> <code>(denom ⟨<var>x</var>⟩)</code> возвращает знаменатель рационального числа
 <code>⟨<var>x</var>⟩</code>.
 
 </li></ul>
 
-<p>We are using here a powerful strategy of synthesis: <a id="index-wishful-thinking"></a>
-<em>wishful thinking</em>.
-We haven’t yet said how a rational number is represented, or how the procedures
-<code>numer</code>, <code>denom</code>, and <code>make-rat</code> should be implemented.  Even
-so, if we did have these three procedures, we could then add, subtract,
-multiply, divide, and test equality by using the following relations:
+<p>Мы пользуемся здесь мощной стратегией синтеза — <a id="index-myshleniem-o-zhelaemom"></a>
+<em>мышлением о желаемом</em>.  Мы
+ещё не сказали, как представлено рациональное число и как должны быть реализованы
+процедуры <code>numer</code>, <code>denom</code> и <code>make-rat</code>.  И всё же, если бы у нас были
+эти три процедуры, мы могли бы складывать, вычитать, умножать, делить и проверять
+равенство, пользуясь следующими соотношениями:
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
     <mtr>
@@ -430,7 +428,7 @@ multiply, divide, and test equality by using the following relations:
     </mtr>
   </mtable>
 </math>
-We can express these rules as procedures:
+Мы можем выразить эти правила как процедуры:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-rat x y</span><span class="clo">)</span><span class="pln">
@@ -455,22 +453,21 @@ We can express these rules as procedures:
   </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">))))</span></pre></div>
 
-<p>Now we have the operations on rational numbers defined in terms of the selector
-and constructor procedures <code>numer</code>, <code>denom</code>, and <code>make-rat</code>.
-But we haven’t yet defined these.  What we need is some way to glue together a
-numerator and a denominator to form a rational number.
+<p>Теперь у нас есть операции над рациональными числами, определённые через
+процедуры-селекторы и процедуру-конструктор <code>numer</code>, <code>denom</code> и
+<code>make-rat</code>.  Но мы их ещё не определили.  Нам нужен какой-то способ склеить
+числитель и знаменатель, образуя рациональное число.
 </p>
-<a id="Pairs"></a>
-<h5 class="subsubheading">Pairs</h5>
+<a id="Pary"></a>
+<h5 class="subsubheading">Пары</h5>
 
-<p>To enable us to implement the concrete level of our data abstraction, our
-language provides a compound structure called a <a id="index-pair"></a>
-<em>pair</em>, which can be
-constructed with the primitive procedure <code>cons</code>.  This procedure takes two
-arguments and returns a compound data object that contains the two arguments as
-parts.  Given a pair, we can extract the parts using the primitive procedures
-<code>car</code> and <code>cdr</code>.<a class="footnote_link" id="DOCF68" href="#FOOT68"><sup>68</sup></a> Thus, we can use <code>cons</code>, <code>car</code>, and
-<code>cdr</code> as follows:
+<p>Чтобы дать нам возможность реализовать конкретный уровень нашей абстракции данных,
+наш язык предоставляет составную структуру под названием <a id="index-para"></a>
+<em>пара</em>, которую можно
+построить примитивной процедурой <code>cons</code>.  Эта процедура принимает два аргумента и
+возвращает составной объект данных, содержащий два аргумента как части.  Имея пару, мы
+можем извлечь части примитивными процедурами <code>car</code> и <code>cdr</code>.<a class="footnote_link" id="DOCF68" href="#FOOT68"><sup>68</sup></a> Таким образом, мы можем использовать <code>cons</code>, <code>car</code> и <code>cdr</code>
+так:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
@@ -482,9 +479,9 @@ parts.  Given a pair, we can extract the parts using the primitive procedures
 </span><i><span class="lit">2</span></i>
 </pre></div>
 
-<p>Notice that a pair is a data object that can be given a name and manipulated,
-just like a primitive data object.  Moreover, <code>cons</code> can be used to form
-pairs whose elements are pairs, and so on:
+<p>Заметьте, что пара — это объект данных, которому можно дать имя и которым можно
+манипулировать, в точности как примитивным объектом данных.  Более того, <code>cons</code>
+можно использовать для образования пар, элементы которых — пары, и так далее:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
@@ -498,31 +495,31 @@ pairs whose elements are pairs, and so on:
 </span><i><span class="lit">3</span></i>
 </pre></div>
 
-<p>In <a href="2_002e2.xhtml#g_t2_002e2">2.2</a> we will see how this ability to combine pairs means that
-pairs can be used as general-purpose building blocks to create all sorts of
-complex data structures.  The single compound-data primitive <a id="index-pair-1"></a>
-<em>pair</em>,
-implemented by the procedures <code>cons</code>, <code>car</code>, and <code>cdr</code>, is the
-only glue we need.  Data objects constructed from pairs are called
-<a id="index-list_002dstructured"></a>
-<em>list-structured</em> data.
+<p>В <a href="2_002e2.xhtml#g_t2_002e2">2.2</a> мы увидим, как эта способность комбинировать пары означает, что пары можно
+использовать как универсальные строительные блоки для создания всевозможных сложных
+структур данных.  Единственный примитив составных данных — <a id="index-para-1"></a>
+<em>пара</em>, реализуемая
+процедурами <code>cons</code>, <code>car</code> и <code>cdr</code>, — это весь клей, который нам нужен.
+Объекты данных, построенные из пар, называются данными со <a id="index-spisochnoi"></a>
+структурой
+<em>списочной
+структурой</em>.
 </p>
-<a id="Representing-rational-numbers"></a>
-<h5 class="subsubheading">Representing rational numbers</h5>
+<a id="Predstavlenie-racionalxnykh-chisel"></a>
+<h5 class="subsubheading">Представление рациональных чисел</h5>
 
-<p>Pairs offer a natural way to complete the rational-number system.  Simply
-represent a rational number as a pair of two integers: a numerator and a
-denominator.  Then <code>make-rat</code>, <code>numer</code>, and <code>denom</code> are readily
-implemented as follows:<a class="footnote_link" id="DOCF69" href="#FOOT69"><sup>69</sup></a>
+<p>Пары дают естественный способ завершить систему рациональных чисел.  Просто представим
+рациональное число как пару двух целых чисел: числителя и знаменателя.  Тогда
+<code>make-rat</code>, <code>numer</code> и <code>denom</code> легко реализуются так:<a class="footnote_link" id="DOCF69" href="#FOOT69"><sup>69</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> n d</span><span class="clo">))</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">))</span></pre></div>
 
-<p>Also, in order to display the results of our computations, we can print
-rational numbers by printing the numerator, a slash, and the
-denominator:<a class="footnote_link" id="DOCF70" href="#FOOT70"><sup>70</sup></a>
+<p>Кроме того, чтобы отображать результаты наших вычислений, мы можем печатать
+рациональные числа, печатая числитель, косую черту и
+знаменатель:<a class="footnote_link" id="DOCF70" href="#FOOT70"><sup>70</sup></a>
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">print-rat x</span><span class="clo">)</span><span class="pln">
@@ -531,7 +528,7 @@ denominator:<a class="footnote_link" id="DOCF70" href="#FOOT70"><sup>70</sup></a
   </span><span class="opn">(</span><span class="pln">display </span><span class="str">"/"</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">display </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)))</span></pre></div>
 
-<p>Now we can try our rational-number procedures:
+<p>Теперь мы можем испытать наши процедуры для рациональных чисел:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> one-half </span><span class="opn">(</span><span class="pln">make-rat </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
@@ -552,12 +549,12 @@ denominator:<a class="footnote_link" id="DOCF70" href="#FOOT70"><sup>70</sup></a
 </span><i><span class="lit">6/9</span></i>
 </pre></div>
 
-<p>As the final example shows, our rational-number implementation does not reduce
-rational numbers to lowest terms.  We can remedy this by changing
-<code>make-rat</code>. If we have a <code>gcd</code> procedure like the one in 
-<a href="1_002e2.xhtml#g_t1_002e2_002e5">1.2.5</a> that produces the greatest common divisor of two integers, we can
-use <code>gcd</code> to reduce the numerator and the denominator to lowest terms
-before constructing the pair:
+<p>Как показывает последний пример, наша реализация рациональных чисел не приводит
+рациональные числа к несократимому виду.  Мы можем исправить это, изменив
+<code>make-rat</code>.  Если у нас есть процедура <code>gcd</code>, подобная той, что в
+<a href="1_002e2.xhtml#g_t1_002e2_002e5">1.2.5</a>, которая выдаёт наибольший общий делитель двух целых чисел, мы можем
+воспользоваться <code>gcd</code>, чтобы привести числитель и знаменатель к несократимому
+виду перед построением пары:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln">
@@ -565,7 +562,7 @@ before constructing the pair:
     </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> n g</span><span class="clo">)</span><span class="pln"> 
           </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> d g</span><span class="clo">))))</span></pre></div>
 
-<p>Now we have
+<p>Теперь мы имеем
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">print-rat 
@@ -573,71 +570,67 @@ before constructing the pair:
 </span><i><span class="lit">2/3</span></i>
 </pre></div>
 
-<p>as desired.  This modification was accomplished by changing the constructor
-<code>make-rat</code> without changing any of the procedures (such as <code>add-rat</code>
-and <code>mul-rat</code>) that implement the actual operations.
+<p>как и хотелось.  Эта модификация была достигнута изменением конструктора
+<code>make-rat</code> без изменения каких-либо процедур (таких как <code>add-rat</code> и
+<code>mul-rat</code>), реализующих собственно операции.
 </p>
 <blockquote>
-<p><strong><a id="Exercise-2_002e1"></a>Exercise 2.1:</strong> Define a better version of
-<code>make-rat</code> that handles both positive and negative arguments.
-<code>Make-rat</code> should normalize the sign so that if the rational number is
-positive, both the numerator and denominator are positive, and if the rational
-number is negative, only the numerator is negative.
+<p><strong><a id="Exercise-2_002e1"></a>Exercise 2.1:</strong> Определите лучшую версию <code>make-rat</code>,
+которая обрабатывает как положительные, так и отрицательные аргументы.  <code>Make-rat</code>
+должна нормализовать знак так, чтобы, если рациональное число положительно, и числитель,
+и знаменатель были положительны, а если рациональное число отрицательно, то
+отрицательным был только числитель.
 </p></blockquote>
 
 <a id="g_t2_002e1_002e2"></a>
-<a id="Abstraction-Barriers"></a>
-<h4 class="subsection"><span class="secnum">2.1.2</span><span class="sectitle">Abstraction Barriers</span></h4>
+<a id="Barxery-abstrakcii"></a>
+<h4 class="subsection"><span class="secnum">2.1.2</span><span class="sectitle">Барьеры абстракции</span></h4>
 
-<p>Before continuing with more examples of compound data and data abstraction, let
-us consider some of the issues raised by the rational-number example.  We
-defined the rational-number operations in terms of a constructor
-<code>make-rat</code> and selectors <code>numer</code> and <code>denom</code>.  In general, the
-underlying idea of data abstraction is to identify for each type of data object
-a basic set of operations in terms of which all manipulations of data objects
-of that type will be expressed, and then to use only those operations in
-manipulating the data.
+<p>Прежде чем продолжить с дальнейшими примерами составных данных и абстракции данных,
+рассмотрим некоторые вопросы, поднятые примером с рациональными числами.  Мы
+определили операции над рациональными числами через конструктор <code>make-rat</code> и
+селекторы <code>numer</code> и <code>denom</code>.  Вообще, основная идея абстракции данных в том,
+чтобы для каждого типа объектов данных определить базовый набор операций, в терминах
+которых будут выражены все манипуляции с объектами данных этого типа, и затем
+пользоваться только этими операциями при манипулировании данными.
 </p>
-<p>We can envision the structure of the rational-number system as shown in 
-<a href="#Figure-2_002e1">Figure 2.1</a>.  The horizontal lines represent <a id="index-abstraction-barriers-1"></a>
-<em>abstraction barriers</em> 
-that isolate different “levels” of the system.  At each level, the
-barrier separates the programs (above) that use the data abstraction from the
-programs (below) that implement the data abstraction.  Programs that use
-rational numbers manipulate them solely in terms of the procedures supplied
-“for public use” by the rational-number package: <code>add-rat</code>,
-<code>sub-rat</code>, <code>mul-rat</code>, <code>div-rat</code>, and <code>equal-rat?</code>. These,
-in turn, are implemented solely in terms of the constructor and selectors
-<code>make-rat</code>, <code>numer</code>, and <code>denom</code>, which themselves are
-implemented in terms of pairs.  The details of how pairs are implemented are
-irrelevant to the rest of the rational-number package so long as pairs can be
-manipulated by the use of <code>cons</code>, <code>car</code>, and <code>cdr</code>.  In effect,
-procedures at each level are the interfaces that define the abstraction
-barriers and connect the different levels.
+<p>Мы можем представить себе структуру системы рациональных чисел так, как показано на
+<a href="#Figure-2_002e1">Figure 2.1</a>.  Горизонтальные линии представляют <a id="index-barxery-abstrakcii-1"></a>
+<em>барьеры абстракции</em>,
+изолирующие различные «уровни» системы.  На каждом уровне барьер отделяет программы
+(выше), которые используют абстракцию данных, от программ (ниже), которые реализуют
+абстракцию данных.  Программы, использующие рациональные числа, манипулируют ими
+исключительно в терминах процедур, предоставляемых «для общего пользования» пакетом
+рациональных чисел: <code>add-rat</code>, <code>sub-rat</code>, <code>mul-rat</code>, <code>div-rat</code> и
+<code>equal-rat?</code>.  Те, в свою очередь, реализованы исключительно в терминах
+конструктора и селекторов <code>make-rat</code>, <code>numer</code> и <code>denom</code>, которые сами
+реализованы в терминах пар.  Подробности того, как реализованы пары, не важны для
+остальной части пакета рациональных чисел, лишь бы парами можно было манипулировать с
+помощью <code>cons</code>, <code>car</code> и <code>cdr</code>.  По сути, процедуры на каждом уровне —
+это интерфейсы, которые определяют барьеры абстракции и связывают различные уровни.
 </p>
 <figure class="float">
 <a id="Figure-2_002e1"></a>
 <object style="width: 48.87ex; height: 38.08ex;" data="fig/chap2/Fig2.1d.std.svg" type="image/svg+xml">SVG</object>
 
 <figcaption class="float-caption">
-<p><strong>Figure 2.1:</strong> Data-abstraction barriers in the rational-number package.</p>
+<p><strong>Figure 2.1:</strong> Барьеры абстракции данных в пакете рациональных чисел.</p>
 </figcaption>
 </figure>
 
-<p>This simple idea has many advantages.  One advantage is that it makes programs
-much easier to maintain and to modify.  Any complex data structure can be
-represented in a variety of ways with the primitive data structures provided by
-a programming language.  Of course, the choice of representation influences the
-programs that operate on it; thus, if the representation were to be changed at
-some later time, all such programs might have to be modified accordingly.  This
-task could be time-consuming and expensive in the case of large programs unless
-the dependence on the representation were to be confined by design to a very
-few program modules.
+<p>У этой простой идеи много достоинств.  Одно достоинство в том, что она делает
+программы гораздо легче сопровождать и изменять.  Любую сложную структуру данных можно
+представить множеством способов с помощью примитивных структур данных,
+предоставляемых языком программирования.  Конечно, выбор представления влияет на
+программы, которые с ним работают; так, если бы представление позднее изменили, все
+такие программы, возможно, пришлось бы соответственно изменить.  Эта задача могла бы
+оказаться трудоёмкой и дорогой в случае больших программ, если бы зависимость от
+представления не была по замыслу ограничена очень немногими модулями программы.
 </p>
-<p>For example, an alternate way to address the problem of reducing rational
-numbers to lowest terms is to perform the reduction whenever we access the
-parts of a rational number, rather than when we construct it.  This leads to
-different constructor and selector procedures:
+<p>Например, альтернативный способ решить задачу приведения рациональных чисел к
+несократимому виду — выполнять сокращение всякий раз, когда мы обращаемся к частям
+рационального числа, а не когда мы его строим.  Это приводит к другим процедурам
+конструктора и селекторов:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln">
@@ -651,41 +644,38 @@ different constructor and selector procedures:
   </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">g </span><span class="opn">(</span><span class="pln">gcd </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">))))</span><span class="pln">
     </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> g</span><span class="clo">)))</span></pre></div>
 
-<p>The difference between this implementation and the previous one lies in when we
-compute the <code>gcd</code>.  If in our typical use of rational numbers we access
-the numerators and denominators of the same rational numbers many times, it
-would be preferable to compute the <code>gcd</code> when the rational numbers are
-constructed.  If not, we may be better off waiting until access time to compute
-the <code>gcd</code>.  In any case, when we change from one representation to the
-other, the procedures <code>add-rat</code>, <code>sub-rat</code>, and so on do not have to
-be modified at all.
+<p>Различие между этой реализацией и предыдущей в том, когда мы вычисляем <code>gcd</code>.
+Если при нашем типичном использовании рациональных чисел мы обращаемся к числителям и
+знаменателям одних и тех же рациональных чисел много раз, было бы предпочтительнее
+вычислять <code>gcd</code> при построении рациональных чисел.  Если нет, нам, возможно,
+лучше подождать до времени обращения, чтобы вычислить <code>gcd</code>.  В любом случае,
+когда мы переходим от одного представления к другому, процедуры <code>add-rat</code>,
+<code>sub-rat</code> и так далее вообще не нужно изменять.
 </p>
-<p>Constraining the dependence on the representation to a few interface procedures
-helps us design programs as well as modify them, because it allows us to
-maintain the flexibility to consider alternate implementations.  To continue
-with our simple example, suppose we are designing a rational-number package and
-we can’t decide initially whether to perform the <code>gcd</code> at construction
-time or at selection time.  The data-abstraction methodology gives us a way to
-defer that decision without losing the ability to make progress on the rest of
-the system.
+<p>Ограничение зависимости от представления немногими интерфейсными процедурами помогает
+нам как проектировать программы, так и изменять их, потому что позволяет нам сохранять
+гибкость в рассмотрении альтернативных реализаций.  Продолжая наш простой пример,
+предположим, что мы проектируем пакет рациональных чисел и поначалу не можем решить,
+выполнять ли <code>gcd</code> во время построения или во время выбора.  Методология
+абстракции данных даёт нам способ отложить это решение, не теряя способности
+продвигаться в остальной части системы.
 </p>
 <blockquote>
-<p><strong><a id="Exercise-2_002e2"></a>Exercise 2.2:</strong> Consider the problem of
-representing line segments in a plane.  Each segment is represented as a pair
-of points: a starting point and an ending point.  Define a constructor
-<code>make-segment</code> and selectors <code>start-segment</code> and <code>end-segment</code>
-that define the representation of segments in terms of points.  Furthermore, a
-point can be represented as a pair of numbers: the <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-2_002e2"></a>Exercise 2.2:</strong> Рассмотрите задачу представления отрезков
+на плоскости.  Каждый отрезок представляется как пара точек: начальная точка и
+конечная точка.  Определите конструктор <code>make-segment</code> и селекторы
+<code>start-segment</code> и <code>end-segment</code>, задающие представление отрезков в терминах
+точек.  Кроме того, точку можно представить как пару чисел: координату <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math> coordinate and the
-<math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и
+координату <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
-</math> coordinate.  Accordingly, specify a constructor <code>make-point</code> and
-selectors <code>x-point</code> and <code>y-point</code> that define this representation.
-Finally, using your selectors and constructors, define a procedure
-<code>midpoint-segment</code> that takes a line segment as argument and returns its
-midpoint (the point whose coordinates are the average of the coordinates of the
-endpoints).  To try your procedures, you’ll need a way to print points:
+</math>.  Соответственно, задайте конструктор <code>make-point</code> и селекторы
+<code>x-point</code> и <code>y-point</code>, определяющие это представление.  Наконец, пользуясь
+своими селекторами и конструкторами, определите процедуру <code>midpoint-segment</code>,
+которая принимает отрезок как аргумент и возвращает его среднюю точку (точку,
+координаты которой — средние координат концов).  Чтобы испытать свои процедуры, вам
+понадобится способ печатать точки:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">print-point p</span><span class="clo">)</span><span class="pln">
@@ -698,37 +688,35 @@ endpoints).  To try your procedures, you’ll need a way to print points:
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e3"></a>Exercise 2.3:</strong> Implement a representation for
-rectangles in a plane.  (Hint: You may want to make use of <a href="#Exercise-2_002e2">Exercise 2.2</a>.)
-In terms of your constructors and selectors, create procedures that compute the
-perimeter and the area of a given rectangle.  Now implement a different
-representation for rectangles.  Can you design your system with suitable
-abstraction barriers, so that the same perimeter and area procedures will work
-using either representation?
+<p><strong><a id="Exercise-2_002e3"></a>Exercise 2.3:</strong> Реализуйте представление прямоугольников
+на плоскости.  (Подсказка: вам может пригодиться <a href="#Exercise-2_002e2">Exercise 2.2</a>.)  В терминах своих
+конструкторов и селекторов создайте процедуры, вычисляющие периметр и площадь данного
+прямоугольника.  Теперь реализуйте другое представление прямоугольников.  Можете ли вы
+спроектировать свою систему с подходящими барьерами абстракции так, чтобы те же
+процедуры периметра и площади работали при любом из представлений?
 </p></blockquote>
 
 <a id="g_t2_002e1_002e3"></a>
-<a id="What-Is-Meant-by-Data_003f"></a>
-<h4 class="subsection"><span class="secnum">2.1.3</span><span class="sectitle">What Is Meant by Data?</span></h4>
+<a id="Chto-ponimaetsya-pod-dannymi_003f"></a>
+<h4 class="subsection"><span class="secnum">2.1.3</span><span class="sectitle">Что понимается под данными?</span></h4>
 
-<p>We began the rational-number implementation in <a href="#g_t2_002e1_002e1">2.1.1</a> by
-implementing the rational-number operations <code>add-rat</code>, <code>sub-rat</code>, and
-so on in terms of three unspecified procedures: <code>make-rat</code>, <code>numer</code>,
-and <code>denom</code>.  At that point, we could think of the operations as being
-defined in terms of data objects—numerators, denominators, and rational
-numbers—whose behavior was specified by the latter three procedures.
+<p>Мы начали реализацию рациональных чисел в <a href="#g_t2_002e1_002e1">2.1.1</a> с реализации операций над
+рациональными числами <code>add-rat</code>, <code>sub-rat</code> и так далее в терминах трёх
+неуказанных процедур: <code>make-rat</code>, <code>numer</code> и <code>denom</code>.  В тот момент мы
+могли мыслить операции как определённые в терминах объектов данных — числителей,
+знаменателей и рациональных чисел, — поведение которых задавалось последними тремя
+процедурами.
 </p>
-<p>But exactly what is meant by <a id="index-data"></a>
-<em>data</em>?  It is not enough to say
-“whatever is implemented by the given selectors and constructors.”  Clearly,
-not every arbitrary set of three procedures can serve as an appropriate basis
-for the rational-number implementation.  We need to guarantee that, if we
-construct a rational number <code>x</code> from a pair of integers <code>n</code> and
-<code>d</code>, then extracting the <code>numer</code> and the <code>denom</code> of <code>x</code> and
-dividing them should yield the same result as dividing <code>n</code> by <code>d</code>.
-In other words, <code>make-rat</code>, <code>numer</code>, and <code>denom</code> must satisfy
-the condition that, for any integer <code>n</code> and any non-zero integer <code>d</code>,
-if <code>x</code> is <code>(make-rat n d)</code>, then
+<p>Но что же именно понимается под <a id="index-dannymi"></a>
+<em>данными</em>?  Недостаточно сказать «всё, что
+реализуется данными селекторами и конструкторами».  Ясно, что не всякий произвольный
+набор из трёх процедур может служить подходящей основой для реализации рациональных
+чисел.  Нам нужно гарантировать, что если мы строим рациональное число <code>x</code> из
+пары целых чисел <code>n</code> и <code>d</code>, то извлечение <code>numer</code> и <code>denom</code> числа
+<code>x</code> и их деление должны давать тот же результат, что и деление <code>n</code> на
+<code>d</code>.  Иными словами, <code>make-rat</code>, <code>numer</code> и <code>denom</code> должны
+удовлетворять условию, что для любого целого <code>n</code> и любого ненулевого целого
+<code>d</code>, если <code>x</code> есть <code>(make-rat n d)</code>, то
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
     <mfrac>
@@ -747,29 +735,27 @@ if <code>x</code> is <code>(make-rat n d)</code>, then
     <mo>.</mo>
   </mrow>
 </math>
-In fact, this is the only condition <code>make-rat</code>, <code>numer</code>, and
-<code>denom</code> must fulfill in order to form a suitable basis for a
-rational-number representation.  In general, we can think of data as defined by
-some collection of selectors and constructors, together with specified
-conditions that these procedures must fulfill in order to be a valid
-representation.<a class="footnote_link" id="DOCF71" href="#FOOT71"><sup>71</sup></a>
+В самом деле, это единственное условие, которому <code>make-rat</code>, <code>numer</code> и
+<code>denom</code> должны удовлетворять, чтобы образовать подходящую основу для представления
+рациональных чисел.  Вообще, мы можем мыслить данные как определяемые некоторым
+набором селекторов и конструкторов вместе с заданными условиями, которым эти процедуры
+должны удовлетворять, чтобы быть допустимым представлением.<a class="footnote_link" id="DOCF71" href="#FOOT71"><sup>71</sup></a>
 </p>
-<p>This point of view can serve to define not only “high-level” data objects,
-such as rational numbers, but lower-level objects as well.  Consider the notion
-of a pair, which we used in order to define our rational numbers.  We never
-actually said what a pair was, only that the language supplied procedures
-<code>cons</code>, <code>car</code>, and <code>cdr</code> for operating on pairs.  But the only
-thing we need to know about these three operations is that if we glue two
-objects together using <code>cons</code> we can retrieve the objects using <code>car</code>
-and <code>cdr</code>.  That is, the operations satisfy the condition that, for any
-objects <code>x</code> and <code>y</code>, if <code>z</code> is <code>(cons x y)</code> then <code>(car
-z)</code> is <code>x</code> and <code>(cdr z)</code> is <code>y</code>.  Indeed, we mentioned that
-these three procedures are included as primitives in our language.  However,
-any triple of procedures that satisfies the above condition can be used as the
-basis for implementing pairs.  This point is illustrated strikingly by the fact
-that we could implement <code>cons</code>, <code>car</code>, and <code>cdr</code> without using
-any data structures at all but only using procedures.  Here are the
-definitions:
+<p>Эта точка зрения может служить для определения не только «высокоуровневых» объектов
+данных, таких как рациональные числа, но и объектов более низкого уровня.  Рассмотрим
+понятие пары, которое мы использовали, чтобы определить наши рациональные числа.  Мы
+на самом деле никогда не говорили, что такое пара, — только что язык предоставляет
+процедуры <code>cons</code>, <code>car</code> и <code>cdr</code> для работы с парами.  Но единственное,
+что нам нужно знать об этих трёх операциях, — это что если мы склеиваем два объекта с
+помощью <code>cons</code>, то можем извлечь объекты с помощью <code>car</code> и <code>cdr</code>.  То
+есть операции удовлетворяют условию, что для любых объектов <code>x</code> и <code>y</code>, если
+<code>z</code> есть <code>(cons x y)</code>, то <code>(car z)</code> есть <code>x</code>, а <code>(cdr z)</code> есть
+<code>y</code>.  Действительно, мы упомянули, что эти три процедуры включены в наш язык как
+примитивы.  Однако любая тройка процедур, удовлетворяющая приведённому выше условию,
+может быть использована как основа для реализации пар.  Этот момент поразительно
+иллюстрируется тем фактом, что мы могли бы реализовать <code>cons</code>, <code>car</code> и
+<code>cdr</code> вообще без использования каких-либо структур данных, а только с помощью
+процедур.  Вот определения:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln">
@@ -784,42 +770,41 @@ definitions:
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z </span><span class="lit">1</span><span class="clo">))</span></pre></div>
 
-<p>This use of procedures corresponds to nothing like our intuitive notion of what
-data should be.  Nevertheless, all we need to do to show that this is a valid
-way to represent pairs is to verify that these procedures satisfy the condition
-given above.
+<p>Это использование процедур не соответствует ничему похожему на наше интуитивное
+понятие о том, чем должны быть данные.  Тем не менее всё, что нам нужно сделать, чтобы
+показать, что это допустимый способ представления пар, — это проверить, что эти
+процедуры удовлетворяют приведённому выше условию.
 </p>
-<p>The subtle point to notice is that the value returned by <code>(cons x y)</code> is a
-procedure—namely the internally defined procedure <code>dispatch</code>, which
-takes one argument and returns either <code>x</code> or <code>y</code> depending on whether
-the argument is 0 or 1.  Correspondingly, <code>(car z)</code> is defined to apply
-<code>z</code> to 0.  Hence, if <code>z</code> is the procedure formed by <code>(cons x
-y)</code>, then <code>z</code> applied to 0 will yield <code>x</code>. Thus, we have shown that
-<code>(car (cons x y))</code> yields <code>x</code>, as desired.  Similarly, <code>(cdr
-(cons x y))</code> applies the procedure returned by <code>(cons x y)</code> to 1, which
-returns <code>y</code>.  Therefore, this procedural implementation of pairs is a
-valid implementation, and if we access pairs using only <code>cons</code>,
-<code>car</code>, and <code>cdr</code> we cannot distinguish this implementation from one
-that uses “real” data structures.
+<p>Тонкий момент, который стоит заметить, в том, что значение, возвращаемое
+<code>(cons x y)</code>, — это процедура, а именно внутренне определённая процедура
+<code>dispatch</code>, которая принимает один аргумент и возвращает либо <code>x</code>, либо
+<code>y</code> в зависимости от того, равен ли аргумент 0 или 1.  Соответственно,
+<code>(car z)</code> определена как применение <code>z</code> к 0.  Следовательно, если <code>z</code>
+— процедура, образованная <code>(cons x y)</code>, то <code>z</code>, применённая к 0, даст
+<code>x</code>.  Тем самым мы показали, что <code>(car (cons x y))</code> даёт <code>x</code>, как и
+требовалось.  Аналогично <code>(cdr (cons x y))</code> применяет процедуру, возвращённую
+<code>(cons x y)</code>, к 1, что возвращает <code>y</code>.  Поэтому эта процедурная реализация
+пар — допустимая реализация, и если мы обращаемся к парам, используя только
+<code>cons</code>, <code>car</code> и <code>cdr</code>, мы не можем отличить эту реализацию от той, что
+использует «настоящие» структуры данных.
 </p>
-<p>The point of exhibiting the procedural representation of pairs is not that our
-language works this way (Scheme, and Lisp systems in general, implement pairs
-directly, for efficiency reasons) but that it could work this way.  The
-procedural representation, although obscure, is a perfectly adequate way to
-represent pairs, since it fulfills the only conditions that pairs need to
-fulfill.  This example also demonstrates that the ability to manipulate
-procedures as objects automatically provides the ability to represent compound
-data.  This may seem a curiosity now, but procedural representations of data
-will play a central role in our programming repertoire.  This style of
-programming is often called <a id="index-message-passing"></a>
-<em>message passing</em>, and we will be using it
-as a basic tool in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> when we address the issues of modeling and
-simulation.
+<p>Смысл демонстрации процедурного представления пар не в том, что наш язык работает
+именно так (Scheme и Lisp-системы в целом реализуют пары напрямую, по соображениям
+эффективности), а в том, что он <em>мог бы</em> так работать.  Процедурное
+представление, хотя и неочевидное, — вполне адекватный способ представления пар,
+поскольку оно выполняет единственные условия, которым пары должны удовлетворять.  Этот
+пример также показывает, что способность манипулировать процедурами как объектами
+автоматически даёт способность представлять составные данные.  Сейчас это может
+показаться курьёзом, но процедурные представления данных будут играть центральную роль
+в нашем программистском репертуаре.  Этот стиль программирования часто называют
+<a id="index-peredachei-soobshchenii"></a>
+<em>передачей сообщений</em>, и мы будем использовать его как основной инструмент в
+<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>, когда обратимся к вопросам моделирования и имитации.
 </p>
 <blockquote>
-<p><strong><a id="Exercise-2_002e4"></a>Exercise 2.4:</strong> Here is an alternative procedural
-representation of pairs.  For this representation, verify that <code>(car (cons
-x y))</code> yields <code>x</code> for any objects <code>x</code> and <code>y</code>.
+<p><strong><a id="Exercise-2_002e4"></a>Exercise 2.4:</strong> Вот альтернативное процедурное
+представление пар.  Для этого представления убедитесь, что <code>(car (cons x y))</code>
+даёт <code>x</code> для любых объектов <code>x</code> и <code>y</code>.
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> 
@@ -828,18 +813,19 @@ x y))</code> yields <code>x</code> for any objects <code>x</code> and <code>y</c
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> 
   </span><span class="opn">(</span><span class="pln">z </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p q</span><span class="clo">)</span><span class="pln"> p</span><span class="clo">)))</span></pre></div>
 
-<p>What is the corresponding definition of <code>cdr</code>? (Hint: To verify that this
-works, make use of the substitution model of <a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>.)
+<p>Каково соответствующее определение <code>cdr</code>?  (Подсказка: чтобы проверить, что это
+работает, воспользуйтесь подстановочной моделью из <a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>.)
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e5"></a>Exercise 2.5:</strong> Show that we can represent pairs of
-nonnegative integers using only numbers and arithmetic operations if we
-represent the pair <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-2_002e5"></a>Exercise 2.5:</strong> Покажите, что мы можем представлять пары
+неотрицательных целых чисел, используя только числа и арифметические операции, если
+представим пару <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
-</math> as the integer that is the product <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> как целое число, являющееся произведением
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <msup>
       <mn>2</mn>
@@ -850,17 +836,15 @@ represent the pair <math xmlns="http://www.w3.org/1998/Math/MathML">
       <mi>b</mi>
     </msup>
   </mrow>
-</math>.
-Give the corresponding definitions of the procedures <code>cons</code>,
-<code>car</code>, and <code>cdr</code>.
+</math>.  Дайте соответствующие определения процедур <code>cons</code>, <code>car</code>
+и <code>cdr</code>.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e6"></a>Exercise 2.6:</strong> In case representing pairs as
-procedures wasn’t mind-boggling enough, consider that, in a language that can
-manipulate procedures, we can get by without numbers (at least insofar as
-nonnegative integers are concerned) by implementing 0 and the operation of
-adding 1 as
+<p><strong><a id="Exercise-2_002e6"></a>Exercise 2.6:</strong> Если представления пар процедурами было
+недостаточно умопомрачительно, учтите, что в языке, который может манипулировать
+процедурами, мы можем обойтись без чисел (по крайней мере, в том, что касается
+неотрицательных целых чисел), реализовав 0 и операцию прибавления 1 как
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> zero </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)))</span><span class="pln">
@@ -868,45 +852,45 @@ adding 1 as
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-1 n</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f </span><span class="opn">((</span><span class="pln">n f</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)))))</span></pre></div>
 
-<p>This representation is known as <a id="index-Church-numerals"></a>
-<em>Church numerals</em>, after its inventor,
-Alonzo Church, the logician who invented the λ-calculus.
+<p>Это представление известно как <a id="index-numeraly-Chiorcha"></a>
+<em>нумералы Чёрча</em>, по имени его изобретателя
+Алонзо Чёрча, логика, который изобрёл λ-исчисление.
 </p>
-<p>Define <code>one</code> and <code>two</code> directly (not in terms of <code>zero</code> and
-<code>add-1</code>).  (Hint: Use substitution to evaluate <code>(add-1 zero)</code>).  Give
-a direct definition of the addition procedure <code>+</code> (not in terms of
-repeated application of <code>add-1</code>).
+<p>Определите <code>one</code> и <code>two</code> напрямую (не в терминах <code>zero</code> и
+<code>add-1</code>).  (Подсказка: воспользуйтесь подстановкой, чтобы вычислить
+<code>(add-1 zero)</code>.)  Дайте прямое определение процедуры сложения <code>+</code> (не в
+терминах повторного применения <code>add-1</code>).
 </p></blockquote>
 
 <a id="g_t2_002e1_002e4"></a>
-<a id="Extended-Exercise_003a-Interval-Arithmetic"></a>
-<h4 class="subsection"><span class="secnum">2.1.4</span><span class="sectitle">Extended Exercise: Interval Arithmetic</span></h4>
+<a id="Razviornutoe-uprazhnenie_003a-intervalxnaya-arifmetika"></a>
+<h4 class="subsection"><span class="secnum">2.1.4</span><span class="sectitle">Развёрнутое упражнение: интервальная арифметика</span></h4>
 
-<p>Alyssa P. Hacker is designing a system to help people solve engineering
-problems.  One feature she wants to provide in her system is the ability to
-manipulate inexact quantities (such as measured parameters of physical devices)
-with known precision, so that when computations are done with such approximate
-quantities the results will be numbers of known precision.
+<p>Алисса П. Хакер проектирует систему, помогающую людям решать инженерные задачи.  Одна
+из возможностей, которую она хочет предоставить в своей системе, — способность
+манипулировать неточными величинами (такими как измеренные параметры физических
+устройств) с известной точностью, чтобы, когда вычисления выполняются с такими
+приближёнными величинами, результаты были числами известной точности.
 </p>
-<p>Electrical engineers will be using Alyssa’s system to compute electrical
-quantities.  It is sometimes necessary for them to compute the value of a
-parallel equivalent resistance <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Инженеры-электрики будут пользоваться системой Алиссы, чтобы вычислять электрические
+величины.  Им иногда необходимо вычислять значение эквивалентного сопротивления
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>R</mi>
     <mi>p</mi>
   </msub>
-</math> of two resistors <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> при параллельном соединении двух резисторов <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>R</mi>
     <mn>1</mn>
   </msub>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <msub>
     <mi>R</mi>
     <mn>2</mn>
   </msub>
-</math>
-using the formula
+</math> по
+формуле
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <msub>
     <mi>R</mi>
@@ -943,30 +927,28 @@ using the formula
     <mo>.</mo>
   </mrow>
 </math>
-Resistance values are usually known only up to some tolerance guaranteed by the
-manufacturer of the resistor.  For example, if you buy a resistor labeled “6.8
-ohms with 10% tolerance” you can only be sure that the resistor has a
-resistance between 6.8 <math xmlns="http://www.w3.org/1998/Math/MathML">
+Значения сопротивлений обычно известны лишь с точностью до некоторого допуска,
+гарантированного изготовителем резистора.  Например, если вы покупаете резистор с
+маркировкой «6,8 ома с допуском 10%», вы можете быть уверены лишь в том, что
+сопротивление резистора лежит между 6,8 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mo>−<!-- − --></mo>
-</math> 0.68 = 6.12 and 6.8 + 0.68 = 7.48 ohms.  Thus, if you
-have a 6.8-ohm 10% resistor in parallel with a 4.7-ohm 5% resistor, the
-resistance of the combination can range from about 2.58 ohms (if the two
-resistors are at the lower bounds) to about 2.97 ohms (if the two resistors are
-at the upper bounds).
+</math> 0,68 = 6,12 и 6,8 + 0,68 = 7,48 ома.
+Таким образом, если у вас есть резистор 6,8 ома с допуском 10%, соединённый
+параллельно с резистором 4,7 ома с допуском 5%, сопротивление соединения может
+варьироваться примерно от 2,58 ома (если оба резистора на нижних границах) примерно до
+2,97 ома (если оба резистора на верхних границах).
 </p>
-<p>Alyssa’s idea is to implement “interval arithmetic” as a set of arithmetic
-operations for combining “intervals” (objects that represent the range of
-possible values of an inexact quantity).  The result of adding, subtracting,
-multiplying, or dividing two intervals is itself an interval, representing the
-range of the result.
+<p>Идея Алиссы — реализовать «интервальную арифметику» как набор арифметических операций
+для комбинирования «интервалов» (объектов, представляющих диапазон возможных значений
+неточной величины).  Результат сложения, вычитания, умножения или деления двух
+интервалов сам является интервалом, представляющим диапазон результата.
 </p>
-<p>Alyssa postulates the existence of an abstract object called an “interval”
-that has two endpoints: a lower bound and an upper bound.  She also presumes
-that, given the endpoints of an interval, she can construct the interval using
-the data constructor <code>make-interval</code>.  Alyssa first writes a procedure for
-adding two intervals.  She reasons that the minimum value the sum could be is
-the sum of the two lower bounds and the maximum value it could be is the sum of
-the two upper bounds:
+<p>Алисса постулирует существование абстрактного объекта под названием «интервал», у
+которого есть два конца: нижняя граница и верхняя граница.  Она также предполагает,
+что, имея концы интервала, она может построить интервал с помощью конструктора данных
+<code>make-interval</code>.  Сначала Алисса пишет процедуру для сложения двух интервалов.
+Она рассуждает, что минимальное значение суммы — это сумма двух нижних границ, а
+максимальное значение — сумма двух верхних границ:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-interval x y</span><span class="clo">)</span><span class="pln">
@@ -975,10 +957,9 @@ the two upper bounds:
                  </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">upper-bound x</span><span class="clo">)</span><span class="pln"> 
                     </span><span class="opn">(</span><span class="pln">upper-bound y</span><span class="clo">))))</span></pre></div>
 
-<p>Alyssa also works out the product of two intervals by finding the minimum and
-the maximum of the products of the bounds and using them as the bounds of the
-resulting interval.  (<code>Min</code> and <code>max</code> are primitives that find the
-minimum or maximum of any number of arguments.)
+<p>Алисса также вычисляет произведение двух интервалов, находя минимум и максимум
+произведений границ и используя их как границы получающегося интервала.  (<code>Min</code>
+и <code>max</code> — примитивы, находящие минимум или максимум любого числа аргументов.)
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-interval x y</span><span class="clo">)</span><span class="pln">
@@ -993,9 +974,9 @@ minimum or maximum of any number of arguments.)
     </span><span class="opn">(</span><span class="pln">make-interval </span><span class="opn">(</span><span class="pln">min p1 p2 p3 p4</span><span class="clo">)</span><span class="pln">
                    </span><span class="opn">(</span><span class="pln">max p1 p2 p3 p4</span><span class="clo">))))</span></pre></div>
 
-<p>To divide two intervals, Alyssa multiplies the first by the reciprocal of the
-second.  Note that the bounds of the reciprocal interval are the reciprocal of
-the upper bound and the reciprocal of the lower bound, in that order.
+<p>Чтобы поделить два интервала, Алисса умножает первый на обратную величину второго.
+Заметьте, что границы обратного интервала — это обратная величина верхней границы и
+обратная величина нижней границы, именно в этом порядке.
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">div-interval x y</span><span class="clo">)</span><span class="pln">
@@ -1005,58 +986,55 @@ the upper bound and the reciprocal of the lower bound, in that order.
                  </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1.0</span><span class="pln"> </span><span class="opn">(</span><span class="pln">lower-bound y</span><span class="clo">)))))</span></pre></div>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e7"></a>Exercise 2.7:</strong> Alyssa’s program is incomplete
-because she has not specified the implementation of the interval abstraction.
-Here is a definition of the interval constructor:
+<p><strong><a id="Exercise-2_002e7"></a>Exercise 2.7:</strong> Программа Алиссы неполна, поскольку она не
+указала реализацию абстракции интервала.  Вот определение конструктора интервала:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-interval a b</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> a b</span><span class="clo">))</span></pre></div>
 
-<p>Define selectors <code>upper-bound</code> and <code>lower-bound</code> to complete the
-implementation.
+<p>Определите селекторы <code>upper-bound</code> и <code>lower-bound</code>, чтобы завершить
+реализацию.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e8"></a>Exercise 2.8:</strong> Using reasoning analogous to
-Alyssa’s, describe how the difference of two intervals may be computed.  Define
-a corresponding subtraction procedure, called <code>sub-interval</code>.
+<p><strong><a id="Exercise-2_002e8"></a>Exercise 2.8:</strong> Пользуясь рассуждением, аналогичным
+рассуждению Алиссы, опишите, как можно вычислить разность двух интервалов.  Определите
+соответствующую процедуру вычитания под названием <code>sub-interval</code>.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e9"></a>Exercise 2.9:</strong> The <a id="index-width"></a>
-<em>width</em> of an interval
-is half of the difference between its upper and lower bounds.  The width is a
-measure of the uncertainty of the number specified by the interval.  For some
-arithmetic operations the width of the result of combining two intervals is a
-function only of the widths of the argument intervals, whereas for others the
-width of the combination is not a function of the widths of the argument
-intervals.  Show that the width of the sum (or difference) of two intervals is
-a function only of the widths of the intervals being added (or subtracted).
-Give examples to show that this is not true for multiplication or division.
+<p><strong><a id="Exercise-2_002e9"></a>Exercise 2.9:</strong> <a id="index-Shirina"></a>
+<em>Ширина</em> интервала — это половина
+разности его верхней и нижней границ.  Ширина — это мера неопределённости числа,
+задаваемого интервалом.  Для некоторых арифметических операций ширина результата
+комбинирования двух интервалов является функцией только ширин интервалов-аргументов,
+тогда как для других ширина комбинации не является функцией ширин
+интервалов-аргументов.  Покажите, что ширина суммы (или разности) двух интервалов
+является функцией только ширин складываемых (или вычитаемых) интервалов.  Приведите
+примеры, показывающие, что это неверно для умножения или деления.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e10"></a>Exercise 2.10:</strong> Ben Bitdiddle, an expert systems
-programmer, looks over Alyssa’s shoulder and comments that it is not clear what
-it means to divide by an interval that spans zero.  Modify Alyssa’s code to
-check for this condition and to signal an error if it occurs.
+<p><strong><a id="Exercise-2_002e10"></a>Exercise 2.10:</strong> Бен Битдидл, опытный системный
+программист, заглядывает Алиссе через плечо и замечает, что неясно, что значит делить
+на интервал, охватывающий ноль.  Измените код Алиссы, чтобы проверять это условие и
+сигнализировать об ошибке, если оно возникает.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e11"></a>Exercise 2.11:</strong> In passing, Ben also cryptically
-comments: “By testing the signs of the endpoints of the intervals, it is
-possible to break <code>mul-interval</code> into nine cases, only one of which
-requires more than two multiplications.”  Rewrite this procedure using Ben’s
-suggestion.
+<p><strong><a id="Exercise-2_002e11"></a>Exercise 2.11:</strong> Между делом Бен также загадочно
+замечает: «Проверяя знаки концов интервалов, можно разбить <code>mul-interval</code> на
+девять случаев, лишь один из которых требует более двух умножений».  Перепишите эту
+процедуру, воспользовавшись предложением Бена.
 </p>
-<p>After debugging her program, Alyssa shows it to a potential user, who complains
-that her program solves the wrong problem.  He wants a program that can deal
-with numbers represented as a center value and an additive tolerance; for
-example, he wants to work with intervals such as 3.5 <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Отладив свою программу, Алисса показывает её потенциальному пользователю, который
+жалуется, что её программа решает не ту задачу.  Ему нужна программа, которая может
+иметь дело с числами, представленными как центральное значение и аддитивный допуск;
+например, он хочет работать с интервалами вроде 3,5 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mo>±<!-- ± --></mo>
-</math> 0.15 rather than
-[3.35, 3.65].  Alyssa returns to her desk and fixes this problem by supplying
-an alternate constructor and alternate selectors:
+</math> 0,15, а не [3,35, 3,65].
+Алисса возвращается к своему столу и устраняет эту проблему, предоставив
+альтернативный конструктор и альтернативные селекторы:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-center-width c w</span><span class="clo">)</span><span class="pln">
@@ -1072,33 +1050,30 @@ an alternate constructor and alternate selectors:
         </span><span class="opn">(</span><span class="pln">lower-bound i</span><span class="clo">))</span><span class="pln"> 
      </span><span class="lit">2</span><span class="clo">))</span></pre></div>
 
-<p>Unfortunately, most of Alyssa’s users are engineers.  Real engineering
-situations usually involve measurements with only a small uncertainty, measured
-as the ratio of the width of the interval to the midpoint of the interval.
-Engineers usually specify percentage tolerances on the parameters of devices,
-as in the resistor specifications given earlier.
+<p>К сожалению, большинство пользователей Алиссы — инженеры.  Реальные инженерные
+ситуации обычно связаны с измерениями лишь с малой неопределённостью, измеряемой как
+отношение ширины интервала к середине интервала.  Инженеры обычно задают процентные
+допуски на параметры устройств, как в приведённых ранее спецификациях резисторов.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e12"></a>Exercise 2.12:</strong> Define a constructor
-<code>make-center-percent</code> that takes a center and a percentage tolerance and
-produces the desired interval.  You must also define a selector <code>percent</code>
-that produces the percentage tolerance for a given interval.  The <code>center</code>
-selector is the same as the one shown above.
+<p><strong><a id="Exercise-2_002e12"></a>Exercise 2.12:</strong> Определите конструктор
+<code>make-center-percent</code>, который принимает центр и процентный допуск и выдаёт
+требуемый интервал.  Вы также должны определить селектор <code>percent</code>, который
+выдаёт процентный допуск для данного интервала.  Селектор <code>center</code> такой же, как
+показанный выше.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e13"></a>Exercise 2.13:</strong> Show that under the assumption of
-small percentage tolerances there is a simple formula for the approximate
-percentage tolerance of the product of two intervals in terms of the tolerances
-of the factors.  You may simplify the problem by assuming that all numbers are
-positive.
+<p><strong><a id="Exercise-2_002e13"></a>Exercise 2.13:</strong> Покажите, что в предположении малых
+процентных допусков существует простая формула для приближённого процентного допуска
+произведения двух интервалов в терминах допусков сомножителей.  Вы можете упростить
+задачу, предположив, что все числа положительны.
 </p>
-<p>After considerable work, Alyssa P. Hacker delivers her finished system.
-Several years later, after she has forgotten all about it, she gets a frenzied
-call from an irate user, Lem E. Tweakit.  It seems that Lem has noticed that
-the formula for parallel resistors can be written in two algebraically
-equivalent ways:
+<p>После значительной работы Алисса П. Хакер сдаёт свою законченную систему.  Несколько
+лет спустя, после того как она совсем о ней забыла, ей звонит разъярённый
+пользователь, Лем И. Твикит.  Оказывается, Лем заметил, что формулу для параллельных
+резисторов можно записать двумя алгебраически эквивалентными способами:
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
     <mfrac>
@@ -1126,7 +1101,7 @@ equivalent ways:
     </mfrac>
   </mrow>
 </math>
-and
+и
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mrow class="MJX-TeXAtom-ORD">
     <mrow class="MJX-TeXAtom-ORD">
@@ -1156,8 +1131,8 @@ and
     <mo>.</mo>
   </mrow>
 </math>
-He has written the following two programs, each of which computes the
-parallel-resistors formula differently:
+Он написал следующие две программы, каждая из которых вычисляет формулу параллельных
+резисторов по-разному:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">par1 r1 r2</span><span class="clo">)</span><span class="pln">
@@ -1173,19 +1148,19 @@ parallel-resistors formula differently:
       </span><span class="opn">(</span><span class="pln">div-interval one r1</span><span class="clo">)</span><span class="pln"> 
       </span><span class="opn">(</span><span class="pln">div-interval one r2</span><span class="clo">)))))</span></pre></div>
 
-<p>Lem complains that Alyssa’s program gives different answers for the two ways of
-computing. This is a serious complaint.
+<p>Лем жалуется, что программа Алиссы даёт разные ответы для двух способов вычисления.
+Это серьёзная жалоба.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e14"></a>Exercise 2.14:</strong> Demonstrate that Lem is right.
-Investigate the behavior of the system on a variety of arithmetic
-expressions. Make some intervals <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p><strong><a id="Exercise-2_002e14"></a>Exercise 2.14:</strong> Продемонстрируйте, что Лем прав.
+Исследуйте поведение системы на разнообразных арифметических выражениях.  Сделайте
+несколько интервалов <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>A</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>B</mi>
-</math>, and use them in computing the
-expressions <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и используйте их при вычислении выражений
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>A</mi>
     <mrow class="MJX-TeXAtom-ORD">
@@ -1193,7 +1168,7 @@ expressions <math xmlns="http://www.w3.org/1998/Math/MathML">
     </mrow>
     <mi>A</mi>
   </mrow>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>A</mi>
     <mrow class="MJX-TeXAtom-ORD">
@@ -1201,93 +1176,90 @@ expressions <math xmlns="http://www.w3.org/1998/Math/MathML">
     </mrow>
     <mi>B</mi>
   </mrow>
-</math>.  You will get the most insight by
-using intervals whose width is a small percentage of the center value. Examine
-the results of the computation in center-percent form (see <a href="#Exercise-2_002e12">Exercise 2.12</a>).
+</math>.  Больше всего понимания вы получите, используя
+интервалы, ширина которых составляет малый процент от центрального значения.
+Рассмотрите результаты вычисления в форме «центр—процент» (см. <a href="#Exercise-2_002e12">Exercise 2.12</a>).
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e15"></a>Exercise 2.15:</strong> Eva Lu Ator, another user, has
-also noticed the different intervals computed by different but algebraically
-equivalent expressions. She says that a formula to compute with intervals using
-Alyssa’s system will produce tighter error bounds if it can be written in such
-a form that no variable that represents an uncertain number is repeated.  Thus,
-she says, <code>par2</code> is a “better” program for parallel resistances than
-<code>par1</code>.  Is she right?  Why?
+<p><strong><a id="Exercise-2_002e15"></a>Exercise 2.15:</strong> Эва Лу Атор, другой пользователь, тоже
+заметила различные интервалы, вычисляемые различными, но алгебраически эквивалентными
+выражениями.  Она говорит, что формула для вычислений с интервалами в системе Алиссы
+будет давать более узкие границы ошибки, если её можно записать в такой форме, где ни
+одна переменная, представляющая неопределённое число, не повторяется.  Таким образом,
+говорит она, <code>par2</code> — «лучшая» программа для параллельных сопротивлений, чем
+<code>par1</code>.  Права ли она?  Почему?
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-2_002e16"></a>Exercise 2.16:</strong> Explain, in general, why
-equivalent algebraic expressions may lead to different answers.  Can you devise
-an interval-arithmetic package that does not have this shortcoming, or is this
-task impossible?  (Warning: This problem is very difficult.)
+<p><strong><a id="Exercise-2_002e16"></a>Exercise 2.16:</strong> Объясните в общем случае, почему
+эквивалентные алгебраические выражения могут приводить к различным ответам.  Можете ли
+вы придумать пакет интервальной арифметики, не имеющий этого недостатка, или эта задача
+невозможна?  (Предупреждение: эта задача очень трудна.)
 </p></blockquote>
-
 
 <div class="footnote">
 <h4 class="footnotes-heading">Footnotes</h4>
 
 <div id="FOOT68"><p><a class="footnote_backlink" href="#DOCF68"><sup>68</sup></a>
-The name <code>cons</code> stands for
-“construct.”  The names <code>car</code> and <code>cdr</code> derive from the original
-implementation of Lisp on the IBM 704.  That machine had an addressing scheme
-that allowed one to reference the “address” and “decrement” parts of a
-memory location.  <code>Car</code> stands for “Contents of Address part of
-Register” and <code>cdr</code> (pronounced “could-er”) stands for “Contents of
-Decrement part of Register.”</p>
+Имя
+<code>cons</code> происходит от «construct» («сконструировать»).  Имена <code>car</code> и
+<code>cdr</code> восходят к первоначальной реализации Lisp на IBM 704.  У той машины была
+схема адресации, позволявшая обращаться к «адресной» («address») и «декрементной»
+(«decrement») частям ячейки памяти.  <code>Car</code> означает «Contents of Address part of
+Register» (содержимое адресной части регистра), а <code>cdr</code> (произносится «куд-эр»)
+означает «Contents of Decrement part of Register» (содержимое декрементной части
+регистра).</p>
 </div>
 <div id="FOOT69"><p><a class="footnote_backlink" href="#DOCF69"><sup>69</sup></a>
-Another way to define the selectors and
-constructor is
+Другой
+способ определить селекторы и конструктор —
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> make-rat </span><span class="kwd">cons</span><span class="clo">)</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> numer </span><span class="kwd">car</span><span class="clo">)</span><span class="pln">
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> denom </span><span class="kwd">cdr</span><span class="clo">)</span></pre></div>
 
-<p>The first definition associates the name <code>make-rat</code> with the value of the
-expression <code>cons</code>, which is the primitive procedure that constructs pairs.
-Thus <code>make-rat</code> and <code>cons</code> are names for the same primitive
-constructor.
+<p>Первое определение связывает имя <code>make-rat</code> со значением выражения <code>cons</code>,
+которое является примитивной процедурой, конструирующей пары.  Таким образом,
+<code>make-rat</code> и <code>cons</code> — имена для одного и того же примитивного конструктора.
 </p>
-<p>Defining selectors and constructors in this way is efficient: Instead of
-<code>make-rat</code> <em>calling</em> <code>cons</code>, <code>make-rat</code> <em>is</em>
-<code>cons</code>, so there is only one procedure called, not two, when
-<code>make-rat</code> is called.  On the other hand, doing this defeats debugging
-aids that trace procedure calls or put breakpoints on procedure calls: You may
-want to watch <code>make-rat</code> being called, but you certainly don’t want to
-watch every call to <code>cons</code>.
+<p>Определять селекторы и конструкторы таким образом эффективно: вместо того чтобы
+<code>make-rat</code> <em>вызывала</em> <code>cons</code>, <code>make-rat</code> <em>есть</em> <code>cons</code>,
+так что при вызове <code>make-rat</code> вызывается только одна процедура, а не две.  С
+другой стороны, такой подход сводит на нет средства отладки, которые трассируют вызовы
+процедур или ставят точки останова на вызовах процедур: вы можете захотеть наблюдать
+за вызовами <code>make-rat</code>, но уж точно не захотите наблюдать за каждым вызовом
+<code>cons</code>.
 </p>
-<p>We have chosen not to use this style of definition in this book.</p>
+<p>Мы решили не использовать этот стиль определения в данной книге.</p>
 </div>
 <div id="FOOT70"><p><a class="footnote_backlink" href="#DOCF70"><sup>70</sup></a>
-<code>Display</code> is the Scheme primitive for printing data.
-The Scheme primitive <code>newline</code> starts a new line for printing.  Neither of
-these procedures returns a useful value, so in the uses of <code>print-rat</code>
-below, we show only what <code>print-rat</code> prints, not what the interpreter
-prints as the value returned by <code>print-rat</code>.</p>
+<code>Display</code> — примитив Scheme для печати данных.  Примитив
+Scheme <code>newline</code> начинает новую строку для печати.  Ни одна из этих процедур не
+возвращает полезного значения, поэтому в приведённых ниже применениях <code>print-rat</code>
+мы показываем только то, что печатает <code>print-rat</code>, а не то, что интерпретатор
+печатает как значение, возвращённое <code>print-rat</code>.</p>
 </div>
 <div id="FOOT71"><p><a class="footnote_backlink" href="#DOCF71"><sup>71</sup></a>
-Surprisingly, this idea is very difficult to formulate
-rigorously. There are two approaches to giving such a formulation.  One,
-pioneered by C. A. R. <a href="References.xhtml#Hoare-_00281972_0029">Hoare (1972)</a>, is known as the method of <a id="index-abstract-models"></a>
-<em>abstract models</em>.  
-It formalizes the “procedures plus conditions” specification as
-outlined in the rational-number example above.  Note that the condition on the
-rational-number representation was stated in terms of facts about integers
-(equality and division).  In general, abstract models define new kinds of data
-objects in terms of previously defined types of data objects.  Assertions about
-data objects can therefore be checked by reducing them to assertions about
-previously defined data objects.  Another approach, introduced by Zilles at
-<abbr>MIT</abbr>, by Goguen, Thatcher, Wagner, and Wright at IBM 
-(see <a href="References.xhtml#Thatcher-et-al_002e-1978">Thatcher et al. 1978</a>), 
-and by Guttag at Toronto (see <a href="References.xhtml#Guttag-1977">Guttag 1977</a>), is called
-<a id="index-algebraic-specification"></a>
-<em>algebraic specification</em>.  It regards the “procedures” as elements
-of an abstract algebraic system whose behavior is specified by axioms that
-correspond to our “conditions,” and uses the techniques of abstract algebra
-to check assertions about data objects.  Both methods are surveyed in the paper
-by <a href="References.xhtml#Liskov-and-Zilles-_00281975_0029">Liskov and Zilles (1975)</a>.</p>
+Как ни удивительно,
+эту идею очень трудно сформулировать строго.  Есть два подхода к такой формулировке.
+Один, впервые предложенный Ч. Э. Р. <a href="References.xhtml#Hoare-_00281972_0029">Hoare (1972)</a>, известен как метод
+<a id="index-abstraktnykh-modelei"></a>
+<em>абстрактных моделей</em>.  Он формализует спецификацию «процедуры плюс условия»,
+как намечено в примере с рациональными числами выше.  Заметьте, что условие на
+представление рациональных чисел было сформулировано в терминах фактов о целых числах
+(равенства и деления).  Вообще, абстрактные модели определяют новые виды объектов
+данных в терминах ранее определённых типов объектов данных.  Поэтому утверждения об
+объектах данных можно проверять, сводя их к утверждениям о ранее определённых объектах
+данных.  Другой подход, введённый Зиллесом в <abbr>MIT</abbr>, Гогеном, Тэтчером, Вагнером и
+Райтом в IBM (см. <a href="References.xhtml#Thatcher-et-al_002e-1978">Thatcher et al. 1978</a>) и Гуттагом в Торонто (см.
+<a href="References.xhtml#Guttag-1977">Guttag 1977</a>), называется <a id="index-algebraicheskoi-specifikaciei"></a>
+<em>алгебраической спецификацией</em>.  Он
+рассматривает «процедуры» как элементы абстрактной алгебраической системы, поведение
+которой задаётся аксиомами, соответствующими нашим «условиям», и использует приёмы
+абстрактной алгебры для проверки утверждений об объектах данных.  Оба метода
+рассмотрены в статье <a href="References.xhtml#Liskov-and-Zilles-_00281975_0029">Liskov and Zilles (1975)</a>.</p>
 </div>
 </div>
 <nav class="header">

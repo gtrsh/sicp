@@ -31,84 +31,84 @@
 <p>
 Next: <a href="2_002e1.xhtml#g_t2_002e1" accesskey="n" rel="next">2.1</a>, Prev: <a href="1_002e3.xhtml#g_t1_002e3" accesskey="p" rel="prev">1.3</a>, Up: <a href="index.xhtml#Top" accesskey="u" rel="prev">Top</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
-<a id="Building-Abstractions-with-Data"></a>
-<h2 class="chapter"><span class="chapnum">2</span><span class="chaptitle">Building Abstractions with Data</span></h2>
+<a id="Postroenie-abstrakcii-s-pomoshchxiu-dannykh"></a>
+<h2 class="chapter"><span class="chapnum">2</span><span class="chaptitle">Построение абстракций с помощью данных</span></h2>
 
 <blockquote>
-<p>We now come to the decisive step of mathematical abstraction: we forget about
-what the symbols stand for. … [The mathematician] need not be idle; there
-are many operations which he may carry out with these symbols, without ever
-having to look at the things they stand for.
+<p>Теперь мы подходим к решающему шагу математической абстракции: мы забываем о том,
+что обозначают символы. … [Математику] нет нужды бездействовать: есть много
+операций, которые он может проделывать с этими символами, ни разу не взглянув на
+вещи, которые они обозначают.
 </p>
-<p>—Hermann Weyl, <cite>The Mathematical Way of Thinking</cite>
+<p>—Герман Вейль, <cite>The Mathematical Way of Thinking</cite>
 </p></blockquote>
 
 
-<p>We concentrated in <a href="Chapter-1.xhtml#Chapter-1">Chapter 1</a> on computational processes and on the role
-of procedures in program design.  We saw how to use primitive data (numbers)
-and primitive operations (arithmetic operations), how to combine procedures to
-form compound procedures through composition, conditionals, and the use of
-parameters, and how to abstract procedures by using <code>define</code>.  We saw that
-a procedure can be regarded as a pattern for the local evolution of a process,
-and we classified, reasoned about, and performed simple algorithmic analyses of
-some common patterns for processes as embodied in procedures.  We also saw that
-higher-order procedures enhance the power of our language by enabling us to
-manipulate, and thereby to reason in terms of, general methods of computation.
-This is much of the essence of programming.
+<p>В <a href="Chapter-1.xhtml#Chapter-1">Chapter 1</a> мы сосредоточились на вычислительных процессах и на роли процедур
+в проектировании программ.  Мы увидели, как пользоваться примитивными данными
+(числами) и примитивными операциями (арифметическими операциями), как комбинировать
+процедуры, образуя составные процедуры посредством композиции, условных выражений и
+использования параметров, и как абстрагировать процедуры с помощью <code>define</code>.  Мы
+увидели, что процедуру можно рассматривать как образец локальной эволюции процесса, и
+мы классифицировали некоторые распространённые образцы процессов, воплощённые в
+процедурах, рассуждали о них и проводили простой алгоритмический анализ.  Мы также
+увидели, что процедуры высшего порядка усиливают наш язык, позволяя нам
+манипулировать обобщёнными методами вычисления и тем самым рассуждать в их терминах.
+В этом во многом и состоит суть программирования.
 </p>
-<p>In this chapter we are going to look at more complex data.  All the procedures
-in chapter 1 operate on simple numerical data, and simple data are not
-sufficient for many of the problems we wish to address using computation.
-Programs are typically designed to model complex phenomena, and more often than
-not one must construct computational objects that have several parts in order
-to model real-world phenomena that have several aspects.  Thus, whereas our
-focus in chapter 1 was on building abstractions by combining procedures
-to form compound procedures, we turn in this chapter to another key aspect of
-any programming language: the means it provides for building abstractions by
-combining data objects to form <a id="index-compound-data"></a>
-<em>compound data</em>.
+<p>В этой главе мы рассмотрим более сложные данные.  Все процедуры в главе 1 работают с
+простыми числовыми данными, а простых данных недостаточно для многих задач, которые
+мы хотим решать с помощью вычислений.  Программы обычно проектируются для
+моделирования сложных явлений, и чаще всего приходится строить вычислительные
+объекты, имеющие несколько частей, чтобы моделировать явления реального мира,
+имеющие несколько аспектов.  Таким образом, если в главе 1 наш фокус был на
+построении абстракций путём комбинирования процедур в составные процедуры, то в этой
+главе мы обращаемся к другому ключевому аспекту любого языка программирования — к
+средствам, которые он предоставляет для построения абстракций путём комбинирования
+объектов данных в <a id="index-sostavnye-dannye"></a>
+<em>составные данные</em>.
 </p>
-<p>Why do we want compound data in a programming language?  For the same reasons
-that we want compound procedures: to elevate the conceptual level at which we
-can design our programs, to increase the modularity of our designs, and to
-enhance the expressive power of our language.  Just as the ability to define
-procedures enables us to deal with processes at a higher conceptual level than
-that of the primitive operations of the language, the ability to construct
-compound data objects enables us to deal with data at a higher conceptual level
-than that of the primitive data objects of the language.
+<p>Зачем нам составные данные в языке программирования?  По тем же причинам, по которым
+нам нужны составные процедуры: чтобы поднять концептуальный уровень, на котором мы
+можем проектировать наши программы, повысить модульность наших проектов и усилить
+выразительную мощь нашего языка.  Подобно тому как способность определять процедуры
+позволяет нам иметь дело с процессами на более высоком концептуальном уровне, чем
+уровень примитивных операций языка, способность строить составные объекты данных
+позволяет нам иметь дело с данными на более высоком концептуальном уровне, чем
+уровень примитивных объектов данных языка.
 </p>
-<p>Consider the task of designing a system to perform arithmetic with rational
-numbers.  We could imagine an operation <code>add-rat</code> that takes two rational
-numbers and produces their sum.  In terms of simple data, a rational number can
-be thought of as two integers: a numerator and a denominator.  Thus, we could
-design a program in which each rational number would be represented by two
-integers (a numerator and a denominator) and where <code>add-rat</code> would be
-implemented by two procedures (one producing the numerator of the sum and one
-producing the denominator).  But this would be awkward, because we would then
-need to explicitly keep track of which numerators corresponded to which
-denominators.  In a system intended to perform many operations on many rational
-numbers, such bookkeeping details would clutter the programs substantially, to
-say nothing of what they would do to our minds.  It would be much better if we
-could “glue together” a numerator and denominator to form a pair—a
-<a id="index-compound-data-object"></a>
-<em>compound data object</em>—that our programs could manipulate in a way
-that would be consistent with regarding a rational number as a single
-conceptual unit.
+<p>Рассмотрим задачу проектирования системы для выполнения арифметики с рациональными
+числами.  Мы могли бы вообразить операцию <code>add-rat</code>, которая принимает два
+рациональных числа и выдаёт их сумму.  В терминах простых данных рациональное число
+можно мыслить как два целых числа: числитель и знаменатель.  Таким образом, мы могли
+бы спроектировать программу, в которой каждое рациональное число представлялось бы
+двумя целыми числами (числителем и знаменателем) и где <code>add-rat</code> была бы
+реализована двумя процедурами (одна выдаёт числитель суммы, другая — знаменатель).  Но
+это было бы неуклюже, потому что нам пришлось бы тогда явно отслеживать, какие
+числители соответствуют каким знаменателям.  В системе, предназначенной для
+выполнения многих операций над многими рациональными числами, такие учётные
+подробности существенно загромождали бы программы — не говоря уже о том, что они
+сделали бы с нашим разумом.  Было бы гораздо лучше, если бы мы могли «склеить»
+числитель и знаменатель, образуя пару — <a id="index-sostavnoi-obwekt-dannykh"></a>
+<em>составной объект данных</em>, — которой
+наши программы могли бы манипулировать способом, согласующимся с рассмотрением
+рационального числа как единой концептуальной единицы.
 </p>
-<p>The use of compound data also enables us to increase the modularity of our
-programs.  If we can manipulate rational numbers directly as objects in their
-own right, then we can separate the part of our program that deals with
-rational numbers per se from the details of how rational numbers may be
-represented as pairs of integers.  The general technique of isolating the parts
-of a program that deal with how data objects are represented from the parts of
-a program that deal with how data objects are used is a powerful design
-methodology called <a id="index-data-abstraction"></a>
-<em>data abstraction</em>.  We will see how data
-abstraction makes programs much easier to design, maintain, and modify.
+<p>Использование составных данных также позволяет нам повысить модульность наших
+программ.  Если мы можем манипулировать рациональными числами напрямую как объектами
+сами по себе, то мы можем отделить ту часть нашей программы, которая имеет дело с
+рациональными числами как таковыми, от подробностей того, как рациональные числа
+могут быть представлены в виде пар целых чисел.  Обобщённый приём изоляции частей
+программы, которые имеют дело с тем, как представлены объекты данных, от частей
+программы, которые имеют дело с тем, как объекты данных используются, — это мощная
+методология проектирования, называемая <a id="index-abstrakciei-dannykh"></a>
+<em>абстракцией данных</em>.  Мы увидим, как
+абстракция данных делает программы гораздо легче проектировать, сопровождать и
+изменять.
 </p>
-<p>The use of compound data leads to a real increase in the expressive
-power of our programming language.  Consider the idea of forming a
-“linear combination” <math xmlns="http://www.w3.org/1998/Math/MathML">
+<p>Использование составных данных приводит к настоящему росту выразительной мощи нашего
+языка программирования.  Рассмотрим идею образования «линейной комбинации»
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>a</mi>
     <mi>x</mi>
@@ -116,17 +116,17 @@ power of our programming language.  Consider the idea of forming a
     <mi>b</mi>
     <mi>y</mi>
   </mrow>
-</math>.  We might like to write
-a procedure that would accept <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math>.  Нам могло бы захотеться написать процедуру, которая принимала бы
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>a</mi>
 </math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>b</mi>
 </math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>
-</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> и <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>y</mi>
-</math> as
-arguments and return the value of <math xmlns="http://www.w3.org/1998/Math/MathML">
+</math> как аргументы и возвращала бы значение
+<math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>a</mi>
     <mi>x</mi>
@@ -134,111 +134,106 @@ arguments and return the value of <math xmlns="http://www.w3.org/1998/Math/MathM
     <mi>b</mi>
     <mi>y</mi>
   </mrow>
-</math>.  This
-presents no difficulty if the arguments are to be numbers, because we
-can readily define the procedure
+</math>.  Это не представляет трудности, если аргументы должны быть числами,
+поскольку мы легко можем определить процедуру
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">linear-combination a b x y</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> b y</span><span class="clo">)))</span></pre></div>
 
-<p>But suppose we are not concerned only with numbers.  Suppose we would like to
-express, in procedural terms, the idea that one can form linear combinations
-whenever addition and multiplication are defined—for rational numbers,
-complex numbers, polynomials, or whatever.  We could express this as a
-procedure of the form
+<p>Но предположим, что нас интересуют не только числа.  Предположим, мы хотели бы
+выразить в процедурных терминах идею, что линейные комбинации можно образовывать
+всякий раз, когда определены сложение и умножение, — для рациональных чисел,
+комплексных чисел, многочленов или чего угодно.  Мы могли бы выразить это как
+процедуру вида
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">linear-combination a b x y</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">add </span><span class="opn">(</span><span class="pln">mul a x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul b y</span><span class="clo">)))</span></pre></div>
 
-<p>where <code>add</code> and <code>mul</code> are not the primitive procedures <code>+</code> and
-<code>*</code> but rather more complex things that will perform the appropriate
-operations for whatever kinds of data we pass in as the arguments <code>a</code>,
-<code>b</code>, <code>x</code>, and <code>y</code>. The key point is that the only thing
-<code>linear-combination</code> should need to know about <code>a</code>, <code>b</code>,
-<code>x</code>, and <code>y</code> is that the procedures <code>add</code> and <code>mul</code> will
-perform the appropriate manipulations.  From the perspective of the procedure
-<code>linear-combination</code>, it is irrelevant what <code>a</code>, <code>b</code>, <code>x</code>,
-and <code>y</code> are and even more irrelevant how they might happen to be
-represented in terms of more primitive data.  This same example shows why it is
-important that our programming language provide the ability to manipulate
-compound objects directly: Without this, there is no way for a procedure such
-as <code>linear-combination</code> to pass its arguments along to <code>add</code> and
-<code>mul</code> without having to know their detailed structure.<a class="footnote_link" id="DOCF67" href="#FOOT67"><sup>67</sup></a>
+<p>где <code>add</code> и <code>mul</code> — не примитивные процедуры <code>+</code> и <code>*</code>, а скорее
+более сложные вещи, которые будут выполнять подходящие операции для тех видов данных,
+что мы передаём как аргументы <code>a</code>, <code>b</code>, <code>x</code> и <code>y</code>.  Ключевой
+момент в том, что единственное, что <code>linear-combination</code> должна знать об
+<code>a</code>, <code>b</code>, <code>x</code> и <code>y</code>, — это то, что процедуры <code>add</code> и
+<code>mul</code> выполнят подходящие манипуляции.  С точки зрения процедуры
+<code>linear-combination</code> не важно, что такое <code>a</code>, <code>b</code>, <code>x</code> и
+<code>y</code>, и ещё менее важно, как они могли бы быть представлены в терминах более
+примитивных данных.  Этот же пример показывает, почему важно, чтобы наш язык
+программирования предоставлял способность манипулировать составными объектами
+напрямую: без этого у такой процедуры, как <code>linear-combination</code>, нет способа
+передать свои аргументы дальше в <code>add</code> и <code>mul</code>, не зная их детальной
+структуры.<a class="footnote_link" id="DOCF67" href="#FOOT67"><sup>67</sup></a>
 </p>
-<p>We begin this chapter by implementing the rational-number arithmetic system
-mentioned above.  This will form the background for our discussion of compound
-data and data abstraction.  As with compound procedures, the main issue to be
-addressed is that of abstraction as a technique for coping with complexity, and
-we will see how data abstraction enables us to erect suitable
-<a id="index-abstraction-barriers"></a>
-<em>abstraction barriers</em> between different parts of a program.
+<p>Мы начинаем эту главу с реализации системы арифметики рациональных чисел, упомянутой
+выше.  Это образует фон для нашего обсуждения составных данных и абстракции данных.
+Как и в случае составных процедур, главный вопрос, который предстоит рассмотреть, —
+это абстракция как приём борьбы со сложностью, и мы увидим, как абстракция данных
+позволяет нам возводить подходящие <a id="index-barxery-abstrakcii"></a>
+<em>барьеры абстракции</em> между различными
+частями программы.
 </p>
-<p>We will see that the key to forming compound data is that a programming
-language should provide some kind of “glue” so that data objects can be
-combined to form more complex data objects.  There are many possible kinds of
-glue.  Indeed, we will discover how to form compound data using no special
-“data” operations at all, only procedures.  This will further blur the
-distinction between “procedure” and “data,” which was already becoming
-tenuous toward the end of chapter 1.  We will also explore some
-conventional techniques for representing sequences and trees.  One key idea in
-dealing with compound data is the notion of <a id="index-closure"></a>
-<em>closure</em>—that the glue
-we use for combining data objects should allow us to combine not only primitive
-data objects, but compound data objects as well.  Another key idea is that
-compound data objects can serve as <a id="index-conventional-interfaces"></a>
-<em>conventional interfaces</em> for
-combining program modules in mix-and-match ways.  We illustrate some of these
-ideas by presenting a simple graphics language that exploits closure.
+<p>Мы увидим, что ключ к образованию составных данных в том, что язык программирования
+должен предоставлять некоторый «клей», чтобы объекты данных можно было комбинировать,
+образуя более сложные объекты данных.  Возможных видов клея много.  Более того, мы
+обнаружим, как образовывать составные данные вообще без каких-либо специальных
+операций над «данными», а только с помощью процедур.  Это ещё больше размоет различие
+между «процедурой» и «данными», которое к концу главы 1 уже становилось зыбким.  Мы
+также исследуем некоторые традиционные приёмы представления последовательностей и
+деревьев.  Одна ключевая идея в работе с составными данными — понятие
+<a id="index-zamknutosti"></a>
+<em>замкнутости</em>: клей, который мы используем для комбинирования объектов данных,
+должен позволять нам комбинировать не только примитивные объекты данных, но и
+составные объекты данных.  Другая ключевая идея в том, что составные объекты данных
+могут служить <a id="index-obshcheprinyatymi-interfeisami"></a>
+<em>общепринятыми интерфейсами</em> для комбинирования программных
+модулей способом «смешивай и сочетай».  Мы проиллюстрируем некоторые из этих идей,
+представив простой графический язык, использующий замкнутость.
 </p>
-<p>We will then augment the representational power of our language by introducing
-<a id="index-symbolic-expressions"></a>
-<em>symbolic expressions</em>—data whose elementary parts can be arbitrary
-symbols rather than only numbers.  We explore various alternatives for
-representing sets of objects.  We will find that, just as a given numerical
-function can be computed by many different computational processes, there are
-many ways in which a given data structure can be represented in terms of
-simpler objects, and the choice of representation can have significant impact
-on the time and space requirements of processes that manipulate the data.  We
-will investigate these ideas in the context of symbolic differentiation, the
-representation of sets, and the encoding of information.
+<p>Затем мы расширим выразительную мощь нашего языка, введя <a id="index-simvolxnye"></a>
+выражения
+<em>символьные
+выражения</em> — данные, элементарные части которых могут быть произвольными символами, а
+не только числами.  Мы исследуем различные альтернативы представления множеств
+объектов.  Мы обнаружим, что, подобно тому как данную числовую функцию можно вычислить
+многими различными вычислительными процессами, существует много способов, которыми
+данную структуру данных можно представить в терминах более простых объектов, и выбор
+представления может существенно влиять на требования к времени и пространству
+процессов, манипулирующих данными.  Мы исследуем эти идеи в контексте символьного
+дифференцирования, представления множеств и кодирования информации.
 </p>
-<p>Next we will take up the problem of working with data that may be represented
-differently by different parts of a program.  This leads to the need to
-implement <a id="index-generic-operations"></a>
-<em>generic operations</em>, which must handle many different types
-of data.  Maintaining modularity in the presence of generic operations requires
-more powerful abstraction barriers than can be erected with simple data
-abstraction alone.  In particular, we introduce <a id="index-data_002ddirected-programming"></a>
-<em>data-directed programming</em> 
-as a technique that allows individual data representations to be
-designed in isolation and then combined <a id="index-additively"></a>
-<em>additively</em> (i.e., without
-modification).  To illustrate the power of this approach to system design, we
-close the chapter by applying what we have learned to the implementation of a
-package for performing symbolic arithmetic on polynomials, in which the
-coefficients of the polynomials can be integers, rational numbers, complex
-numbers, and even other polynomials.
+<p>Затем мы займёмся задачей работы с данными, которые могут по-разному представляться
+разными частями программы.  Это приводит к необходимости реализовать
+<a id="index-obobshchionnye-operacii"></a>
+<em>обобщённые операции</em>, которые должны обрабатывать много различных типов
+данных.  Поддержание модульности при наличии обобщённых операций требует более мощных
+барьеров абстракции, чем те, что можно возвести одной лишь простой абстракцией данных.
+В частности, мы введём <a id="index-programmirovanie_002c-upravlyaemoe-dannymi"></a>
+<em>программирование, управляемое данными</em>, как приём,
+позволяющий проектировать отдельные представления данных в изоляции, а затем
+комбинировать их <a id="index-additivno"></a>
+<em>аддитивно</em> (то есть без изменений).  Чтобы проиллюстрировать
+мощь этого подхода к проектированию систем, мы завершим главу, применив изученное к
+реализации пакета для выполнения символьной арифметики над многочленами, в которых
+коэффициенты многочленов могут быть целыми числами, рациональными числами,
+комплексными числами и даже другими многочленами.
 </p>
 
 <div class="footnote">
 <h4 class="footnotes-heading">Footnotes</h4>
 
 <div id="FOOT67"><p><a class="footnote_backlink" href="#DOCF67"><sup>67</sup></a>
-The
-ability to directly manipulate procedures provides an analogous increase in the
-expressive power of a programming language.  For example, in 
-<a href="1_002e3.xhtml#g_t1_002e3_002e1">1.3.1</a> we introduced the <code>sum</code> procedure, which takes a procedure
-<code>term</code> as an argument and computes the sum of the values of <code>term</code>
-over some specified interval.  In order to define <code>sum</code>, it is crucial
-that we be able to speak of a procedure such as <code>term</code> as an entity in its
-own right, without regard for how <code>term</code> might be expressed with more
-primitive operations.  Indeed, if we did not have the notion of “a
-procedure,” it is doubtful that we would ever even think of the possibility of
-defining an operation such as <code>sum</code>.  Moreover, insofar as performing the
-summation is concerned, the details of how <code>term</code> may be constructed from
-more primitive operations are irrelevant.</p>
+Способность напрямую манипулировать процедурами даёт аналогичный
+рост выразительной мощи языка программирования.  Например, в <a href="1_002e3.xhtml#g_t1_002e3_002e1">1.3.1</a> мы ввели
+процедуру <code>sum</code>, которая принимает процедуру <code>term</code> как аргумент и
+вычисляет сумму значений <code>term</code> на некотором заданном интервале.  Чтобы
+определить <code>sum</code>, критически важно, чтобы мы могли говорить о такой процедуре,
+как <code>term</code>, как о самостоятельной сущности, безотносительно к тому, как
+<code>term</code> могла бы быть выражена через более примитивные операции.  В самом деле,
+если бы у нас не было понятия «процедура», сомнительно, что мы вообще когда-либо
+подумали бы о возможности определить операцию вроде <code>sum</code>.  Более того, в той
+мере, в какой дело касается выполнения суммирования, подробности того, как <code>term</code>
+может быть построена из более примитивных операций, не важны.</p>
 </div>
 </div>
 <nav class="header">

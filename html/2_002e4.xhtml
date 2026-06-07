@@ -76,7 +76,7 @@ abstraction barriers that isolate different design choices from each other and
 permit different choices to coexist in a single program.  Furthermore, since
 large programs are often created by combining pre-existing modules that were
 designed in isolation, we need conventions that permit programmers to
-incorporate modules into larger systems <a id="index-additively-1"></a>
+incorporate modules into larger systems <a id="index-additively"></a>
 <em>additively</em>, that is, without
 having to redesign or reimplement these modules.
 </p>
@@ -820,7 +820,7 @@ representations.  The problem is real and must be addressed in such programs as
 large-scale data-base-management systems.
 </p>
 <p>What we need is a means for modularizing the system design even further.  This
-is provided by the programming technique known as <a id="index-data_002ddirected-programming-1"></a>
+is provided by the programming technique known as <a id="index-data_002ddirected-programming"></a>
 <em>data-directed programming</em>.  
 To understand how data-directed programming works, begin with
 the observation that whenever we deal with a set of generic operations that are
@@ -1159,7 +1159,7 @@ object and lets the object do the work:<a class="footnote_link" id="DOCF114" hre
 internal <code>dispatch</code> procedure.  This is the procedure that is invoked when
 <code>apply-generic</code> requests an operation to be performed.
 </p>
-<p>This style of programming is called <a id="index-message-passing-1"></a>
+<p>This style of programming is called <a id="index-message-passing"></a>
 <em>message passing</em>.  The name comes
 from the image that a data object is an entity that receives the requested
 operation name as a “message.”  We have already seen an example of message
