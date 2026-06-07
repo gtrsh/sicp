@@ -1,0 +1,430 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index af1ba2c..027e2e8 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -9622,36 +9622,33 @@ Origin(Frame) + x * Edge_1(Frame) + y * Edge_2(Frame)
+ @end quotation
+ 
+ @node	2.3.2, 2.3.3, 2.3.1, 2.3
+-@subsection Example: Symbolic Differentiation
+-
+-As an illustration of symbol manipulation and a further illustration of data
+-abstraction, consider the design of a procedure that performs symbolic
+-differentiation of algebraic expressions.  We would like the procedure to take
+-as arguments an algebraic expression and a variable and to return the
+-derivative of the expression with respect to the variable.  For example, if the
+-arguments to the procedure are @math{{ax^2 + bx + c}} and @math{x}, the
+-procedure should return @math{{2ax + b}}.  Symbolic differentiation is of
+-special historical significance in Lisp.  It was one of the motivating examples
+-behind the development of a computer language for symbol manipulation.
+-Furthermore, it marked the beginning of the line of research that led to the
+-development of powerful systems for symbolic mathematical work, which are
+-currently being used by a growing number of applied mathematicians and
+-physicists.
+-
+-In developing the symbolic-differentiation program, we will follow the same
+-strategy of data abstraction that we followed in developing the rational-number
+-system of @ref{2.1.1}.  That is, we will first define a differentiation
+-algorithm that operates on abstract objects such as ``sums,'' ``products,'' and
+-``variables'' without worrying about how these are to be represented.  Only
+-afterward will we address the representation problem.
+-
+-@subsubheading The differentiation program with abstract data
+-
+-In order to keep things simple, we will consider a very simple
+-symbolic-differentiation program that handles expressions that are built up
+-using only the operations of addition and multiplication with two arguments.
+-Differentiation of any such expression can be carried out by applying the
+-following reduction rules:
++@subsection Пример: символьное дифференцирование
++
++В качестве иллюстрации манипулирования символами и дальнейшей иллюстрации абстракции
++данных рассмотрим проектирование процедуры, которая выполняет символьное
++дифференцирование алгебраических выражений.  Мы хотели бы, чтобы процедура принимала как
++аргументы алгебраическое выражение и переменную и возвращала производную выражения по
++этой переменной.  Например, если аргументы процедуры — @math{{ax^2 + bx + c}} и
++@math{x}, процедура должна вернуть @math{{2ax + b}}.  Символьное дифференцирование имеет
++особое историческое значение в Lisp.  Оно было одним из мотивирующих примеров,
++стоявших за разработкой компьютерного языка для манипулирования символами.  Более того,
++оно ознаменовало начало линии исследований, которая привела к разработке мощных систем
++для символьной математической работы, используемых ныне растущим числом прикладных
++математиков и физиков.
++
++В разработке программы символьного дифференцирования мы будем следовать той же стратегии
++абстракции данных, которой мы следовали в разработке системы рациональных чисел из
++@ref{2.1.1}.  То есть мы сначала определим алгоритм дифференцирования, который оперирует
++абстрактными объектами, такими как «суммы», «произведения» и «переменные», не
++беспокоясь о том, как они должны быть представлены.  Только потом мы обратимся к
++проблеме представления.
++
++@subsubheading Программа дифференцирования с абстрактными данными
++
++Чтобы сохранять простоту, мы рассмотрим очень простую программу символьного
++дифференцирования, которая обрабатывает выражения, построенные с использованием только
++операций сложения и умножения с двумя аргументами.  Дифференцирование любого такого
++выражения можно выполнить, применяя следующие правила сведения:
+ @ifinfo
+ 
+ @example
+@@ -9689,39 +9686,37 @@ d(uv)     / dv \     / du \
+ \]
+ @end tex
+ @noindent
+-Observe that the latter two rules are recursive in nature.  That is, to obtain
+-the derivative of a sum we first find the derivatives of the terms and add
+-them.  Each of the terms may in turn be an expression that needs to be
+-decomposed.  Decomposing into smaller and smaller pieces will eventually
+-produce pieces that are either constants or variables, whose derivatives will
+-be either 0 or 1.
+-
+-To embody these rules in a procedure we indulge in a little wishful thinking,
+-as we did in designing the rational-number implementation.  If we had a means
+-for representing algebraic expressions, we should be able to tell whether an
+-expression is a sum, a product, a constant, or a variable.  We should be able
+-to extract the parts of an expression.  For a sum, for example we want to be
+-able to extract the addend (first term) and the augend (second term).  We
+-should also be able to construct expressions from parts.  Let us assume that we
+-already have procedures to implement the following selectors, constructors, and
+-predicates:
++Заметьте, что последние два правила рекурсивны по природе.  То есть, чтобы получить
++производную суммы, мы сначала находим производные слагаемых и складываем их.  Каждое из
++слагаемых, в свою очередь, может быть выражением, которое нужно разложить.  Разложение
++на всё меньшие и меньшие части в конце концов даст части, которые являются либо
++константами, либо переменными, чьи производные будут либо 0, либо 1.
++
++Чтобы воплотить эти правила в процедуре, мы позволяем себе немного мышления о желаемом,
++как мы делали при проектировании реализации рациональных чисел.  Если бы у нас было
++средство для представления алгебраических выражений, мы должны были бы суметь
++определить, является ли выражение суммой, произведением, константой или переменной.  Мы
++должны были бы суметь извлечь части выражения.  Для суммы, например, мы хотим уметь
++извлечь первое слагаемое (первый член) и второе слагаемое (второй член).  Мы также
++должны уметь строить выражения из частей.  Предположим, что у нас уже есть процедуры для
++реализации следующих селекторов, конструкторов и предикатов:
+ 
+ @example
+-(variable? e)          @r{Is @code{e} a variable?}
+-(same-variable? v1 v2) @r{Are @code{v1} and @code{v2} the same variable?}
+-(sum? e)               @r{Is @code{e} a sum?}
+-(addend e)             @r{Addend of the sum @code{e}.}
+-(augend e)             @r{Augend of the sum @code{e}.}
+-(make-sum a1 a2)       @r{Construct the sum of @code{a1} and @code{a2}.}
+-(product? e)           @r{Is @code{e} a product?}
+-(multiplier e)         @r{Multiplier of the product @code{e}.}
+-(multiplicand e)       @r{Multiplicand of the product @code{e}.}
+-(make-product m1 m2)   @r{Construct the product of @code{m1} and @code{m2}.}
++(variable? e)          @r{@code{e} — переменная?}
++(same-variable? v1 v2) @r{@code{v1} и @code{v2} — одна и та же переменная?}
++(sum? e)               @r{@code{e} — сумма?}
++(addend e)             @r{Первое слагаемое суммы @code{e}.}
++(augend e)             @r{Второе слагаемое суммы @code{e}.}
++(make-sum a1 a2)       @r{Построить сумму @code{a1} и @code{a2}.}
++(product? e)           @r{@code{e} — произведение?}
++(multiplier e)         @r{Множитель произведения @code{e}.}
++(multiplicand e)       @r{Множимое произведения @code{e}.}
++(make-product m1 m2)   @r{Построить произведение @code{m1} и @code{m2}.}
+ @end example
+ 
+ @noindent
+-Using these, and the primitive predicate @code{number?}, which identifies
+-numbers, we can express the differentiation rules as the following procedure:
++Используя их и примитивный предикат @code{number?}, который опознаёт числа, мы можем
++выразить правила дифференцирования следующей процедурой:
+ 
+ @lisp
+ (define (deriv exp var)
+@@ -9744,34 +9739,32 @@ numbers, we can express the differentiation rules as the following procedure:
+ @end lisp
+ 
+ @noindent
+-This @code{deriv} procedure incorporates the complete differentiation
+-algorithm.  Since it is expressed in terms of abstract data, it will work no
+-matter how we choose to represent algebraic expressions, as long as we design a
+-proper set of selectors and constructors.  This is the issue we must address
+-next.
++Эта процедура @code{deriv} воплощает полный алгоритм дифференцирования.  Поскольку она
++выражена в терминах абстрактных данных, она будет работать независимо от того, как мы
++решим представлять алгебраические выражения, лишь бы мы спроектировали подходящий набор
++селекторов и конструкторов.  Это и есть вопрос, к которому мы должны обратиться далее.
+ 
+-@subsubheading Representing algebraic expressions
++@subsubheading Представление алгебраических выражений
+ 
+-We can imagine many ways to use list structure to represent algebraic
+-expressions.  For example, we could use lists of symbols that mirror the usual
+-algebraic notation, representing @math{{ax + b}} as the list @code{(a * x + b)}.  
+-However, one especially straightforward choice is to use the same
+-parenthesized prefix notation that Lisp uses for combinations; that is, to
+-represent @math{{ax + b}} as @code{(+ (* a x) b)}.  Then our data
+-representation for the differentiation problem is as follows:
++Мы можем вообразить много способов использовать списочную структуру для представления
++алгебраических выражений.  Например, мы могли бы использовать списки символов, которые
++отражают обычную алгебраическую нотацию, представляя @math{{ax + b}} как список
++@code{(a * x + b)}.  Однако один особенно прямолинейный выбор — использовать ту же
++скобочную префиксную нотацию, которую Lisp использует для комбинаций; то есть
++представлять @math{{ax + b}} как @code{(+ (* a x) b)}.  Тогда наше представление данных
++для задачи дифференцирования таково:
+ 
+ @itemize @bullet
+ 
+ @item
+-The variables are symbols.  They are identified by the primitive predicate
+-@code{symbol?}:
++Переменные — это символы.  Они опознаются примитивным предикатом @code{symbol?}:
+ 
+ @lisp
+ (define (variable? x) (symbol? x))
+ @end lisp
+ 
+ @item
+-Two variables are the same if the symbols representing them are @code{eq?}:
++Две переменные одинаковы, если представляющие их символы @code{eq?}:
+ 
+ @lisp
+ (define (same-variable? v1 v2)
+@@ -9781,7 +9774,7 @@ Two variables are the same if the symbols representing them are @code{eq?}:
+ @end lisp
+ 
+ @item
+-Sums and products are constructed as lists:
++Суммы и произведения строятся как списки:
+ 
+ @lisp
+ (define (make-sum a1 a2) (list '+ a1 a2))
+@@ -9789,7 +9782,7 @@ Sums and products are constructed as lists:
+ @end lisp
+ 
+ @item
+-A sum is a list whose first element is the symbol @code{+}:
++Сумма — это список, первый элемент которого — символ @code{+}:
+ 
+ @lisp
+ (define (sum? x)
+@@ -9797,35 +9790,35 @@ A sum is a list whose first element is the symbol @code{+}:
+ @end lisp
+ 
+ @item
+-The addend is the second item of the sum list:
++Первое слагаемое — это второй элемент списка суммы:
+ 
+ @lisp
+ (define (addend s) (cadr s))
+ @end lisp
+ 
+ @item
+-The augend is the third item of the sum list:
++Второе слагаемое — это третий элемент списка суммы:
+ 
+ @lisp
+ (define (augend s) (caddr s))
+ @end lisp
+ 
+ @item
+-A product is a list whose first element is the symbol @code{*}:
++Произведение — это список, первый элемент которого — символ @code{*}:
+ @lisp
+ (define (product? x)
+   (and (pair? x) (eq? (car x) '*)))
+ @end lisp
+ 
+ @item
+-The multiplier is the second item of the product list:
++Множитель — это второй элемент списка произведения:
+ 
+ @lisp
+ (define (multiplier p) (cadr p))
+ @end lisp
+ 
+ @item
+-The multiplicand is the third item of the product list:
++Множимое — это третий элемент списка произведения:
+ 
+ @lisp
+ (define (multiplicand p) (caddr p))
+@@ -9834,9 +9827,9 @@ The multiplicand is the third item of the product list:
+ @end itemize
+ 
+ @noindent
+-Thus, we need only combine these with the algorithm as embodied by @code{deriv}
+-in order to have a working symbolic-differentiation program.  Let us look at
+-some examples of its behavior:
++Таким образом, нам нужно лишь скомбинировать их с алгоритмом, воплощённым в @code{deriv},
++чтобы получить работающую программу символьного дифференцирования.  Рассмотрим несколько
++примеров её поведения:
+ 
+ @lisp
+ (deriv '(+ x 3) 'x)
+@@ -9852,8 +9845,7 @@ some examples of its behavior:
+ @end lisp
+ 
+ @noindent
+-The program produces answers that are correct; however, they are unsimplified.
+-It is true that
++Программа производит ответы, которые верны; однако они неупрощённые.  Верно, что
+ @ifinfo
+ 
+ @example
+@@ -9868,19 +9860,17 @@ d(xy)
+   {d(xy) \over dx} \,=\, {x \cdot 0} + {1 \cdot y,}  \]
+ @end tex
+ @noindent
+-but we would like the program to know that @math{{x \cdot 0 = 0}}, @math{{1 \cdot y = y}},
+-and @math{{0 + y = y}}.  The answer for the second example should have been
+-simply @code{y}.  As the third example shows, this becomes a serious issue when
+-the expressions are complex.
++но мы хотели бы, чтобы программа знала, что @math{{x \cdot 0 = 0}}, @math{{1 \cdot y = y}}
++и @math{{0 + y = y}}.  Ответ для второго примера должен был быть просто @code{y}.  Как
++показывает третий пример, это становится серьёзной проблемой, когда выражения сложны.
+ 
+-Our difficulty is much like the one we encountered with the rational-number
+-implementation: we haven't reduced answers to simplest form.  To accomplish the
+-rational-number reduction, we needed to change only the constructors and the
+-selectors of the implementation.  We can adopt a similar strategy here.  We
+-won't change @code{deriv} at all.  Instead, we will change @code{make-sum} so
+-that if both summands are numbers, @code{make-sum} will add them and return
+-their sum.  Also, if one of the summands is 0, then @code{make-sum} will return
+-the other summand:
++Наша трудность очень похожа на ту, с которой мы столкнулись в реализации рациональных
++чисел: мы не приводили ответы к простейшей форме.  Чтобы выполнить приведение
++рациональных чисел, нам нужно было изменить только конструкторы и селекторы реализации.
++Мы можем принять похожую стратегию здесь.  Мы вообще не будем менять @code{deriv}.
++Вместо этого мы изменим @code{make-sum} так, что если оба слагаемых — числа, то
++@code{make-sum} сложит их и вернёт их сумму.  Также, если одно из слагаемых равно 0, то
++@code{make-sum} вернёт другое слагаемое:
+ 
+ @lisp
+ (define (make-sum a1 a2)
+@@ -9892,8 +9882,8 @@ the other summand:
+ @end lisp
+ 
+ @noindent
+-This uses the procedure @code{=number?}, which checks whether an expression is
+-equal to a given number:
++Это использует процедуру @code{=number?}, которая проверяет, равно ли выражение данному
++числу:
+ 
+ @lisp
+ (define (=number? exp num)
+@@ -9901,8 +9891,8 @@ equal to a given number:
+ @end lisp
+ 
+ @noindent
+-Similarly, we will change @code{make-product} to build in the rules that 0
+-times anything is 0 and 1 times anything is the thing itself:
++Аналогично, мы изменим @code{make-product}, чтобы встроить правила, что 0, умноженный на
++что угодно, есть 0, и 1, умноженная на что угодно, есть сама эта вещь:
+ 
+ @lisp
+ (define (make-product m1 m2)
+@@ -9917,7 +9907,7 @@ times anything is 0 and 1 times anything is the thing itself:
+ @end lisp
+ 
+ @noindent
+-Here is how this version works on our three examples:
++Вот как эта версия работает на наших трёх примерах:
+ 
+ @lisp
+ (deriv '(+ x 3) 'x)
+@@ -9931,16 +9921,16 @@ Here is how this version works on our three examples:
+ @end lisp
+ 
+ @noindent
+-Although this is quite an improvement, the third example shows that there is
+-still a long way to go before we get a program that puts expressions into a
+-form that we might agree is ``simplest.''  The problem of algebraic
+-simplification is complex because, among other reasons, a form that may be
+-simplest for one purpose may not be for another.
++Хотя это значительное улучшение, третий пример показывает, что нам ещё далеко до
++программы, которая приводит выражения к форме, которую мы могли бы согласиться считать
++«простейшей».  Проблема алгебраического упрощения сложна, потому что, среди прочих
++причин, форма, которая может быть простейшей для одной цели, может не быть таковой для
++другой.
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.56}Exercise 2.56:} Show how to extend the basic
+-differentiator to handle more kinds of expressions.  For instance, implement
+-the differentiation rule
++@strong{@anchor{Exercise 2.56}Exercise 2.56:} Покажите, как расширить базовый
++дифференциатор для обработки большего числа видов выражений.  Например, реализуйте
++правило дифференцирования
+ @ifinfo
+ 
+ @example
+@@ -9955,51 +9945,50 @@ d(u^n)            du
+   {d(u^{\kern0.1ex n}) \over dx} \,=\, {nu^{\kern0.1ex n-1} \, {du \over dx}}  \]
+ @end tex
+ @noindent
+-by adding a new clause to the @code{deriv} program and defining appropriate
+-procedures @code{exponentiation?}, @code{base}, @code{exponent}, and
+-@code{make-exponentiation}.  (You may use the symbol @code{**} to denote
+-exponentiation.)  Build in the rules that anything raised to the power 0 is 1
+-and anything raised to the power 1 is the thing itself.
++добавив новое предложение к программе @code{deriv} и определив подходящие процедуры
++@code{exponentiation?}, @code{base}, @code{exponent} и @code{make-exponentiation}.  (Вы
++можете использовать символ @code{**} для обозначения возведения в степень.)  Встройте
++правила, что что угодно, возведённое в степень 0, есть 1, и что угодно, возведённое в
++степень 1, есть сама эта вещь.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.57}Exercise 2.57:} Extend the differentiation
+-program to handle sums and products of arbitrary numbers of (two or more)
+-terms.  Then the last example above could be expressed as
++@strong{@anchor{Exercise 2.57}Exercise 2.57:} Расширьте программу дифференцирования для
++обработки сумм и произведений произвольного числа (двух или более) членов.  Тогда
++последний пример выше можно было бы выразить как
+ 
+ @lisp
+ (deriv '(* x y (+ x 3)) 'x)
+ @end lisp
+ 
+-Try to do this by changing only the representation for sums and products,
+-without changing the @code{deriv} procedure at all.  For example, the
+-@code{addend} of a sum would be the first term, and the @code{augend} would be
+-the sum of the rest of the terms.
++Постарайтесь сделать это, изменив только представление для сумм и произведений, вообще
++не меняя процедуру @code{deriv}.  Например, @code{addend} суммы был бы первым членом, а
++@code{augend} был бы суммой остальных членов.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.58}Exercise 2.58:} Suppose we want to modify the
+-differentiation program so that it works with ordinary mathematical notation,
+-in which @code{+} and @code{*} are infix rather than prefix operators.  Since
+-the differentiation program is defined in terms of abstract data, we can modify
+-it to work with different representations of expressions solely by changing the
+-predicates, selectors, and constructors that define the representation of the
+-algebraic expressions on which the differentiator is to operate.
++@strong{@anchor{Exercise 2.58}Exercise 2.58:} Предположим, мы хотим изменить программу
++дифференцирования так, чтобы она работала с обычной математической нотацией, в которой
++@code{+} и @code{*} — инфиксные, а не префиксные операторы.  Поскольку программа
++дифференцирования определена в терминах абстрактных данных, мы можем изменить её для
++работы с различными представлениями выражений, изменив лишь предикаты, селекторы и
++конструкторы, определяющие представление алгебраических выражений, над которыми должен
++работать дифференциатор.
+ 
+ @enumerate a
+ 
+ @item
+-Show how to do this in order to differentiate algebraic expressions presented
+-in infix form, such as @code{(x + (3 * (x + (y + 2))))}.  To simplify the task,
+-assume that @code{+} and @code{*} always take two arguments and that
+-expressions are fully parenthesized.
++Покажите, как сделать это, чтобы дифференцировать алгебраические выражения,
++представленные в инфиксной форме, такие как @code{(x + (3 * (x + (y + 2))))}.  Чтобы
++упростить задачу, предположите, что @code{+} и @code{*} всегда принимают два аргумента и
++что выражения полностью заключены в скобки.
+ 
+ @item
+-The problem becomes substantially harder if we allow standard algebraic
+-notation, such as @code{(x + 3 * (x + y + 2))}, which drops unnecessary
+-parentheses and assumes that multiplication is done before addition.  Can you
+-design appropriate predicates, selectors, and constructors for this notation
+-such that our derivative program still works?
++Задача становится существенно труднее, если мы допускаем стандартную алгебраическую
++нотацию, такую как @code{(x + 3 * (x + y + 2))}, которая отбрасывает ненужные скобки и
++предполагает, что умножение делается до сложения.  Можете ли вы спроектировать
++подходящие предикаты, селекторы и конструкторы для этой нотации так, чтобы наша программа
++производной всё ещё работала?
+ 
+ @end enumerate
+ @end quotation

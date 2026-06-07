@@ -1,0 +1,592 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 28371f2..c271480 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -10531,17 +10531,17 @@ d(u^n)            du
+ @end quotation
+ 
+ @node	2.3.4, 2.4, 2.2, 2.3
+-@subsection Example: Huffman Encoding Trees
+-
+-This section provides practice in the use of list structure and data
+-abstraction to manipulate sets and trees.  The application is to methods for
+-representing data as sequences of ones and zeros (bits).  For example, the
+-ASCII standard code used to represent text in computers encodes each character
+-as a sequence of seven bits.  Using seven bits allows us to distinguish @math{2^7},
+-or 128, possible different characters.  In general, if we want to distinguish
+-@math{n} different symbols, we will need to use @math{{\log_2n}} bits per
+-symbol.  If all our messages are made up of the eight symbols A, B, C, D, E, F,
+-G, and H, we can choose a code with three bits per character, for example
++@subsection Пример: деревья кодирования Хаффмана
++
++Этот раздел даёт практику использования списочной структуры и абстракции данных для
++манипулирования множествами и деревьями.  Приложение — методы представления данных как
++последовательностей единиц и нулей (битов).  Например, стандартный код ASCII,
++используемый для представления текста в компьютерах, кодирует каждый символ как
++последовательность из семи битов.  Использование семи битов позволяет нам различать
++@math{2^7}, или 128, возможных различных символов.  Вообще, если мы хотим различать
++@math{n} различных символов, нам понадобится использовать @math{{\log_2n}} битов на
++символ.  Если все наши сообщения составлены из восьми символов A, B, C, D, E, F, G и H,
++мы можем выбрать код с тремя битами на символ, например
+ 
+ @example
+ A 000  C 010  E 100  G 110
+@@ -10549,14 +10549,14 @@ B 001  D 011  F 101  H 111
+ @end example
+ 
+ @noindent
+-With this code, the message
++С этим кодом сообщение
+ 
+ @example
+ BACADAEAFABBAAAGAH
+ @end example
+ 
+ @noindent
+-is encoded as the string of 54 bits
++кодируется как строка из 54 битов
+ 
+ @example
+ 001000010000011000100000101
+@@ -10564,17 +10564,16 @@ is encoded as the string of 54 bits
+ @end example
+ 
+ @noindent
+-Codes such as ASCII and the A-through-H code above are known as
+-@newterm{fixed-length} codes, because they represent each symbol in the message
+-with the same number of bits.  It is sometimes advantageous to use
+-@newterm{variable-length} codes, in which different symbols may be represented
+-by different numbers of bits.  For example, Morse code does not use the same
+-number of dots and dashes for each letter of the alphabet.  In particular, E,
+-the most frequent letter, is represented by a single dot.  In general, if our
+-messages are such that some symbols appear very frequently and some very
+-rarely, we can encode data more efficiently (i.e., using fewer bits per
+-message) if we assign shorter codes to the frequent symbols.  Consider the
+-following alternative code for the letters A through H:
++Коды, такие как ASCII и приведённый выше код от A до H, известны как коды
++@newterm{фиксированной длины}, потому что они представляют каждый символ сообщения
++одним и тем же числом битов.  Иногда выгодно использовать коды @newterm{переменной
++длины}, в которых разные символы могут представляться разным числом битов.  Например,
++азбука Морзе не использует одно и то же число точек и тире для каждой буквы алфавита.  В
++частности, E, самая частая буква, представляется одной точкой.  Вообще, если наши
++сообщения таковы, что некоторые символы появляются очень часто, а некоторые очень редко,
++мы можем кодировать данные эффективнее (то есть используя меньше битов на сообщение),
++если назначим более короткие коды частым символам.  Рассмотрим следующий альтернативный
++код для букв от A до H:
+ 
+ @example
+ A 0    C 1010  E 1100  G 1110
+@@ -10582,7 +10581,7 @@ B 100  D 1011  F 1101  H 1111
+ @end example
+ 
+ @noindent
+-With this code, the same message as above is encoded as the string
++С этим кодом то же сообщение, что и выше, кодируется как строка
+ 
+ @example
+ 100010100101101100011
+@@ -10590,40 +10589,38 @@ With this code, the same message as above is encoded as the string
+ @end example
+ 
+ @noindent
+-This string contains 42 bits, so it saves more than 20% in space in comparison
+-with the fixed-length code shown above.
+-
+-One of the difficulties of using a variable-length code is knowing when you
+-have reached the end of a symbol in reading a sequence of zeros and ones.
+-Morse code solves this problem by using a special @newterm{separator code} (in
+-this case, a pause) after the sequence of dots and dashes for each letter.
+-Another solution is to design the code in such a way that no complete code for
+-any symbol is the beginning (or @newterm{prefix}) of the code for another
+-symbol.  Such a code is called a @newterm{prefix code}.  In the example above,
+-A is encoded by 0 and B is encoded by 100, so no other symbol can have a code
+-that begins with 0 or with 100.
+-
+-In general, we can attain significant savings if we use variable-length prefix
+-codes that take advantage of the relative frequencies of the symbols in the
+-messages to be encoded.  One particular scheme for doing this is called the
+-Huffman encoding method, after its discoverer, David Huffman.  A Huffman code
+-can be represented as a binary tree whose leaves are the symbols that are
+-encoded.  At each non-leaf node of the tree there is a set containing all the
+-symbols in the leaves that lie below the node.  In addition, each symbol at a
+-leaf is assigned a weight (which is its relative frequency), and each non-leaf
+-node contains a weight that is the sum of all the weights of the leaves lying
+-below it.  The weights are not used in the encoding or the decoding process.
+-We will see below how they are used to help construct the tree.
+-
+-@ref{Figure 2.18} shows the Huffman tree for the A-through-H code given above.
+-The weights at the leaves indicate that the tree was designed for messages in
+-which A appears with relative frequency 8, B with relative frequency 3, and the
+-other letters each with relative frequency 1.
++Эта строка содержит 42 бита, так что она экономит более 20% места по сравнению с кодом
++фиксированной длины, показанным выше.
++
++Одна из трудностей использования кода переменной длины — это знать, когда вы достигли
++конца символа при чтении последовательности нулей и единиц.  Азбука Морзе решает эту
++проблему, используя особый @newterm{разделяющий код} (в данном случае паузу) после
++последовательности точек и тире для каждой буквы.  Другое решение — спроектировать код
++так, чтобы никакой полный код какого-либо символа не был началом (или @newterm{префиксом})
++кода другого символа.  Такой код называется @newterm{префиксным кодом}.  В примере выше A
++кодируется 0, а B кодируется 100, так что никакой другой символ не может иметь код,
++начинающийся с 0 или со 100.
++
++Вообще, мы можем достичь значительной экономии, если используем префиксные коды
++переменной длины, которые пользуются относительными частотами символов в кодируемых
++сообщениях.  Одна конкретная схема для этого называется методом кодирования Хаффмана, по
++имени её первооткрывателя, Дэвида Хаффмана.  Код Хаффмана можно представить как двоичное
++дерево, листья которого — кодируемые символы.  В каждом нелистовом узле дерева находится
++множество, содержащее все символы листьев, лежащих под узлом.  Кроме того, каждому
++символу в листе назначен вес (который является его относительной частотой), а каждый
++нелистовой узел содержит вес, являющийся суммой всех весов листьев, лежащих под ним.  Веса
++не используются в процессе кодирования или декодирования.  Мы увидим ниже, как они
++используются, чтобы помочь построить дерево.
++
++@ref{Figure 2.18} показывает дерево Хаффмана для приведённого выше кода от A до H.  Веса в
++листьях указывают, что дерево было спроектировано для сообщений, в которых A появляется с
++относительной частотой 8, B — с относительной частотой 3, а остальные буквы — каждая с
++относительной частотой 1.
+ 
+ @float
+ @anchor{Figure 2.18}
+ @ifinfo
+-@strong{Figure 2.18:} A Huffman encoding tree.
++@strong{Figure 2.18:} Дерево кодирования Хаффмана.
+ 
+ @example
+            @{A B C D E F G H@} 17
+@@ -10644,100 +10641,93 @@ other letters each with relative frequency 1.
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.18a,135mm,,,.std.svg}
+-@caption{@strong{Figure 2.18:} A Huffman encoding tree.}
++@caption{@strong{Figure 2.18:} Дерево кодирования Хаффмана.}
+ @end iftex
+ @end float
+ 
+-Given a Huffman tree, we can find the encoding of any symbol by starting at the
+-root and moving down until we reach the leaf that holds the symbol.  Each time
+-we move down a left branch we add a 0 to the code, and each time we move down a
+-right branch we add a 1.  (We decide which branch to follow by testing to see
+-which branch either is the leaf node for the symbol or contains the symbol in
+-its set.)  For example, starting from the root of the tree in @ref{Figure 2.18}, 
+-we arrive at the leaf for D by following a right branch, then a left
+-branch, then a right branch, then a right branch; hence, the code for D is
+-1011.
+-
+-@noindent
+-To decode a bit sequence using a Huffman tree, we begin at the root and use the
+-successive zeros and ones of the bit sequence to determine whether to move down
+-the left or the right branch.  Each time we come to a leaf, we have generated a
+-new symbol in the message, at which point we start over from the root of the
+-tree to find the next symbol.  For example, suppose we are given the tree above
+-and the sequence 10001010.  Starting at the root, we move down the right
+-branch, (since the first bit of the string is 1), then down the left branch
+-(since the second bit is 0), then down the left branch (since the third bit is
+-also 0).  This brings us to the leaf for B, so the first symbol of the decoded
+-message is B.  Now we start again at the root, and we make a left move because
+-the next bit in the string is 0.  This brings us to the leaf for A.  Then we
+-start again at the root with the rest of the string 1010, so we move right,
+-left, right, left and reach C.  Thus, the entire message is BAC.
+-
+-@subsubheading Generating Huffman trees
+-
+-Given an ``alphabet'' of symbols and their relative frequencies, how do we
+-construct the ``best'' code?  (In other words, which tree will encode messages
+-with the fewest bits?)  Huffman gave an algorithm for doing this and showed
+-that the resulting code is indeed the best variable-length code for messages
+-where the relative frequency of the symbols matches the frequencies with which
+-the code was constructed.  We will not prove this optimality of Huffman codes
+-here, but we will show how Huffman trees are constructed.@footnote{See @ref{Hamming 1980} 
+-for a discussion of the mathematical properties of Huffman codes.}
+-
+-The algorithm for generating a Huffman tree is very simple. The idea is to
+-arrange the tree so that the symbols with the lowest frequency appear farthest
+-away from the root. Begin with the set of leaf nodes, containing symbols and
+-their frequencies, as determined by the initial data from which the code is to
+-be constructed. Now find two leaves with the lowest weights and merge them to
+-produce a node that has these two nodes as its left and right branches. The
+-weight of the new node is the sum of the two weights. Remove the two leaves
+-from the original set and replace them by this new node. Now continue this
+-process. At each step, merge two nodes with the smallest weights, removing them
+-from the set and replacing them with a node that has these two as its left and
+-right branches. The process stops when there is only one node left, which is
+-the root of the entire tree.  Here is how the Huffman tree of @ref{Figure 2.18}
+-was generated:
++Имея дерево Хаффмана, мы можем найти кодировку любого символа, начав с корня и двигаясь
++вниз, пока не достигнем листа, который содержит символ.  Каждый раз, когда мы движемся
++вниз по левой ветви, мы добавляем 0 к коду, и каждый раз, когда мы движемся вниз по правой
++ветви, мы добавляем 1.  (Мы решаем, по какой ветви следовать, проверяя, какая ветвь либо
++является листовым узлом для символа, либо содержит символ в своём множестве.)  Например,
++начав от корня дерева на @ref{Figure 2.18}, мы приходим к листу для D, следуя по правой
++ветви, затем по левой ветви, затем по правой ветви, затем по правой ветви; следовательно,
++код для D — это 1011.
++
++@noindent
++Чтобы декодировать битовую последовательность с помощью дерева Хаффмана, мы начинаем с
++корня и используем последовательные нули и единицы битовой последовательности, чтобы
++определить, двигаться ли вниз по левой или по правой ветви.  Каждый раз, когда мы доходим
++до листа, мы породили новый символ сообщения, в этот момент мы начинаем заново от корня
++дерева, чтобы найти следующий символ.  Например, предположим, нам даны дерево выше и
++последовательность 10001010.  Начав с корня, мы движемся вниз по правой ветви (поскольку
++первый бит строки — 1), затем вниз по левой ветви (поскольку второй бит — 0), затем вниз
++по левой ветви (поскольку третий бит тоже 0).  Это приводит нас к листу для B, так что
++первый символ декодированного сообщения — B.  Теперь мы начинаем снова от корня и делаем
++левый ход, потому что следующий бит в строке — 0.  Это приводит нас к листу для A.  Затем
++мы начинаем снова от корня с остатком строки 1010, так что движемся вправо, влево,
++вправо, влево и достигаем C.  Таким образом, всё сообщение — BAC.
++
++@subsubheading Порождение деревьев Хаффмана
++
++Имея «алфавит» символов и их относительные частоты, как нам построить «наилучший» код?
++(Иными словами, какое дерево закодирует сообщения наименьшим числом битов?)  Хаффман дал
++алгоритм для этого и показал, что получающийся код действительно является наилучшим кодом
++переменной длины для сообщений, где относительная частота символов соответствует
++частотам, с которыми код был построен.  Мы не будем доказывать эту оптимальность кодов
++Хаффмана здесь, но мы покажем, как строятся деревья Хаффмана.@footnote{См. @ref{Hamming 1980}
++для обсуждения математических свойств кодов Хаффмана.}
++
++Алгоритм порождения дерева Хаффмана очень прост.  Идея в том, чтобы расположить дерево
++так, чтобы символы с наименьшей частотой появлялись дальше всего от корня.  Начните с
++множества листовых узлов, содержащих символы и их частоты, как определено исходными
++данными, из которых должен быть построен код.  Теперь найдите два листа с наименьшими
++весами и слейте их, чтобы произвести узел, у которого эти два узла — его левая и правая
++ветви.  Вес нового узла — это сумма двух весов.  Удалите два листа из исходного множества
++и замените их этим новым узлом.  Теперь продолжайте этот процесс.  На каждом шаге сливайте
++два узла с наименьшими весами, удаляя их из множества и заменяя их узлом, у которого эти
++два — его левая и правая ветви.  Процесс останавливается, когда остаётся только один узел,
++который является корнем всего дерева.  Вот как было порождено дерево Хаффмана с
++@ref{Figure 2.18}:
+ 
+ @example
+-Initial @{(A 8) (B 3) (C 1) (D 1) 
+-leaves   (E 1) (F 1) (G 1) (H 1)@}
++Начальные @{(A 8) (B 3) (C 1) (D 1)
++листья     (E 1) (F 1) (G 1) (H 1)@}
+ 
+-Merge   @{(A 8) (B 3) (@{C D@} 2) 
+-         (E 1) (F 1) (G 1) (H 1)@}
++Слияние   @{(A 8) (B 3) (@{C D@} 2)
++           (E 1) (F 1) (G 1) (H 1)@}
+ 
+-Merge   @{(A 8) (B 3) (@{C D@} 2) 
+-         (@{E F@} 2) (G 1) (H 1)@}
++Слияние   @{(A 8) (B 3) (@{C D@} 2)
++           (@{E F@} 2) (G 1) (H 1)@}
+ 
+-Merge   @{(A 8) (B 3) (@{C D@} 2) 
+-         (@{E F@} 2) (@{G H@} 2)@}
++Слияние   @{(A 8) (B 3) (@{C D@} 2)
++           (@{E F@} 2) (@{G H@} 2)@}
+ 
+-Merge   @{(A 8) (B 3) (@{C D@} 2) 
+-         (@{E F G H@} 4)@}
++Слияние   @{(A 8) (B 3) (@{C D@} 2)
++           (@{E F G H@} 4)@}
+ 
+-Merge   @{(A 8) (@{B C D@} 5) 
+-         (@{E F G H@} 4)@}
++Слияние   @{(A 8) (@{B C D@} 5)
++           (@{E F G H@} 4)@}
+ 
+-Merge   @{(A 8) (@{B C D E F G H@} 9)@}
++Слияние   @{(A 8) (@{B C D E F G H@} 9)@}
+ 
+-Final   @{(@{A B C D E F G H@} 17)@}
+-merge    
++Итоговое  @{(@{A B C D E F G H@} 17)@}
++слияние
+ @end example
+ 
+ @noindent
+-The algorithm does not always specify a unique tree, because there may not be
+-unique smallest-weight nodes at each step.  Also, the choice of the order in
+-which the two nodes are merged (i.e., which will be the right branch and which
+-will be the left branch) is arbitrary.
++Алгоритм не всегда задаёт уникальное дерево, потому что на каждом шаге может не быть
++уникальных узлов наименьшего веса.  Также выбор порядка, в котором сливаются два узла (то
++есть какой будет правой ветвью, а какой — левой ветвью), произволен.
+ 
+-@subsubheading Representing Huffman trees
++@subsubheading Представление деревьев Хаффмана
+ 
+-In the exercises below we will work with a system that uses Huffman trees to
+-encode and decode messages and generates Huffman trees according to the
+-algorithm outlined above.  We will begin by discussing how trees are
+-represented.
++В упражнениях ниже мы будем работать с системой, которая использует деревья Хаффмана,
++чтобы кодировать и декодировать сообщения, и порождает деревья Хаффмана согласно
++алгоритму, очерченному выше.  Мы начнём с обсуждения того, как представляются деревья.
+ 
+-Leaves of the tree are represented by a list consisting of the symbol
+-@code{leaf}, the symbol at the leaf, and the weight:
++Листья дерева представляются списком, состоящим из символа @code{leaf}, символа в листе и
++веса:
+ 
+ @lisp
+ (define (make-leaf symbol weight)
+@@ -10749,14 +10739,12 @@ Leaves of the tree are represented by a list consisting of the symbol
+ @end lisp
+ 
+ @noindent
+-A general tree will be a list of a left branch, a right branch, a set of
+-symbols, and a weight.  The set of symbols will be simply a list of the
+-symbols, rather than some more sophisticated set representation.  When we make
+-a tree by merging two nodes, we obtain the weight of the tree as the sum of the
+-weights of the nodes, and the set of symbols as the union of the sets of
+-symbols for the nodes.  Since our symbol sets are represented as lists, we can
+-form the union by using the @code{append} procedure we defined in 
+-@ref{2.2.1}:
++Общее дерево будет списком из левой ветви, правой ветви, множества символов и веса.
++Множество символов будет просто списком символов, а не каким-то более изощрённым
++представлением множества.  Когда мы делаем дерево, сливая два узла, мы получаем вес дерева
++как сумму весов узлов, а множество символов — как объединение множеств символов узлов.
++Поскольку наши множества символов представлены как списки, мы можем образовать
++объединение, используя процедуру @code{append}, которую мы определили в @ref{2.2.1}:
+ 
+ @lisp
+ (define (make-code-tree left right)
+@@ -10768,7 +10756,7 @@ form the union by using the @code{append} procedure we defined in
+ @end lisp
+ 
+ @noindent
+-If we make a tree in this way, we have the following selectors:
++Если мы делаем дерево таким образом, у нас есть следующие селекторы:
+ 
+ @lisp
+ (define (left-branch tree) (car tree))
+@@ -10786,16 +10774,15 @@ If we make a tree in this way, we have the following selectors:
+ @end lisp
+ 
+ @noindent
+-The procedures @code{symbols} and @code{weight} must do something slightly
+-different depending on whether they are called with a leaf or a general tree.
+-These are simple examples of @newterm{generic procedures} (procedures that can
+-handle more than one kind of data), which we will have much more to say about
+-in @ref{2.4} and @ref{2.5}.
++Процедуры @code{symbols} и @code{weight} должны делать нечто слегка различное в
++зависимости от того, вызваны ли они с листом или с общим деревом.  Это простые примеры
++@newterm{обобщённых процедур} (процедур, которые могут обрабатывать более одного вида
++данных), о которых нам предстоит сказать гораздо больше в @ref{2.4} и @ref{2.5}.
+ 
+-@subsubheading The decoding procedure
++@subsubheading Процедура декодирования
+ 
+-The following procedure implements the decoding algorithm.  It takes as
+-arguments a list of zeros and ones, together with a Huffman tree.
++Следующая процедура реализует алгоритм декодирования.  Она принимает в качестве аргументов
++список нулей и единиц вместе с деревом Хаффмана.
+ 
+ @lisp
+ (define (decode bits tree)
+@@ -10822,30 +10809,27 @@ arguments a list of zeros and ones, together with a Huffman tree.
+ @end lisp
+ 
+ @noindent
+-The procedure @code{decode-1} takes two arguments: the list of remaining bits
+-and the current position in the tree.  It keeps moving ``down'' the tree,
+-choosing a left or a right branch according to whether the next bit in the list
+-is a zero or a one.  (This is done with the procedure @code{choose-branch}.)
+-When it reaches a leaf, it returns the symbol at that leaf as the next symbol
+-in the message by @code{cons}ing it onto the result of decoding the rest of the
+-message, starting at the root of the tree.  Note the error check in the final
+-clause of @code{choose-branch}, which complains if the procedure finds
+-something other than a zero or a one in the input data.
++Процедура @code{decode-1} принимает два аргумента: список оставшихся битов и текущую
++позицию в дереве.  Она продолжает двигаться «вниз» по дереву, выбирая левую или правую
++ветвь в зависимости от того, является ли следующий бит в списке нулём или единицей.  (Это
++делается процедурой @code{choose-branch}.)  Когда она достигает листа, она возвращает
++символ в этом листе как следующий символ сообщения, присоединяя его через @code{cons} к
++результату декодирования остатка сообщения, начиная с корня дерева.  Заметьте проверку
++ошибки в последнем предложении @code{choose-branch}, которая жалуется, если процедура
++находит во входных данных что-то, кроме нуля или единицы.
+ 
+-@subsubheading Sets of weighted elements
++@subsubheading Множества взвешенных элементов
+ 
+-In our representation of trees, each non-leaf node contains a set of symbols,
+-which we have represented as a simple list.  However, the tree-generating
+-algorithm discussed above requires that we also work with sets of leaves and
+-trees, successively merging the two smallest items.  Since we will be required
+-to repeatedly find the smallest item in a set, it is convenient to use an
+-ordered representation for this kind of set.
++В нашем представлении деревьев каждый нелистовой узел содержит множество символов, которое
++мы представили как простой список.  Однако алгоритм порождения дерева, обсуждённый выше,
++требует, чтобы мы также работали с множествами листьев и деревьев, последовательно сливая
++два наименьших элемента.  Поскольку нам придётся многократно находить наименьший элемент в
++множестве, удобно использовать упорядоченное представление для такого рода множества.
+ 
+-We will represent a set of leaves and trees as a list of elements, arranged in
+-increasing order of weight.  The following @code{adjoin-set} procedure for
+-constructing sets is similar to the one described in @ref{Exercise 2.61};
+-however, items are compared by their weights, and the element being added to
+-the set is never already in it.
++Мы будем представлять множество листьев и деревьев как список элементов, расположенных в
++возрастающем порядке веса.  Следующая процедура @code{adjoin-set} для построения множеств
++похожа на ту, что описана в @ref{Exercise 2.61}; однако элементы сравниваются по их весам,
++а добавляемый в множество элемент никогда уже не находится в нём.
+ 
+ @lisp
+ (define (adjoin-set x set)
+@@ -10858,9 +10842,9 @@ the set is never already in it.
+ @end lisp
+ 
+ @noindent
+-The following procedure takes a list of symbol-frequency pairs such as
+-@code{((A 4) (B 2) (C 1) (D 1))} and constructs an initial ordered set of
+-leaves, ready to be merged according to the Huffman algorithm:
++Следующая процедура принимает список пар «символ—частота», таких как
++@code{((A 4) (B 2) (C 1) (D 1))}, и строит начальное упорядоченное множество листьев,
++готовое к слиянию согласно алгоритму Хаффмана:
+ 
+ @lisp
+ (define (make-leaf-set pairs)
+@@ -10874,8 +10858,8 @@ leaves, ready to be merged according to the Huffman algorithm:
+ @end lisp
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.67}Exercise 2.67:} Define an encoding tree and a
+-sample message:
++@strong{@anchor{Exercise 2.67}Exercise 2.67:} Определите дерево кодирования и образец
++сообщения:
+ 
+ @lisp
+ (define sample-tree
+@@ -10891,13 +10875,13 @@ sample message:
+   '(0 1 1 0 0 1 0 1 0 1 1 1 0))
+ @end lisp
+ 
+-Use the @code{decode} procedure to decode the message, and give the result.
++Используйте процедуру @code{decode}, чтобы декодировать сообщение, и приведите результат.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.68}Exercise 2.68:} The @code{encode} procedure takes
+-as arguments a message and a tree and produces the list of bits that gives the
+-encoded message.
++@strong{@anchor{Exercise 2.68}Exercise 2.68:} Процедура @code{encode} принимает в
++качестве аргументов сообщение и дерево и производит список битов, дающий закодированное
++сообщение.
+ 
+ @lisp
+ (define (encode message tree)
+@@ -10909,19 +10893,18 @@ encoded message.
+        (encode (cdr message) tree))))
+ @end lisp
+ 
+-@code{Encode-symbol} is a procedure, which you must write, that returns the
+-list of bits that encodes a given symbol according to a given tree.  You should
+-design @code{encode-symbol} so that it signals an error if the symbol is not in
+-the tree at all.  Test your procedure by encoding the result you obtained in
+-@ref{Exercise 2.67} with the sample tree and seeing whether it is the same as
+-the original sample message.
++@code{Encode-symbol} — это процедура, которую вы должны написать, возвращающая список
++битов, который кодирует данный символ согласно данному дереву.  Вы должны спроектировать
++@code{encode-symbol} так, чтобы она сигнализировала об ошибке, если символа вообще нет в
++дереве.  Протестируйте свою процедуру, закодировав результат, который вы получили в
++@ref{Exercise 2.67}, с образцом дерева и проверив, тот ли он же, что и исходный образец
++сообщения.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.69}Exercise 2.69:} The following procedure takes as
+-its argument a list of symbol-frequency pairs (where no symbol appears in more
+-than one pair) and generates a Huffman encoding tree according to the Huffman
+-algorithm.
++@strong{@anchor{Exercise 2.69}Exercise 2.69:} Следующая процедура принимает в качестве
++своего аргумента список пар «символ—частота» (где никакой символ не появляется более чем
++в одной паре) и порождает дерево кодирования Хаффмана согласно алгоритму Хаффмана.
+ 
+ @lisp
+ (define (generate-huffman-tree pairs)
+@@ -10929,21 +10912,21 @@ algorithm.
+    (make-leaf-set pairs)))
+ @end lisp
+ 
+-@code{Make-leaf-set} is the procedure given above that transforms the list of
+-pairs into an ordered set of leaves.  @code{Successive-merge} is the procedure
+-you must write, using @code{make-code-tree} to successively merge the
+-smallest-weight elements of the set until there is only one element left, which
+-is the desired Huffman tree.  (This procedure is slightly tricky, but not
+-really complicated.  If you find yourself designing a complex procedure, then
+-you are almost certainly doing something wrong.  You can take significant
+-advantage of the fact that we are using an ordered set representation.)
++@code{Make-leaf-set} — это процедура, данная выше, которая преобразует список пар в
++упорядоченное множество листьев.  @code{Successive-merge} — это процедура, которую вы
++должны написать, используя @code{make-code-tree}, чтобы последовательно сливать элементы
++наименьшего веса множества, пока не останется только один элемент, который и является
++искомым деревом Хаффмана.  (Эта процедура слегка хитра, но не очень сложна.  Если вы
++обнаруживаете, что проектируете сложную процедуру, то вы почти наверняка делаете что-то
++неправильно.  Вы можете существенно воспользоваться тем фактом, что мы используем
++упорядоченное представление множества.)
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.70}Exercise 2.70:} The following eight-symbol
+-alphabet with as@-so@-ci@-ated relative frequencies was designed to efficiently
+-encode the lyr@-ics of 1950s rock songs.  (Note that the ``symbols'' of an
+-``alphabet'' need not be individual letters.)
++@strong{@anchor{Exercise 2.70}Exercise 2.70:} Следующий восьмисимвольный алфавит со
++связанными относительными частотами был спроектирован, чтобы эффективно кодировать тексты
++рок-песен 1950-х годов.  (Заметьте, что «символы» «алфавита» не обязаны быть отдельными
++буквами.)
+ 
+ @example
+ 
+@@ -10953,9 +10936,9 @@ GET  2    YIP  9
+ JOB  2    WAH  1
+ @end example
+ 
+-Use @code{generate-huffman-tree} (@ref{Exercise 2.69}) to generate a
+-corresponding Huffman tree, and use @code{encode} (@ref{Exercise 2.68}) to
+-encode the following message:
++Используйте @code{generate-huffman-tree} (@ref{Exercise 2.69}), чтобы породить
++соответствующее дерево Хаффмана, и используйте @code{encode} (@ref{Exercise 2.68}), чтобы
++закодировать следующее сообщение:
+ 
+ @example
+ Get a job
+@@ -10969,29 +10952,27 @@ yip yip yip yip yip
+ Sha boom
+ @end example
+ 
+-How many bits are required for the encoding?  What is the smallest number of
+-bits that would be needed to encode this song if we used a fixed-length code
+-for the eight-symbol alphabet?
++Сколько битов требуется для кодирования?  Каково наименьшее число битов, которое
++понадобилось бы, чтобы закодировать эту песню, если бы мы использовали код фиксированной
++длины для восьмисимвольного алфавита?
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.71}Exercise 2.71:} Suppose we have a Huffman tree
+-for an alphabet of @math{n} symbols, and that the relative frequencies of the
+-symbols are @math{{1, 2, 4, \dots, 2^{n-1}}}.  Sketch the tree for @math{{n=5}}; for
+-@math{{n=10}}.  In such a tree (for general @math{n}) how many bits are required to
+-encode the most frequent symbol?  The least frequent symbol?
++@strong{@anchor{Exercise 2.71}Exercise 2.71:} Предположим, у нас есть дерево Хаффмана для
++алфавита из @math{n} символов, и что относительные частоты символов — это
++@math{{1, 2, 4, \dots, 2^{n-1}}}.  Набросайте дерево для @math{{n=5}}; для @math{{n=10}}.
++В таком дереве (для общего @math{n}) сколько битов требуется, чтобы закодировать самый
++частый символ?  Самый редкий символ?
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.72}Exercise 2.72:} Consider the encoding procedure
+-that you designed in @ref{Exercise 2.68}.  What is the order of growth in the
+-number of steps needed to encode a symbol?  Be sure to include the number of
+-steps needed to search the symbol list at each node encountered.  To answer
+-this question in general is difficult.  Consider the special case where the
+-relative frequencies of the @math{n} symbols are as described in @ref{Exercise 2.71}, 
+-and give the order of growth (as a function of @math{n}) of the number of
+-steps needed to encode the most frequent and least frequent symbols in the
+-alphabet.
++@strong{@anchor{Exercise 2.72}Exercise 2.72:} Рассмотрите процедуру кодирования, которую
++вы спроектировали в @ref{Exercise 2.68}.  Каков порядок роста в числе шагов, нужных, чтобы
++закодировать символ?  Не забудьте включить число шагов, нужных, чтобы просмотреть список
++символов в каждом встреченном узле.  Ответить на этот вопрос в общем случае трудно.
++Рассмотрите частный случай, где относительные частоты @math{n} символов таковы, как
++описано в @ref{Exercise 2.71}, и приведите порядок роста (как функцию от @math{n}) числа
++шагов, нужных, чтобы закодировать самый частый и самый редкий символы алфавита.
+ @end quotation
+ 
+ @node	2.4, 2.5, 2.3, Chapter 2

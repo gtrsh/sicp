@@ -1,0 +1,686 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 027e2e8..28371f2 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -9994,65 +9994,63 @@ d(u^n)            du
+ @end quotation
+ 
+ @node	2.3.3, 2.3.4, 2.3.2, 2.3
+-@subsection Example: Representing Sets
+-
+-In the previous examples we built representations for two kinds of compound
+-data objects: rational numbers and algebraic expressions.  In one of these
+-examples we had the choice of simplifying (reducing) the expressions at either
+-construction time or selection time, but other than that the choice of a
+-representation for these structures in terms of lists was straightforward. When
+-we turn to the representation of sets, the choice of a representation is not so
+-obvious.  Indeed, there are a number of possible representations, and they
+-differ significantly from one another in several ways.
+-
+-Informally, a set is simply a collection of distinct objects.  To give a more
+-precise definition we can employ the method of data abstraction.  That is, we
+-define ``set'' by specifying the operations that are to be used on sets.  These
+-are @code{union-set}, @code{intersection-set}, @code{element-of-set?}, and
+-@code{adjoin-set}.  @code{Element-of-set?} is a predicate that determines
+-whether a given element is a member of a set.  @code{Adjoin-set} takes an
+-object and a set as arguments and returns a set that contains the elements of
+-the original set and also the adjoined element.  @code{Union-set} computes the
+-union of two sets, which is the set containing each element that appears in
+-either argument.  @code{Intersection-set} computes the intersection of two
+-sets, which is the set containing only elements that appear in both arguments.
+-From the viewpoint of data abstraction, we are free to design any
+-representation that implements these operations in a way consistent with the
+-interpretations given above.@footnote{If we want to be more formal, we can
+-specify ``consistent with the interpretations given above'' to mean that the
+-operations satisfy a collection of rules such as these:
++@subsection Пример: представление множеств
++
++В предыдущих примерах мы строили представления для двух видов составных объектов
++данных: рациональных чисел и алгебраических выражений.  В одном из этих примеров у нас
++был выбор — упрощать (приводить) выражения во время построения или во время выбора, но,
++кроме этого, выбор представления для этих структур в терминах списков был
++прямолинейным.  Когда мы обращаемся к представлению множеств, выбор представления не
++столь очевиден.  В самом деле, есть несколько возможных представлений, и они значительно
++различаются между собой по нескольким параметрам.
++
++Неформально, множество — это просто набор различных объектов.  Чтобы дать более точное
++определение, мы можем применить метод абстракции данных.  То есть мы определяем
++«множество», задавая операции, которые должны использоваться над множествами.  Это
++@code{union-set}, @code{intersection-set}, @code{element-of-set?} и @code{adjoin-set}.
++@code{Element-of-set?} — это предикат, который определяет, является ли данный элемент
++членом множества.  @code{Adjoin-set} принимает объект и множество как аргументы и
++возвращает множество, которое содержит элементы исходного множества, а также
++присоединённый элемент.  @code{Union-set} вычисляет объединение двух множеств — множество,
++содержащее каждый элемент, который появляется в любом из аргументов.
++@code{Intersection-set} вычисляет пересечение двух множеств — множество, содержащее
++только элементы, которые появляются в обоих аргументах.  С точки зрения абстракции
++данных мы вольны проектировать любое представление, которое реализует эти операции
++способом, согласующимся с приведёнными выше интерпретациями.@footnote{Если мы хотим быть
++более формальными, мы можем уточнить «согласующимся с приведёнными выше интерпретациями»
++как то, что операции удовлетворяют набору правил, таких как эти:
+ 
+ @itemize @bullet
+ 
+ @item
+-For any set @code{S} and any object @code{x},
++Для любого множества @code{S} и любого объекта @code{x}
+ @code{(element-of-set? x (adjoin-set x S))}
+-is true (informally: ``Adjoining an object to a
+-set produces a set that contains the object'').
++истинно (неформально: «Присоединение объекта к множеству производит множество, которое
++содержит объект»).
+ 
+ @item
+-For any sets @code{S} and @code{T} and any object @code{x},
++Для любых множеств @code{S} и @code{T} и любого объекта @code{x}
+ @code{(element-of-set? x (union-set S T))}
+-is equal to
++равно
+ @code{(or (element-of-set? x S) (element-of-set? x T))}
+-(informally: ``The elements of @code{(union S T)} are the elements that
+-are in @code{S} or in @code{T}'').
++(неформально: «Элементы @code{(union S T)} — это элементы, которые находятся в @code{S}
++или в @code{T}»).
+ 
+ @item
+-For any object @code{x},
++Для любого объекта @code{x}
+ @code{(element-of-set? x '())}
+-is false (informally: ``No object is an element of the empty set'').
++ложно (неформально: «Никакой объект не является элементом пустого множества»).
+ 
+ @end itemize
+ }
+ 
+-@subsubheading Sets as unordered lists
++@subsubheading Множества как неупорядоченные списки
+ 
+-One way to represent a set is as a list of its elements in which no element
+-appears more than once.  The empty set is represented by the empty list.  In
+-this representation, @code{element-of-set?} is similar to the procedure
+-@code{memq} of @ref{2.3.1}.  It uses @code{equal?}  instead of
+-@code{eq?} so that the set elements need not be symbols:
++Один способ представить множество — это список его элементов, в котором ни один элемент
++не появляется более одного раза.  Пустое множество представляется пустым списком.  В
++этом представлении @code{element-of-set?} похожа на процедуру @code{memq} из
++@ref{2.3.1}.  Она использует @code{equal?} вместо @code{eq?}, чтобы элементы множества
++не обязаны были быть символами:
+ 
+ @lisp
+ (define (element-of-set? x set)
+@@ -10062,9 +10060,9 @@ this representation, @code{element-of-set?} is similar to the procedure
+ @end lisp
+ 
+ @noindent
+-Using this, we can write @code{adjoin-set}.  If the object to be adjoined is
+-already in the set, we just return the set.  Otherwise, we use @code{cons} to
+-add the object to the list that represents the set:
++Используя это, мы можем написать @code{adjoin-set}.  Если присоединяемый объект уже в
++множестве, мы просто возвращаем множество.  Иначе мы используем @code{cons}, чтобы
++добавить объект к списку, представляющему множество:
+ 
+ @lisp
+ (define (adjoin-set x set)
+@@ -10074,11 +10072,10 @@ add the object to the list that represents the set:
+ @end lisp
+ 
+ @noindent
+-For @code{intersection-set} we can use a recursive strategy.  If we know how to
+-form the intersection of @code{set2} and the @code{cdr} of @code{set1}, we only
+-need to decide whether to include the @code{car} of @code{set1} in this.  But
+-this depends on whether @code{(car set1)} is also in @code{set2}.  Here is the
+-resulting procedure:
++Для @code{intersection-set} мы можем использовать рекурсивную стратегию.  Если мы знаем,
++как образовать пересечение @code{set2} и @code{cdr} списка @code{set1}, нам нужно лишь
++решить, включать ли @code{car} списка @code{set1} в это.  Но это зависит от того,
++находится ли @code{(car set1)} также в @code{set2}.  Вот получающаяся процедура:
+ 
+ @lisp
+ (define (intersection-set set1 set2)
+@@ -10093,56 +10090,55 @@ resulting procedure:
+ @end lisp
+ 
+ @noindent
+-In designing a representation, one of the issues we should be concerned with is
+-efficiency.  Consider the number of steps required by our set operations.
+-Since they all use @code{element-of-set?}, the speed of this operation has a
+-major impact on the efficiency of the set implementation as a whole.  Now, in
+-order to check whether an object is a member of a set, @code{element-of-set?}
+-may have to scan the entire set. (In the worst case, the object turns out not
+-to be in the set.)  Hence, if the set has @math{n} elements,
+-@code{element-of-set?}  might take up to @math{n} steps.  Thus, the number of
+-steps required grows as @math{{\Theta(n)}}.  The number of steps required by
+-@code{adjoin-set}, which uses this operation, also grows as @math{{\Theta(n)}}.
+-For @code{intersection-set}, which does an @code{element-of-set?} check for
+-each element of @code{set1}, the number of steps required grows as the product
+-of the sizes of the sets involved, or @math{{\Theta(n^2)}} for two sets of size
+-@math{n}.  The same will be true of @code{union-set}.
++При проектировании представления один из вопросов, о которых мы должны заботиться, —
++эффективность.  Рассмотрим число шагов, требуемых нашими операциями над множествами.
++Поскольку все они используют @code{element-of-set?}, скорость этой операции оказывает
++значительное влияние на эффективность реализации множеств в целом.  Так вот, чтобы
++проверить, является ли объект членом множества, @code{element-of-set?}, возможно,
++придётся просканировать всё множество.  (В худшем случае объекта в множестве не
++оказывается.)  Следовательно, если множество имеет @math{n} элементов,
++@code{element-of-set?} может занять до @math{n} шагов.  Таким образом, число требуемых
++шагов растёт как @math{{\Theta(n)}}.  Число шагов, требуемых @code{adjoin-set}, которая
++использует эту операцию, также растёт как @math{{\Theta(n)}}.  Для
++@code{intersection-set}, которая делает проверку @code{element-of-set?} для каждого
++элемента @code{set1}, число требуемых шагов растёт как произведение размеров
++участвующих множеств, или @math{{\Theta(n^2)}} для двух множеств размера @math{n}.  То
++же будет верно для @code{union-set}.
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.59}Exercise 2.59:} Implement the @code{union-set}
+-operation for the unordered-list representation of sets.
++@strong{@anchor{Exercise 2.59}Exercise 2.59:} Реализуйте операцию @code{union-set} для
++представления множеств неупорядоченными списками.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.60}Exercise 2.60:} We specified that a set would be
+-represented as a list with no duplicates.  Now suppose we allow duplicates.
+-For instance, the set @math{{\{1, 2, 3\}}} could be represented as the list @code{(2 3 2 1
+-3 2 2)}.  Design procedures @code{element-of-set?}, @code{adjoin-set},
+-@code{union-set}, and @code{intersection-set} that operate on this
+-representation.  How does the efficiency of each compare with the corresponding
+-procedure for the non-duplicate representation?  Are there applications for
+-which you would use this representation in preference to the non-duplicate one?
++@strong{@anchor{Exercise 2.60}Exercise 2.60:} Мы задали, что множество представляется
++списком без дубликатов.  Теперь предположим, что мы допускаем дубликаты.  Например,
++множество @math{{\{1, 2, 3\}}} можно было бы представить списком @code{(2 3 2 1 3 2 2)}.
++Спроектируйте процедуры @code{element-of-set?}, @code{adjoin-set}, @code{union-set} и
++@code{intersection-set}, которые оперируют этим представлением.  Как сравнивается
++эффективность каждой с соответствующей процедурой для представления без дубликатов?  Есть
++ли приложения, для которых вы бы использовали это представление в предпочтение
++представлению без дубликатов?
+ @end quotation
+ 
+-@subsubheading Sets as ordered lists
++@subsubheading Множества как упорядоченные списки
+ 
+-One way to speed up our set operations is to change the representation so that
+-the set elements are listed in increasing order.  To do this, we need some way
+-to compare two objects so that we can say which is bigger.  For example, we
+-could compare symbols lexicographically, or we could agree on some method for
+-assigning a unique number to an object and then compare the elements by
+-comparing the corresponding numbers.  To keep our discussion simple, we will
+-consider only the case where the set elements are numbers, so that we can
+-compare elements using @code{>} and @code{<}.  We will represent a set of
+-numbers by listing its elements in increasing order.  Whereas our first
+-representation above allowed us to represent the set @math{{\{1, 3, 6, 10\}}} by listing
+-the elements in any order, our new representation allows only the list @code{(1
+-3 6 10)}.
++Один способ ускорить наши операции над множествами — изменить представление так, чтобы
++элементы множества перечислялись в возрастающем порядке.  Чтобы сделать это, нам нужен
++некоторый способ сравнивать два объекта, чтобы мы могли сказать, который больше.
++Например, мы могли бы сравнивать символы лексикографически, или мы могли бы
++договориться о некотором методе присвоения уникального числа объекту, а затем сравнивать
++элементы, сравнивая соответствующие числа.  Чтобы наше обсуждение оставалось простым, мы
++рассмотрим только случай, когда элементы множества — числа, так что мы можем сравнивать
++элементы с помощью @code{>} и @code{<}.  Мы будем представлять множество чисел,
++перечисляя его элементы в возрастающем порядке.  Тогда как наше первое представление выше
++позволяло нам представлять множество @math{{\{1, 3, 6, 10\}}}, перечисляя элементы в
++любом порядке, наше новое представление позволяет только список @code{(1 3 6 10)}.
+ 
+-One advantage of ordering shows up in @code{element-of-set?}: In checking for
+-the presence of an item, we no longer have to scan the entire set.  If we reach
+-a set element that is larger than the item we are looking for, then we know
+-that the item is not in the set:
++Одно преимущество упорядочивания проявляется в @code{element-of-set?}: при проверке
++наличия элемента нам больше не нужно сканировать всё множество.  Если мы достигаем
++элемента множества, который больше искомого элемента, то мы знаем, что элемента в
++множестве нет:
+ 
+ @lisp
+ (define (element-of-set? x set)
+@@ -10152,32 +10148,27 @@ that the item is not in the set:
+         (else (element-of-set? x (cdr set)))))
+ @end lisp
+ 
+-How many steps does this save?  In the worst case, the item we are looking for
+-may be the largest one in the set, so the number of steps is the same as for
+-the unordered representation.  On the other hand, if we search for items of
+-many different sizes we can expect that sometimes we will be able to stop
+-searching at a point near the beginning of the list and that other times we
+-will still need to examine most of the list.  On the average we should expect
+-to have to examine about half of the items in the set.  Thus, the average
+-number of steps required will be about @math{{n / 2}}.  This is still
+-@math{{\Theta(n)}} growth, but it does save us, on the average, a factor of 2
+-in number of steps over the previous implementation.
+-
+-We obtain a more impressive speedup with @code{intersection-set}.  In the
+-unordered representation this operation required @math{{\Theta(n^2)}} steps,
+-because we performed a complete scan of @code{set2} for each element of
+-@code{set1}.  But with the ordered representation, we can use a more clever
+-method.  Begin by comparing the initial elements, @code{x1} and @code{x2}, of
+-the two sets.  If @code{x1} equals @code{x2}, then that gives an element of the
+-intersection, and the rest of the intersection is the intersection of the
+-@code{cdr}-s of the two sets.  Suppose, however, that @code{x1} is less than
+-@code{x2}.  Since @code{x2} is the smallest element in @code{set2}, we can
+-immediately conclude that @code{x1} cannot appear anywhere in @code{set2} and
+-hence is not in the intersection.  Hence, the intersection is equal to the
+-intersection of @code{set2} with the @code{cdr} of @code{set1}.  Similarly, if
+-@code{x2} is less than @code{x1}, then the intersection is given by the
+-intersection of @code{set1} with the @code{cdr} of @code{set2}.  Here is the
+-procedure:
++Сколько шагов это экономит?  В худшем случае искомый элемент может быть наибольшим в
++множестве, так что число шагов то же, что и для неупорядоченного представления.  С
++другой стороны, если мы ищем элементы многих разных размеров, мы можем ожидать, что
++иногда мы сможем прекратить поиск в точке около начала списка, а в других случаях нам
++всё ещё нужно будет осмотреть большую часть списка.  В среднем мы должны ожидать, что
++придётся осмотреть около половины элементов множества.  Таким образом, среднее число
++требуемых шагов будет около @math{{n / 2}}.  Это всё ещё рост @math{{\Theta(n)}}, но это
++экономит нам, в среднем, множитель 2 в числе шагов по сравнению с предыдущей реализацией.
++
++Мы получаем более впечатляющее ускорение с @code{intersection-set}.  В неупорядоченном
++представлении эта операция требовала @math{{\Theta(n^2)}} шагов, потому что мы выполняли
++полное сканирование @code{set2} для каждого элемента @code{set1}.  Но с упорядоченным
++представлением мы можем использовать более хитрый метод.  Начнём со сравнения начальных
++элементов, @code{x1} и @code{x2}, двух множеств.  Если @code{x1} равно @code{x2}, то это
++даёт элемент пересечения, а остаток пересечения — это пересечение @code{cdr} двух
++множеств.  Предположим, однако, что @code{x1} меньше @code{x2}.  Поскольку @code{x2} —
++наименьший элемент в @code{set2}, мы можем сразу заключить, что @code{x1} не может
++появиться нигде в @code{set2} и, следовательно, не находится в пересечении.
++Следовательно, пересечение равно пересечению @code{set2} с @code{cdr} списка @code{set1}.
++Аналогично, если @code{x2} меньше @code{x1}, то пересечение даётся пересечением
++@code{set1} с @code{cdr} списка @code{set2}.  Вот эта процедура:
+ 
+ @lisp
+ (define (intersection-set set1 set2)
+@@ -10197,45 +10188,42 @@ procedure:
+ @end lisp
+ 
+ @noindent
+-To estimate the number of steps required by this process, observe that at each
+-step we reduce the intersection problem to computing intersections of smaller
+-sets---removing the first element from @code{set1} or @code{set2} or both.
+-Thus, the number of steps required is at most the sum of the sizes of
+-@code{set1} and @code{set2}, rather than the product of the sizes as with the
+-unordered representation.  This is @math{{\Theta(n)}} growth rather than
+-@math{{\Theta(n^2)}}---a considerable speedup, even for sets of moderate size.
++Чтобы оценить число шагов, требуемых этим процессом, заметьте, что на каждом шаге мы
++сводим задачу пересечения к вычислению пересечений меньших множеств — удаляя первый
++элемент из @code{set1}, или @code{set2}, или обоих.  Таким образом, число требуемых
++шагов — это самое большее сумма размеров @code{set1} и @code{set2}, а не произведение
++размеров, как в неупорядоченном представлении.  Это рост @math{{\Theta(n)}}, а не
++@math{{\Theta(n^2)}} — значительное ускорение, даже для множеств умеренного размера.
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.61}Exercise 2.61:} Give an implementation of
+-@code{adjoin-set} using the ordered representation.  By analogy with
+-@code{element-of-set?} show how to take advantage of the ordering to produce a
+-procedure that requires on the average about half as many steps as with the
+-unordered representation.
++@strong{@anchor{Exercise 2.61}Exercise 2.61:} Дайте реализацию @code{adjoin-set},
++используя упорядоченное представление.  По аналогии с @code{element-of-set?} покажите,
++как воспользоваться упорядочиванием, чтобы получить процедуру, которая требует в среднем
++примерно вдвое меньше шагов, чем при неупорядоченном представлении.
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.62}Exercise 2.62:} Give a @math{{\Theta(n)}}
+-implementation of @code{union-set} for sets represented as ordered lists.
++@strong{@anchor{Exercise 2.62}Exercise 2.62:} Дайте @math{{\Theta(n)}}-реализацию
++@code{union-set} для множеств, представленных упорядоченными списками.
+ @end quotation
+ 
+-@subsubheading Sets as binary trees
++@subsubheading Множества как двоичные деревья
+ 
+-We can do better than the ordered-list representation by arranging the set
+-elements in the form of a tree.  Each node of the tree holds one element of the
+-set, called the ``entry'' at that node, and a link to each of two other
+-(possibly empty) nodes.  The ``left'' link points to elements smaller than the
+-one at the node, and the ``right'' link to elements greater than the one at the
+-node.  @ref{Figure 2.16} shows some trees that represent the set
+-@math{{\{1, 3, 5, 7, 9, 11\}}}.  The same set may be represented by a tree in a number of
+-different ways.  The only thing we require for a valid representation is that
+-all elements in the left subtree be smaller than the node entry and that all
+-elements in the right subtree be larger.
++Мы можем сделать лучше, чем представление упорядоченным списком, расположив элементы
++множества в форме дерева.  Каждый узел дерева содержит один элемент множества,
++называемый «записью» в этом узле, и связь с каждым из двух других (возможно, пустых)
++узлов.  «Левая» связь указывает на элементы, меньшие чем в узле, а «правая» связь — на
++элементы, бо́льшие чем в узле.  @ref{Figure 2.16} показывает некоторые деревья, которые
++представляют множество @math{{\{1, 3, 5, 7, 9, 11\}}}.  Одно и то же множество может быть
++представлено деревом несколькими различными способами.  Единственное, что мы требуем для
++допустимого представления, — это чтобы все элементы в левом поддереве были меньше записи
++узла, а все элементы в правом поддереве — больше.
+ 
+ @float
+ @anchor{Figure 2.16}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.16:} Various binary trees that represent the set @math{{\{1, 3, 5, 7, 9, 11\}}}.
++@strong{Figure 2.16:} Различные двоичные деревья, представляющие множество @math{{\{1, 3, 5, 7, 9, 11\}}}.
+ 
+ @example
+    7          3             5
+@@ -10250,35 +10238,33 @@ elements in the right subtree be larger.
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.16c,120mm,,,.std.svg}
+-@caption{@strong{Figure 2.16:} Various binary trees that represent the set @math{{\{1, 3, 5, 7, 9, 11\}}}.}
++@caption{@strong{Figure 2.16:} Различные двоичные деревья, представляющие множество @math{{\{1, 3, 5, 7, 9, 11\}}}.}
+ @end iftex
+ @end float
+ 
+-The advantage of the tree representation is this: Suppose we want to check
+-whether a number @math{x} is contained in a set.  We begin by comparing @math{x} with
+-the entry in the top node.  If @math{x} is less than this, we know that we need
+-only search the left subtree; if @math{x} is greater, we need only search the
+-right subtree.  Now, if the tree is ``balanced,'' each of these subtrees will
+-be about half the size of the original.  Thus, in one step we have reduced the
+-problem of searching a tree of size @math{n} to searching a tree of size @math{{n / 2}}.
+-Since the size of the tree is halved at each step, we should expect that the
+-number of steps needed to search a tree of size @math{n} grows as
+-@math{{\Theta(\log n)}}.@footnote{Halving the size of the problem at each
+-step is the distinguishing characteristic of logarithmic growth, as we saw with
+-the fast-exponentiation algorithm of @ref{1.2.4} and the half-interval
+-search method of @ref{1.3.3}.} For large sets, this will be a
+-significant speedup over the previous representations.
+-
+-We can represent trees by using lists.  Each node will be a list of three
+-items: the entry at the node, the left subtree, and the right subtree.  A left
+-or a right subtree of the empty list will indicate that there is no subtree
+-connected there.  We can describe this representation by the following
+-procedures:@footnote{We are representing sets in terms of trees, and trees in
+-terms of lists---in effect, a data abstraction built upon a data abstraction.
+-We can regard the procedures @code{entry}, @code{left-branch},
+-@code{right-branch}, and @code{make-tree} as a way of isolating the abstraction
+-of a ``binary tree'' from the particular way we might wish to represent such a
+-tree in terms of list structure.}
++Преимущество древовидного представления таково: предположим, мы хотим проверить, содержится
++ли число @math{x} в множестве.  Мы начинаем со сравнения @math{x} с записью в верхнем
++узле.  Если @math{x} меньше этого, мы знаем, что нам нужно искать только в левом
++поддереве; если @math{x} больше, нам нужно искать только в правом поддереве.  Так вот,
++если дерево «сбалансировано», каждое из этих поддеревьев будет примерно вдвое меньше
++исходного.  Таким образом, за один шаг мы свели задачу поиска в дереве размера @math{n} к
++поиску в дереве размера @math{{n / 2}}.  Поскольку размер дерева уменьшается вдвое на
++каждом шаге, мы должны ожидать, что число шагов, нужных для поиска в дереве размера
++@math{n}, растёт как @math{{\Theta(\log n)}}.@footnote{Деление размера задачи пополам на
++каждом шаге — отличительная характеристика логарифмического роста, как мы видели на
++алгоритме быстрого возведения в степень из @ref{1.2.4} и методе половинного деления из
++@ref{1.3.3}.} Для больших множеств это будет значительным ускорением по сравнению с
++предыдущими представлениями.
++
++Мы можем представлять деревья с помощью списков.  Каждый узел будет списком из трёх
++элементов: запись в узле, левое поддерево и правое поддерево.  Левое или правое поддерево,
++равное пустому списку, будет указывать, что там нет присоединённого поддерева.  Мы можем
++описать это представление следующими процедурами:@footnote{Мы представляем множества в
++терминах деревьев, а деревья — в терминах списков; по сути, абстракция данных, построенная
++на абстракции данных.  Мы можем рассматривать процедуры @code{entry}, @code{left-branch},
++@code{right-branch} и @code{make-tree} как способ изолировать абстракцию «двоичного
++дерева» от конкретного способа, которым мы могли бы захотеть представить такое дерево в
++терминах списочной структуры.}
+ 
+ @lisp
+ (define (entry tree) (car tree))
+@@ -10289,8 +10275,8 @@ tree in terms of list structure.}
+ @end lisp
+ 
+ @noindent
+-Now we can write the @code{element-of-set?} procedure using the strategy
+-described above:
++Теперь мы можем написать процедуру @code{element-of-set?}, используя описанную выше
++стратегию:
+ 
+ @lisp
+ (define (element-of-set? x set)
+@@ -10307,15 +10293,14 @@ described above:
+ @end lisp
+ 
+ @noindent
+-Adjoining an item to a set is implemented similarly and also requires
+-@math{{\Theta(\log n)}} steps.  To adjoin an item @code{x}, we compare
+-@code{x} with the node entry to determine whether @code{x} should be added to
+-the right or to the left branch, and having adjoined @code{x} to the
+-appropriate branch we piece this newly constructed branch together with the
+-original entry and the other branch.  If @code{x} is equal to the entry, we
+-just return the node.  If we are asked to adjoin @code{x} to an empty tree, we
+-generate a tree that has @code{x} as the entry and empty right and left
+-branches.  Here is the procedure:
++Присоединение элемента к множеству реализуется аналогично и также требует
++@math{{\Theta(\log n)}} шагов.  Чтобы присоединить элемент @code{x}, мы сравниваем
++@code{x} с записью узла, чтобы определить, должен ли @code{x} быть добавлен в правую или
++в левую ветвь, и, присоединив @code{x} к подходящей ветви, мы соединяем эту
++новопостроенную ветвь с исходной записью и другой ветвью.  Если @code{x} равен записи, мы
++просто возвращаем узел.  Если нас просят присоединить @code{x} к пустому дереву, мы
++порождаем дерево, у которого @code{x} — запись, а правая и левая ветви пусты.  Вот эта
++процедура:
+ 
+ @lisp
+ (define (adjoin-set x set)
+@@ -10334,34 +10319,33 @@ branches.  Here is the procedure:
+ @end lisp
+ 
+ @noindent
+-The above claim that searching the tree can be performed in a logarithmic
+-number of steps rests on the assumption that the tree is ``balanced,'' i.e.,
+-that the left and the right subtree of every tree have approximately the same
+-number of elements, so that each subtree contains about half the elements of
+-its parent.  But how can we be certain that the trees we construct will be
+-balanced?  Even if we start with a balanced tree, adding elements with
+-@code{adjoin-set} may produce an unbalanced result.  Since the position of a
+-newly adjoined element depends on how the element compares with the items
+-already in the set, we can expect that if we add elements ``randomly'' the tree
+-will tend to be balanced on the average.  But this is not a guarantee.  For
+-example, if we start with an empty set and adjoin the numbers 1 through 7 in
+-sequence we end up with the highly unbalanced tree shown in @ref{Figure 2.17}.
+-In this tree all the left subtrees are empty, so it has no advantage over a
+-simple ordered list.  One way to solve this problem is to define an operation
+-that transforms an arbitrary tree into a balanced tree with the same elements.
+-Then we can perform this transformation after every few @code{adjoin-set}
+-operations to keep our set in balance.  There are also other ways to solve this
+-problem, most of which involve designing new data structures for which
+-searching and insertion both can be done in @math{{\Theta(\log n)}}
+-steps.@footnote{Examples of such structures include @newterm{B-trees} and
+-@newterm{red-black trees}.  There is a large literature on data structures
+-devoted to this problem.  See @ref{Cormen et al. 1990}.}
++Приведённое выше утверждение, что поиск в дереве можно выполнить за логарифмическое число
++шагов, опирается на предположение, что дерево «сбалансировано», то есть что левое и правое
++поддерево каждого дерева имеют приблизительно одинаковое число элементов, так что каждое
++поддерево содержит около половины элементов своего родителя.  Но как мы можем быть
++уверены, что строимые нами деревья будут сбалансированы?  Даже если мы начинаем со
++сбалансированного дерева, добавление элементов с помощью @code{adjoin-set} может произвести
++несбалансированный результат.  Поскольку позиция новоприсоединённого элемента зависит от
++того, как элемент сравнивается с элементами, уже находящимися в множестве, мы можем ожидать,
++что если мы добавляем элементы «случайно», дерево будет стремиться быть сбалансированным в
++среднем.  Но это не гарантия.  Например, если мы начинаем с пустого множества и присоединяем
++числа от 1 до 7 по порядку, мы получаем сильно несбалансированное дерево, показанное на
++@ref{Figure 2.17}.  В этом дереве все левые поддеревья пусты, так что у него нет
++преимущества перед простым упорядоченным списком.  Один способ решить эту проблему — это
++определить операцию, которая преобразует произвольное дерево в сбалансированное дерево с теми
++же элементами.  Тогда мы можем выполнять это преобразование после каждых нескольких операций
++@code{adjoin-set}, чтобы держать наше множество в равновесии.  Есть также другие способы
++решить эту проблему, большинство из которых включают проектирование новых структур данных,
++для которых и поиск, и вставку можно выполнить за @math{{\Theta(\log n)}}
++шагов.@footnote{Примеры таких структур включают @newterm{B-деревья} и
++@newterm{красно-чёрные деревья}.  Существует большая литература по структурам данных,
++посвящённая этой проблеме.  См. @ref{Cormen et al. 1990}.}
+ 
+ @float
+ @anchor{Figure 2.17}
+ @ifinfo
+ @quotation
+-@strong{Figure 2.17:} Unbalanced tree produced by adjoining 1 through 7 in sequence.
++@strong{Figure 2.17:} Несбалансированное дерево, полученное присоединением чисел от 1 до 7 по порядку.
+ 
+ @example
+ 1
+@@ -10380,13 +10364,13 @@ devoted to this problem.  See @ref{Cormen et al. 1990}.}
+ @end ifinfo
+ @iftex
+ @image{fig/chap2/Fig2.17a,68mm,,,.std.svg}
+-@caption{@strong{Figure 2.17:} Unbalanced tree produced by adjoining 1 through 7 in sequence.}
++@caption{@strong{Figure 2.17:} Несбалансированное дерево, полученное присоединением чисел от 1 до 7 по порядку.}
+ @end iftex
+ @end float
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.63}Exercise 2.63:} Each of the following two
+-procedures converts a binary tree to a list.
++@strong{@anchor{Exercise 2.63}Exercise 2.63:} Каждая из следующих двух процедур
++преобразует двоичное дерево в список.
+ 
+ @lisp
+ (define (tree->list-1 tree)
+@@ -10415,26 +10399,26 @@ procedures converts a binary tree to a list.
+ @enumerate a
+ 
+ @item
+-Do the two procedures produce the same result for every tree?  If not, how do
+-the results differ?  What lists do the two procedures produce for the trees in
++Производят ли две процедуры один и тот же результат для каждого дерева?  Если нет, то чем
++различаются результаты?  Какие списки производят две процедуры для деревьев на
+ @ref{Figure 2.16}?
+ 
+ @item
+-Do the two procedures have the same order of growth in the number of steps
+-required to convert a balanced tree with @math{n} elements to a list?  If not,
+-which one grows more slowly?
++Имеют ли две процедуры один и тот же порядок роста в числе шагов, требуемых для
++преобразования сбалансированного дерева с @math{n} элементами в список?  Если нет, то
++какая растёт медленнее?
+ 
+ @end enumerate
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.64}Exercise 2.64:} The following procedure
+-@code{list->tree} converts an ordered list to a balanced binary tree.  The
+-helper procedure @code{partial-tree} takes as arguments an integer @math{n} and
+-list of at least @math{n} elements and constructs a balanced tree containing the
+-first @math{n} elements of the list.  The result returned by @code{partial-tree}
+-is a pair (formed with @code{cons}) whose @code{car} is the constructed tree
+-and whose @code{cdr} is the list of elements not included in the tree.
++@strong{@anchor{Exercise 2.64}Exercise 2.64:} Следующая процедура @code{list->tree}
++преобразует упорядоченный список в сбалансированное двоичное дерево.  Вспомогательная
++процедура @code{partial-tree} принимает как аргументы целое число @math{n} и список из по
++меньшей мере @math{n} элементов и строит сбалансированное дерево, содержащее первые
++@math{n} элементов списка.  Результат, возвращаемый @code{partial-tree}, — это пара
++(образованная с помощью @code{cons}), чей @code{car} — построенное дерево, а чей
++@code{cdr} — список элементов, не включённых в дерево.
+ 
+ @lisp
+ (define (list->tree elements)
+@@ -10474,51 +10458,47 @@ and whose @code{cdr} is the list of elements not included in the tree.
+ @enumerate a
+ 
+ @item
+-Write a short paragraph explaining as clearly as you can how
+-@code{partial-tree} works.  Draw the tree produced by @code{list->tree} for
+-the list @code{(1 3 5 7 9 11)}.
++Напишите короткий абзац, объясняющий как можно яснее, как работает @code{partial-tree}.
++Нарисуйте дерево, производимое @code{list->tree} для списка @code{(1 3 5 7 9 11)}.
+ 
+ @item
+-What is the order of growth in the number of steps required by
+-@code{list->tree} to convert a list of @math{n} elements?
++Каков порядок роста в числе шагов, требуемых @code{list->tree} для преобразования списка
++из @math{n} элементов?
+ 
+ @end enumerate
+ @end quotation
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.65}Exercise 2.65:} Use the results of @ref{Exercise 2.63} 
+-and @ref{Exercise 2.64} to give @math{{\Theta(n)}} implementations of
+-@code{union-set} and @code{intersection-set} for sets implemented as (balanced)
+-binary trees.@footnote{@ref{Exercise 2.63} through @ref{Exercise 2.65} are due
+-to Paul Hilfinger.}
++@strong{@anchor{Exercise 2.65}Exercise 2.65:} Используйте результаты @ref{Exercise 2.63}
++и @ref{Exercise 2.64}, чтобы дать @math{{\Theta(n)}}-реализации @code{union-set} и
++@code{intersection-set} для множеств, реализованных как (сбалансированные) двоичные
++деревья.@footnote{@ref{Exercise 2.63} — @ref{Exercise 2.65} принадлежат Полу Хилфингеру.}
+ @end quotation
+ 
+-@subsubheading Sets and information retrieval
++@subsubheading Множества и информационный поиск
+ 
+-We have examined options for using lists to represent sets and have seen how
+-the choice of representation for a data object can have a large impact on the
+-performance of the programs that use the data.  Another reason for
+-concentrating on sets is that the techniques discussed here appear again and
+-again in applications involving information retrieval.
++Мы рассмотрели варианты использования списков для представления множеств и увидели, как
++выбор представления для объекта данных может оказать большое влияние на
++производительность программ, которые используют данные.  Ещё одна причина
++сосредоточиться на множествах в том, что приёмы, обсуждаемые здесь, снова и снова
++появляются в приложениях, связанных с информационным поиском.
+ 
+-Consider a data base containing a large number of individual records, such as
+-the personnel files for a company or the transactions in an accounting system.
+-A typical data-management system spends a large amount of time accessing or
+-modifying the data in the records and therefore requires an efficient method
+-for accessing records.  This is done by identifying a part of each record to
+-serve as an identifying @newterm{key}.  A key can be anything that uniquely
+-identifies the record.  For a personnel file, it might be an employee's ID
+-number.  For an accounting system, it might be a transaction number.  Whatever
+-the key is, when we define the record as a data structure we should include a
+-@code{key} selector procedure that retrieves the key associated with a given
+-record.
++Рассмотрим базу данных, содержащую большое число отдельных записей, таких как кадровые
++файлы компании или транзакции в бухгалтерской системе.  Типичная система управления
++данными тратит большое количество времени на доступ к данным в записях или их изменение
++и поэтому требует эффективного метода доступа к записям.  Это делается путём выделения
++части каждой записи, служащей идентифицирующим @newterm{ключом}.  Ключом может быть всё
++что угодно, что однозначно идентифицирует запись.  Для кадрового файла это мог бы быть
++табельный номер сотрудника.  Для бухгалтерской системы это мог бы быть номер транзакции.
++Каким бы ни был ключ, когда мы определяем запись как структуру данных, мы должны включить
++процедуру-селектор @code{key}, которая извлекает ключ, связанный с данной записью.
+ 
+-Now we represent the data base as a set of records. To locate the record with a
+-given key we use a procedure @code{lookup}, which takes as arguments a key and
+-a data base and which returns the record that has that key, or false if there
+-is no such record.  @code{Lookup} is implemented in almost the same way as
+-@code{element-of-set?}.  For example, if the set of records is implemented as
+-an unordered list, we could use
++Теперь мы представляем базу данных как множество записей.  Чтобы найти запись с данным
++ключом, мы используем процедуру @code{lookup}, которая принимает как аргументы ключ и
++базу данных и которая возвращает запись, имеющую этот ключ, или ложь, если такой записи
++нет.  @code{Lookup} реализуется почти таким же образом, как @code{element-of-set?}.
++Например, если множество записей реализовано как неупорядоченный список, мы могли бы
++использовать
+ 
+ @lisp
+ (define (lookup given-key set-of-records)
+@@ -10532,23 +10512,22 @@ an unordered list, we could use
+ @end lisp
+ 
+ @noindent
+-Of course, there are better ways to represent large sets than as unordered
+-lists.  Information-retrieval systems in which records have to be ``randomly
+-accessed'' are typically implemented by a tree-based method, such as the
+-binary-tree representation discussed previously.  In designing such a system
+-the methodology of data abstraction can be a great help.  The designer can
+-create an initial implementation using a simple, straightforward representation
+-such as unordered lists.  This will be unsuitable for the eventual system, but
+-it can be useful in providing a ``quick and dirty'' data base with which to
+-test the rest of the system.  Later on, the data representation can be modified
+-to be more sophisticated.  If the data base is accessed in terms of abstract
+-selectors and constructors, this change in representation will not require any
+-changes to the rest of the system.
++Конечно, есть лучшие способы представлять большие множества, чем неупорядоченные списки.
++Системы информационного поиска, в которых к записям приходится «обращаться случайно»,
++обычно реализуются методом на основе деревьев, таким как представление двоичным деревом,
++обсуждённое ранее.  При проектировании такой системы методология абстракции данных может
++быть большим подспорьем.  Проектировщик может создать начальную реализацию, используя
++простое, прямолинейное представление, такое как неупорядоченные списки.  Это будет
++непригодно для итоговой системы, но может быть полезно, предоставляя «быструю и грязную»
++базу данных, на которой можно тестировать остальную часть системы.  Позднее представление
++данных можно изменить, сделав его более изощрённым.  Если к базе данных обращаются в
++терминах абстрактных селекторов и конструкторов, это изменение представления не потребует
++никаких изменений в остальной части системы.
+ 
+ @quotation
+-@strong{@anchor{Exercise 2.66}Exercise 2.66:} Implement the @code{lookup}
+-procedure for the case where the set of records is structured as a binary tree,
+-ordered by the numerical values of the keys.
++@strong{@anchor{Exercise 2.66}Exercise 2.66:} Реализуйте процедуру @code{lookup} для
++случая, когда множество записей структурировано как двоичное дерево, упорядоченное по
++числовым значениям ключей.
+ @end quotation
+ 
+ @node	2.3.4, 2.4, 2.2, 2.3

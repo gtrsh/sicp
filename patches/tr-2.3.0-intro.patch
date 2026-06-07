@@ -1,0 +1,30 @@
+diff --git a/sicp-pocket.texi b/sicp-pocket.texi
+index 92d4399..e24f947 100644
+--- a/sicp-pocket.texi
++++ b/sicp-pocket.texi
+@@ -9408,17 +9408,17 @@ Origin(Frame) + x * Edge_1(Frame) + y * Edge_2(Frame)
+ @end quotation
+ 
+ @node	2.3, 2.4, 2.2, Chapter 2
+-@section Symbolic Data
++@section Символьные данные
+ 
+-All the compound data objects we have used so far were constructed ultimately
+-from numbers.  In this section we extend the representational capability of our
+-language by introducing the ability to work with arbitrary symbols as data.
++Все составные объекты данных, которые мы использовали до сих пор, в конечном счёте
++строились из чисел.  В этом разделе мы расширяем представительную способность нашего
++языка, вводя возможность работать с произвольными символами как с данными.
+ 
+ @menu
+-* 2.3.1::            Quotation
+-* 2.3.2::            Example: Symbolic Differentiation
+-* 2.3.3::            Example: Representing Sets
+-* 2.3.4::            Example: Huffman Encoding Trees
++* 2.3.1::            Цитирование
++* 2.3.2::            Пример: символьное дифференцирование
++* 2.3.3::            Пример: представление множеств
++* 2.3.4::            Пример: деревья кодирования Хаффмана
+ @end menu
+ 
+ @node	2.3.1, 2.3.2, 2.3, 2.3
